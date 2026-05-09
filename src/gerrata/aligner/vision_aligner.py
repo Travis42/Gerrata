@@ -12,6 +12,7 @@ Default model: zai/glm-4.6v, fallback: zai/glm-4.5v.
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import logging
 import os
@@ -20,6 +21,7 @@ import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -193,6 +195,9 @@ class VisionTranscriber:
         prompt: str = TRANSCRIPTION_PROMPT,
         timeout: float = 120.0,
         ocr_engine: str = "vision",
+        cache_file: str | Path | None = None,
+        disable_cache: bool = False,
+        concurrency: int = 1,
     ):
         """Initialize transcriber.
 
@@ -203,6 +208,9 @@ class VisionTranscriber:
             prompt: System/user prompt for transcription.
             timeout: Request timeout in seconds.
             ocr_engine: "tesseract" (local, free) or "vision" (LLM API).
+            cache_file: Path to transcription cache file (default: cache/transcription_cache.json).
+            disable_cache: If True, disable all caching.
+            concurrency: Number of concurrent API calls (default: 1).
         """
         self.api_url = api_url
         self.api_key = api_key or DEFAULT_API_KEY
@@ -210,6 +218,98 @@ class VisionTranscriber:
         self.prompt = prompt
         self.timeout = timeout
         self.ocr_engine = ocr_engine
+        self.cache_file = Path(cache_file) if cache_file else None
+        self.disable_cache = disable_cache
+        self.concurrency = concurrency
+        self.cache_data = self._load_cache() if not disable_cache and self.cache_file else {}
+        self.cache_stats = {"hits": 0, "misses": 0, "saves": 0}
+
+    def _load_cache(self) -> dict:
+        """Load transcription cache from disk."""
+        if not self.cache_file or not self.cache_file.exists():
+            return {"version": 1, "model": "", "pages": {}}
+
+        try:
+            with open(self.cache_file, "r") as f:
+                cache = json.load(f)
+                # Validate cache structure
+                if not isinstance(cache, dict) or "pages" not in cache:
+                    logger.warning(f"Invalid cache file {self.cache_file}, starting fresh")
+                    return {"version": 1, "model": "", "pages": {}}
+                return cache
+        except (json.JSONDecodeError, IOError) as e:
+            logger.warning(f"Failed to load cache {self.cache_file}: {e}")
+            return {"version": 1, "model": "", "pages": {}}
+
+    def _save_cache(self) -> None:
+        """Save transcription cache to disk."""
+        if not self.cache_file or self.disable_cache:
+            return
+
+        try:
+            # Ensure parent directory exists
+            self.cache_file.parent.mkdir(parents=True, exist_ok=True)
+            # Write atomically
+            temp_file = self.cache_file.with_suffix(".tmp")
+            with open(temp_file, "w") as f:
+                json.dump(self.cache_data, f, indent=2)
+            temp_file.replace(self.cache_file)
+        except IOError as e:
+            logger.warning(f"Failed to save cache {self.cache_file}: {e}")
+
+    def _compute_image_hash(self, image_path: Path) -> str:
+        """Compute SHA-256 hash of an image file."""
+        hash_sha256 = hashlib.sha256()
+        with open(image_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_sha256.update(chunk)
+        return f"sha256:{hash_sha256.hexdigest()}"
+
+    def _get_cached_transcription(self, image_path: Path, model: str) -> Optional[str]:
+        """Check if we have a cached transcription for this image."""
+        if self.disable_cache or not self.cache_file:
+            return None
+
+        filename = image_path.name
+        file_hash = self._compute_image_hash(image_path)
+
+        # Check cache entry
+        if filename in self.cache_data.get("pages", {}):
+            entry = self.cache_data["pages"][filename]
+            # Validate hash and model match
+            if (entry.get("hash") == file_hash and
+                entry.get("model") == model and
+                entry.get("success", False)):
+                self.cache_stats["hits"] += 1
+                return entry.get("text", "")
+
+        self.cache_stats["misses"] += 1
+        return None
+
+    def _cache_transcription(self, image_path: Path, model: str, text: str, success: bool) -> None:
+        """Cache a transcription result."""
+        if self.disable_cache or not self.cache_file:
+            return
+
+        filename = image_path.name
+        file_hash = self._compute_image_hash(image_path)
+
+        # Initialize cache structure if needed
+        if "pages" not in self.cache_data:
+            self.cache_data["pages"] = {}
+
+        # Store entry
+        self.cache_data["pages"][filename] = {
+            "hash": file_hash,
+            "success": success,
+            "text": text if success else "",
+            "model": model,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
+
+        self.cache_stats["saves"] += 1
+        # Write immediately for crash resilience
+        self._save_cache()
 
     def _tesseract_ocr(self, image_path: Path) -> str:
         """Run Tesseract OCR locally. Free, fast, no API needed."""
@@ -249,6 +349,23 @@ class VisionTranscriber:
                 error=f"Image not found: {image_path}",
             )
 
+        # For vision models, check cache first
+        if self.ocr_engine == "vision":
+            primary_model = self.models[0] if self.models else "unknown"
+            cached_text = self._get_cached_transcription(image_path, primary_model)
+            if cached_text is not None:
+                # Cache hit
+                cleaned = strip_paratext(cached_text)
+                logger.info(f"  Cache hit: {image_path.name} (cached, {len(cached_text)} chars)")
+                return PageTranscription(
+                    page_num=page_num,
+                    image_path=image_path,
+                    transcription=cached_text,
+                    transcription_cleaned=cleaned,
+                    model_used=primary_model,
+                    success=True,
+                )
+
         # Try Tesseract first (local, free, fast)
         if self.ocr_engine == "tesseract":
             text = self._tesseract_ocr(image_path)
@@ -287,6 +404,10 @@ class VisionTranscriber:
                 )
                 if transcription and len(transcription.strip()) > 10:
                     cleaned = strip_paratext(transcription.strip())
+                    # Cache the result
+                    if self.ocr_engine == "vision":
+                        self._cache_transcription(image_path, model, transcription.strip(), True)
+                        logger.info(f"  Cache saved: {image_path.name} ({len(transcription.strip())} chars)")
                     return PageTranscription(
                         page_num=page_num,
                         image_path=image_path,
@@ -298,6 +419,11 @@ class VisionTranscriber:
             except Exception as e:
                 logger.debug(f"Model {model} failed for page {page_num}: {e}")
                 continue
+
+        # Cache the failure
+        if self.ocr_engine == "vision":
+            primary_model = self.models[0] if self.models else "unknown"
+            self._cache_transcription(image_path, primary_model, "", False)
 
         return PageTranscription(
             page_num=page_num,
@@ -312,7 +438,7 @@ class VisionTranscriber:
         image_paths: list[Path],
         skip_existing: bool = True,
     ) -> list[PageTranscription]:
-        """Transcribe multiple page images sequentially.
+        """Transcribe multiple page images with concurrency control.
 
         Args:
             image_paths: List of page image paths.
@@ -321,15 +447,40 @@ class VisionTranscriber:
         Returns:
             List of PageTranscription objects.
         """
-        results: list[PageTranscription] = []
-        for i, path in enumerate(image_paths):
-            logger.info(f"Transcribing page {i+1}/{len(image_paths)}: {path.name}")
-            result = await self.transcribe_page(path, page_num=i)
-            results.append(result)
-            if result.success:
-                logger.info(f"  → {len(result.transcription)} chars via {result.model_used}")
-            else:
-                logger.warning(f"  → Failed: {result.error}")
+        import asyncio
+
+        if self.concurrency > 1:
+            logger.info(f"Using {self.concurrency} concurrent API calls for transcription")
+
+        semaphore = asyncio.Semaphore(self.concurrency)
+
+        async def process_page(i, path):
+            async with semaphore:
+                logger.info(f"Transcribing page {i+1}/{len(image_paths)}: {path.name}")
+                result = await self.transcribe_page(path, page_num=i)
+                if result.success:
+                    # Don't print char count for cache hits (already logged)
+                    if not (self.ocr_engine == "vision" and
+                            self._get_cached_transcription(path, result.model_used)):
+                        logger.info(f"  → {len(result.transcription)} chars via {result.model_used}")
+                else:
+                    logger.warning(f"  → Failed: {result.error}")
+                return (i, result)
+
+        tasks = [process_page(i, path) for i, path in enumerate(image_paths)]
+        results_raw = await asyncio.gather(*tasks)
+
+        # Sort by original index to maintain ordering
+        results_raw.sort(key=lambda x: x[0])
+        results = [r[1] for r in results_raw]
+
+        # Print summary statistics
+        if not self.disable_cache and self.cache_stats["hits"] + self.cache_stats["misses"] > 0:
+            fresh = self.cache_stats["saves"]
+            cached = self.cache_stats["hits"]
+            total = len(results)
+            logger.info(f"Transcribed {total}/{len(image_paths)} pages ({cached} from cache, {fresh} fresh)")
+
         return results
 
     async def _call_api(

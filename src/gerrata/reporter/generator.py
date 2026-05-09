@@ -38,12 +38,62 @@ class ReportGenerator:
 
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
                  pg_file_path: Optional[Path] = None, scan_id: Optional[str] = None,
-                 scan_pages: Optional[list] = None):
+                 scan_pages: Optional[list] = None, body_text: str = ""):
         self.console = console or Console()
         self.pg_parsed_text = pg_parsed_text
         self.pg_file_path = Path(pg_file_path) if pg_file_path else None
         self.scan_id = scan_id
         self.scan_pages = scan_pages or []
+        self.body_text = body_text
+
+    def _extract_sentence(self, text: str, offset: int, length: int) -> str:
+        """Extract the sentence containing the given offset.
+
+        Args:
+            text: Full text to search in
+            offset: Character offset of the target text
+            length: Length of the target text
+
+        Returns:
+            The sentence containing the target text, or empty string if not found
+        """
+        if not text or offset < 0 or offset >= len(text):
+            return ""
+
+        # Find sentence boundaries: look backwards for ., !, ?, or paragraph break
+        start = offset
+        while start > 0:
+            char = text[start - 1]
+            if char in '.!?':
+                # Include the punctuation and move past it
+                start -= 1
+                # Skip the punctuation
+                while start > 0 and text[start] in '.!? ':
+                    start += 1
+                break
+            if char == '\n' and text[start-1:start] == '\n\n':
+                # Paragraph break
+                break
+            start -= 1
+
+        # Look forward for sentence end
+        end = offset + length
+        while end < len(text):
+            char = text[end]
+            if char in '.!?':
+                # Include the punctuation
+                end += 1
+                break
+            if char == '\n' and end + 1 < len(text) and text[end+1] == '\n':
+                # Paragraph break
+                break
+            end += 1
+
+        # Extract the sentence and clean it up
+        sentence = text[start:end].strip()
+        # Replace multiple whitespace with single space
+        sentence = ' '.join(sentence.split())
+        return sentence
 
     def _get_ia_leaf_number(self, scan_page: int) -> int:
         """Get the IA leaf number for a scan page from its image path.
@@ -317,7 +367,7 @@ class ReportGenerator:
             )
             lines.append("")
             for err in report.edition_variants:
-                lines.append(f"- **Page {err.candidate.scan_page}:** "
+                lines.append(f"- **Page {err.candidate.scan_page + 1}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\"")
                 if err.reasoning:
                     lines.append(f"  - {err.reasoning}")
@@ -351,7 +401,7 @@ class ReportGenerator:
                 if err.chapter_title:
                     location_parts.append(f"**Chapter:** {err.chapter_title}")
                 if err.candidate.scan_page is not None:
-                    location_parts.append(f"**Scan page:** {err.candidate.scan_page}")
+                    location_parts.append(f"**Scan page:** {err.candidate.scan_page + 1}")
 
                 if location_parts:
                     lines.append(f"- {'; '.join(location_parts)}")
@@ -386,7 +436,7 @@ class ReportGenerator:
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
-                lines.append(f"{i}. **Page {err.candidate.scan_page}{location_str}:** "
+                lines.append(f"{i}. **Page {err.candidate.scan_page + 1}{location_str}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
@@ -404,7 +454,7 @@ class ReportGenerator:
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
-                lines.append(f"{i}. **Page {err.candidate.scan_page}{location_str}:** "
+                lines.append(f"{i}. **Page {err.candidate.scan_page + 1}{location_str}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
@@ -443,7 +493,7 @@ class ReportGenerator:
                 if err.chapter_title:
                     location_parts.append(f"chapter: {err.chapter_title}")
                 if err.candidate.scan_page is not None:
-                    location_parts.append(f"page {err.candidate.scan_page}")
+                    location_parts.append(f"page {err.candidate.scan_page + 1}")
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
@@ -464,7 +514,27 @@ class ReportGenerator:
 
     def generate_json(self, report: Report) -> str:
         """Generate a JSON report."""
-        return report.to_json()
+        # Convert report to dict and add display_page and pg_sentence to each error
+        report_dict = report.to_dict()
+        for error_dict in report_dict.get("errors", []):
+            # Add display_page field (1-indexed for human readability)
+            error_dict["display_page"] = error_dict.get("scan_page", 0) + 1
+
+            # Add pg_sentence field if we have body text
+            if self.body_text:
+                pg_text = error_dict.get("pg_text", "")
+                # Find by string search (pg_offset may be inaccurate)
+                pos = self.body_text.find(pg_text)
+                if pos < 0 and '(absent in PG)' in pg_text:
+                    pg_text = error_dict.get("scan_text", "")
+                    pos = self.body_text.find(pg_text)
+                if pos >= 0:
+                    pg_sentence = self._extract_sentence(self.body_text, pos, len(pg_text))
+                else:
+                    pg_sentence = ""
+                error_dict["pg_sentence"] = pg_sentence
+
+        return json.dumps(report_dict, indent=2)
 
     def generate_review_needed(self, report: Report) -> str:
         """Generate a review file for items that need human decision.
@@ -533,7 +603,7 @@ class ReportGenerator:
             if err.pg_file_line > 0:
                 location_parts.append(f"Line {err.pg_file_line}")
             if err.candidate.scan_page is not None:
-                location_parts.append(f"Page {err.candidate.scan_page}")
+                location_parts.append(f"Page {err.candidate.scan_page + 1}")
             if err.chapter_title:
                 location_parts.append(f"({err.chapter_title})")
 
@@ -592,6 +662,7 @@ class ReportGenerator:
             if e.verdict == Verdict.SCAN_CORRECT
             and e.confidence >= 0.8
             and e.pg_file_line > 0
+            and e.category != ErrorCategory.ALIGNMENT_ARTIFACT
         ]
         review_needed = [
             e for e in report.errors
@@ -625,6 +696,24 @@ class ReportGenerator:
             lines.append(f" Line {err.pg_file_line}:")
             lines.append(f" {err.candidate.pg_text}")
 
+            # Add context sentence if available
+            if self.body_text:
+                pg_text = err.candidate.pg_text
+                pos = self.body_text.find(pg_text)
+                if pos < 0 and '(absent in PG)' in pg_text:
+                    pg_text = err.candidate.scan_text
+                    pos = self.body_text.find(pg_text)
+                if pos >= 0:
+                    pg_sentence = self._extract_sentence(
+                        self.body_text,
+                        pos,
+                        len(pg_text)
+                    )
+                else:
+                    pg_sentence = ""
+                if pg_sentence:
+                    lines.append(f" Context: ...{pg_sentence}...")
+
             # Arrow fix format: "bad text ==> good text"
             arrow_fix = self.format_arrow_fix(err)
             lines.append(f" {arrow_fix}")
@@ -636,8 +725,15 @@ class ReportGenerator:
         report: Report,
         output_dir: Path | str,
         base_name: str = "",
+        suffix: str = "",
     ) -> tuple[Path, Path, Path, Path]:
         """Save markdown, JSON, errata email, and review needed reports.
+
+        Args:
+            report: The report to save
+            output_dir: Directory to save reports in
+            base_name: Base filename (without extension)
+            suffix: Optional suffix to add before file extension (e.g., "-raw")
 
         Returns:
             Tuple of (markdown_path, json_path, email_path, review_path).
@@ -649,10 +745,11 @@ class ReportGenerator:
             title_slug = _slugify(report.metadata.title)
             base_name = f"gutenberg{report.metadata.pg_id}-{title_slug}"
 
-        md_path = output_dir / f"{base_name}_errata.md"
-        json_path = output_dir / f"{base_name}_errata.json"
-        email_path = output_dir / f"{base_name}_errata_email.txt"
-        review_path = output_dir / f"{base_name}_review_needed.txt"
+        # Add suffix before extension if provided
+        md_path = output_dir / f"{base_name}_errata{suffix}.md"
+        json_path = output_dir / f"{base_name}_errata{suffix}.json"
+        email_path = output_dir / f"{base_name}_errata_email{suffix}.txt"
+        review_path = output_dir / f"{base_name}_review_needed{suffix}.txt"
 
         # Enrich errors with line numbers and chapter context
         self.enrich_errors_with_context(report)

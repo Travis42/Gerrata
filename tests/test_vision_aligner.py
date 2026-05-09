@@ -160,6 +160,46 @@ class TestVisionTranscriber:
         assert result.model_used == "model-2"
         assert call_count == 2
 
+    @pytest.mark.asyncio
+    async def test_transcribe_pages_concurrency_preserves_order(self, tmp_path):
+        """Test that concurrent transcription preserves result order."""
+        from PIL import Image
+        import asyncio
+
+        # Create multiple test images
+        image_paths = []
+        for i in range(5):
+            img_path = tmp_path / f"page{i}.png"
+            img = Image.new("RGB", (100, 100), color="white")
+            img.save(img_path)
+            image_paths.append(img_path)
+
+        transcriber = VisionTranscriber(
+            api_key="test-key",
+            models=["test-model"],
+            concurrency=3,
+        )
+
+        # Mock the API call to return page-specific text with variable delay
+        async def mock_call_with_delay(model, image_data, media_type):
+            # Simulate variable processing time
+            await asyncio.sleep(0.01 * len(image_paths))
+            # Extract page number from the call (simulated)
+            return "Transcribed text"
+
+        with patch.object(
+            transcriber, "_call_api",
+            side_effect=mock_call_with_delay
+        ):
+            results = await transcriber.transcribe_pages(image_paths)
+
+        # Verify all results are present
+        assert len(results) == 5
+        # Verify order is preserved (most important test for concurrency)
+        for i, result in enumerate(results):
+            assert result.page_num == i, f"Order not preserved at index {i}"
+            assert result.success
+
 
 # ── VisionAligner ─────────────────────────────────────────────────────
 

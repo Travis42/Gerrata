@@ -60,6 +60,7 @@ class VisionVerifier:
         timeout: float = 60.0,
         max_retries: int = 3,
         base_delay: float = 2.0,
+        concurrency: int = 1,
     ):
         """Initialize vision verifier.
 
@@ -71,6 +72,7 @@ class VisionVerifier:
             timeout: Request timeout in seconds.
             max_retries: Maximum number of retries for rate limit errors.
             base_delay: Base delay in seconds for exponential backoff.
+            concurrency: Number of concurrent API calls (default: 1).
         """
         self.api_url = api_url
         self.api_key = api_key
@@ -79,6 +81,7 @@ class VisionVerifier:
         self.timeout = timeout
         self.max_retries = max_retries
         self.base_delay = base_delay
+        self.concurrency = concurrency
 
     def is_configured(self) -> bool:
         """Check if the verifier has required configuration."""
@@ -242,7 +245,7 @@ class VisionVerifier:
         get_image_path=None,
         get_pg_context=None,
     ) -> list[Error]:
-        """Verify multiple candidate errors grouped by scan page.
+        """Verify multiple candidate errors grouped by scan page with concurrency control.
 
         This method groups all candidate errors by their scan_page and sends
         a single API call per page with all items from that page. This is
@@ -265,44 +268,60 @@ class VisionVerifier:
                 reasoning="Vision verifier not configured",
             ) for error in errors]
 
+        if self.concurrency > 1:
+            logger.info(f"Using {self.concurrency} concurrent API calls for verification")
+
         # Group errors by scan page
         from collections import defaultdict
         page_groups: dict[int, list[tuple[int, CandidateError]]] = defaultdict(list)
         for idx, error in enumerate(errors):
             page_groups[error.scan_page].append((idx, error))
 
-        # Process each page group
+        # Process each page group with concurrency control
+        import asyncio
+
+        semaphore = asyncio.Semaphore(self.concurrency)
         results: list[Error] = [None] * len(errors)
+
+        async def process_page_group(scan_page, items):
+            async with semaphore:
+                # Get the first error to retrieve image path
+                first_error = items[0][1]
+                image_path = get_image_path(first_error) if get_image_path else None
+
+                if not image_path or not image_path.exists():
+                    logger.debug(f"No scan image for page {scan_page}, marking all as unable_to_verify")
+                    page_results = [
+                        Error(
+                            candidate=error,
+                            verdict=Verdict.UNABLE_TO_VERIFY,
+                            confidence=0.0,
+                            reasoning="No scan page image available",
+                        )
+                        for idx, error in items
+                    ]
+                    return (scan_page, items, page_results)
+
+                # Get PG context for each error
+                items_with_context = []
+                for idx, error in items:
+                    pg_context = get_pg_context(error) if get_pg_context else ""
+                    items_with_context.append((idx, error, pg_context))
+
+                # Verify all items on this page in one API call
+                page_results = await self._verify_page_batch(image_path, items_with_context)
+                return (scan_page, items, page_results)
+
+        # Create tasks for all page groups
+        tasks = [process_page_group(page, items) for page, items in page_groups.items()]
+        group_results = await asyncio.gather(*tasks)
+
+        # Reconstruct results in original order
         pages_processed = 0
         items_processed = 0
-
-        for scan_page, items in page_groups.items():
-            # Get the first error to retrieve image path
-            first_error = items[0][1]
-            image_path = get_image_path(first_error) if get_image_path else None
-
-            if not image_path or not image_path.exists():
-                logger.debug(f"No scan image for page {scan_page}, marking all as unable_to_verify")
-                for idx, error in items:
-                    results[idx] = Error(
-                        candidate=error,
-                        verdict=Verdict.UNABLE_TO_VERIFY,
-                        confidence=0.0,
-                        reasoning="No scan page image available",
-                    )
-                continue
-
-            # Get PG context for each error
-            items_with_context = []
-            for idx, error in items:
-                pg_context = get_pg_context(error) if get_pg_context else ""
-                items_with_context.append((idx, error, pg_context))
-
-            # Verify all items on this page in one API call
-            page_results = await self._verify_page_batch(image_path, items_with_context)
-
+        for scan_page, items, page_results in group_results:
             # Store results in the correct order
-            for result_idx, error_result in zip([idx for idx, _, _ in items_with_context], page_results):
+            for result_idx, error_result in zip([idx for idx, _ in items], page_results):
                 results[result_idx] = error_result
 
             pages_processed += 1

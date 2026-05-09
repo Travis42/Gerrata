@@ -249,3 +249,69 @@ class TestVisionVerifier:
 
         finally:
             test_image.unlink(missing_ok=True)
+
+    @pytest.mark.asyncio
+    async def test_verify_batch_per_page_concurrency_preserves_order(self, verifier):
+        """Test that concurrent verification preserves result order."""
+        from PIL import Image
+        import io
+
+        # Create test errors on different pages to test concurrent processing
+        errors = []
+        for i in range(10):
+            errors.append(CandidateError(
+                pg_text=f"error{i}",
+                scan_text=f"fix{i}",
+                pg_offset=100 + i * 100,
+                scan_page=i % 3,  # Distribute across 3 pages
+                diff_description=f"Error {i}",
+            ))
+
+        # Create a test image
+        img = Image.new("RGB", (100, 100), color="white")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        test_image = Path("/tmp/test_gerrata_concurrency.png")
+        test_image.write_bytes(buf.getvalue())
+
+        try:
+            # Create verifier with concurrency=3
+            concurrent_verifier = VisionVerifier(
+                api_url="https://api.example.com/v1/chat/completions",
+                api_key="test-key",
+                model="test-model",
+                concurrency=3,
+            )
+
+            # Mock the page batch verification to return simple errors
+            async def mock_verify_page(image_path, items):
+                from gerrata.models import Error, Verdict
+                # Simulate variable delay to ensure concurrent execution
+                import asyncio
+                await asyncio.sleep(0.01 * len(items))
+                return [
+                    Error(
+                        candidate=error,
+                        verdict=Verdict.SCAN_CORRECT,
+                        confidence=0.9,
+                        reasoning=f"Mock result for {error.pg_text}",
+                    )
+                    for _, error, _ in items
+                ]
+
+            with patch.object(concurrent_verifier, '_verify_page_batch', side_effect=mock_verify_page):
+                results = await concurrent_verifier.verify_batch_per_page(
+                    errors,
+                    get_image_path=lambda e: test_image,
+                    get_pg_context=lambda e: "context",
+                )
+
+            # Verify all results are present
+            assert len(results) == 10
+            # Verify order is preserved (most important test for concurrency)
+            for i, result in enumerate(results):
+                assert result.candidate.pg_text == f"error{i}", f"Order not preserved at index {i}"
+                assert result.confidence == 0.9
+
+        finally:
+            test_image.unlink(missing_ok=True)

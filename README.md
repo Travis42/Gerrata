@@ -83,6 +83,23 @@ After running, the output directory contains:
 | `pg{ID}_review_needed.txt` | Items needing human review before submission |
 | `pg{ID}_errata.md` | Full markdown report with all errors and context |
 | `pg{ID}_errata.json` | Machine-readable JSON with all error data |
+| `pg{ID}_errata-raw.md` | **Raw findings** report (pre-verification, unfiltered) |
+| `pg{ID}_errata-raw.json` | **Raw findings** JSON (before LLM verification) |
+
+### Two-Stage Reporting
+
+The pipeline generates **two sets of reports** to help you understand the value of LLM verification:
+
+1. **Raw findings report** (`*-raw.*` files): Saved immediately after the text diff step, before LLM verification. This shows exactly what the text diff found, with all candidates marked as `unable_to_verify` (0% confidence).
+
+2. **Final verified report** (regular files): Saved after LLM verification, with verdicts, confidence scores, and false positives filtered out.
+
+Comparing the two reports shows what value the verification step adds:
+- How many false positives were filtered out
+- Which candidates the LLM confidently confirmed as real errors
+- Which differences are edition variants or intentional modernizations
+
+This transparency helps you tune the pipeline and understand the verification process.
 
 ### errata_email.txt
 

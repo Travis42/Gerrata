@@ -162,6 +162,12 @@ def build_parser() -> argparse.ArgumentParser:
         default="",
         help="Cache directory for downloads",
     )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=5,
+        help="Number of concurrent API calls for transcription and verification (default: 5)",
+    )
     return parser
 
 
@@ -260,6 +266,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             api_key=args.vision_key or None,
             models=models,
             ocr_engine="vision",  # Use GLM vision model (best accuracy for old book pages)
+            concurrency=args.concurrency,
         )
 
         transcriptions = await transcriber.transcribe_pages(page_images)
@@ -348,6 +355,274 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     candidates = fp_filter.filter(candidates)
     console.print(f"  After filtering: {len(candidates)}")
 
+    # Step 6b: Word-boundary cutoff artifact filter
+    def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+        """Check if a diff is a word-boundary cutoff artifact.
+
+        Diffs like "hen"→"when" are alignment artifacts where text was split at
+        a word boundary during transcription. The scan says "when" but the PG
+        alignment picked up only "hen" because the 'w' was part of a previous
+        matched segment. These are not real errata.
+
+        Args:
+            scan_text: Text from the scan transcription
+            pg_text: Text from the PG text
+
+        Returns:
+            True if this is likely a cutoff artifact
+        """
+        from gerrata.models import ErrorCategory
+
+        s = scan_text.strip()
+        p = pg_text.strip()
+
+        # Both must be single words (no spaces)
+        if ' ' in s or ' ' in p:
+            return False
+
+        # One must be suffix of the other with exactly 1 char difference
+        if abs(len(s) - len(p)) != 1:
+            return False
+
+        longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+
+        # Check if shorter is a prefix or suffix of longer
+        if not longer.startswith(shorter) and not longer.endswith(shorter):
+            return False
+
+        # If the shorter text is ≤ 3 chars, it's likely a fragment, not a real word
+        # This catches "hen" (3 chars) but passes "clause" (6 chars)
+        if len(shorter) <= 3:
+            return True
+
+        return False
+
+    # Apply cutoff artifact filter
+    filtered_candidates = []
+    artifacts_count = 0
+    for candidate in candidates:
+        if is_cutoff_artifact(candidate.scan_text, candidate.pg_text):
+            # Mark as alignment artifact
+            from gerrata.models import CandidateError, ErrorCategory
+            # Create a new candidate with the artifact category
+            artifact_candidate = CandidateError(
+                pg_text=candidate.pg_text,
+                scan_text=candidate.scan_text,
+                pg_offset=candidate.pg_offset,
+                scan_page=candidate.scan_page,
+                diff_description=candidate.diff_description,
+                category=ErrorCategory.ALIGNMENT_ARTIFACT,
+                severity=candidate.severity,
+            )
+            filtered_candidates.append(artifact_candidate)
+            artifacts_count += 1
+        else:
+            filtered_candidates.append(candidate)
+
+    candidates = filtered_candidates
+    if artifacts_count > 0:
+        console.print(f"  Filtered {artifacts_count} word-boundary cutoff artifacts")
+
+    # Step 6b: Filter absent-in-PG entries
+    # These are text present in the scan but completely missing from PG —
+    # often alignment artifacts where the diff spanned a paragraph boundary.
+    absent_count = 0
+    filtered_candidates = []
+    for candidate in candidates:
+        if '(absent in PG)' in candidate.pg_text or '(absent in scan)' in candidate.scan_text:
+            absent_count += 1
+            continue
+        filtered_candidates.append(candidate)
+    candidates = filtered_candidates
+    if absent_count > 0:
+        console.print(f"  Filtered {absent_count} absent-text entries (alignment artifacts)")
+
+    # Step 6c: Additional false positive filters
+    console.print(f"[bold blue]Step {step_num + 1}c:[/bold blue] Additional filtering...")
+
+    # Filter 1: Long mismatch filter
+    def is_long_mismatch(scan_text: str, pg_text: str) -> bool:
+        """Check if a diff is a long mismatch artifact.
+        
+        Alignment sometimes spans multiple sentences, producing diffs where one side
+        is a short phrase and the other is 40+ chars of unrelated text.
+        
+        Args:
+            scan_text: Text from the scan transcription
+            pg_text: Text from the PG text
+            
+        Returns:
+            True if this is likely a long mismatch artifact
+        """
+        return len(scan_text.strip()) > 40 or len(pg_text.strip()) > 40
+
+    # Filter 2: HTML artifact filter
+    def is_html_artifact(scan_text: str, pg_text: str) -> bool:
+        """Check if a diff contains HTML/image markup artifacts.
+        
+        GLM-OCR sometimes picks up HTML markup from the scan.
+        
+        Args:
+            scan_text: Text from the scan transcription
+            pg_text: Text from the PG text
+            
+        Returns:
+            True if this contains HTML/image markup
+        """
+        combined = scan_text + pg_text
+        return any(marker in combined for marker in ['<div', '<span', 'bbox=', '![](', '<img', '</div'])
+
+    # Filter 3: ALL CAPS header filter
+    def is_all_caps_header(scan_text: str) -> bool:
+        """Check if scan text is an ALL CAPS header artifact.
+        
+        Chapter titles and ornamental headers get mismatched.
+        Only check scan_text since pg_text could legitimately be uppercase.
+        
+        Args:
+            scan_text: Text from the scan transcription
+            
+        Returns:
+            True if this is likely an ALL CAPS header mismatch
+        """
+        stripped = scan_text.strip()
+        return stripped.isupper() and len(stripped) > 5
+
+    # Filter 4: Suffix fragment filter (extended)
+    def is_suffix_fragment(scan_text: str, pg_text: str) -> bool:
+        """Check if a diff is a suffix/prefix fragment artifact.
+        
+        Longer word-boundary fragments like "terson,"→"Utterson,", "ugh"→"through".
+        These are cases where the diff picked up a tail end of a word.
+        
+        Args:
+            scan_text: Text from the scan transcription
+            pg_text: Text from the PG text
+            
+        Returns:
+            True if this is likely a suffix fragment artifact
+        """
+        s = scan_text.strip()
+        p = pg_text.strip()
+        
+        # Both must be single tokens (no spaces in shorter)
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+        if ' ' in shorter:
+            return False
+        
+        # Length difference must be small (≤3 chars)
+        if len(longer) - len(shorter) > 3:
+            return False
+        
+        # Shorter must be a suffix of longer
+        if not longer.endswith(shorter):
+            return False
+        
+        # Exception: singular/plural (e.g., "clause" → "clauses")
+        # If longer ends with 's' and removing it gives the shorter text, it's a real error
+        if longer.endswith('s') and longer[:-1] == shorter and len(shorter) >= 4:
+            return False  # Likely a real singular/plural difference
+        if longer.endswith('es') and longer[:-2] == shorter and len(shorter) >= 4:
+            return False  # Same for -es endings
+        
+        # Exception: the shorter text is long enough to be a real word (≥6 chars)
+        # Let's be conservative: only filter if shorter is ≤8 chars
+        if len(shorter) > 8:
+            return False
+        
+        return True
+
+    # Filter 5: Quoted fragment filter
+    def is_quoted_fragment(scan_text: str, pg_text: str) -> bool:
+        """Check if a diff is a quoted fragment artifact.
+        
+        When dialogue starts with a quotation mark, the alignment sometimes grabs
+        just the opening quote+word while PG has the full quoted sentence.
+        
+        Args:
+            scan_text: Text from the scan transcription
+            pg_text: Text from the PG text
+            
+        Returns:
+            True if this is likely a quoted fragment artifact
+        """
+        s = scan_text.strip()
+        p = pg_text.strip()
+        
+        # Check if shorter starts with a quote
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+        if not shorter:
+            return False
+        
+        starts_with_quote = shorter[0] in '"\"\u00ab'  # " " «
+        if not starts_with_quote:
+            return False
+        
+        # Length difference must be significant (>20 chars)
+        if len(longer) - len(shorter) <= 20:
+            return False
+        
+        return True
+
+    # Apply all filters
+    FILTERS = [
+        ("Long mismatches", is_long_mismatch),
+        ("HTML artifacts", is_html_artifact),
+        ("ALL CAPS headers", lambda s, p: is_all_caps_header(s)),
+        ("Suffix fragments", is_suffix_fragment),
+        ("Quoted fragments", is_quoted_fragment),
+    ]
+
+    filtered_candidates = []
+    filter_counts = {name: 0 for name, _ in FILTERS}
+    
+    for candidate in candidates:
+        filtered = False
+        for filter_name, filter_fn in FILTERS:
+            if filter_fn(candidate.scan_text, candidate.pg_text):
+                # Mark as alignment artifact
+                from gerrata.models import CandidateError, ErrorCategory
+                artifact_candidate = CandidateError(
+                    pg_text=candidate.pg_text,
+                    scan_text=candidate.scan_text,
+                    pg_offset=candidate.pg_offset,
+                    scan_page=candidate.scan_page,
+                    diff_description=candidate.diff_description,
+                    category=ErrorCategory.ALIGNMENT_ARTIFACT,
+                    severity=candidate.severity,
+                )
+                filtered_candidates.append(artifact_candidate)
+                filter_counts[filter_name] += 1
+                filtered = True
+                break
+        if not filtered:
+            filtered_candidates.append(candidate)
+
+    # Log filtering results
+    total_filtered = sum(filter_counts.values())
+    if total_filtered > 0:
+        console.print(f"  Filtered {total_filtered} additional alignment artifacts:")
+        for filter_name, count in filter_counts.items():
+            if count > 0:
+                console.print(f"    - {filter_name}: {count}")
+
+    candidates = filtered_candidates
+
+    # Step 6d: Calculate pg_file_line for each candidate
+    console.print(f"[bold blue]Step {step_num + 1}d:[/bold blue] Computing line numbers...")
+    for candidate in candidates:
+        # Find the PG text by string search (pg_offset may be inaccurate)
+        pg_text = candidate.pg_text
+        if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
+            pg_text = candidate.scan_text
+        pos = parsed.body_text.find(pg_text)
+        if pos >= 0:
+            candidate.pg_file_line = parsed.body_text[:pos].count('\n') + 1
+        else:
+            # Fallback to offset-based
+            candidate.pg_file_line = parsed.body_text[:candidate.pg_offset].count('\n') + 1
+    console.print(f"  Computed line numbers for {len(candidates)} candidates")
+
     # Step 7: LLM vision verification (if configured and in vision mode)
     verified_errors: list[Error] = []
 
@@ -366,6 +641,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             api_url=verify_url,
             api_key=verify_key,
             model=verify_model,
+            concurrency=args.concurrency,
         )
 
         # Use batch verification for better performance and rate limit handling
@@ -377,6 +653,16 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             return None
 
         def get_pg_context(error):
+            # Find the PG text by string search (pg_offset may be inaccurate)
+            pg_text = error.pg_text
+            if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
+                pg_text = error.scan_text
+            pos = parsed.body_text.find(pg_text)
+            if pos >= 0:
+                start = max(0, pos - 200)
+                end = min(len(parsed.body_text), pos + len(pg_text) + 200)
+                return parsed.body_text[start:end]
+            # Fallback to offset-based
             return parsed.body_text[max(0, error.pg_offset - 200):error.pg_offset + 200]
 
         verified_errors = await verifier.verify_batch_per_page(
@@ -415,6 +701,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         pg_file_path=args.pg_file,
         scan_id=scan_id,
         scan_pages=scan_pages,
+        body_text=parsed.body_text,
     )
     md_path, json_path, email_path, review_path = generator.save_reports(report, args.output)
     generator.print_summary(report)

@@ -268,6 +268,9 @@ class ScanFetcher:
         if not pages_dir.exists():
             return []
         pngs = sorted(pages_dir.glob("*.png"))
+        # Also support page_NNNN.png pattern (from pdftoppm)
+        if not pngs:
+            pngs = sorted(pages_dir.glob("page_*.png"))
         return pngs
 
     def load_local_ocr_text(self, path: Path | str) -> str:

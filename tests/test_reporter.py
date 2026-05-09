@@ -157,6 +157,28 @@ class TestReportGenerator:
         assert email_path.exists()
         assert review_path.exists()
 
+    def test_save_reports_with_suffix(self, generator, sample_report, tmp_path):
+        """Test that suffix parameter adds suffix before file extension."""
+        md_path, json_path, email_path, review_path = generator.save_reports(
+            sample_report, tmp_path, suffix="-raw"
+        )
+        assert md_path.exists()
+        assert json_path.exists()
+        assert email_path.exists()
+        assert review_path.exists()
+
+        # Check that suffix is added before extension
+        assert md_path.stem.endswith("_errata-raw")
+        assert json_path.stem.endswith("_errata-raw")
+        assert email_path.stem.endswith("_errata_email-raw")
+        assert review_path.stem.endswith("_review_needed-raw")
+
+        # Check extensions are preserved
+        assert md_path.suffix == ".md"
+        assert json_path.suffix == ".json"
+        assert email_path.suffix == ".txt"
+        assert review_path.suffix == ".txt"
+
     def test_line_number_mapping(self, generator_with_context, sample_metadata):
         """Test that line numbers are correctly mapped from PG offsets."""
         # Create an error with a known text offset
@@ -405,7 +427,7 @@ class TestReportGenerator:
 
         # Check entry format
         assert "[?]" in review_content
-        assert "Line 335, Page 0, (STORY OF THE DOOR)" in review_content  # Updated to match actual format
+        assert "Line 335, Page 1, (STORY OF THE DOOR)" in review_content  # Page 0 + 1
         assert "PG text: returned" in review_content
         assert "Scan text: return" in review_content
         assert "Verdict: unable_to_verify (50%)" in review_content
@@ -438,7 +460,7 @@ class TestReportGenerator:
 
         # Check edition variant prefix
         assert "[E]" in review_content
-        assert "Line 129, Page 6" in review_content
+        assert "Line 129, Page 7" in review_content  # Page 6 + 1
         assert "Classified as edition variant — likely NOT an error" in review_content
 
     def test_review_needed_low_confidence(self, generator_with_context, sample_metadata):
@@ -724,3 +746,246 @@ class TestCLI:
         code = main(["43", "--ocr-file", "/nonexistent"])
         # Should return 3 (pipeline error) since file doesn't exist
         assert code in (2, 3)
+
+
+class TestSentenceExtraction:
+    """Test the _extract_sentence method for context extraction."""
+
+    def test_extract_sentence_basic(self):
+        generator = ReportGenerator()
+
+        # Basic sentence extraction
+        text = "This is sentence one. This is sentence two. This is sentence three."
+        sentence = generator._extract_sentence(text, 28, 6)  # "sentence"
+        assert "sentence two" in sentence
+        assert sentence.startswith("This is sentence two")
+
+    def test_extract_sentence_with_newlines(self):
+        generator = ReportGenerator()
+
+        # Text with newlines
+        text = "First sentence.\n\nSecond sentence here. Third sentence."
+        sentence = generator._extract_sentence(text, 25, 8)  # "sentence"
+        assert "Second sentence here" in sentence
+
+    def test_extract_sentence_at_boundary(self):
+        generator = ReportGenerator()
+
+        # At sentence start
+        text = "Hello world. Goodbye world."
+        sentence = generator._extract_sentence(text, 0, 5)  # "Hello"
+        assert "Hello world" in sentence
+
+    def test_extract_sentence_empty_text(self):
+        generator = ReportGenerator()
+        sentence = generator._extract_sentence("", 0, 5)
+        assert sentence == ""
+
+    def test_extract_sentence_invalid_offset(self):
+        generator = ReportGenerator()
+        text = "Some text here."
+        sentence = generator._extract_sentence(text, 100, 5)  # Out of bounds
+        assert sentence == ""
+
+
+class TestPageNumbering:
+    """Test that page numbers are displayed as 1-indexed in human-readable outputs."""
+
+    def test_json_includes_display_page(self, sample_metadata, sample_errors):
+        generator = ReportGenerator()
+        report = Report(
+            metadata=sample_metadata,
+            pages_checked=10,
+            total_pages=20,
+            errors=sample_errors,
+            alignments=[]
+        )
+
+        json_str = generator.generate_json(report)
+        data = json.loads(json_str)
+
+        # Check that display_page is scan_page + 1
+        for error in data["errors"]:
+            assert "display_page" in error
+            assert error["display_page"] == error["scan_page"] + 1
+
+    def test_markdown_shows_1_indexed_pages(self, sample_metadata, sample_errors):
+        generator = ReportGenerator()
+        report = Report(
+            metadata=sample_metadata,
+            pages_checked=10,
+            total_pages=20,
+            errors=sample_errors,
+            alignments=[]
+        )
+
+        md = generator.generate_markdown(report)
+
+        # Check that pages are displayed as 1-indexed (scan_page + 1)
+        # scan_page=5 should be shown as page 6
+        # scan_page=10 should be shown as page 11
+        # scan_page=15 should be shown as page 16
+        # scan_page=20 should be shown as page 21
+        assert "page 16" in md  # scan_page=15 becomes page 16
+        # Make sure 0-indexed pages don't appear
+        assert "page 15" not in md  # scan_page=15 should not be shown as page 15
+
+
+class TestLineNumberCalculation:
+    """Test line number calculation for PG file offsets."""
+
+    def test_line_number_calculation(self):
+        # Simulate body text with multiple lines
+        body_text = """Line 1
+Line 2
+Line 3
+Line 4
+Line 5"""
+
+        # Offset at start of line 3 (after "Line 1\nLine 2\n")
+        offset = len("Line 1\nLine 2\n")
+        line_num = body_text[:offset].count('\n') + 1
+
+        assert line_num == 3
+
+    def test_line_number_at_offset(self):
+        body_text = "First line\nSecond line\nThird line"
+
+        # Character at position 15 (in "Second line")
+        offset = 15
+        line_num = body_text[:offset].count('\n') + 1
+
+        assert line_num == 2
+
+    def test_line_number_empty_text(self):
+        body_text = ""
+        offset = 0
+        line_num = body_text[:offset].count('\n') + 1
+        assert line_num == 1
+
+
+class TestCutoffArtifactFilter:
+    """Test the word-boundary cutoff artifact detection."""
+
+    def test_cutoff_artifact_short_word(self):
+        """Test that short suffix fragments are detected as artifacts."""
+        # This is the "hen" -> "when" case
+        # "hen" is 3 chars and is a suffix of "when" (4 chars)
+        def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+
+            # Both must be single words (no spaces)
+            if ' ' in s or ' ' in p:
+                return False
+
+            # One must be suffix of the other with exactly 1 char difference
+            if abs(len(s) - len(p)) != 1:
+                return False
+
+            longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+
+            # Check if shorter is a prefix or suffix of longer
+            if not longer.startswith(shorter) and not longer.endswith(shorter):
+                return False
+
+            # If the shorter text is ≤ 3 chars, it's likely a fragment
+            if len(shorter) <= 3:
+                return True
+
+            return False
+
+        # Test "hen" -> "when" (should be artifact)
+        assert is_cutoff_artifact("when", "hen") == True
+        assert is_cutoff_artifact("hen", "when") == True
+
+    def test_cutoff_artifact_real_word(self):
+        """Test that real word differences are not detected as artifacts."""
+        # This is the "clause" -> "clauses" case
+        # "clause" is 6 chars and is a prefix of "clauses" (7 chars)
+        # Should NOT be artifact because "clause" is a real word (>3 chars)
+        def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+
+            if ' ' in s or ' ' in p:
+                return False
+
+            if abs(len(s) - len(p)) != 1:
+                return False
+
+            longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+
+            if not longer.startswith(shorter) and not longer.endswith(shorter):
+                return False
+
+            if len(shorter) <= 3:
+                return True
+
+            return False
+
+        # Test "clause" -> "clauses" (should NOT be artifact)
+        assert is_cutoff_artifact("clauses", "clause") == False
+        assert is_cutoff_artifact("clause", "clauses") == False
+
+    def test_cutoff_artifact_multi_word(self):
+        """Test that multi-word phrases are not detected as artifacts."""
+        def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+
+            if ' ' in s or ' ' in p:
+                return False
+
+            if abs(len(s) - len(p)) != 1:
+                return False
+
+            longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+
+            if not longer.startswith(shorter) and not longer.endswith(shorter):
+                return False
+
+            if len(shorter) <= 3:
+                return True
+
+            return False
+
+        # Multi-word should not be artifact
+        assert is_cutoff_artifact("the cat", "cat") == False
+        assert is_cutoff_artifact("walking", "walk") == False  # "walk" is 4 chars, not artifact
+
+    def test_cutoff_artifact_no_match(self):
+        """Test that completely different words are not detected as artifacts."""
+        def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+
+            if ' ' in s or ' ' in p:
+                return False
+
+            if abs(len(s) - len(p)) != 1:
+                return False
+
+            longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+
+            if not longer.startswith(shorter) and not longer.endswith(shorter):
+                return False
+
+            if len(shorter) <= 3:
+                return True
+
+            return False
+
+        # Completely different words should not be artifact
+        assert is_cutoff_artifact("apple", "orange") == False
+        assert is_cutoff_artifact("the", "cat") == False
+
+
+class TestConcurrencyDefault:
+    """Test that default concurrency is 5."""
+
+    def test_default_concurrency_is_five(self):
+        from gerrata.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(["43"])
+        assert args.concurrency == 5
