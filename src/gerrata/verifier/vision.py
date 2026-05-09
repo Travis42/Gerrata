@@ -1,0 +1,658 @@
+"""LLM vision verifier for candidate error classification.
+
+Uses a vision-capable LLM to look at scan page images and classify
+differences between PG text and the scan.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import base64
+import json
+import logging
+import re
+from pathlib import Path
+from typing import Optional
+
+import httpx
+
+from gerrata.models import CandidateError, Error, Verdict
+
+logger = logging.getLogger(__name__)
+
+MODEL_NAME_MAP = {
+    "zai/glm-4.6v": "glm-4.6v",
+    "zai/glm-4.5v": "glm-4.5v",
+    "zai/glm-4.6v-flashx": "glm-4.6v-flashx",
+    "zai/glm-ocr": "glm-ocr",
+}
+
+DEFAULT_SYSTEM_PROMPT = """You are a quality assurance expert for Project Gutenberg texts. You are comparing a published PG text against the original page scan (from Internet Archive or similar source) to verify potential errors.
+
+IMPORTANT: The PG text and the page scan may be from DIFFERENT EDITIONS of the same work. You must distinguish between:
+
+(a) **Error in PG text**: The PG text has a clear mistake (typo, OCR scanno that survived proofreading, wrong word, missing content). The scan shows the correct reading.
+
+(b) **Edition variant**: The PG text and scan use different but both valid readings (e.g., different punctuation, different word forms like "downright" vs "down-right", British vs American spelling, different paragraph breaks, etc.)
+
+(c) **Intentional modernization**: PG deliberately changed the text (e.g., modernized spelling, standardized formatting, expanded abbreviations like "shan't" → "shall not").
+
+For each difference, respond with:
+1. Your verdict: "pg_correct" | "scan_correct" | "edition_variant" | "intentional_modernization" | "ambiguous" | "unable_to_verify"
+2. Confidence: 0.0-1.0
+3. Brief reasoning (1-2 sentences)
+4. If verdict is "scan_correct", suggest the PG text fix
+
+Respond in JSON format:
+{"verdict": "...", "confidence": 0.X, "reasoning": "...", "suggested_fix": "..."}
+"""
+
+
+class VisionVerifier:
+    """Verify candidate errors using an LLM vision model."""
+
+    def __init__(
+        self,
+        api_url: str = "",
+        api_key: str = "",
+        model: str = "",
+        system_prompt: str = DEFAULT_SYSTEM_PROMPT,
+        timeout: float = 60.0,
+        max_retries: int = 3,
+        base_delay: float = 2.0,
+    ):
+        """Initialize vision verifier.
+
+        Args:
+            api_url: Base URL for the LLM API (e.g., "https://api.openai.com/v1/chat/completions")
+            api_key: API key for authentication.
+            model: Model name (e.g., "gpt-4o", "claude-3.5-sonnet").
+            system_prompt: System prompt for the verifier.
+            timeout: Request timeout in seconds.
+            max_retries: Maximum number of retries for rate limit errors.
+            base_delay: Base delay in seconds for exponential backoff.
+        """
+        self.api_url = api_url
+        self.api_key = api_key
+        self.model = model
+        self.system_prompt = system_prompt
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.base_delay = base_delay
+
+    def is_configured(self) -> bool:
+        """Check if the verifier has required configuration."""
+        return bool(self.api_url and self.model)
+
+    async def verify_error(
+        self,
+        error: CandidateError,
+        scan_image_path: Optional[Path] = None,
+        pg_context: str = "",
+    ) -> Error:
+        """Verify a single candidate error using the LLM vision model.
+
+        Args:
+            error: The candidate error to verify.
+            scan_image_path: Path to the scan page image (PNG/JPEG).
+            pg_context: Additional PG text context around the error.
+
+        Returns:
+            Error with verdict, confidence, and reasoning.
+        """
+        if not self.is_configured():
+            logger.warning("Vision verifier not configured, returning unable_to_verify")
+            return Error(
+                candidate=error,
+                verdict=Verdict.UNABLE_TO_VERIFY,
+                confidence=0.0,
+                reasoning="Vision verifier not configured",
+            )
+
+        if not scan_image_path or not scan_image_path.exists():
+            logger.debug(f"No scan image for page {error.scan_page}, skipping vision verify")
+            return Error(
+                candidate=error,
+                verdict=Verdict.UNABLE_TO_VERIFY,
+                confidence=0.0,
+                reasoning="No scan page image available",
+            )
+
+        # Build the user prompt
+        user_prompt = self._build_prompt(error, pg_context)
+
+        # Build the API request
+        headers = {}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
+        # Embed system prompt in user message for Z.AI API compatibility
+        full_prompt = f"{self.system_prompt}\n\n{user_prompt}"
+        messages = [
+            {"role": "user", "content": self._build_multimodal_content(full_prompt, scan_image_path)},
+        ]
+
+        payload = {
+            "model": MODEL_NAME_MAP.get(self.model, self.model),
+            "messages": messages,
+            "max_tokens": 500,
+            "temperature": 0.1,
+        }
+
+        # Try with retry logic for rate limiting
+        for attempt in range(self.max_retries + 1):
+            try:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    resp = await client.post(
+                        self.api_url,
+                        json=payload,
+                        headers=headers,
+                    )
+                    
+                    # Handle rate limiting with Retry-After header
+                    if resp.status_code == 429:
+                        if attempt < self.max_retries:
+                            retry_after = resp.headers.get("Retry-After")
+                            if retry_after:
+                                try:
+                                    delay = float(retry_after)
+                                except ValueError:
+                                    delay = self.base_delay * (2 ** attempt)
+                            else:
+                                delay = self.base_delay * (2 ** attempt)
+                            
+                            logger.warning(f"Rate limited (429), retrying in {delay:.1f}s (attempt {attempt + 1}/{self.max_retries})")
+                            await asyncio.sleep(delay)
+                            continue
+                        else:
+                            logger.error(f"Max retries exceeded for rate limit errors")
+                    
+                    resp.raise_for_status()
+                    data = resp.json()
+
+                # Parse the response
+                return self._parse_response(data, error)
+
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and attempt < self.max_retries:
+                    delay = self.base_delay * (2 ** attempt)
+                    logger.warning(f"HTTP 429 error, retrying in {delay:.1f}s (attempt {attempt + 1}/{self.max_retries})")
+                    await asyncio.sleep(delay)
+                    continue
+                else:
+                    logger.error(f"Vision API error: {e}")
+                    return Error(
+                        candidate=error,
+                        verdict=Verdict.UNABLE_TO_VERIFY,
+                        confidence=0.0,
+                        reasoning=f"API error: {e}",
+                    )
+            except httpx.HTTPError as e:
+                logger.error(f"Vision API error: {e}")
+                return Error(
+                    candidate=error,
+                    verdict=Verdict.UNABLE_TO_VERIFY,
+                    confidence=0.0,
+                    reasoning=f"API error: {e}",
+                )
+            except (json.JSONDecodeError, KeyError) as e:
+                logger.error(f"Failed to parse vision API response: {e}")
+                return Error(
+                    candidate=error,
+                    verdict=Verdict.UNABLE_TO_VERIFY,
+                    confidence=0.0,
+                    reasoning=f"Response parse error: {e}",
+                )
+
+        # Should not reach here, but just in case
+        return Error(
+            candidate=error,
+            verdict=Verdict.UNABLE_TO_VERIFY,
+            confidence=0.0,
+            reasoning="Max retries exceeded",
+        )
+
+    async def verify_batch(
+        self,
+        errors: list[CandidateError],
+        get_image_path=None,
+        get_pg_context=None,
+    ) -> list[Error]:
+        """Verify multiple candidate errors.
+
+        Args:
+            errors: List of candidate errors.
+            get_image_path: Optional callable(error) -> Path to get scan image.
+            get_pg_context: Optional callable(error) -> str to get PG context.
+
+        Returns:
+            List of Error objects with verdicts.
+        """
+        results = []
+        for error in errors:
+            image_path = get_image_path(error) if get_image_path else None
+            pg_context = get_pg_context(error) if get_pg_context else ""
+            result = await self.verify_error(error, image_path, pg_context)
+            results.append(result)
+        return results
+
+    async def verify_batch_per_page(
+        self,
+        errors: list[CandidateError],
+        get_image_path=None,
+        get_pg_context=None,
+    ) -> list[Error]:
+        """Verify multiple candidate errors grouped by scan page.
+
+        This method groups all candidate errors by their scan_page and sends
+        a single API call per page with all items from that page. This is
+        much more efficient than verifying each error individually.
+
+        Args:
+            errors: List of candidate errors.
+            get_image_path: Optional callable(error) -> Path to get scan image.
+            get_pg_context: Optional callable(error) -> str to get PG context.
+
+        Returns:
+            List of Error objects with verdicts, in the same order as input.
+        """
+        if not self.is_configured():
+            logger.warning("Vision verifier not configured, returning unable_to_verify")
+            return [Error(
+                candidate=error,
+                verdict=Verdict.UNABLE_TO_VERIFY,
+                confidence=0.0,
+                reasoning="Vision verifier not configured",
+            ) for error in errors]
+
+        # Group errors by scan page
+        from collections import defaultdict
+        page_groups: dict[int, list[tuple[int, CandidateError]]] = defaultdict(list)
+        for idx, error in enumerate(errors):
+            page_groups[error.scan_page].append((idx, error))
+
+        # Process each page group
+        results: list[Error] = [None] * len(errors)
+        pages_processed = 0
+        items_processed = 0
+
+        for scan_page, items in page_groups.items():
+            # Get the first error to retrieve image path
+            first_error = items[0][1]
+            image_path = get_image_path(first_error) if get_image_path else None
+
+            if not image_path or not image_path.exists():
+                logger.debug(f"No scan image for page {scan_page}, marking all as unable_to_verify")
+                for idx, error in items:
+                    results[idx] = Error(
+                        candidate=error,
+                        verdict=Verdict.UNABLE_TO_VERIFY,
+                        confidence=0.0,
+                        reasoning="No scan page image available",
+                    )
+                continue
+
+            # Get PG context for each error
+            items_with_context = []
+            for idx, error in items:
+                pg_context = get_pg_context(error) if get_pg_context else ""
+                items_with_context.append((idx, error, pg_context))
+
+            # Verify all items on this page in one API call
+            page_results = await self._verify_page_batch(image_path, items_with_context)
+
+            # Store results in the correct order
+            for result_idx, error_result in zip([idx for idx, _, _ in items_with_context], page_results):
+                results[result_idx] = error_result
+
+            pages_processed += 1
+            items_processed += len(items)
+            logger.info(f"Verified page {scan_page}: {len(items)} items (total: {items_processed}/{len(errors)} items across {pages_processed} pages)")
+
+        return results
+
+    async def _verify_page_batch(
+        self,
+        image_path: Path,
+        items: list[tuple[int, CandidateError, str]],
+    ) -> list[Error]:
+        """Verify all candidate errors from a single page in one API call.
+
+        Args:
+            image_path: Path to the scan page image.
+            items: List of (index, error, pg_context) tuples.
+
+        Returns:
+            List of Error objects with verdicts, in the same order as input items.
+        """
+        # Build the batch prompt
+        user_prompt = self._build_batch_prompt(items)
+
+        # Build the API request
+        headers = {}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
+        # Embed system prompt in user message for Z.AI API compatibility
+        full_prompt = f"{self.system_prompt}\n\n{user_prompt}"
+        messages = [
+            {"role": "user", "content": self._build_multimodal_content(full_prompt, image_path)},
+        ]
+
+        payload = {
+            "model": MODEL_NAME_MAP.get(self.model, self.model),
+            "messages": messages,
+            "max_tokens": 2000,  # Increased for batch responses
+            "temperature": 0.1,
+        }
+
+        # Try with retry logic for rate limiting
+        for attempt in range(self.max_retries + 1):
+            try:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    resp = await client.post(
+                        self.api_url,
+                        json=payload,
+                        headers=headers,
+                    )
+                    
+                    # Handle rate limiting with Retry-After header
+                    if resp.status_code == 429:
+                        if attempt < self.max_retries:
+                            retry_after = resp.headers.get("Retry-After")
+                            if retry_after:
+                                try:
+                                    delay = float(retry_after)
+                                except ValueError:
+                                    delay = self.base_delay * (2 ** attempt)
+                            else:
+                                delay = self.base_delay * (2 ** attempt)
+                            
+                            logger.warning(f"Rate limited (429), retrying in {delay:.1f}s (attempt {attempt + 1}/{self.max_retries})")
+                            await asyncio.sleep(delay)
+                            continue
+                        else:
+                            logger.error(f"Max retries exceeded for rate limit errors")
+                    
+                    resp.raise_for_status()
+                    data = resp.json()
+
+                # Parse the batch response
+                return self._parse_batch_response(data, items)
+
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and attempt < self.max_retries:
+                    delay = self.base_delay * (2 ** attempt)
+                    logger.warning(f"HTTP 429 error, retrying in {delay:.1f}s (attempt {attempt + 1}/{self.max_retries})")
+                    await asyncio.sleep(delay)
+                    continue
+                else:
+                    logger.error(f"Vision API error: {e}")
+                    return self._create_unable_to_verify_errors(items, f"API error: {e}")
+            except httpx.HTTPError as e:
+                logger.error(f"Vision API error: {e}")
+                return self._create_unable_to_verify_errors(items, f"API error: {e}")
+            except (json.JSONDecodeError, KeyError) as e:
+                logger.error(f"Failed to parse vision API response: {e}")
+                return self._create_unable_to_verify_errors(items, f"Response parse error: {e}")
+
+        # Should not reach here, but just in case
+        return self._create_unable_to_verify_errors(items, "Max retries exceeded")
+
+    def _build_batch_prompt(self, items: list[tuple[int, CandidateError, str]]) -> str:
+        """Build a batch prompt for multiple candidate errors on the same page."""
+        parts = [
+            "You will review MULTIPLE potential text differences on this scan page. ",
+            "For EACH item, analyze the PG text passage against the scan page image and provide your verdict.\n\n",
+        ]
+
+        for idx, error, pg_context in items:
+            parts.append(f"**Item {idx}:**\n")
+            parts.append(f"Difference: {error.diff_description}\n")
+            parts.append(f"PG text: {error.pg_text}\n")
+            parts.append(f"Scan OCR text: {error.scan_text}\n")
+            if pg_context:
+                parts.append(f"PG context: {pg_context[:200]}...\n")
+            parts.append("\n")
+
+        parts.append(
+            "Respond with a JSON ARRAY containing one object per item, in the same order as above. "
+            "Each object must have: index (int), verdict (str), confidence (float 0-1), reasoning (str), "
+            "and optionally suggested_fix (str if verdict is scan_correct).\n\n"
+            "Example format:\n"
+            '[\n  {"index": 0, "verdict": "scan_correct", "confidence": 0.9, "reasoning": "...", "suggested_fix": "..."},\n'
+            '  {"index": 1, "verdict": "edition_variant", "confidence": 0.85, "reasoning": "..."}\n'
+            "]\n\n"
+            "Remember: The PG text and scan may be from DIFFERENT EDITIONS. Distinguish between actual errors "
+            "and edition variants/modernizations."
+        )
+
+        return "".join(parts)
+
+    def _parse_batch_response(self, data: dict, items: list[tuple[int, CandidateError, str]]) -> list[Error]:
+        """Parse a batch API response into Error objects."""
+        results = []
+
+        try:
+            # Extract the response text
+            choices = data.get("choices", [])
+            if not choices:
+                return self._create_unable_to_verify_errors(items, "Empty API response")
+
+            message = choices[0].get("message", {})
+            content = message.get("content", "")
+
+            # Try to parse JSON array from the response
+            result_array = self._extract_json_array(content)
+
+            if not result_array:
+                logger.error(f"Could not parse JSON array from response: {content[:200]}")
+                return self._create_unable_to_verify_errors(items, "Could not parse JSON array response")
+
+            # Build a map of index -> result
+            results_map = {}
+            for item in result_array:
+                idx = item.get("index")
+                if idx is not None:
+                    results_map[idx] = item
+
+            # Create Error objects in the same order as input items
+            for idx, error, _ in items:
+                if idx not in results_map:
+                    # Missing result for this index
+                    results.append(Error(
+                        candidate=error,
+                        verdict=Verdict.UNABLE_TO_VERIFY,
+                        confidence=0.0,
+                        reasoning="Missing result in batch response",
+                    ))
+                    continue
+
+                item_result = results_map[idx]
+                verdict_str = item_result.get("verdict", "unable_to_verify")
+                confidence = float(item_result.get("confidence", 0.5))
+                reasoning = item_result.get("reasoning", "")
+                suggested_fix = item_result.get("suggested_fix", "")
+
+                # Map verdict string to enum
+                verdict_map = {
+                    "pg_correct": Verdict.PG_CORRECT,
+                    "scan_correct": Verdict.SCAN_CORRECT,
+                    "edition_variant": Verdict.EDITION_VARIANT,
+                    "intentional_modernization": Verdict.INTENTIONAL_MODERNIZATION,
+                    "ambiguous": Verdict.AMBIGUOUS,
+                    "unable_to_verify": Verdict.UNABLE_TO_VERIFY,
+                }
+                verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
+
+                results.append(Error(
+                    candidate=error,
+                    verdict=verdict,
+                    confidence=min(1.0, max(0.0, confidence)),
+                    reasoning=reasoning,
+                    suggested_fix=suggested_fix,
+                ))
+
+        except Exception as e:
+            logger.error(f"Error parsing batch response: {e}")
+            return self._create_unable_to_verify_errors(items, f"Parse error: {e}")
+
+        return results
+
+    def _extract_json_array(self, text: str) -> list:
+        """Extract JSON array from LLM response text."""
+        # Try to find JSON array in the response
+        # First try direct parse
+        try:
+            result = json.loads(text)
+            if isinstance(result, list):
+                return result
+        except json.JSONDecodeError:
+            pass
+
+        # Try to find JSON array in code blocks
+        json_match = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+        # Try to find any JSON array
+        json_match = re.search(r"\[.*?\]", text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(0))
+            except json.JSONDecodeError:
+                pass
+
+        return []
+
+    def _create_unable_to_verify_errors(
+        self,
+        items: list[tuple[int, CandidateError, str]],
+        reason: str,
+    ) -> list[Error]:
+        """Create unable-to-verify errors for all items."""
+        return [
+            Error(
+                candidate=error,
+                verdict=Verdict.UNABLE_TO_VERIFY,
+                confidence=0.0,
+                reasoning=reason,
+            )
+            for _, error, _ in items
+        ]
+
+    def _build_prompt(self, error: CandidateError, pg_context: str = "") -> str:
+        """Build the user prompt for the vision model."""
+        parts = [
+            "Compare the PG text passage with the scan page image and classify the difference:\n",
+            f"**Difference found:** {error.diff_description}\n",
+            f"**PG text (the published version):** {error.pg_text}\n",
+            f"**Scan OCR text (from source scan):** {error.scan_text}\n",
+        ]
+        if pg_context:
+            parts.append(f"\n**PG text context (surrounding text):**\n{pg_context}\n")
+        parts.append(
+            "\nLook at the scan page image carefully. "
+            "Can you read the relevant text on the page? "
+            "Does the scan match the PG text or the OCR text? "
+            "Or is this an edition variant / intentional modernization?\n"
+        )
+        return "".join(parts)
+
+    def _build_multimodal_content(self, prompt: str, image_path: Path) -> list[dict]:
+        """Build multimodal content with text and image for the API request."""
+        content = [{"type": "text", "text": prompt}]
+
+        # Add image
+        image_data = base64.b64encode(image_path.read_bytes()).decode("utf-8")
+        suffix = image_path.suffix.lower().lstrip(".")
+        media_type = {
+            "png": "image/png",
+            "jpg": "image/jpeg",
+            "jpeg": "image/jpeg",
+            "gif": "image/gif",
+            "webp": "image/webp",
+        }.get(suffix, "image/png")
+
+        content.append({
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:{media_type};base64,{image_data}",
+            },
+        })
+
+        return content
+
+    def _parse_response(self, data: dict, error: CandidateError) -> Error:
+        """Parse the LLM API response into an Error object."""
+        try:
+            # Extract the response text
+            choices = data.get("choices", [])
+            if not choices:
+                return Error(candidate=error, verdict=Verdict.UNABLE_TO_VERIFY,
+                           confidence=0.0, reasoning="Empty API response")
+
+            message = choices[0].get("message", {})
+            content = message.get("content", "")
+
+            # Try to parse JSON from the response
+            result = self._extract_json(content)
+
+            verdict_str = result.get("verdict", "unable_to_verify")
+            confidence = float(result.get("confidence", 0.5))
+            reasoning = result.get("reasoning", "")
+            suggested_fix = result.get("suggested_fix", "")
+
+            # Map verdict string to enum
+            verdict_map = {
+                "pg_correct": Verdict.PG_CORRECT,
+                "scan_correct": Verdict.SCAN_CORRECT,
+                "edition_variant": Verdict.EDITION_VARIANT,
+                "intentional_modernization": Verdict.INTENTIONAL_MODERNIZATION,
+                "ambiguous": Verdict.AMBIGUOUS,
+                "unable_to_verify": Verdict.UNABLE_TO_VERIFY,
+            }
+            verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
+
+            return Error(
+                candidate=error,
+                verdict=verdict,
+                confidence=min(1.0, max(0.0, confidence)),
+                reasoning=reasoning,
+                suggested_fix=suggested_fix,
+            )
+
+        except Exception as e:
+            logger.error(f"Error parsing response: {e}")
+            return Error(candidate=error, verdict=Verdict.UNABLE_TO_VERIFY,
+                       confidence=0.0, reasoning=f"Parse error: {e}")
+
+    def _extract_json(self, text: str) -> dict:
+        """Extract JSON object from LLM response text."""
+        # Try to find JSON in the response
+        # First try direct parse
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+
+        # Try to find JSON in code blocks
+        json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+        # Try to find any JSON object
+        json_match = re.search(r"\{[^}]+\}", text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group(0))
+            except json.JSONDecodeError:
+                pass
+
+        return {}
