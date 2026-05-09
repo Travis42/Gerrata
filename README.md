@@ -234,11 +234,31 @@ gerrata 43 \
 
 The default is Z.AI (`api.z.ai`) with GLM-4.6V, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
 
+### Split Endpoint Configuration
+
+You can use different API endpoints for transcription and verification. This is useful when you want to use GLM-OCR for transcription (specialized for document layout parsing) and GLM-4.6V for verification (better at understanding context and edition variants).
+
+```bash
+gerrata 43 \
+  --scan-id "some-scan-id" \
+  --vision-url "https://api.z.ai/api/paas/v4/layout_parsing" \
+  --vision-model "glm-ocr" \
+  --vision-key "$ZAI_API_KEY" \
+  --verify-url "https://api.z.ai/api/paas/v4/chat/completions" \
+  --verify-model "glm-4.6v" \
+  -o reports
+```
+
+If you only specify `--vision-*` flags, the same endpoint will be used for both transcription and verification (backward compatible).
+
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `--vision-url` | `https://api.z.ai/api/paas/v4/chat/completions` | API endpoint |
-| `--vision-key` | `$ZAI_API_KEY` | API key |
-| `--vision-model` | auto-select | Model name (e.g., `gpt-4o`, `glm-4.6v`) |
+| `--vision-url` | `https://api.z.ai/api/paas/v4/chat/completions` | API endpoint for page transcription (Step 3) |
+| `--vision-key` | `$ZAI_API_KEY` | API key for transcription |
+| `--vision-model` | auto-select | Model name for transcription (e.g., `glm-ocr`, `glm-4.6v`) |
+| `--verify-url` | same as `--vision-url` | API endpoint for verification (Step 7) |
+| `--verify-key` | same as `--vision-key` | API key for verification |
+| `--verify-model` | same as `--vision-model` | Model name for verification |
 
 **Note:** Page transcription and verification both require a model that can read images. Text-only models won't work for these steps. Use `--no-verify` to skip verification (you'll still need vision for transcription unless you also use `--no-vision-transcribe`).
 

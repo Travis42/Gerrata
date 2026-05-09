@@ -340,47 +340,138 @@ class VisionTranscriber:
     ) -> str:
         """Call the vision API for transcription."""
         import httpx
+        import asyncio
 
         headers = {}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
 
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": self.prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:{media_type};base64,{image_data}",
-                        },
-                    },
-                ],
+        # Check if this is a GLM-OCR model
+        is_glm_ocr = "glm-ocr" in model.lower() or "glm_ocr" in model.lower()
+
+        if is_glm_ocr:
+            # GLM-OCR uses a different API endpoint and format
+            # Extract base URL and convert to layout_parsing endpoint
+            base_url = self.api_url
+            if "/chat/completions" in base_url:
+                # Convert chat/completions URL to layout_parsing URL
+                base_url = base_url.replace("/chat/completions", "/layout_parsing")
+            elif not base_url.endswith("/layout_parsing"):
+                # If it's not already a layout_parsing URL, try to construct it
+                # from the base URL
+                parts = base_url.split("/api/paas/v4/")
+                if len(parts) == 2:
+                    base_url = f"{parts[0]}/api/paas/v4/layout_parsing"
+                else:
+                    # Fallback: just append layout_parsing
+                    base_url = base_url.rstrip("/") + "/layout_parsing"
+
+            # GLM-OCR request format
+            payload = {
+                "model": "glm-ocr",
+                "file": f"data:{media_type};base64,{image_data}",
             }
-        ]
 
-        payload = {
-            "model": model,
-            "messages": messages,
-            "max_tokens": 4000,
-            "temperature": 0.1,
-        }
+            # Retry logic for rate limiting
+            max_retries = 3
+            base_delay = 2.0
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            resp = await client.post(
-                self.api_url,
-                json=payload,
-                headers=headers,
-            )
-            resp.raise_for_status()
-            data = resp.json()
+            for attempt in range(max_retries):
+                try:
+                    async with httpx.AsyncClient(timeout=self.timeout) as client:
+                        resp = await client.post(
+                            base_url,
+                            json=payload,
+                            headers=headers,
+                        )
 
-        # Extract text from response
-        choices = data.get("choices", [])
-        if not choices:
-            raise ValueError("Empty API response")
-        return choices[0].get("message", {}).get("content", "")
+                        # Handle rate limiting
+                        if resp.status_code == 429:
+                            if attempt < max_retries - 1:
+                                retry_after = resp.headers.get("Retry-After")
+                                if retry_after:
+                                    try:
+                                        delay = float(retry_after)
+                                    except ValueError:
+                                        delay = base_delay * (2 ** attempt)
+                                else:
+                                    delay = base_delay * (2 ** attempt)
+
+                                logger.warning(f"GLM-OCR rate limited, retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries})")
+                                await asyncio.sleep(delay)
+                                continue
+                            else:
+                                raise ValueError(f"GLM-OCR API rate limit exceeded after {max_retries} retries")
+
+                        resp.raise_for_status()
+                        data = resp.json()
+
+                    # Extract text from GLM-OCR response
+                    if "md_results" in data:
+                        return data["md_results"]
+                    elif "result" in data:
+                        return data["result"]
+                    else:
+                        raise ValueError(f"GLM-OCR response missing expected fields: {data}")
+
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 429 and attempt < max_retries - 1:
+                        delay = base_delay * (2 ** attempt)
+                        logger.warning(f"GLM-OCR HTTP 429, retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries})")
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        raise ValueError(f"GLM-OCR API error: {e}")
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        delay = base_delay * (2 ** attempt)
+                        logger.warning(f"GLM-OCR error, retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries}): {e}")
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        raise ValueError(f"GLM-OCR failed after {max_retries} retries: {e}")
+
+            # Should not reach here
+            raise ValueError("GLM-OCR failed: max retries exceeded")
+
+        else:
+            # Standard chat/completions format (GLM-4.6V, GPT-4V, etc.)
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": self.prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:{media_type};base64,{image_data}",
+                            },
+                        },
+                    ],
+                }
+            ]
+
+            payload = {
+                "model": model,
+                "messages": messages,
+                "max_tokens": 4000,
+                "temperature": 0.1,
+            }
+
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                resp = await client.post(
+                    self.api_url,
+                    json=payload,
+                    headers=headers,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+
+            # Extract text from response
+            choices = data.get("choices", [])
+            if not choices:
+                raise ValueError("Empty API response")
+            return choices[0].get("message", {}).get("content", "")
 
 
 class VisionAligner:

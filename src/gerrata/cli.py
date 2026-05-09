@@ -113,19 +113,37 @@ def build_parser() -> argparse.ArgumentParser:
         "--vision-url",
         type=str,
         default="https://api.z.ai/api/paas/v4/chat/completions",
-        help="Vision model API URL",
+        help="Vision model API URL for page transcription (Step 3)",
     )
     parser.add_argument(
         "--vision-key",
         type=str,
         default=os.environ.get("ZAI_API_KEY", ""),
-        help="Vision model API key (default: ZAI_API_KEY environment variable)",
+        help="Vision model API key for transcription (default: ZAI_API_KEY environment variable)",
     )
     parser.add_argument(
         "--vision-model",
         type=str,
         default="",
-        help="Vision model name (default: auto-select from fallback chain)",
+        help="Vision model name for transcription (default: auto-select from fallback chain)",
+    )
+    parser.add_argument(
+        "--verify-url",
+        type=str,
+        default="",
+        help="Vision model API URL for verification (Step 7) (default: same as --vision-url)",
+    )
+    parser.add_argument(
+        "--verify-key",
+        type=str,
+        default="",
+        help="Vision model API key for verification (default: same as --vision-key)",
+    )
+    parser.add_argument(
+        "--verify-model",
+        type=str,
+        default="",
+        help="Vision model name for verification (default: same as --vision-model)",
     )
     parser.add_argument(
         "--page-range",
@@ -333,16 +351,21 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     # Step 7: LLM vision verification (if configured and in vision mode)
     verified_errors: list[Error] = []
 
+    # Determine verify config (fallback to vision config if not set)
+    verify_url = args.verify_url or args.vision_url
+    verify_key = args.verify_key or args.vision_key
+    verify_model = args.verify_model or args.vision_model or "zai/glm-4.6v"
+
     if args.no_verify or not vision_mode:
         console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (--no-verify or OCR mode)")
         for candidate in candidates:
             verified_errors.append(Error(candidate=candidate))
-    elif args.vision_url and args.vision_key:
+    elif verify_url and verify_key:
         console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] LLM vision verification...")
         verifier = VisionVerifier(
-            api_url=args.vision_url,
-            api_key=args.vision_key,
-            model=args.vision_model or "zai/glm-4.6v",
+            api_url=verify_url,
+            api_key=verify_key,
+            model=verify_model,
         )
 
         # Use batch verification for better performance and rate limit handling
