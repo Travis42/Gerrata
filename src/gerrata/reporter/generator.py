@@ -788,28 +788,36 @@ class ReportGenerator:
             lines.append("No errors found requiring correction.")
             return "\n".join(lines)
 
-        # Deduplicate by offset proximity (within 50 chars), keeping highest confidence
-        sorted_by_offset = sorted(submit_ready, key=lambda e: e.candidate.pg_offset)
+        # Deduplicate by offset proximity (within 50 chars)
+        # Strategy: sort by offset then confidence descending, apply post-dedup
+        # filters, and skip items whose offset is already claimed. This way if
+        # a punctuation-only item gets filtered out, the next item at the same
+        # offset (like a real word error) can still be included.
+        sorted_by_offset = sorted(submit_ready, key=lambda e: (e.candidate.pg_offset, -e.confidence))
+        seen_offsets: set[int] = set()
         deduplicated: list[Error] = []
-        last_offset = -100
-        for err in sorted_by_offset:
-            if err.candidate.pg_offset - last_offset < 50:
-                continue
-            deduplicated.append(err)
-            last_offset = err.candidate.pg_offset
 
-        # Post-dedup filters: punctuation-only and quote-start fragment
-        filtered: list[Error] = []
-        for err in deduplicated:
+        for err in sorted_by_offset:
+            # Check if this offset is already claimed by a better entry
+            # (only for nearby *different* offsets — same offset is a different diff)
+            if err.candidate.pg_offset not in seen_offsets and any(
+                0 < abs(err.candidate.pg_offset - seen) < 50
+                for seen in seen_offsets
+            ):
+                continue
+
+            # Apply post-dedup filters
             if self._is_punctuation_only(err.candidate.pg_text, err.candidate.scan_text):
                 continue
             if self._is_quote_start_fragment(err.candidate.pg_text, err.candidate.scan_text):
                 continue
-            filtered.append(err)
+
+            deduplicated.append(err)
+            seen_offsets.add(err.candidate.pg_offset)
 
         # Update count after filtering
-        count = len(filtered)
-        # Replace the count in the header (was submit_ready count, now filtered count)
+        count = len(deduplicated)
+        # Replace the count in the header (was submit_ready count, now deduplicated count)
         # Rebuild lines with correct count
         lines = [
             f"{title}, by {author}",
@@ -822,12 +830,12 @@ class ReportGenerator:
         lines.append(f" {count} errors ready for submission")
         lines.append("")
 
-        if not filtered:
+        if not deduplicated:
             lines.append("No errors found requiring correction.")
             return "\n".join(lines)
 
         # Generate each error entry
-        for err in filtered:
+        for err in deduplicated:
             pg_text = err.candidate.pg_text.strip()
             scan_text = err.candidate.scan_text.strip()
             page = err.candidate.scan_page + 1  # 1-indexed
