@@ -57,6 +57,27 @@ def is_quoted_fragment(scan_text, pg_text):
     if not starts_with_quote: return False
     return len(longer) - len(shorter) > 20
 
+def is_punctuation_only(pg_text, scan_text):
+    """True if PG and scan text differ only in punctuation/whitespace."""
+    pg_words = re.sub(r'[^\w]', '', pg_text)
+    scan_words = re.sub(r'[^\w]', '', scan_text)
+    if not pg_words or not scan_words:
+        return True
+    return pg_words == scan_words
+
+def is_quote_start_mismatch(pg_text, scan_text):
+    """True if one side starts with a quote and the other doesn't, with significant length difference.
+    Catches dialogue reassembly artifacts like 'erson?" "Only' -> '"Only'."""
+    s, p = scan_text.strip(), pg_text.strip()
+    shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+    if not shorter:
+        return False
+    if shorter[0] not in '"\u201c\u201c\u00ab':
+        return False
+    if len(longer) - len(shorter) <= 10:
+        return False
+    return True
+
 
 # ── Main ──
 
@@ -121,8 +142,8 @@ def main():
         print(f"  {v}: {c}")
 
     # Only scan_correct high-confidence are email-worthy
-    scan_correct = [e for e in filtered if e.get('verdict') == 'scan_correct' and e.get('confidence', 0) >= 0.8]
-    print(f"\nscan_correct + high confidence (email candidates): {len(scan_correct)}")
+    scan_correct = [e for e in filtered if e.get('verdict') == 'scan_correct' and e.get('confidence', 0) >= 0.85]
+    print(f"\nscan_correct + high confidence ≥0.85 (email candidates): {len(scan_correct)}")
 
     # Load PG text for sentence extraction
     body_text = ""
@@ -177,19 +198,47 @@ def main():
         final.append(e)
         last_offset = e.get('pg_offset', 0)
 
+    # ── Post-dedup filters ──
+    post_filters = [
+        ("Punctuation-only change", lambda e: is_punctuation_only(e.get('pg_text', ''), e.get('scan_text', ''))),
+        ("Quote-start fragment", lambda e: is_quote_start_mismatch(e.get('pg_text', ''), e.get('scan_text', ''))),
+    ]
+
+    cleaned = []
+    post_counts = {}
+    for e in final:
+        caught = False
+        for name, fn in post_filters:
+            if fn(e):
+                post_counts[name] = post_counts.get(name, 0) + 1
+                caught = True
+                break
+        if not caught:
+            cleaned.append(e)
+
+    total_post = len(final) - len(cleaned)
+    if total_post > 0:
+        print(f"\nPost-dedup filters:")
+        for name, count in sorted(post_counts.items(), key=lambda x: -x[1]):
+            print(f"  {name}: {count}")
+        print(f"Total removed: {total_post}")
+        print(f"Final email entries: {len(cleaned)}")
+    else:
+        print(f"\nFinal email entries: {len(final)}")
+
     # Build the email — PG Format 2 (arrow fix)
     lines = []
     lines.append("The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson")
     lines.append(" [EBook #43]")
     lines.append(" File: 43-h.htm")
     lines.append("")
-    lines.append(f" {len(deduped)} errors ready for submission")
+    lines.append(f" {len(cleaned)} errors ready for submission")
     lines.append("")
 
-    if not deduped:
+    if not cleaned:
         lines.append("No errors found requiring correction.")
     else:
-        for e in deduped:
+        for e in cleaned:
             scan = e.get('scan_text', '').strip()
             pg = e.get('pg_text', '').strip()
             page = e.get('display_page', '?')
