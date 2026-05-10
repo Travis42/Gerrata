@@ -731,15 +731,14 @@ class ReportGenerator:
         return len(longer) - len(shorter) > 20
 
     def generate_errata_email(self, report: Report) -> str:
-        """Generate errata report in PG Format 2 (arrow fix) for email submission.
+        """Generate errata report in Project Gutenberg's preferred format.
 
-        This generates a standalone text file ready to email to errata@pglaf.org.
-        Only includes scan_correct errors with confidence >= 0.85, deduplicated by
-        offset proximity, with post-dedup punctuation-only and quote-start filters.
+        Follows PG errata guidance (https://www.gutenberg.org/help/errata.html):
+        - Header with title, author, eBook number, file name
+        - Scan verification source when available
+        - Each error: context line first, then 'erroneous ==> corrected'
+        - Enough context to locate the error uniquely
         """
-        lines: list[str] = []
-
-        # Header
         title = report.metadata.title
         author = report.metadata.author
         pg_id = report.metadata.pg_id
@@ -750,14 +749,6 @@ class ReportGenerator:
             pg_filename = self.pg_file_path.name
         else:
             pg_filename = f"{pg_id}-h.htm"
-
-        lines.append(f"{title}, by {author}")
-        lines.append(f" [EBook #{pg_id}]")
-        lines.append(f" File: {pg_filename}")
-
-        # Source verification note
-        if self.scan_id:
-            lines.append(f" Verified against Internet Archive scan: https://archive.org/details/{self.scan_id}")
 
         # Filter: scan_correct + high confidence + exclude certain categories
         # Also apply stage-1 text-based alignment artifact filters
@@ -780,75 +771,49 @@ class ReportGenerator:
             and not self._is_quoted_fragment(e.candidate.pg_text, e.candidate.scan_text)
         ]
 
-        lines.append("")
-        lines.append(f" {len(submit_ready)} errors ready for submission")
-        lines.append("")
-
-        if not submit_ready:
-            lines.append("No errors found requiring correction.")
-            return "\n".join(lines)
-
         # Deduplicate by offset proximity (within 50 chars)
-        # Strategy: sort by offset then confidence descending, apply post-dedup
-        # filters, and skip items whose offset is already claimed. This way if
-        # a punctuation-only item gets filtered out, the next item at the same
-        # offset (like a real word error) can still be included.
         sorted_by_offset = sorted(submit_ready, key=lambda e: (e.candidate.pg_offset, -e.confidence))
         seen_offsets: set[int] = set()
         deduplicated: list[Error] = []
 
         for err in sorted_by_offset:
-            # Check if this offset is already claimed by a better entry
-            # (only for nearby *different* offsets — same offset is a different diff)
             if err.candidate.pg_offset not in seen_offsets and any(
                 0 < abs(err.candidate.pg_offset - seen) < 50
                 for seen in seen_offsets
             ):
                 continue
-
-            # Apply post-dedup filters
             if self._is_punctuation_only(err.candidate.pg_text, err.candidate.scan_text):
                 continue
             if self._is_quote_start_fragment(err.candidate.pg_text, err.candidate.scan_text):
                 continue
-
             deduplicated.append(err)
             seen_offsets.add(err.candidate.pg_offset)
 
-        # Update count after filtering
-        count = len(deduplicated)
-        # Replace the count in the header (was submit_ready count, now deduplicated count)
-        # Rebuild lines with correct count
-        lines = [
-            f"{title}, by {author}",
-            f" [EBook #{pg_id}]",
-            f" File: {pg_filename}",
-        ]
-        if self.scan_id:
-            lines.append(f" Verified against Internet Archive scan: https://archive.org/details/{self.scan_id}")
-        lines.append("")
-        lines.append(f" {count} errors ready for submission")
-        lines.append("")
+        # Build email in PG's preferred format
+        lines: list[str] = []
 
-        if not deduplicated:
-            lines.append("No errors found requiring correction.")
+        lines.append(f"In {title}, by {author}, [EBook #{pg_id}],")
+        lines.append(f"File: {pg_filename},")
+
+        if self.scan_id:
+            lines.append(f"I verified the following changes against the Internet Archive scan:")
+            lines.append(f"https://archive.org/details/{self.scan_id}")
+            lines.append("")
+
+        if deduplicated:
+            lines.append(f"I found {len(deduplicated)} errors:")
+        else:
+            lines.append("I found no errors requiring correction.")
             return "\n".join(lines)
 
-        # Generate each error entry
+        lines.append("")
+
         for err in deduplicated:
             pg_text = err.candidate.pg_text.strip()
             scan_text = err.candidate.scan_text.strip()
-            page = err.candidate.scan_page + 1  # 1-indexed
 
-            lines.append(f"Page {page}: {pg_text} -> {scan_text}")
-
-            # Add scan page link if scan_id is available
-            if self.scan_id:
-                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
-                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                lines.append(f"  Scan: {scan_url}")
-
-            # Add context sentence if available
+            # Get context sentence containing the error
+            context = ""
             if self.body_text:
                 search_text = pg_text
                 pos = self.body_text.find(search_text)
@@ -856,15 +821,20 @@ class ReportGenerator:
                     search_text = scan_text
                     pos = self.body_text.find(search_text)
                 if pos >= 0:
-                    pg_sentence = self._extract_sentence(
-                        self.body_text,
-                        pos,
-                        len(search_text)
+                    context = self._extract_sentence(
+                        self.body_text, pos, len(search_text)
                     )
-                else:
-                    pg_sentence = ""
-                if pg_sentence:
-                    lines.append(f"  Context: {pg_sentence}")
+
+            # PG format: context line first, then fix line
+            if context:
+                lines.append(context)
+            lines.append(f"{pg_text} ==> {scan_text}")
+
+            # Per-error scan page link when scan_id available
+            if self.scan_id:
+                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                lines.append(f"(see scan page: {scan_url})")
 
             lines.append("")
 

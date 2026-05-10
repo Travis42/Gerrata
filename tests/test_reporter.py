@@ -279,11 +279,10 @@ class TestReportGenerator:
         assert "Robert Louis Stevenson" in email_content
         assert "[EBook #43]" in email_content
         assert "File:" in email_content
-        assert "Verified against Internet Archive scan" in email_content
+        assert "verified the following changes" in email_content
 
-        # Should use Page N format (not Line N)
-        assert "Page 6:" in email_content
-        assert "tne -> the" in email_content
+        # Should use ==> arrow format (PG's preferred format)
+        assert "tne ==> the" in email_content
 
         # Low confidence error should NOT be included (below 0.85 threshold)
         assert "walked" not in email_content
@@ -320,8 +319,7 @@ class TestReportGenerator:
         assert parsed_json["errors"][0]["pg_file_line"] == 6
         assert parsed_json["errors"][0]["chapter_title"] == "Chapter One"
 
-        assert "Page 6:" in email
-        assert "tne -> the" in email
+        assert "tne ==> the" in email
 
     def test_print_summary(self, generator, sample_report, capsys):
         """print_summary should not raise."""
@@ -367,13 +365,13 @@ class TestReportGenerator:
         email_content = generator_with_context.generate_errata_email(report)
 
         # Should include high confidence
-        assert "tne -> the" in email_content
+        assert "tne ==> the" in email_content
 
         # Should exclude low confidence
         assert "walked" not in email_content
 
-        # Summary should show 1 error ready
-        assert "1 errors ready for submission" in email_content
+        # Summary should show 1 error found
+        assert "I found 1 errors" in email_content
 
     def test_errata_email_deduplicates_by_offset(self, generator_with_context, sample_metadata):
         """Test that errors within 50 chars offset proximity are deduplicated."""
@@ -430,12 +428,12 @@ class TestReportGenerator:
 
         email_content = generator_with_context.generate_errata_email(report)
 
-        # Should show 2 errors (one deduped, one far away)
-        assert "2 errors ready for submission" in email_content
-        # tne->the should appear only once (deduped)
-        assert email_content.count("tne -> the") == 1
+        # Should show 2 errors found (one deduped, one far away)
+        assert "I found 2 errors" in email_content
+        # tne==>the should appear only once (deduped)
+        assert email_content.count("tne ==> the") == 1
         # respecters should appear
-        assert "respectors -> respecters" in email_content
+        assert "respectors ==> respecters" in email_content
 
     def test_errata_email_arrow_format(self, generator_with_context, sample_metadata):
         """Test that errata_email uses -> arrow format."""
@@ -461,10 +459,8 @@ class TestReportGenerator:
 
         email_content = generator_with_context.generate_errata_email(report)
 
-        # Should use -> arrow format
-        assert "tne -> the" in email_content
-        # Should NOT use ==> format
-        assert "==>" not in email_content
+        # Should use ==> arrow format (PG's preferred format)
+        assert "tne ==> the" in email_content
         # Should NOT use "Change to" format
         assert "Change" not in email_content
 
@@ -492,9 +488,8 @@ class TestReportGenerator:
 
         email_content = generator.generate_errata_email(report)
 
-        # Error with scan_page=0 will show as "Page 1:" — still included if it passes filters
-        # But since pg_file_line=0 is not a filter anymore, the error still appears
-        assert "Page 1:" in email_content or "1 errors ready for submission" in email_content
+        # Error with scan_page=0 will show — still included if it passes filters
+        assert "I found 1 errors" in email_content
 
     def test_errata_email_post_dedup_filters(self, generator, sample_metadata):
         """Test punctuation-only and quote-start fragment post-dedup filters."""
@@ -534,7 +529,7 @@ class TestReportGenerator:
         email_content = generator.generate_errata_email(report)
 
         # Both should be filtered out
-        assert "0 errors ready for submission" in email_content
+        assert "no errors requiring correction" in email_content
         assert "hello" not in email_content
         assert "Only" not in email_content
 
