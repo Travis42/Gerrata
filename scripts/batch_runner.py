@@ -100,6 +100,8 @@ def load_queue() -> list[dict]:
                     status = "done"
                 elif "[~]" in status_cell:
                     status = "running"
+                elif "[!]" in status_cell:
+                    status = "ready"
                 else:
                     status = "pending"
 
@@ -189,6 +191,75 @@ def cleanup_old_caches(keep_running_pg: str | None = None):
 
     print(f"  Freed {freed/1e6:.0f}MB total")
     return freed
+
+
+def update_queue_status(pg_id: int, new_status: str, candidates: int = None, scan_id: str = None):
+    """Update a book's status in ERRATA_QUEUE.md.
+
+    Statuses: [x] done, [~] running, [!] ready, [ ] pending
+    """
+    if not QUEUE_FILE.exists():
+        return
+
+    content = QUEUE_FILE.read_text()
+    lines = content.split("\n")
+    updated = False
+
+    for i, line in enumerate(lines):
+        if not line.startswith("|"):
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) < 3:
+            continue
+        try:
+            row_pg_id = int(parts[1])
+        except (ValueError, IndexError):
+            continue
+
+        if row_pg_id == pg_id:
+            # Replace status
+            raw_parts = [p.strip() for p in line.split("|")]
+            for j, part in enumerate(raw_parts):
+                if part.strip() in ("[x]", "[~]", "[!]", "[ ]", "") and 3 < j < 7:
+                    raw_parts[j] = f" {new_status} "
+                    break
+            # Update candidates column if provided
+            if candidates is not None:
+                for j, part in enumerate(raw_parts):
+                    if part.strip() == "—" and j > 5:
+                        raw_parts[j] = f" {candidates} "
+                        break
+            lines[i] = "|".join(raw_parts)
+            updated = True
+            break
+
+    if updated:
+        QUEUE_FILE.write_text("\n".join(lines))
+        print(f"  Updated queue: PG #{pg_id} -> {new_status}")
+
+
+def record_pipeline_run(pg_id: int, title: str, scan_id: str, candidates: int, duration: str, issues: str = ""):
+    """Append a row to the Pipeline Run Log table."""
+    if not QUEUE_FILE.exists():
+        return
+
+    content = QUEUE_FILE.read_text()
+    new_row = f"| {datetime.now(timezone.utc).strftime('%Y-%m-%d')} | {pg_id} | {title} | {scan_id} | {candidates} | {duration} | {issues} |"
+
+    lines = content.split("\n")
+    insert_idx = len(lines)
+    in_run_log = False
+    for i, line in enumerate(lines):
+        if "Pipeline Run Log" in line:
+            in_run_log = True
+        elif in_run_log and line.startswith("##"):
+            insert_idx = i - 1
+            break
+        elif in_run_log and (line.strip() == "" or line.startswith("|")):
+            insert_idx = i + 1
+
+    lines.insert(insert_idx, new_row)
+    QUEUE_FILE.write_text("\n".join(lines))
 
 
 def check_pipeline_output(pg_id: int) -> dict:
