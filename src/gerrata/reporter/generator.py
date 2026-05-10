@@ -795,10 +795,14 @@ class ReportGenerator:
         lines.append(f"In {title}, by {author}, [EBook #{pg_id}],")
         lines.append(f"File: {pg_filename},")
 
+        # Always include IA source link (mandatory per PG errata guidance)
         if self.scan_id:
             lines.append(f"I verified the following changes against the Internet Archive scan:")
             lines.append(f"https://archive.org/details/{self.scan_id}")
-            lines.append("")
+        else:
+            lines.append("Source scans: Internet Archive")
+
+        lines.append("")
 
         if deduplicated:
             lines.append(f"I found {len(deduplicated)} errors:")
@@ -811,6 +815,7 @@ class ReportGenerator:
         for err in deduplicated:
             pg_text = err.candidate.pg_text.strip()
             scan_text = err.candidate.scan_text.strip()
+            page = err.candidate.scan_page + 1  # 1-indexed
 
             # Get context sentence containing the error
             context = ""
@@ -825,18 +830,24 @@ class ReportGenerator:
                         self.body_text, pos, len(search_text)
                     )
 
-            # PG format: context line first, then fix line
+            # PG format: page reference, context line, then fix line
+            if self.scan_id:
+                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                lines.append(f"Page {page} ({scan_url}):")
+            else:
+                lines.append(f"Page {page}:")
+
             if context:
                 lines.append(context)
             lines.append(f"{pg_text} ==> {scan_text}")
 
-            # Per-error scan page link when scan_id available
-            if self.scan_id:
-                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
-                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                lines.append(f"(see scan page: {scan_url})")
-
             lines.append("")
+
+        # Footer
+        lines.append("These errata were found using Gerrata (https://github.com/nictravis/gerrata) and refined by a human reviewer.")
+        lines.append("Please reach out if you would like to discuss Gerrata or this report.")
+        lines.append("I'm a huge fan of Project Gutenberg.")
 
         return "\n".join(lines)
 
