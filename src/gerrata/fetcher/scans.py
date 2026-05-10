@@ -243,9 +243,13 @@ class ScanFetcher:
 
                 try:
                     img = Image.open(jp2_temp)
+                    img.load()
                     img.save(png_path, "PNG")
                     png_files.append(png_path)
                     logger.debug(f"Extracted page {page_num}: {png_path.name}")
+                except Exception as e:
+                    logger.warning(f"Skipping corrupted page {page_num} ({jp2_name}): {e}")
+                    png_path.unlink(missing_ok=True)
                 finally:
                     jp2_temp.unlink(missing_ok=True)
 
