@@ -1,3 +1,5 @@
+![Gerrata](Gerrata.png)
+
 # Gerrata
 
 **Automated errata detection for Project Gutenberg.** Compares published PG texts against original page scans from the Internet Archive to find transcription errors, producing errata-submission-ready reports.
@@ -110,10 +112,6 @@ The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson
 
  3 errors ready for submission
  5 items need your review (see review_needed.txt)
-
- Line 50:
- Context: ...the street was small and what is called quiet...
- assed ==> passed
 
  Line 100:
  Context: ...every time he looked at my prisoner...
