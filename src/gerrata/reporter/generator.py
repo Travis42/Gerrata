@@ -843,7 +843,7 @@ class ReportGenerator:
             lines.append("")
 
         # Footer
-        lines.append("These errata were found using Gerrata (https://github.com/nictravis/gerrata) and refined by a human reviewer.")
+        lines.append("These errata were found using Gerrata (https://github.com/nictravis/gerrata) and refined by a human reviewer (me).")
         lines.append("Please reach out if you would like to discuss Gerrata or this report.")
         lines.append("I'm a huge fan of Project Gutenberg.")
 
