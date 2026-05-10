@@ -703,14 +703,12 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         scan_pages=scan_pages,
         body_text=parsed.body_text,
     )
-    md_path, json_path, email_path, review_path = generator.save_reports(report, args.output)
+    json_path, email_path = generator.save_reports(report, args.output)
     generator.print_summary(report)
 
     console.print(f"[bold green]Reports saved:[/bold green]")
-    console.print(f"  Markdown: {md_path}")
     console.print(f"  JSON: {json_path}")
     console.print(f"  Errata Email: {email_path}")
-    console.print(f"  Review Needed: {review_path}")
 
     return report
 

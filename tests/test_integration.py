@@ -103,16 +103,10 @@ class TestIntegrationPipeline:
 
         # Step 7: Generate reports
         generator = ReportGenerator()
-        md_path, json_path, email_path, review_path = generator.save_reports(report, tmp_path)
+        json_path, email_path = generator.save_reports(report, tmp_path)
 
-        assert md_path.exists()
         assert json_path.exists()
         assert email_path.exists()
-
-        # Verify markdown
-        md_content = md_path.read_text()
-        assert "Jekyll" in md_content
-        assert "Stevenson" in md_content
 
         # Verify JSON
         json_content = json.loads(json_path.read_text())
@@ -175,11 +169,7 @@ class TestIntegrationPipeline:
         )
 
         generator = ReportGenerator()
-        md_path, json_path, email_path, review_path = generator.save_reports(report, tmp_path)
-
-        # Markdown should be non-empty
-        md = md_path.read_text()
-        assert len(md) > 100
+        json_path, email_path = generator.save_reports(report, tmp_path)
 
         # JSON should be valid
         j = json.loads(json_path.read_text())
@@ -257,11 +247,10 @@ class TestVisionFirstPipeline:
 
         # Step 6: Generate reports
         generator = ReportGenerator()
-        md_path, json_path, email_path, review_path = generator.save_reports(report, tmp_path / "vision")
+        json_path, email_path = generator.save_reports(report, tmp_path / "vision")
 
-        assert md_path.exists()
         assert json_path.exists()
-        assert "Jekyll" in md_path.read_text()
+        assert email_path.exists()
 
         # Verify alignment method is LLM_VISION
         for a in alignments:

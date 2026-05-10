@@ -12,6 +12,24 @@ from pathlib import Path
 from typing import Optional
 
 
+def _next_version(path: Path) -> Path:
+    """If path exists, return the next available versioned filename.
+
+    Example: if ``report.txt`` exists, returns ``report-2.txt``.
+    """
+    if not path.exists():
+        return path
+    stem = path.stem
+    ext = path.suffix
+    parent = path.parent
+    n = 2
+    while True:
+        versioned = parent / f"{stem}-{n}{ext}"
+        if not versioned.exists():
+            return versioned
+        n += 1
+
+
 def _slugify(text: str, max_length: int = 60) -> str:
     """Slugify a title for use in filenames.
 
@@ -628,15 +646,36 @@ class ReportGenerator:
 
         return "\n".join(lines)
 
+    def _is_punctuation_only(self, pg_text: str, scan_text: str) -> bool:
+        """True if PG and scan text differ only in punctuation/whitespace."""
+        pg_words = re.sub(r'[^\w]', '', pg_text)
+        scan_words = re.sub(r'[^\w]', '', scan_text)
+        if not pg_words or not scan_words:
+            return True
+        return pg_words == scan_words
+
+    def _is_quote_start_fragment(self, pg_text: str, scan_text: str) -> bool:
+        """True if one side starts with a quote and the other doesn't, with significant length difference."""
+        s, p = scan_text.strip(), pg_text.strip()
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+        if not shorter:
+            return False
+        if shorter[0] not in '"\u201c\u201c\u00ab':
+            return False
+        if len(longer) - len(shorter) <= 10:
+            return False
+        return True
+
     def generate_errata_email(self, report: Report) -> str:
         """Generate errata report in PG Format 2 (arrow fix) for email submission.
 
         This generates a standalone text file ready to email to errata@pglaf.org.
-        Only includes scan_correct errors with confidence >= 0.8, deduplicated by line number.
+        Only includes scan_correct errors with confidence >= 0.85, deduplicated by
+        offset proximity, with post-dedup punctuation-only and quote-start filters.
         """
         lines: list[str] = []
 
-        # Header (PG Format 2)
+        # Header
         title = report.metadata.title
         author = report.metadata.author
         pg_id = report.metadata.pg_id
@@ -656,67 +695,92 @@ class ReportGenerator:
         if self.scan_id:
             lines.append(f" Verified against Internet Archive scan: https://archive.org/details/{self.scan_id}")
 
-        # Count items for summary
+        # Filter: scan_correct + high confidence + exclude certain categories
         submit_ready = [
             e for e in report.errors
             if e.verdict == Verdict.SCAN_CORRECT
-            and e.confidence >= 0.8
-            and e.pg_file_line > 0
-            and e.category != ErrorCategory.ALIGNMENT_ARTIFACT
-        ]
-        review_needed = [
-            e for e in report.errors
-            if e.category != ErrorCategory.ALIGNMENT_ARTIFACT
-            and not (e.verdict == Verdict.SCAN_CORRECT and e.confidence >= 0.8 and e.pg_file_line > 0)
+            and e.confidence >= 0.85
+            and e.category not in (
+                ErrorCategory.EDITION_VARIANT,
+                ErrorCategory.MODERNIZATION,
+                ErrorCategory.INTENTIONAL_CHANGE,
+                ErrorCategory.ALIGNMENT_ARTIFACT,
+            )
         ]
 
         lines.append("")
         lines.append(f" {len(submit_ready)} errors ready for submission")
-        if review_needed:
-            lines.append(f" {len(review_needed)} items need your review (see review_needed.txt)")
         lines.append("")
 
         if not submit_ready:
             lines.append("No errors found requiring correction.")
             return "\n".join(lines)
 
-        # Deduplicate by pg_file_line: keep highest confidence error for each line
-        line_map = {}
-        for err in submit_ready:
-            line = err.pg_file_line
-            if line not in line_map or err.confidence > line_map[line].confidence:
-                line_map[line] = err
+        # Deduplicate by offset proximity (within 50 chars), keeping highest confidence
+        sorted_by_offset = sorted(submit_ready, key=lambda e: e.candidate.pg_offset)
+        deduplicated: list[Error] = []
+        last_offset = -100
+        for err in sorted_by_offset:
+            if err.candidate.pg_offset - last_offset < 50:
+                continue
+            deduplicated.append(err)
+            last_offset = err.candidate.pg_offset
 
-        # Sort by line number for consistent output
-        deduplicated_errors = sorted(line_map.values(), key=lambda e: e.pg_file_line)
+        # Post-dedup filters: punctuation-only and quote-start fragment
+        filtered: list[Error] = []
+        for err in deduplicated:
+            if self._is_punctuation_only(err.candidate.pg_text, err.candidate.scan_text):
+                continue
+            if self._is_quote_start_fragment(err.candidate.pg_text, err.candidate.scan_text):
+                continue
+            filtered.append(err)
 
-        # Generate each error in PG Format 2 (arrow format)
-        for err in deduplicated_errors:
-            lines.append("")
-            lines.append(f" Line {err.pg_file_line}:")
-            lines.append(f" {err.candidate.pg_text}")
+        # Update count after filtering
+        count = len(filtered)
+        # Replace the count in the header (was submit_ready count, now filtered count)
+        # Rebuild lines with correct count
+        lines = [
+            f"{title}, by {author}",
+            f" [EBook #{pg_id}]",
+            f" File: {pg_filename}",
+        ]
+        if self.scan_id:
+            lines.append(f" Verified against Internet Archive scan: https://archive.org/details/{self.scan_id}")
+        lines.append("")
+        lines.append(f" {count} errors ready for submission")
+        lines.append("")
+
+        if not filtered:
+            lines.append("No errors found requiring correction.")
+            return "\n".join(lines)
+
+        # Generate each error entry
+        for err in filtered:
+            pg_text = err.candidate.pg_text.strip()
+            scan_text = err.candidate.scan_text.strip()
+            page = err.candidate.scan_page + 1  # 1-indexed
+
+            lines.append(f"Page {page}: {pg_text} -> {scan_text}")
 
             # Add context sentence if available
             if self.body_text:
-                pg_text = err.candidate.pg_text
-                pos = self.body_text.find(pg_text)
-                if pos < 0 and '(absent in PG)' in pg_text:
-                    pg_text = err.candidate.scan_text
-                    pos = self.body_text.find(pg_text)
+                search_text = pg_text
+                pos = self.body_text.find(search_text)
+                if pos < 0 and '(absent in PG)' in search_text:
+                    search_text = scan_text
+                    pos = self.body_text.find(search_text)
                 if pos >= 0:
                     pg_sentence = self._extract_sentence(
                         self.body_text,
                         pos,
-                        len(pg_text)
+                        len(search_text)
                     )
                 else:
                     pg_sentence = ""
                 if pg_sentence:
-                    lines.append(f" Context: ...{pg_sentence}...")
+                    lines.append(f"  Context: {pg_sentence}")
 
-            # Arrow fix format: "bad text ==> good text"
-            arrow_fix = self.format_arrow_fix(err)
-            lines.append(f" {arrow_fix}")
+            lines.append("")
 
         return "\n".join(lines)
 
@@ -726,8 +790,8 @@ class ReportGenerator:
         output_dir: Path | str,
         base_name: str = "",
         suffix: str = "",
-    ) -> tuple[Path, Path, Path, Path]:
-        """Save markdown, JSON, errata email, and review needed reports.
+    ) -> tuple[Path, Path]:
+        """Save JSON and errata email reports.
 
         Args:
             report: The report to save
@@ -736,7 +800,7 @@ class ReportGenerator:
             suffix: Optional suffix to add before file extension (e.g., "-raw")
 
         Returns:
-            Tuple of (markdown_path, json_path, email_path, review_path).
+            Tuple of (json_path, email_path).
         """
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -745,18 +809,11 @@ class ReportGenerator:
             title_slug = _slugify(report.metadata.title)
             base_name = f"gutenberg{report.metadata.pg_id}-{title_slug}"
 
-        # Add suffix before extension if provided
-        md_path = output_dir / f"{base_name}_errata{suffix}.md"
-        json_path = output_dir / f"{base_name}_errata{suffix}.json"
-        email_path = output_dir / f"{base_name}_errata_email{suffix}.txt"
-        review_path = output_dir / f"{base_name}_review_needed{suffix}.txt"
+        json_path = _next_version(output_dir / f"{base_name}_errata{suffix}.json")
+        email_path = _next_version(output_dir / f"{base_name}_errata_email{suffix}.txt")
 
         # Enrich errors with line numbers and chapter context
         self.enrich_errors_with_context(report)
-
-        # Generate and save markdown report
-        md_content = self.generate_markdown(report)
-        md_path.write_text(md_content, encoding="utf-8")
 
         # Generate and save JSON report
         json_content = self.generate_json(report)
@@ -766,11 +823,7 @@ class ReportGenerator:
         email_content = self.generate_errata_email(report)
         email_path.write_text(email_content, encoding="utf-8")
 
-        # Generate and save review needed file
-        review_content = self.generate_review_needed(report)
-        review_path.write_text(review_content, encoding="utf-8")
-
-        return md_path, json_path, email_path, review_path
+        return json_path, email_path
 
     def print_summary(self, report: Report) -> None:
         """Print a summary to the console using rich."""
