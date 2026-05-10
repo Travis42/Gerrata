@@ -834,6 +834,12 @@ class ReportGenerator:
 
             lines.append(f"Page {page}: {pg_text} -> {scan_text}")
 
+            # Add scan page link if scan_id is available
+            if self.scan_id:
+                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                lines.append(f"  Scan: {scan_url}")
+
             # Add context sentence if available
             if self.body_text:
                 search_text = pg_text
