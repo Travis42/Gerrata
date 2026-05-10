@@ -409,8 +409,8 @@ class TestReportGenerator:
 
         # Far offset (> 50 chars away) — should be kept
         c3 = CandidateError(
-            pg_text="here",
-            scan_text="her",
+            pg_text="respectors",
+            scan_text="respecters",
             pg_offset=300,
             scan_page=10,
             category=ErrorCategory.OCR_SCANNO
@@ -434,8 +434,8 @@ class TestReportGenerator:
         assert "2 errors ready for submission" in email_content
         # tne->the should appear only once (deduped)
         assert email_content.count("tne -> the") == 1
-        # her should appear
-        assert "here -> her" in email_content
+        # respecters should appear
+        assert "respectors -> respecters" in email_content
 
     def test_errata_email_arrow_format(self, generator_with_context, sample_metadata):
         """Test that errata_email uses -> arrow format."""

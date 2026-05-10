@@ -666,6 +666,70 @@ class ReportGenerator:
             return False
         return True
 
+    # -- Stage-1 alignment artifact filters (text-based, no category needed) --
+
+    def _is_absent_entry(self, pg_text: str, scan_text: str) -> bool:
+        """True if one side has '(absent in PG)' or '(absent in scan)' marker."""
+        return (
+            '(absent in pg)' in pg_text.lower()
+            or '(absent in scan)' in scan_text.lower()
+        )
+
+    def _is_cutoff_artifact(self, pg_text: str, scan_text: str) -> bool:
+        """True if one side is a short suffix fragment of the other (≤3 chars)."""
+        s, p = scan_text.strip(), pg_text.strip()
+        if ' ' in s or ' ' in p:
+            return False
+        if abs(len(s) - len(p)) != 1:
+            return False
+        longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+        if not (longer.startswith(shorter) or longer.endswith(shorter)):
+            return False
+        return len(shorter) <= 3
+
+    def _is_long_mismatch(self, pg_text: str, scan_text: str) -> bool:
+        """True if either side is >40 chars (alignment spanned too far)."""
+        return len(scan_text.strip()) > 40 or len(pg_text.strip()) > 40
+
+    def _is_html_artifact(self, pg_text: str, scan_text: str) -> bool:
+        """True if combined text contains HTML/CSS/markup artifacts."""
+        combined = scan_text + pg_text
+        return any(m in combined for m in [
+            '<div', '<span', 'bbox=', '![](', '<img', '</div',
+            'margin-', 'text-align', 'page-break', 'font-style', 'font-weight',
+        ])
+
+    def _is_all_caps_header(self, scan_text: str) -> bool:
+        """True if scan text is an ALL CAPS header (chapter title)."""
+        stripped = scan_text.strip()
+        return stripped.isupper() and len(stripped) > 5
+
+    def _is_suffix_fragment(self, pg_text: str, scan_text: str) -> bool:
+        """True if one side is a tail fragment of the other (≤8 chars, diff ≤3)."""
+        s, p = scan_text.strip(), pg_text.strip()
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+        if ' ' in shorter:
+            return False
+        if len(longer) - len(shorter) > 3:
+            return False
+        if not longer.endswith(shorter):
+            return False
+        if longer.endswith('s') and longer[:-1] == shorter and len(shorter) >= 4:
+            return False
+        if longer.endswith('es') and longer[:-2] == shorter and len(shorter) >= 4:
+            return False
+        return len(shorter) <= 8
+
+    def _is_quoted_fragment(self, pg_text: str, scan_text: str) -> bool:
+        """True if short side starts with quote and length diff > 20."""
+        s, p = scan_text.strip(), pg_text.strip()
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+        if not shorter:
+            return False
+        if shorter[0] not in '""\u00ab':
+            return False
+        return len(longer) - len(shorter) > 20
+
     def generate_errata_email(self, report: Report) -> str:
         """Generate errata report in PG Format 2 (arrow fix) for email submission.
 
@@ -696,6 +760,7 @@ class ReportGenerator:
             lines.append(f" Verified against Internet Archive scan: https://archive.org/details/{self.scan_id}")
 
         # Filter: scan_correct + high confidence + exclude certain categories
+        # Also apply stage-1 text-based alignment artifact filters
         submit_ready = [
             e for e in report.errors
             if e.verdict == Verdict.SCAN_CORRECT
@@ -706,6 +771,13 @@ class ReportGenerator:
                 ErrorCategory.INTENTIONAL_CHANGE,
                 ErrorCategory.ALIGNMENT_ARTIFACT,
             )
+            and not self._is_absent_entry(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_cutoff_artifact(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_long_mismatch(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_html_artifact(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_all_caps_header(e.candidate.scan_text)
+            and not self._is_suffix_fragment(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_quoted_fragment(e.candidate.pg_text, e.candidate.scan_text)
         ]
 
         lines.append("")
