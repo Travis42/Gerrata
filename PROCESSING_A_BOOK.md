@@ -20,20 +20,25 @@ Visit `https://www.gutenberg.org/ebooks/<pg_id>` to get:
 
 ### 2. Find the Internet Archive Scan
 
-Search IA for the original edition that PG transcribed from:
+**First, check if PG credits a specific edition or scan source:**
+- Look in the PG HTML header and title page for publisher, edition year, and reprint info
+- Some PG credits mention a specific physical copy used for transcription
+- Matching the exact edition is critical for alignment quality — different printings may have different line breaks, pagination, or even corrections
+
+Search IA for the edition PG transcribed from:
 ```
-site:archive.org "<title>" "<author>" "<original publisher>"
+site:archive.org "<title>" "<author>" "<publisher>" "<year>"
 ```
 
 The scan should be:
-- The same edition PG used (check PG's "Credits" section)
+- The same edition and printing PG used (check PG's "Credits" and title page)
 - A physical book scan with page images (not a derived PDF)
 - Have a downloadable PDF or JP2 page images
 
 Verify the scan has page images by checking:
 - `https://archive.org/details/<identifier>/page/n1/mode/1up`
 
-Record the IA identifier (e.g., `in.ernet.dli.2015.190961`).
+Record the IA identifier (e.g., `06-stevenson-jekyll-hyde`).
 
 ### 3. Run the Pipeline
 
@@ -62,7 +67,7 @@ To get notified when the pipeline finishes:
 ZAI_API_KEY=<key> gerrata <pg_id> \
   --scan-id <ia_identifier> \
   --concurrency 10 \
-  && /root/clawd/scripts/wake-agent.sh "Gerrata pipeline complete for PG #<pg_id>" \
+  ; /root/clawd/scripts/wake-agent.sh "Gerrata pipeline complete for PG #<pg_id>" \
     --channel telegram --to "-1003815086962:3515"
 ```
 
