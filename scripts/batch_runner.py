@@ -59,11 +59,16 @@ def load_queue() -> list[dict]:
             if line_raw.startswith("|#") or line_raw.startswith("|---"):
                 continue
 
-            parts = [p.strip() for p in line_raw.split("|") if p.strip()]
+            # Split preserving empty cells to maintain column alignment
+            raw_parts = [p.strip() for p in line_raw.split("|")]
+            if raw_parts and raw_parts[0] == "":
+                raw_parts = raw_parts[1:]
+            if raw_parts and raw_parts[-1] == "":
+                raw_parts = raw_parts[:-1]
 
             # Detect header row
-            if "PG ID" in parts and "Title" in parts:
-                for i, col_name in enumerate(parts):
+            if "PG ID" in raw_parts and "Title" in raw_parts:
+                for i, col_name in enumerate(raw_parts):
                     col_name_lower = col_name.lower()
                     if "num" in col_name_lower or col_name_lower == "#":
                         col_map["num"] = i
@@ -84,10 +89,13 @@ def load_queue() -> list[dict]:
                 header_seen = True
                 continue
 
+            if not header_seen or not col_map:
+                continue
+
             try:
-                num = int(parts[col_map.get("num", 0)])
-                pg_id = int(parts[col_map.get("pg_id", 1)])
-                status_cell = parts[col_map.get("status", 4)]
+                num = int(raw_parts[col_map.get("num", 0)])
+                pg_id = int(raw_parts[col_map.get("pg_id", 1)])
+                status_cell = raw_parts[col_map.get("status", 4)]
                 if "[x]" in status_cell:
                     status = "done"
                 elif "[~]" in status_cell:
@@ -96,16 +104,16 @@ def load_queue() -> list[dict]:
                     status = "pending"
 
                 scan_col = col_map.get("scan_id", 5)
-                scan_id = parts[scan_col] if scan_col < len(parts) else ""
-                # Filter out non-scan notes that ended up in the scan column
+                scan_id = raw_parts[scan_col] if scan_col < len(raw_parts) else ""
+                # Filter out non-scan values
                 if scan_id and not re.match(r'^[a-zA-Z0-9._-]+$', scan_id):
                     scan_id = ""
 
                 entries.append({
                     "num": num,
                     "pg_id": pg_id,
-                    "title": parts[col_map.get("title", 2)],
-                    "author": parts[col_map.get("author", 3)],
+                    "title": raw_parts[col_map.get("title", 2)],
+                    "author": raw_parts[col_map.get("author", 3)],
                     "status": status,
                     "scan_id": scan_id,
                 })
@@ -185,8 +193,8 @@ def cleanup_old_caches(keep_running_pg: str | None = None):
 
 def check_pipeline_output(pg_id: int) -> dict:
     """Check if pipeline produced valid output for a PG ID."""
-    reports = list(REPORTS_DIR.glob(f"gutenberg{pg_id}-*_errata_email*.txt"))
-    jsons = list(REPORTS_DIR.glob(f"gutenberg{pg_id}-*_errata*.json"))
+    reports = sorted(REPORTS_DIR.glob(f"gutenberg{pg_id}-*_errata_email*.txt"))
+    jsons = sorted(REPORTS_DIR.glob(f"gutenberg{pg_id}-*_errata*.json"))
 
     email_report = reports[-1] if reports else None
     json_report = jsons[-1] if jsons else None
@@ -196,7 +204,7 @@ def check_pipeline_output(pg_id: int) -> dict:
     if email_report:
         try:
             text = email_report.read_text()
-            candidate_count = text.count("\nPage ")  # "Page N:" format
+            candidate_count = text.count("Page ")  # "Page N:" format per error
         except Exception:
             pass
 
