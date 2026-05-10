@@ -2,6 +2,8 @@
 
 **Automated errata detection for Project Gutenberg.** Compares published PG texts against original page scans from the Internet Archive to find transcription errors, producing errata-submission-ready reports.
 
+**DISCLAIMER** Although every effort has been made to reduce false positives, errata from this tool should never be sent as-is.  Always review the results, delete false positives, and then send your human curated errata email.  This project is not responsible for irresponsible errata reports, and has intentionally made the choice to not allow automated reporting to keep you, the human, in the loop.  **Read and heed!**
+
 ## How It Works
 
 1. **Fetch** the PG text (HTML or plain text) and the corresponding source scan from the Internet Archive

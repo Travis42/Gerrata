@@ -371,7 +371,7 @@ class TestReportGenerator:
         assert "walked" not in email_content
 
         # Summary should show 1 error found
-        assert "I found 1 errors" in email_content
+        # error count removed from email output
 
     def test_errata_email_deduplicates_by_offset(self, generator_with_context, sample_metadata):
         """Test that errors within 50 chars offset proximity are deduplicated."""
@@ -429,7 +429,7 @@ class TestReportGenerator:
         email_content = generator_with_context.generate_errata_email(report)
 
         # Should show 2 errors found (one deduped, one far away)
-        assert "I found 2 errors" in email_content
+        # error count removed from email output
         # tne==>the should appear only once (deduped)
         assert email_content.count("tne ==> the") == 1
         # respecters should appear
@@ -489,7 +489,7 @@ class TestReportGenerator:
         email_content = generator.generate_errata_email(report)
 
         # Error with scan_page=0 will show — still included if it passes filters
-        assert "I found 1 errors" in email_content
+        # error count removed from email output
 
     def test_errata_email_post_dedup_filters(self, generator, sample_metadata):
         """Test punctuation-only and quote-start fragment post-dedup filters."""

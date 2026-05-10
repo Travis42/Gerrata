@@ -804,9 +804,7 @@ class ReportGenerator:
 
         lines.append("")
 
-        if deduplicated:
-            lines.append(f"I found {len(deduplicated)} errors:")
-        else:
+        if not deduplicated:
             lines.append("I found no errors requiring correction.")
             return "\n".join(lines)
 
