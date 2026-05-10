@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Sequential errata pipeline runner
 # Runs each book in order: download → pipeline → verify → cleanup → next
-set -euo pipefail
+set -uo pipefail
+# NOTE: intentionally NOT using 'set -e' because gerrata exits with code 2
+# (non-fatal) on success. We check output instead.
 
 REPO="/root/projects/gerrata"
 cd "$REPO"
@@ -12,7 +14,6 @@ CONCURRENCY=10
 
 # Queue: PG_ID|IA_SCAN_ID|DESCRIPTION
 QUEUE=(
-  "1342|prideprejudice00aust|Pride and Prejudice"
   "145|middlemarch01elio|Middlemarch"
   "11|aliceinwonderlan0000unse_v9s1|Alice in Wonderland"
   "1513|2tragedyofromeoj00shakuoft|Romeo and Juliet"
