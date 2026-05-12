@@ -40,15 +40,21 @@ def save_intermediate(cache_dir: Path, name: str, data) -> None:
     """Save intermediate pipeline result for re-running later steps."""
     cache_dir.mkdir(parents=True, exist_ok=True)
     path = cache_dir / f"{name}.json"
-    serializable = data
-    if hasattr(data, '__dict__'):
-        from dataclasses import asdict
-        serializable = asdict(data)
-    elif isinstance(data, list) and data and hasattr(data[0], 'to_dict'):
-        serializable = [item.to_dict() for item in data]
-    elif isinstance(data, list) and data and hasattr(data[0], '__dataclass_fields__'):
-        from dataclasses import asdict
-        serializable = [asdict(item) for item in data]
+
+    def _serialize(obj):
+        """Recursively serialize dataclasses and common types to JSON-safe forms."""
+        from dataclasses import asdict, is_dataclass
+        if isinstance(obj, dict):
+            return {k: _serialize(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [_serialize(item) for item in obj]
+        if is_dataclass(obj) and not isinstance(obj, type):
+            return _serialize(asdict(obj))
+        if hasattr(obj, 'to_dict'):
+            return _serialize(obj.to_dict())
+        return obj
+
+    serializable = _serialize(data)
     with open(path, 'w') as f:
         json.dump(serializable, f, indent=2, default=str)
     logging.getLogger(__name__).info(f"  Saved intermediate: {path}")
@@ -242,12 +248,17 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "01_pg_parsed")
         if not cached:
             raise ValueError(f"--resume-from={resume_from} but 01_pg_parsed.json not found in {intermed_dir}")
+        from gerrata.fetcher.pg import ChapterLocation
+        chapters = [
+            ChapterLocation(**ch) if isinstance(ch, dict) else ch
+            for ch in cached["chapters"]
+        ]
         parsed = PGParsedText(
             metadata=PGMetadata(title=cached["title"], author=cached["author"], pg_id=args.pg_id),
             body_text=cached["body_text"],
             full_text=cached["body_text"],  # full_text not saved separately; body_text is sufficient
             paragraphs=cached["paragraphs"],
-            chapters=cached["chapters"],
+            chapters=chapters,
         )
         console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
         console.print(f"  Title: {parsed.metadata.title}")

@@ -314,6 +314,9 @@ class ReportGenerator:
             return ""
 
         for chapter in self.pg_parsed_text.chapters:
+            # Handle chapters saved as strings (from save_intermediate fallback)
+            if isinstance(chapter, str):
+                continue
             if chapter.offset <= pg_offset < chapter.end_offset:
                 return chapter.title
 
