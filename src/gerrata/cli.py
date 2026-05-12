@@ -9,7 +9,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -24,6 +24,16 @@ from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.vision import VisionVerifier
 from gerrata.reporter.generator import ReportGenerator
 
+
+
+def load_intermediate(cache_dir: Path, name: str) -> Any | None:
+    """Load an intermediate pipeline result. Returns None if not found."""
+    path = cache_dir / f"{name}.json"
+    if not path.exists():
+        return None
+    with open(path) as f:
+        return json.load(f)
+    logging.getLogger(__name__).info(f"  Loaded intermediate: {path}")
 
 
 def save_intermediate(cache_dir: Path, name: str, data) -> None:
@@ -182,6 +192,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Cache directory for downloads",
     )
     parser.add_argument(
+        "--resume-from",
+        type=str,
+        choices=["pg-parsed", "transcriptions", "alignments", "candidates-raw", "candidates-filtered"],
+        default="",
+        help="Resume pipeline from an intermediate save point. "
+             "Requires cached results in the scan ID cache directory.",
+    )
+    parser.add_argument(
         "--concurrency",
         type=int,
         default=5,
@@ -217,79 +235,119 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     scan_id = args.scan_id
     page_range = parse_page_range(args.page_range)
     intermed_dir = cache_dir / scan_id if scan_id else cache_dir / f"pg{args.pg_id}"
+    resume_from = args.resume_from
 
     # Step 1: Parse PG text
-    console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
-    if args.pg_file:
-        parsed = pg_fetcher.parse_file(args.pg_file)
+    if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
+        cached = load_intermediate(intermed_dir, "01_pg_parsed")
+        if not cached:
+            raise ValueError(f"--resume-from={resume_from} but 01_pg_parsed.json not found in {intermed_dir}")
+        parsed = PGParsedText(
+            metadata=PGMetadata(title=cached["title"], author=cached["author"], pg_id=args.pg_id),
+            body_text=cached["body_text"],
+            paragraphs=cached["paragraphs"],
+            chapters=cached["chapters"],
+        )
+        console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
+        console.print(f"  Title: {parsed.metadata.title}")
+        console.print(f"  Author: {parsed.metadata.author}")
+        console.print(f"  Body: {len(parsed.body_text):,} chars, {len(parsed.paragraphs)} paragraphs")
+        console.print(f"  Chapters: {len(parsed.chapters)}")
+        console.print(f"  [dim]Resumed from 01_pg_parsed[/dim]")
     else:
-        pg_path = await pg_fetcher.download(args.pg_id, dest=cache_dir or Path("./cache"))
-        parsed = pg_fetcher.parse_file(pg_path)
+        console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
+        if args.pg_file:
+            parsed = pg_fetcher.parse_file(args.pg_file)
+        else:
+            pg_path = await pg_fetcher.download(args.pg_id, dest=cache_dir or Path("./cache"))
+            parsed = pg_fetcher.parse_file(pg_path)
 
-    console.print(f"  Title: {parsed.metadata.title}")
-    console.print(f"  Author: {parsed.metadata.author}")
-    console.print(f"  Body: {len(parsed.body_text):,} chars, {len(parsed.paragraphs)} paragraphs")
-    console.print(f"  Chapters: {len(parsed.chapters)}")
-    save_intermediate(intermed_dir, "01_pg_parsed", {
-        "title": parsed.metadata.title,
-        "author": parsed.metadata.author,
-        "body_text": parsed.body_text,
-        "paragraphs": parsed.paragraphs,
-        "chapters": parsed.chapters,
-    })
-    console.print(f"  Mode: {'[green]vision-first[/green]' if vision_mode else '[yellow]OCR-based[/yellow]'}")
+        console.print(f"  Title: {parsed.metadata.title}")
+        console.print(f"  Author: {parsed.metadata.author}")
+        console.print(f"  Body: {len(parsed.body_text):,} chars, {len(parsed.paragraphs)} paragraphs")
+        console.print(f"  Chapters: {len(parsed.chapters)}")
+        save_intermediate(intermed_dir, "01_pg_parsed", {
+            "title": parsed.metadata.title,
+            "author": parsed.metadata.author,
+            "body_text": parsed.body_text,
+            "paragraphs": parsed.paragraphs,
+            "chapters": parsed.chapters,
+        })
+        console.print(f"  Mode: {'[green]vision-first[/green]' if vision_mode else '[yellow]OCR-based[/yellow]'}")
+
+    # Determine vision_mode when resuming — check if transcriptions cache exists
+    if resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
+        cached_transcriptions = load_intermediate(intermed_dir, "02_transcriptions")
+        vision_mode = cached_transcriptions is not None
 
     # Step 2: Get page images (vision mode) or load OCR (OCR mode)
     alignments = []
     scan_pages = []
 
     if vision_mode:
-        console.print("[bold blue]Step 2:[/bold blue] Getting page images...")
-
-        # Get page image paths
-        page_images: list[Path] = []
-
-        if args.pages_dir:
-            # Use pre-extracted pages
-            pages_dir = Path(args.pages_dir)
-            page_images = scan_fetcher.get_cached_pages(pages_dir)
-            console.print(f"  Loaded {len(page_images)} pre-extracted pages from {pages_dir}")
-        elif args.jp2_zip:
-            # Use local zip
-            zip_path = Path(args.jp2_zip)
-            extract_dir = zip_path.parent / "pages"
-            page_images = scan_fetcher.extract_jp2_zip(
-                zip_path, dest=extract_dir, page_range=page_range
-            )
-            console.print(f"  Extracted {len(page_images)} pages from {zip_path.name}")
-        elif scan_id:
-            # Download zip from IA
-            if not scan_id:
-                raise ValueError("--scan-id is required for vision mode without --pages-dir or --jp2-zip")
-
-            zip_path = await scan_fetcher.download_jp2_zip(
-                identifier=scan_id,
-                dest=cache_dir or Path("./cache"),
-            )
-            extract_dir = (cache_dir or Path("./cache")) / "pages"
-            page_images = scan_fetcher.extract_jp2_zip(
-                zip_path, dest=extract_dir, page_range=page_range
-            )
-            console.print(f"  Downloaded and extracted {len(page_images)} pages")
+        if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
+            # Resuming — load transcriptions from cache
+            cached = load_intermediate(intermed_dir, "02_transcriptions")
+            if not cached:
+                raise ValueError(f"--resume-from={resume_from} but 02_transcriptions.json not found in {intermed_dir}")
+            from gerrata.aligner.vision_aligner import PageTranscription
+            successful = [PageTranscription(
+                page_num=t["page_num"],
+                image_path=Path(t["image_path"]) if t.get("image_path") else None,
+                transcription=t["transcription"],
+                transcription_cleaned=t.get("transcription_cleaned"),
+                success=t["success"],
+                error=t.get("error"),
+            ) for t in cached]
+            transcriptions = successful
+            console.print(f"  [dim]Resumed {len(successful)} transcriptions from 02_transcriptions[/dim]")
         else:
-            raise ValueError(
-                "Vision mode requires --scan-id, --pages-dir, or --jp2-zip"
-            )
+            console.print("[bold blue]Step 2:[/bold blue] Getting page images...")
 
-        if not page_images:
-            console.print("[red]No page images found. Cannot proceed in vision mode.[/red]")
-            raise ValueError("No page images available")
+            # Get page image paths
+            page_images: list[Path] = []
 
-        # Step 3: Transcribe pages with vision model
-        console.print("[bold blue]Step 3:[/bold blue] Transcribing pages with vision model...")
+            if args.pages_dir:
+                # Use pre-extracted pages
+                pages_dir = Path(args.pages_dir)
+                page_images = scan_fetcher.get_cached_pages(pages_dir)
+                console.print(f"  Loaded {len(page_images)} pre-extracted pages from {pages_dir}")
+            elif args.jp2_zip:
+                # Use local zip
+                zip_path = Path(args.jp2_zip)
+                extract_dir = zip_path.parent / "pages"
+                page_images = scan_fetcher.extract_jp2_zip(
+                    zip_path, dest=extract_dir, page_range=page_range
+                )
+                console.print(f"  Extracted {len(page_images)} pages from {zip_path.name}")
+            elif scan_id:
+                # Download zip from IA
+                if not scan_id:
+                    raise ValueError("--scan-id is required for vision mode without --pages-dir or --jp2-zip")
 
-        models = [args.vision_model] if args.vision_model else None
-        transcriber = VisionTranscriber(
+                zip_path = await scan_fetcher.download_jp2_zip(
+                    identifier=scan_id,
+                    dest=cache_dir or Path("./cache"),
+                )
+                extract_dir = (cache_dir or Path("./cache")) / "pages"
+                page_images = scan_fetcher.extract_jp2_zip(
+                    zip_path, dest=extract_dir, page_range=page_range
+                )
+                console.print(f"  Downloaded and extracted {len(page_images)} pages")
+            else:
+                raise ValueError(
+                    "Vision mode requires --scan-id, --pages-dir, or --jp2-zip"
+                )
+
+            if not page_images:
+                console.print("[red]No page images found. Cannot proceed in vision mode.[/red]")
+                raise ValueError("No page images available")
+
+            # Step 3: Transcribe pages with vision model
+            console.print("[bold blue]Step 3:[/bold blue] Transcribing pages with vision model...")
+
+            models = [args.vision_model] if args.vision_model else None
+            transcriber = VisionTranscriber(
             api_url=args.vision_url,
             api_key=args.vision_key or None,
             models=models,
@@ -298,14 +356,15 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             cache_file=f"cache/{scan_id}_transcriptions.json",
         )
 
-        transcriptions = await transcriber.transcribe_pages(page_images)
-        successful = [t for t in transcriptions if t.success]
-        console.print(f"  Transcribed {len(successful)}/{len(transcriptions)} pages")
-        save_intermediate(intermed_dir, "02_transcriptions", successful)
+            transcriptions = await transcriber.transcribe_pages(page_images)
+            successful = [t for t in transcriptions if t.success]
+            console.print(f"  Transcribed {len(successful)}/{len(transcriptions)} pages")
+            save_intermediate(intermed_dir, "02_transcriptions", successful)
 
-        if not successful:
-            console.print("[red]All transcriptions failed. Falling back to OCR mode.[/red]")
-            vision_mode = False
+            if not successful:
+                console.print("[red]All transcriptions failed. Falling back to OCR mode.[/red]")
+                vision_mode = False
+            # end else (non-resume) block for Steps 2-3
 
     if not vision_mode:
         # OCR-based pipeline (original)
@@ -345,7 +404,35 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             )
             scan_pages = scan_data.pages
 
-    if vision_mode and successful:
+    if vision_mode and resume_from in ("candidates-raw", "candidates-filtered"):
+        # Resume from alignments cache
+        cached = load_intermediate(intermed_dir, "03_alignments")
+        if not cached:
+            raise ValueError(f"--resume-from={resume_from} but 03_alignments.json not found in {intermed_dir}")
+        from gerrata.models import Alignment, AlignmentMethod
+        alignments = [Alignment(
+            pg_start=a["pg_start"],
+            pg_end=a["pg_end"],
+            scan_page=a["scan_page"],
+            scan_image_path=a.get("scan_image_path", ""),
+            confidence=a.get("confidence", 0),
+            method=AlignmentMethod(a.get("method", "llm_vision")),
+        ) for a in cached]
+
+        cached_pages = load_intermediate(intermed_dir, "03_scan_pages")
+        if cached_pages:
+            from gerrata.fetcher.scans import ScanPage
+            scan_pages = [ScanPage(
+                page_num=p["page_num"],
+                ocr_text=p.get("ocr_text", ""),
+                vision_text=p.get("vision_text", ""),
+                image_path=Path(p["image_path"]) if p.get("image_path") else None,
+            ) for p in cached_pages]
+
+        alignment_confidence = VisionAligner().alignment_confidence(alignments, len(parsed.body_text))
+        console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
+        console.print(f"  [dim]Resumed {len(alignments)} alignments from 03_alignments (coverage {alignment_confidence:.0%})[/dim]")
+    elif vision_mode and successful:
         # Align transcriptions to PG text
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
         vision_aligner = VisionAligner(match_threshold=0.35, min_match_chars=40)
@@ -372,15 +459,32 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
     # Step 5: Text diff
     step_num = 5 if vision_mode else 4
-    console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
-    checker = TextDiffChecker()
-    candidates = checker.check_all_alignments(
-        pg_text=parsed.body_text,
-        alignments=alignments,
-        scan_pages=scan_pages,
-    )
-    console.print(f"  Raw candidates: {len(candidates)}")
-    save_intermediate(intermed_dir, "04_candidates_raw", candidates)
+    if resume_from == "candidates-filtered":
+        cached = load_intermediate(intermed_dir, "04_candidates_raw")
+        if not cached:
+            raise ValueError("--resume-from=candidates-filtered but 04_candidates_raw.json not found")
+        from gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
+        candidates = []
+        for c in cached:
+            # Reconstruct enums that were serialized as strings
+            c_copy = dict(c)
+            if "category" in c_copy and isinstance(c_copy["category"], str):
+                c_copy["category"] = ErrorCategory(c_copy["category"])
+            if "severity" in c_copy and isinstance(c_copy["severity"], str):
+                c_copy["severity"] = ErrorSeverity(c_copy["severity"])
+            candidates.append(CandidateError(**c_copy))
+        console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
+        console.print(f"  [dim]Resumed {len(candidates)} raw candidates from 04_candidates_raw[/dim]")
+    else:
+        console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
+        checker = TextDiffChecker()
+        candidates = checker.check_all_alignments(
+            pg_text=parsed.body_text,
+            alignments=alignments,
+            scan_pages=scan_pages,
+        )
+        console.print(f"  Raw candidates: {len(candidates)}")
+        save_intermediate(intermed_dir, "04_candidates_raw", candidates)
 
     # Step 6: False positive filter
     console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
