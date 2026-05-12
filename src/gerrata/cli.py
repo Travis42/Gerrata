@@ -245,6 +245,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         parsed = PGParsedText(
             metadata=PGMetadata(title=cached["title"], author=cached["author"], pg_id=args.pg_id),
             body_text=cached["body_text"],
+            full_text=cached["body_text"],  # full_text not saved separately; body_text is sufficient
             paragraphs=cached["paragraphs"],
             chapters=cached["chapters"],
         )

@@ -65,6 +65,34 @@ gerrata 43 \
   -o reports
 ```
 
+### Resuming from an Intermediate Step
+
+The pipeline saves intermediate results at each step. If you want to re-run from a specific step (e.g., after fixing a bug in the aligner), use `--resume-from`:
+
+```bash
+# Re-run from alignment (skips PG parsing, page extraction, and transcription)
+gerrata 2701 \
+  --scan-id mobydick0001herm \
+  --resume-from alignments \
+  --vision-url "https://openrouter.ai/api/v1/chat/completions" \
+  --vision-key "$OPENROUTER_KEY" \
+  --vision-model "qwen/qwen3-vl-8b-instruct" \
+  --verify-model "mistralai/mistral-small-3.2-24b-instruct" \
+  -o reports
+```
+
+Available resume points:
+
+| Resume point | What it skips | When to use |
+|---|---|---|
+| `pg-parsed` | PG text download + parse | Testing alignment or later steps |
+| `transcriptions` | + page images + vision transcription | Testing alignment, diff, or later steps |
+| `alignments` | + alignment computation | Testing diff, filtering, verification, or reporting |
+| `candidates-raw` | + text diff | Testing filtering, verification, or reporting |
+| `candidates-filtered` | + false positive filtering | Testing verification or reporting |
+
+Intermediate files are saved in `cache/{scan-id}/` (e.g., `cache/mobydick0001herm/01_pg_parsed.json`, `02_transcriptions.json`, etc.).
+
 ### Skip Verification (Fast/Free)
 
 Omit LLM verification if you just want raw diffs:
