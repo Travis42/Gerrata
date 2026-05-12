@@ -10,16 +10,15 @@
 - [ ] `compute_line_number(pg_offset, pg_text)` method exists in `ReportGenerator` — takes raw offset and text, returns HTML file line number
 - [ ] The pipeline reads the PG HTML file and has the raw body text + offsets — line number computation should happen when errors are finalized
 
-## Upcoming
+## In Progress
 
-### Fix vision aligner producing 87% misaligned page mappings
-- Root cause: LLM-based text matching in `vision_aligner.py` maps wrong PG text to scan pages
-- Symptom: PG text from one chapter compared against scan page from completely different chapter
-- Impact: nearly all "submit-ready" errors are artifacts of bad alignment, not real errors
-- Audit data (Moby Dick): 475 filtered candidates, 384 misaligned (87%), across pages 42-336
-- Key observations:
-  - First ~20 alignments (scans 29-50) are severely off — front matter scrambled
-  - Mid-book has major jumps: alignment 240 has scan gap=233, alignment 10 has scan BACKWARD + PG gap=268K
-  - Only 13% of candidates have correctly aligned PG text and scan page content
-  - The verifier receives mismatched content and hallucinates corrections
-- Needs deep investigation into the vision_aligner.py matching algorithm
+### Fix vision aligner brute-force fallback ignoring sequential constraint
+- **Status**: Codemaster implementing fix
+- **Root cause**: Brute-force chunk loop in `align_transcription_to_pg()` (~line 1390-1428) iterates ALL `pg_chunks` without checking `[search_start, search_end]` bounds
+- **The RETAS and n-gram paths correctly enforce the constraint**, but the fallback does not
+- **Impact**: Sequential constraint is the mechanism ensuring each page maps to PG text after the previous page. Without it:
+  - Short front-matter pages match random chunks anywhere in PG
+  - Wrong `search_start` cascades to subsequent pages
+  - 87% misalignment rate (Moby Dick: 384/475 candidates wrong)
+- **Fix**: Add `effective_start - 200` / `effective_end + 200` bounds check to chunk loop (mirrors existing paragraph loop pattern)
+- **After fix**: Re-run Moby Dick pipeline to verify alignment quality

@@ -1389,16 +1389,21 @@ class VisionAligner:
                 chunk_norm = normalize_for_matching(chunk)
                 if len(chunk_norm) < self.min_match_chars:
                     continue
+                chunk_prefix = chunk[:80]
+                idx = pg_text.find(chunk_prefix)
+                if idx == -1:
+                    continue
+                if idx < effective_start - 200:
+                    continue
+                if effective_end != len(pg_norm) and idx > effective_end + 200:
+                    continue
                 score = SequenceMatcher(None, trans_norm, chunk_norm).ratio()
                 weighted = score * (1.0 + 0.3 * min(1.0, len(chunk_norm) / 500.0))
                 if weighted > best_score:
                     best_score = weighted
                     best_match_len = len(chunk_norm)
-                    chunk_prefix = chunk[:80]
-                    idx = pg_text.find(chunk_prefix)
-                    if idx != -1:
-                        best_pg_start = idx
-                        best_pg_end = idx + len(chunk)
+                    best_pg_start = idx
+                    best_pg_end = idx + len(chunk)
 
         # Use raw score (unweighted) for threshold check
         raw_score = best_score / (1.0 + 0.3 * min(1.0, best_match_len / 500.0)) if best_match_len else 0.0
