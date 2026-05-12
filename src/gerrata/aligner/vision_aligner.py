@@ -182,6 +182,7 @@ class VisionAlignmentResult:
     transcription: PageTranscription
     matched_pg_chunks: list[str] = field(default_factory=list)
     best_score: float = 0.0
+    anchored: bool = True  # True if RETAS found unique word anchors; False for brute-force only
 
 
 class VisionTranscriber:
@@ -1142,6 +1143,7 @@ class VisionAligner:
         best_pg_start = 0
         best_pg_end = 0
         best_match_len = 0
+        was_anchored = False  # Track whether match came from RETAS/n-gram anchors
 
         # ── Phase 1: RETAS unique word anchoring (preferred) ──
         anchor_result = self._find_unique_word_anchor(
@@ -1271,6 +1273,7 @@ class VisionAligner:
                         best_score = weighted_score
                         best_match_len = best_pg_end - best_pg_start
                         best_pg_end = min(best_pg_end, len(pg_text))
+                        was_anchored = True
 
                         logger.debug(
                             f"  RETAS final: pg_text[{best_pg_start}:{best_pg_end}], "
@@ -1297,6 +1300,7 @@ class VisionAligner:
                 if win_score > self.match_threshold * 0.4:
                     best_score = win_score * (1.0 + 0.3 * min(1.0, (win_end - win_start) / 500.0))
                     best_match_len = win_end - win_start
+                    was_anchored = True
 
                     if win_start < len(norm_map):
                         best_pg_start = norm_map[win_start]
@@ -1358,6 +1362,7 @@ class VisionAligner:
                     best_pg_start = para_best_start
                     best_pg_end = para_best_end
                     best_match_len = para_best_len
+                    was_anchored = True
 
         # ── Final fallback: Brute-force matching ──
         if best_score == 0:
@@ -1442,6 +1447,7 @@ class VisionAligner:
             alignment=alignment,
             transcription=transcription,
             best_score=best_score,
+            anchored=was_anchored,
         )
 
     def align_all_pages(
@@ -1503,12 +1509,16 @@ class VisionAligner:
             )
             if result:
                 results.append(result)
-                # Advance search_start to the end of this match for sequential constraint
-                # This ensures the next page searches after the current page's content
-                search_start = result.alignment.pg_end
+                # Only advance search_start for anchored matches (RETAS/n-gram).
+                # Brute-force matches are positionally unreliable — they can match
+                # short text to random locations, which would poison the constraint
+                # for all subsequent pages.
+                if result.anchored:
+                    search_start = result.alignment.pg_end
                 logger.info(
                     f"Page {trans.page_num}: matched PG [{result.alignment.pg_start}:{result.alignment.pg_end}] "
-                    f"(score={result.best_score:.2f}, conf={result.alignment.confidence:.2f})"
+                    f"(score={result.best_score:.2f}, conf={result.alignment.confidence:.2f}"
+                    f"{'' if result.anchored else ', brute-force (not advancing constraint)'})"
                 )
             else:
                 logger.debug(f"Page {trans.page_num}: no match found")
