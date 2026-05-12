@@ -1071,6 +1071,151 @@ class VisionAligner:
         return score, pg_start_approx, pg_end_approx
 
     @staticmethod
+    def _find_all_positions(text: str, phrase: str) -> list[int]:
+        """Find all character positions where phrase occurs in text."""
+        positions = []
+        start = 0
+        while True:
+            idx = text.find(phrase, start)
+            if idx == -1:
+                break
+            positions.append(idx)
+            start = idx + 1
+        return positions
+
+    def _grow_string_anchor(
+        self,
+        trans_norm: str,
+        pg_norm: str,
+        search_start: int = 0,
+        search_end: int = -1,
+        min_word_len: int = 3,
+    ) -> tuple[int | None, bool]:
+        """Grow a string from scan transcription until unique match in PG.
+
+        Returns (pg_char_position, is_confident) or (None, False).
+        """
+        if search_end == -1:
+            search_end = len(pg_norm)
+        pg_search = pg_norm[search_start:search_end]
+
+        trans_words = trans_norm.split()
+        if len(trans_words) < 2:
+            return None, False
+
+        # Skip leading short words
+        start_idx = 0
+        while start_idx < len(trans_words) and len(trans_words[start_idx]) < min_word_len:
+            start_idx += 1
+
+        if start_idx >= len(trans_words):
+            return None, False
+
+        # Try forward growth (from scan start)
+        result = self._grow_forward(trans_words, start_idx, pg_search)
+
+        if result is not None:
+            pg_pos, n_words, is_unique = result
+            # Validate: does the matched PG region also match in the scan?
+            if is_unique and self._validate_anchor(pg_search, pg_pos, n_words, trans_norm):
+                return search_start + pg_pos, True
+            elif not is_unique:
+                # Multiple matches — use the first one but mark unconfident
+                return search_start + pg_pos, False
+
+        # Try backward growth (from scan end)
+        result = self._grow_backward(trans_words, pg_search)
+        if result is not None:
+            pg_pos, n_words, is_unique = result
+            return search_start + pg_pos, is_unique
+
+        return None, False
+
+    def _grow_forward(
+        self,
+        trans_words: list[str],
+        start_idx: int,
+        pg_search: str,
+    ) -> tuple[int, int, bool] | None:
+        """Grow word string forward from start_idx until unique match."""
+        last_match_count = 0
+        last_match_pos = -1
+
+        for n in range(1, len(trans_words) - start_idx + 1):
+            phrase = " ".join(trans_words[start_idx : start_idx + n])
+
+            # Find all matches in PG search region
+            positions = self._find_all_positions(pg_search, phrase)
+            match_count = len(positions)
+
+            if match_count == 0:
+                # String has diverged (OCR error or edition difference)
+                # Return last known position if we had one
+                if last_match_count > 0 and last_match_pos >= 0:
+                    return last_match_pos, n - 1, False  # unconfident
+                return None
+
+            if match_count == 1:
+                return positions[0], n, True  # confident
+
+            # match_count > 1: still ambiguous, keep growing
+            # Track first match position as fallback
+            last_match_count = match_count
+            last_match_pos = positions[0]
+
+        # Exhausted all words without uniqueness
+        if last_match_count > 0:
+            return last_match_pos, len(trans_words) - start_idx, False
+        return None
+
+    def _grow_backward(
+        self,
+        trans_words: list[str],
+        pg_search: str,
+    ) -> tuple[int, int, bool] | None:
+        """Grow word string backward from end of scan transcription."""
+        last_match_count = 0
+        last_match_pos = -1
+
+        for n in range(1, len(trans_words) + 1):
+            end_idx = len(trans_words) - n + 1
+            start_idx = max(0, end_idx - n)
+            phrase = " ".join(trans_words[start_idx:end_idx])
+
+            positions = self._find_all_positions(pg_search, phrase)
+            match_count = len(positions)
+
+            if match_count == 0:
+                if last_match_count > 0 and last_match_pos >= 0:
+                    return last_match_pos, n - 1, False
+                return None
+
+            if match_count == 1:
+                return positions[0], n, True
+
+            last_match_count = match_count
+            last_match_pos = positions[0]
+
+        if last_match_count > 0:
+            return last_match_pos, len(trans_words), False
+        return None
+
+    def _validate_anchor(
+        self,
+        pg_search: str,
+        pg_pos: int,
+        n_words: int,
+        trans_norm: str,
+    ) -> bool:
+        """Validate anchor by checking PG region also appears uniquely in scan."""
+        pg_words = pg_search[pg_pos:].split()[:n_words]
+        if len(pg_words) < 2:
+            return False
+        pg_phrase = " ".join(pg_words)
+        count = self._find_all_positions(trans_norm, pg_phrase)
+        return len(count) == 1
+
+    @staticmethod
     def _map_norm_to_raw(norm_pos: int, raw_text: str, raw_len: int) -> int:
         """Map a position in normalized text back to the original raw text.
 
@@ -1346,6 +1491,49 @@ class VisionAligner:
                             f"  RETAS final: pg_text[{best_pg_start}:{best_pg_end}], "
                             f"score={best_ratio:.3f}"
                         )
+        # ── Phase 1.5: Growing-String Anchor (GSA) ──
+        if best_score == 0:
+            gsa_pos, gsa_confident = self._grow_string_anchor(
+                trans_norm, pg_norm,
+                search_start=effective_start,
+                search_end=effective_end,
+            )
+
+            if gsa_pos is not None:
+                logger.debug(
+                    f"Page {scan_page}: GSA anchor at pg_norm[{gsa_pos}] "
+                    f"(confident={gsa_confident})"
+                )
+
+                # Use GSA position as anchor estimate, then do sliding window
+                window_size = int(len(trans_norm) * 1.2)
+                best_sliding_score = 0.0
+                search_range = 200  # tighter than RETAS since GSA is more precise
+                step_size = 25
+
+                for offset in range(-search_range, search_range + 1, step_size):
+                    start_pos = max(0, gsa_pos + offset)
+                    end_pos = min(len(pg_text), start_pos + window_size)
+                    pg_window = pg_text[start_pos:end_pos]
+                    pg_window_norm = normalize_for_matching(pg_window)
+
+                    if len(pg_window_norm) >= len(trans_norm) * 0.5:
+                        score = SequenceMatcher(None, trans_norm, pg_window_norm).ratio()
+                        if score > best_sliding_score:
+                            best_sliding_score = score
+                            best_pg_start = start_pos
+                            best_pg_end = end_pos
+
+                if best_sliding_score > self.match_threshold:
+                    best_pg_raw = pg_text[best_pg_start:best_pg_end]
+                    best_pg_norm_window = normalize_for_matching(best_pg_raw)
+                    final_score = SequenceMatcher(None, trans_norm, best_pg_norm_window).ratio()
+
+                    best_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
+                    best_match_len = best_pg_end - best_pg_start
+                    best_pg_end = min(best_pg_end, len(pg_text))
+                    was_anchored = gsa_confident  # only advance constraint if confident
+
         # ── Fallback: N-gram anchoring if RETAS found no anchors ──
         if best_score == 0:
             anchor_pos, anchor_len = self._anchor_transcription(
