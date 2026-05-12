@@ -242,6 +242,67 @@ class PageTranscription:
 
 
 @dataclass
+class SequentialTracker:
+    """Tracks confirmed match positions for sequential search estimation."""
+
+    matches: list[tuple[int, int, float, int]] = field(default_factory=list)
+    # Each entry: (page_num, pg_end_offset, confidence_score, match_length)
+
+    @property
+    def last_confirmed_position(self) -> int:
+        """Most recent match end from HIGH or MEDIUM confidence matches."""
+        for _pn, offset, confidence, _ml in reversed(self.matches):
+            if confidence >= 0.40:
+                return offset
+        return 0
+
+    @property
+    def last_confirmed_page(self) -> int:
+        """Page number of the most recent HIGH or MEDIUM confidence match."""
+        for pn, _off, confidence, _ml in reversed(self.matches):
+            if confidence >= 0.40:
+                return pn
+        return 0
+
+    @property
+    def chars_per_page(self) -> float:
+        """Estimated chars per page from recent confirmed matches."""
+        recent = [(pn, off) for pn, off, conf, _ml in self.matches if conf >= 0.40]
+        if len(recent) < 2:
+            return 1500.0  # Default estimate
+        recent = recent[-10:]
+        total_chars = recent[-1][1] - recent[0][1]
+        total_pages = recent[-1][0] - recent[0][0]
+        return max(500.0, total_chars / max(1, total_pages))
+
+    def expected_position(self, page_num: int) -> int:
+        """Estimate where page_num's content should start in PG text."""
+        last_pos = self.last_confirmed_position
+        last_page = self.last_confirmed_page
+        pages_gap = page_num - last_page
+        if pages_gap <= 0:
+            return last_pos
+        return last_pos + int(pages_gap * self.chars_per_page)
+
+    def record(self, page_num: int, pg_end: int, confidence: float, match_length: int):
+        """Record a confirmed match."""
+        self.matches.append((page_num, pg_end, confidence, match_length))
+
+    def search_window(self, page_num: int, pg_text_length: int) -> tuple[int, int]:
+        """Return (start, end) search window centered on expected position."""
+        expected = self.expected_position(page_num)
+        start = max(0, expected - 2000)
+        end = min(pg_text_length, expected + 8000)
+        return (start, end)
+
+
+# Alignment phase thresholds
+CHAPTER_THRESHOLD = 0.50
+SEQUENTIAL_THRESHOLD = 0.40
+GLOBAL_THRESHOLD = 0.35
+
+
+@dataclass
 class VisionAlignmentResult:
     """Result of aligning a page to PG text."""
 
@@ -1312,6 +1373,7 @@ class VisionAligner:
         scan_page: int = 0,
         search_start: int = 0,
         search_end: int = -1,
+        min_score: float = 0.35,
     ) -> VisionAlignmentResult | None:
         """Align a single page transcription to PG text.
 
@@ -1326,9 +1388,10 @@ class VisionAligner:
             scan_page: Scan page number.
             search_start: Only search PG text from this offset (for sequential constraint).
             search_end: Only search PG text up to this offset (-1 = end).
+            min_score: Minimum score to accept (default 0.35).
 
         Returns:
-            VisionAlignmentResult if a match is found, None otherwise.
+            VisionAlignmentResult if a match is found (score >= min_score), None otherwise.
         """
         if not transcription.success or not transcription.transcription:
             return None
@@ -1698,6 +1761,13 @@ class VisionAligner:
             method=AlignmentMethod.LLM_VISION,
         )
 
+        # Check minimum score threshold
+        if best_score < min_score:
+            logger.debug(
+                f"Page {scan_page}: score {best_score:.3f} below threshold {min_score:.2f}"
+            )
+            return None
+
         return VisionAlignmentResult(
             alignment=alignment,
             transcription=transcription,
@@ -1813,146 +1883,237 @@ class VisionAligner:
         pg_paragraphs: list[str],
         chapters: list | None = None,
     ) -> list[VisionAlignmentResult]:
-        """Align all page transcriptions to PG text.
+        """Align all page transcriptions to PG text using three-phase fallback.
 
-        Pages are processed in reading order. When chapter boundaries are
-        available, each page is constrained to the current chapter's PG text
-        region, dramatically reducing false anchor matches.
+        Phase 1 (chapter-constrained): Fast, usually correct. Requires score >= 0.50.
+        Phase 2 (sequential neighborhood): Covers drift. Requires score >= 0.40.
+        Phase 3 (global search): Guaranteed coverage. Requires score >= 0.35.
 
-        Args:
-            transcriptions: List of page transcription results.
-            pg_text: Full PG body text.
-            pg_paragraphs: PG paragraphs.
-            chapters: Optional list of ChapterLocation objects for per-chapter
-                search constraints.
-
-        Returns:
-            List of successful alignment results.
+        After forward pass, a backward repair pass fills remaining gaps
+        using bilateral constraints from neighboring confirmed matches.
         """
-        results: list[VisionAlignmentResult] = []
+        # Initialize results as list of None (same length as transcriptions)
+        results: list[VisionAlignmentResult | None] = [None] * len(transcriptions)
+        tracker = SequentialTracker()
+
         body_offset = find_body_start(pg_text)
         if body_offset > 0:
             logger.info(
                 f"Detected PG body start at offset {body_offset} "
                 f"({body_offset / len(pg_text) * 100:.1f}% of text), skipping TOC/front-matter"
             )
-        search_start = body_offset
-        search_end = len(pg_text)
 
-        # Chapter-based constraint tracking
+        # Parse chapters
+        real_chapters: list = []
         current_chapter_idx = -1
         if chapters:
-            # Filter to real chapters only: skip TOC entries which are
-            # tiny (20-100 chars between headings). Real chapters have
-            # body text between them (>1000 chars).
             real_chapters = [ch for ch in chapters if ch.end_offset - ch.offset > 1000]
             if not real_chapters:
-                real_chapters = chapters  # fallback: use all
-
-            # Replace chapters list with filtered version
-            chapters = real_chapters
-
-            # Find the first chapter at or after body_offset
-            for i, ch in enumerate(chapters):
+                real_chapters = chapters
+            for i, ch in enumerate(real_chapters):
                 if ch.offset >= body_offset:
                     current_chapter_idx = i
-                    search_start = ch.offset
                     break
-            if current_chapter_idx < 0 and chapters:
-                current_chapter_idx = len(chapters) - 1
+            if current_chapter_idx < 0 and real_chapters:
+                current_chapter_idx = len(real_chapters) - 1
             logger.info(
-                f"Chapter-based alignment: {len(chapters)} chapters, "
+                f"Soft alignment: {len(real_chapters)} chapters, "
                 f"starting at chapter {current_chapter_idx + 1} "
-                f"({chapters[current_chapter_idx].title if current_chapter_idx >= 0 else 'N/A'})"
+                f"({real_chapters[current_chapter_idx].title if current_chapter_idx >= 0 else 'N/A'})"
             )
 
-        # Normalize PG text once for n-gram indexing
-        pg_norm = normalize_for_matching(pg_text)
+        # -- Forward pass: three-phase alignment --
+        for i, trans in enumerate(transcriptions):
+            page_num = trans.page_num
 
-        for trans in transcriptions:
-            # Skip duplicate pages: check if this transcription is very similar
-            # to any already-aligned page (using cleaned transcription)
+            # Skip duplicate pages
             if trans.transcription_cleaned:
-                is_duplicate = False
-                for result in results:
-                    if result.transcription.transcription_cleaned:
-                        # Use SequenceMatcher to detect near-duplicate pages
+                is_dup = False
+                for r in results:
+                    if r and r.transcription.transcription_cleaned:
                         ratio = SequenceMatcher(
-                            None,
-                            trans.transcription_cleaned,
-                            result.transcription.transcription_cleaned
+                            None, trans.transcription_cleaned,
+                            r.transcription.transcription_cleaned
                         ).ratio()
                         if ratio > 0.9:
                             logger.info(
-                                f"Page {trans.page_num}: skipping duplicate "
-                                f"(ratio={ratio:.2f} vs page {result.transcription.page_num})"
+                                f"Page {page_num}: skipping duplicate "
+                                f"(ratio={ratio:.2f} vs page {r.transcription.page_num})"
                             )
-                            is_duplicate = True
+                            is_dup = True
                             break
-                
-                if is_duplicate:
+                if is_dup:
                     continue
 
-            # Chapter detection: check if this page has a chapter heading
-            # that matches a PG chapter, and constrain the search window
-            page_search_start = search_start
-            page_search_end = search_end
+            # -- Phase 1: Chapter-constrained search --
+            heading = self._detect_scan_chapter(trans.transcription)
+            ch_window = None
+            if heading and real_chapters and current_chapter_idx >= 0:
+                match_idx = self._match_chapter_heading(heading, real_chapters, current_chapter_idx)
+                if match_idx is not None and match_idx >= current_chapter_idx - 2:
+                    ch = real_chapters[match_idx]
+                    ch_window = (ch.offset, ch.end_offset)
+                    current_chapter_idx = match_idx
+                    logger.info(
+                        f"Page {page_num}: Phase 1 (chapter '{heading}') "
+                        f"[{ch.offset}:{ch.end_offset}]"
+                    )
 
-            if chapters and current_chapter_idx >= 0:
-                heading = self._detect_scan_chapter(trans.transcription)
-                if heading:
-                    match_idx = self._match_chapter_heading(heading, chapters, current_chapter_idx)
-                    if match_idx is not None:
-                        old_idx = current_chapter_idx
-                        # Allow forward movement or staying (re-occurring heading)
-                        # but never jump backward by more than 2 chapters
-                        if match_idx >= current_chapter_idx - 2:
-                            current_chapter_idx = match_idx
-                            page_search_start = chapters[current_chapter_idx].offset
-                            page_search_end = chapters[current_chapter_idx].end_offset
-                            logger.info(
-                                f"Page {trans.page_num}: chapter detected '{heading}' → "
-                                f"chapter {current_chapter_idx + 1} "
-                                f"(pg [{page_search_start}:{page_search_end}])"
-                            )
-                else:
-                    # No heading on this page — use current chapter boundaries
-                    page_search_start = chapters[current_chapter_idx].offset
-                    page_search_end = chapters[current_chapter_idx].end_offset
+            if ch_window:
+                result = self.align_transcription_to_pg(
+                    transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+                    scan_page=page_num, search_start=ch_window[0], search_end=ch_window[1],
+                    min_score=CHAPTER_THRESHOLD,
+                )
+                if result:
+                    results[i] = result
+                    tracker.record(page_num, result.alignment.pg_end, 0.50,
+                                 result.alignment.pg_end - result.alignment.pg_start)
+                    current_chapter_idx = self._update_chapter_from_position(
+                        result.alignment.pg_start, real_chapters, current_chapter_idx
+                    )
+                    logger.info(
+                        f"Page {page_num}: Phase 1 match "
+                        f"[{result.alignment.pg_start}:{result.alignment.pg_end}] "
+                        f"score={result.best_score:.2f} HIGH"
+                    )
+                    continue
 
+            # -- Phase 2: Sequential neighborhood search --
+            seq_window = tracker.search_window(page_num, len(pg_text))
             result = self.align_transcription_to_pg(
-                transcription=trans,
-                pg_text=pg_text,
-                pg_paragraphs=pg_paragraphs,
-                scan_page=trans.page_num,
-                search_start=page_search_start,
-                search_end=page_search_end,
+                transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+                scan_page=page_num, search_start=seq_window[0], search_end=seq_window[1],
+                min_score=SEQUENTIAL_THRESHOLD,
             )
             if result:
-                results.append(result)
-                # Only advance search_start for anchored matches (RETAS/n-gram).
-                # When chapter constraints are active, also advance the chapter
-                # pointer if the match is past the current chapter boundary.
-                if result.anchored:
-                    search_start = result.alignment.pg_end
-                    # Auto-advance chapter if the match landed in the next chapter
-                    if chapters and current_chapter_idx < len(chapters) - 1:
-                        next_ch = chapters[current_chapter_idx + 1]
-                        if result.alignment.pg_start >= next_ch.offset:
-                            current_chapter_idx += 1
-                            logger.debug(
-                                f"  Auto-advanced to chapter {current_chapter_idx + 1} "
-                                f"({chapters[current_chapter_idx].title})"
-                            )
-                logger.info(
-                    f"Page {trans.page_num}: matched PG [{result.alignment.pg_start}:{result.alignment.pg_end}] "
-                    f"(score={result.best_score:.2f}, conf={result.alignment.confidence:.2f}"
-                    f"{'' if result.anchored else ', brute-force (not advancing constraint)'})"
+                results[i] = result
+                tracker.record(page_num, result.alignment.pg_end, 0.40,
+                             result.alignment.pg_end - result.alignment.pg_start)
+                current_chapter_idx = self._update_chapter_from_position(
+                    result.alignment.pg_start, real_chapters, current_chapter_idx
                 )
-            else:
-                logger.debug(f"Page {trans.page_num}: no match found")
+                logger.info(
+                    f"Page {page_num}: Phase 2 match "
+                    f"[{result.alignment.pg_start}:{result.alignment.pg_end}] "
+                    f"score={result.best_score:.2f} MEDIUM"
+                )
+                continue
 
-        return results
+            # -- Phase 3: Global search --
+            logger.info(f"Page {page_num}: Phase 3 (global) [0:{len(pg_text)}]")
+            result = self.align_transcription_to_pg(
+                transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+                scan_page=page_num, search_start=0, search_end=len(pg_text),
+                min_score=GLOBAL_THRESHOLD,
+            )
+            if result:
+                results[i] = result
+                tracker.record(page_num, result.alignment.pg_end, 0.35,
+                             result.alignment.pg_end - result.alignment.pg_start)
+                current_chapter_idx = self._update_chapter_from_position(
+                    result.alignment.pg_start, real_chapters, current_chapter_idx
+                )
+                logger.info(
+                    f"Page {page_num}: Phase 3 match "
+                    f"[{result.alignment.pg_start}:{result.alignment.pg_end}] "
+                    f"score={result.best_score:.2f} LOW"
+                )
+                continue
+
+            # True failure
+            logger.info(f"Page {page_num}: NO MATCH in any phase")
+
+        # -- Backward repair pass --
+        results = self._repair_pass(results, transcriptions, pg_text, pg_paragraphs, tracker)
+
+        return [r for r in results if r is not None]
+
+    def _update_chapter_from_position(
+        self, pg_start: int, chapters: list, current_idx: int
+    ) -> int:
+        """Derive current chapter from match position instead of heading.
+
+        Returns the chapter index containing pg_start.
+        """
+        if not chapters:
+            return current_idx
+        for i, ch in enumerate(chapters):
+            if ch.offset <= pg_start < ch.end_offset:
+                if i != current_idx:
+                    logger.debug(
+                        f"  Chapter tracker corrected: {current_idx + 1} -> {i + 1} "
+                        f"({ch.title}) from match position {pg_start}"
+                    )
+                return i
+        return current_idx
+
+    def _repair_pass(
+        self,
+        results: list[VisionAlignmentResult | None],
+        transcriptions: list[PageTranscription],
+        pg_text: str,
+        pg_paragraphs: list[str],
+        tracker: SequentialTracker,
+    ) -> list[VisionAlignmentResult | None]:
+        """Fill gaps using bilateral constraints from neighboring matches."""
+        repaired = list(results)
+        changed = True
+        max_iterations = 5
+        iteration = 0
+
+        while changed and iteration < max_iterations:
+            changed = False
+            iteration += 1
+            for i in range(len(repaired)):
+                if repaired[i] is not None:
+                    continue
+
+                # Find nearest confirmed match before and after
+                before = None
+                after = None
+                for j in range(i - 1, -1, -1):
+                    if repaired[j] is not None:
+                        before = repaired[j]
+                        break
+                for j in range(i + 1, len(repaired)):
+                    if repaired[j] is not None:
+                        after = repaired[j]
+                        break
+
+                if before and after:
+                    window_start = max(0, before.alignment.pg_end - 500)
+                    window_end = min(len(pg_text), after.alignment.pg_start + 500)
+                elif before:
+                    window_start = max(0, before.alignment.pg_end - 500)
+                    window_end = min(len(pg_text), window_start + 10000)
+                elif after:
+                    window_end = after.alignment.pg_start + 500
+                    window_start = max(0, window_end - 10000)
+                else:
+                    continue
+
+                result = self.align_transcription_to_pg(
+                    transcription=transcriptions[i], pg_text=pg_text,
+                    pg_paragraphs=pg_paragraphs,
+                    scan_page=transcriptions[i].page_num,
+                    search_start=window_start, search_end=window_end,
+                    min_score=GLOBAL_THRESHOLD,
+                )
+                if result:
+                    repaired[i] = result
+                    tracker.record(
+                        transcriptions[i].page_num, result.alignment.pg_end, 0.35,
+                        result.alignment.pg_end - result.alignment.pg_start,
+                    )
+                    logger.info(
+                        f"Page {transcriptions[i].page_num}: REPAIR match "
+                        f"[{result.alignment.pg_start}:{result.alignment.pg_end}] "
+                        f"score={result.best_score:.2f}"
+                    )
+                    changed = True
+
+        return repaired
 
     def get_alignments(self, results: list[VisionAlignmentResult]) -> list:
         """Extract Alignment objects from results.
