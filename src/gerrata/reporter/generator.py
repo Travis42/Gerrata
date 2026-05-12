@@ -116,9 +116,10 @@ class ReportGenerator:
     def _get_ia_leaf_number(self, scan_page: int) -> int:
         """Get the IA leaf number for a scan page from its image path.
 
-        IA uses leaf numbers (n0, n1, n2...) that correspond to JP2 filenames.
-        The JP2 filename contains the leaf number, e.g., '06-Stevenson-JekyllHyde_0048.jp2'
-        contains leaf number 48.
+        IA uses leaf numbers (n0, n1, n2...) for the book's numbered pages.
+        Some JP2 zips include a cover image as _0000.jp2 (different aspect
+        ratio) that IA doesn't count as a leaf. When present, JP2 filenames
+        are offset by +1 from IA leaf numbers: _0001.jp2 = n0, _0002.jp2 = n1.
 
         Args:
             scan_page: The 0-based index of the page in the scan_pages array
@@ -134,9 +135,14 @@ class ReportGenerator:
                 path_str = str(page.image_path)
                 match = re.search(r'_(\d+)\.\w+$', path_str)
                 if match:
-                    return int(match.group(1))
-        # Fallback to scan_page + 1 (approximate)
-        return scan_page + 1
+                    jp2_num = int(match.group(1))
+                    # IA book viewer leaf numbering starts at n0 for the first
+                    # content page. JP2 zips include a cover image as _0000.jp2
+                    # that isn't counted as a leaf, so all JP2 filenames are
+                    # offset by +1 from IA leaf numbers.
+                    return jp2_num - 1
+        # Fallback to scan_page (approximate)
+        return scan_page
 
     def compute_line_number(self, pg_offset: int, pg_text: str) -> int:
         """Compute the line number in the PG HTML file for a given text offset.
@@ -385,7 +391,7 @@ class ReportGenerator:
             )
             lines.append("")
             for err in report.edition_variants:
-                lines.append(f"- **Page {err.candidate.scan_page + 1}:** "
+                lines.append(f"- **Page {self._get_ia_leaf_number(err.candidate.scan_page)}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\"")
                 if err.reasoning:
                     lines.append(f"  - {err.reasoning}")
@@ -419,7 +425,7 @@ class ReportGenerator:
                 if err.chapter_title:
                     location_parts.append(f"**Chapter:** {err.chapter_title}")
                 if err.candidate.scan_page is not None:
-                    location_parts.append(f"**Scan page:** {err.candidate.scan_page + 1}")
+                    location_parts.append(f"**Scan page:** {self._get_ia_leaf_number(err.candidate.scan_page)}")
 
                 if location_parts:
                     lines.append(f"- {'; '.join(location_parts)}")
@@ -454,7 +460,7 @@ class ReportGenerator:
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
-                lines.append(f"{i}. **Page {err.candidate.scan_page + 1}{location_str}:** "
+                lines.append(f"{i}. **Page {self._get_ia_leaf_number(err.candidate.scan_page)}{location_str}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
@@ -472,7 +478,7 @@ class ReportGenerator:
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
-                lines.append(f"{i}. **Page {err.candidate.scan_page + 1}{location_str}:** "
+                lines.append(f"{i}. **Page {self._get_ia_leaf_number(err.candidate.scan_page)}{location_str}:** "
                            f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
@@ -511,7 +517,7 @@ class ReportGenerator:
                 if err.chapter_title:
                     location_parts.append(f"chapter: {err.chapter_title}")
                 if err.candidate.scan_page is not None:
-                    location_parts.append(f"page {err.candidate.scan_page + 1}")
+                    location_parts.append(f"page {self._get_ia_leaf_number(err.candidate.scan_page)}")
 
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
@@ -536,7 +542,7 @@ class ReportGenerator:
         report_dict = report.to_dict()
         for error_dict in report_dict.get("errors", []):
             # Add display_page field (1-indexed for human readability)
-            error_dict["display_page"] = error_dict.get("scan_page", 0) + 1
+            error_dict["display_page"] = self._get_ia_leaf_number(error_dict.get("scan_page", 0))
 
             # Add pg_sentence field if we have body text
             if self.body_text:
@@ -621,7 +627,7 @@ class ReportGenerator:
             if err.pg_file_line > 0:
                 location_parts.append(f"Line {err.pg_file_line}")
             if err.candidate.scan_page is not None:
-                location_parts.append(f"Page {err.candidate.scan_page + 1}")
+                location_parts.append(f"Page {self._get_ia_leaf_number(err.candidate.scan_page)}")
             if err.chapter_title:
                 location_parts.append(f"({err.chapter_title})")
 
@@ -813,7 +819,7 @@ class ReportGenerator:
         for err in deduplicated:
             pg_text = err.candidate.pg_text.strip()
             scan_text = err.candidate.scan_text.strip()
-            page = err.candidate.scan_page + 1  # 1-indexed
+            page = self._get_ia_leaf_number(err.candidate.scan_page)  # 1-indexed
 
             # Get context sentence containing the error
             context = ""
