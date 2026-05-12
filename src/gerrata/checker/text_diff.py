@@ -39,6 +39,32 @@ class TextDiffChecker:
     def __init__(self, min_word_diff_length: int = 1):
         self.min_word_diff_length = min_word_diff_length
 
+    def _is_fragment_candidate(self, pg_text: str, scan_text: str) -> bool:
+        """Check if a candidate looks like a word fragment (alignment boundary artifact).
+
+        A fragment candidate is one where the diff caught a partial word at the
+        edge of an alignment boundary — e.g., "suff" instead of "suffrages",
+        "le." instead of "unreasonable.", or "c" instead of "calling".
+        """
+        # Long candidates on both sides are rarely fragments
+        if len(pg_text) >= 10 and len(scan_text) >= 10:
+            return False
+
+        def looks_like_fragment(text: str) -> bool:
+            text = text.strip()
+            if not text:
+                return True
+            if ' ' in text:
+                return False
+            if text[-1] in '.,;:!?)"\'':
+                return len(text) < 4  # "le." is fragment, "ancle." could be word
+            return len(text) < 5
+
+        if len(pg_text) < 10 or len(scan_text) < 10:
+            if looks_like_fragment(pg_text) or looks_like_fragment(scan_text):
+                return True
+        return False
+
     def check_aligned_passage(
         self,
         pg_text: str,
@@ -77,6 +103,19 @@ class TextDiffChecker:
                 pg_offset, scan_page,
             )
             if error:
+                # Filter out word-fragment candidates (alignment boundary artifacts)
+                if self._is_fragment_candidate(error.pg_text, error.scan_text):
+                    logger.debug(
+                        f"Filtered fragment candidate: pg='{error.pg_text[:40]}' "
+                        f"scan='{error.scan_text[:40]}'"
+                    )
+                    continue
+                # Filter out page reference artifacts ({43}, {190}, {xxiii})
+                if re.search(r'\{\d+[a-z]*\}', error.pg_text) or re.search(r'\{\d+[a-z]*\}', error.scan_text):
+                    logger.debug(
+                        f"Filtered page-ref candidate: pg='{error.pg_text[:40]}'"
+                    )
+                    continue
                 errors.append(error)
 
         return errors

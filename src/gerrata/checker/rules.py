@@ -171,9 +171,15 @@ class FalsePositiveFilter:
                 )
 
         # Check for pure whitespace/punctuation differences
+        # Exception: text containing single-letter initials with dots (e.g.,
+        # "H.T", "J.B.") indicates abbreviated content like scanner metadata
+        # that leaked into PG text — don't filter these as "punctuation only".
+        # Note: pg and scan are lowercased here.
+        combined_lower = pg + ' ' + scan
+        has_initials = bool(re.search(r'[a-z]\.[a-z]', combined_lower))
         pg_words = re.sub(r"[^\w]", "", pg)
         scan_words = re.sub(r"[^\w]", "", scan)
-        if pg_words == scan_words:
+        if pg_words == scan_words and not has_initials:
             return FilterResult(
                 error=error,
                 is_false_positive=True,

@@ -37,11 +37,18 @@ IMPORTANT: The PG text and the page scan may be from DIFFERENT EDITIONS of the s
 
 (c) **Intentional modernization**: PG deliberately changed the text (e.g., modernized spelling, standardized formatting, expanded abbreviations like "shan't" → "shall not").
 
+CRITICAL RULES:
+1. Your job is to OBSERVE and CLASSIFY — not to compose, improve, or rewrite text.
+2. When you determine the scan shows a different reading than PG, you must transcribe EXACTLY what you see on the scan page. Do NOT paraphrase, correct, normalize, or improve the scan text.
+3. Do NOT suggest fixes or compose alternative text. The "suggested_fix" field must contain ONLY the exact characters visible on the scan page — nothing more, nothing less.
+4. If you cannot read the relevant text on the scan page clearly, say "unable_to_verify". Do not guess.
+5. If the scan text and PG text differ but both readings are plausible (e.g., different editions), say "edition_variant" — do NOT choose one as "correct".
+
 For each difference, respond with:
 1. Your verdict: "pg_correct" | "scan_correct" | "edition_variant" | "intentional_modernization" | "ambiguous" | "unable_to_verify"
 2. Confidence: 0.0-1.0
 3. Brief reasoning (1-2 sentences)
-4. If verdict is "scan_correct", suggest the PG text fix
+4. If verdict is "scan_correct", set suggested_fix to the EXACT text visible on the scan page (transcribe character-by-character, do NOT compose or normalize)
 
 Respond in JSON format:
 {"verdict": "...", "confidence": 0.X, "reasoning": "...", "suggested_fix": "..."}
@@ -429,7 +436,11 @@ class VisionVerifier:
             parts.append(f"**Item {idx}:**\n")
             parts.append(f"Difference: {error.diff_description}\n")
             parts.append(f"PG text: {error.pg_text}\n")
-            parts.append(f"Scan OCR text: {error.scan_text}\n")
+            # IMPORTANT: Do NOT show scan_text to the LLM — it causes hallucination.
+            # The LLM must read the page IMAGE itself, not rely on OCR text hints.
+            if len(error.pg_text.strip()) < 5:
+                parts.append("NOTE: This passage is too short to reliably locate on a page image. "
+                             "Default to verdict 'unable_to_verify'.\n")
             if pg_context:
                 parts.append(f"PG context: {pg_context[:200]}...\n")
             parts.append("\n")
@@ -437,13 +448,22 @@ class VisionVerifier:
         parts.append(
             "Respond with a JSON ARRAY containing one object per item, in the same order as above. "
             "Each object must have: index (int), verdict (str), confidence (float 0-1), reasoning (str), "
+            "image_evidence (str — quote 20+ chars of surrounding text as you see it on the page image), "
             "and optionally suggested_fix (str if verdict is scan_correct).\n\n"
+            "CRITICAL RULES:\n"
+            "1. For EACH item, FIRST locate the exact PG text passage on the scan page image.\n"
+            "2. In image_evidence, quote the surrounding text as it appears on the page — this proves you read the image.\n"
+            "3. If verdict is 'scan_correct', suggested_fix must be an EXACT transcription of the text visible "
+            "on the scan page — character-by-character. Do NOT compose, normalize, paraphrase, or improve.\n"
+            "4. If you cannot clearly locate or read the relevant text on the page, use verdict 'unable_to_verify'.\n\n"
             "Example format:\n"
-            '[\n  {"index": 0, "verdict": "scan_correct", "confidence": 0.9, "reasoning": "...", "suggested_fix": "..."},\n'
-            '  {"index": 1, "verdict": "edition_variant", "confidence": 0.85, "reasoning": "..."}\n'
+            '[\n  {"index": 0, "verdict": "scan_correct", "confidence": 0.9, "reasoning": "...", '
+            '"image_evidence": "...surrounding text from page...", "suggested_fix": "..."},\n'
+            '  {"index": 1, "verdict": "edition_variant", "confidence": 0.85, "reasoning": "...", '
+            '"image_evidence": "..."}\n'
             "]\n\n"
             "Remember: The PG text and scan may be from DIFFERENT EDITIONS. Distinguish between actual errors "
-            "and edition variants/modernizations."
+            "and edition variants/modernizations. When in doubt, say 'edition_variant' or 'ambiguous'."
         )
 
         return "".join(parts)
@@ -504,12 +524,15 @@ class VisionVerifier:
                 }
                 verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
 
+                image_evidence = item_result.get("image_evidence", "")
+
                 results.append(Error(
                     candidate=error,
                     verdict=verdict,
                     confidence=min(1.0, max(0.0, confidence)),
                     reasoning=reasoning,
                     suggested_fix=suggested_fix,
+                    image_evidence=image_evidence,
                 ))
 
         except Exception as e:
@@ -569,15 +592,22 @@ class VisionVerifier:
             "Compare the PG text passage with the scan page image and classify the difference:\n",
             f"**Difference found:** {error.diff_description}\n",
             f"**PG text (the published version):** {error.pg_text}\n",
-            f"**Scan OCR text (from source scan):** {error.scan_text}\n",
+            # IMPORTANT: Do NOT show scan_text — it causes the LLM to hallucinate
+            # instead of reading the actual page image.
         ]
+        if len(error.pg_text.strip()) < 5:
+            parts.append(
+                "\nNOTE: This passage is too short to reliably locate on a page image. "
+                "Default to verdict 'unable_to_verify'.\n"
+            )
         if pg_context:
             parts.append(f"\n**PG text context (surrounding text):**\n{pg_context}\n")
         parts.append(
-            "\nLook at the scan page image carefully. "
-            "Can you read the relevant text on the page? "
-            "Does the scan match the PG text or the OCR text? "
-            "Or is this an edition variant / intentional modernization?\n"
+            "\nFIRST, locate the exact PG text passage on the scan page image. "
+            "Quote 20+ characters of surrounding text from the image as evidence that you found it. "
+            "Then classify: does the scan show the same text, different text, or is this an edition variant?\n"
+            "If different, quote EXACTLY what you see on the page — do NOT compose or guess.\n"
+            "If you cannot locate the passage clearly, use verdict 'unable_to_verify'.\n"
         )
         return "".join(parts)
 
@@ -636,12 +666,15 @@ class VisionVerifier:
             }
             verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
 
+            image_evidence = result.get("image_evidence", "")
+
             return Error(
                 candidate=error,
                 verdict=verdict,
                 confidence=min(1.0, max(0.0, confidence)),
                 reasoning=reasoning,
                 suggested_fix=suggested_fix,
+                image_evidence=image_evidence,
             )
 
         except Exception as e:

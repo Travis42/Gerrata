@@ -13,6 +13,12 @@ import logging
 import re
 import zipfile
 from dataclasses import dataclass, field
+
+# Browser-like user agent to avoid IA anti-bot blocking
+_BROWSER_UA = (
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+)
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -44,6 +50,7 @@ class ScanFetcher:
     """Fetch page scans from Internet Archive."""
 
     DOWNLOAD_BASE = "https://archive.org/download/{identifier}/"
+    METADATA_URL = "https://archive.org/metadata/{identifier}"
 
     def __init__(self, cache_dir: Path | str | None = None):
         if cache_dir:
@@ -52,10 +59,38 @@ class ScanFetcher:
         else:
             self.cache_dir = None
 
+    async def _get_direct_server(self, identifier: str) -> str | None:
+        """Resolve IA identifier to direct server URL via metadata API.
+
+        The /download/ endpoint intermittently returns 503/500 errors.
+        The metadata API (https://archive.org/metadata/{id}) returns the
+        actual storage server hostname and directory path, allowing direct
+        downloads that bypass the congested /download/ endpoint.
+        """
+        import httpx
+
+        try:
+            url = self.METADATA_URL.format(identifier=identifier)
+            async with httpx.AsyncClient(follow_redirects=True, timeout=15, headers={"user-agent": _BROWSER_UA}) as client:
+                resp = await client.get(url)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    server = data.get("server")
+                    dir_path = data.get("dir")
+                    if server and dir_path:
+                        return f"https://{server}{dir_path}"
+                    elif server:
+                        # Some items omit dir, construct it
+                        return f"https://{server}/{identifier}"
+        except Exception as e:
+            logger.debug(f"Metadata lookup failed for {identifier}: {e}")
+        return None
+
     async def fetch_ocr_text(self, identifier: str) -> str:
         """Download OCR text from Internet Archive.
 
         Tries multiple OCR file patterns (DjVu XML, DjVu text, ABBYY XML).
+        Falls back to direct server access via metadata API if /download/ fails.
         """
         import httpx
 
@@ -67,18 +102,38 @@ class ScanFetcher:
             f"{identifier}_abbyy.txt",  # ABBYY text
         ]
 
-        async with httpx.AsyncClient(follow_redirects=True, timeout=60) as client:
+        # Get direct server URL as fallback
+        direct_base = await self._get_direct_server(identifier)
+        if direct_base:
+            logger.info(f"Resolved direct server: {direct_base}")
+
+        async with httpx.AsyncClient(follow_redirects=True, timeout=120, headers={"user-agent": _BROWSER_UA}) as client:
             for pattern in ocr_patterns:
-                url = f"{self.DOWNLOAD_BASE.format(identifier=identifier)}{pattern}"
+                download_url = f"{self.DOWNLOAD_BASE.format(identifier=identifier)}{pattern}"
                 try:
-                    resp = await client.get(url)
+                    resp = await client.get(download_url)
                     if resp.status_code == 200:
                         content = resp.text
                         if len(content) > 100:  # Sanity check
-                            logger.info(f"Downloaded OCR text: {url}")
+                            logger.info(f"Downloaded OCR text: {download_url}")
                             return content
                 except httpx.HTTPError as e:
-                    logger.debug(f"Failed to fetch {url}: {e}")
+                    logger.debug(f"Failed to fetch {download_url}: {e}")
+
+            # Fallback: try direct server URL (bypasses /download/ endpoint)
+            if direct_base:
+                logger.info(f"Standard /download/ failed, trying direct server: {direct_base}")
+                for pattern in ocr_patterns:
+                    direct_url = f"{direct_base}/{pattern}"
+                    try:
+                        resp = await client.get(direct_url)
+                        if resp.status_code == 200 and len(resp.text) > 100:
+                            logger.info(f"Downloaded OCR text via direct server: {direct_url}")
+                            return resp.text
+                        elif resp.status_code != 200:
+                            logger.debug(f"Direct server returned {resp.status_code} for {direct_url}")
+                    except httpx.HTTPError as e:
+                        logger.debug(f"Direct server failed for {direct_url}: {e}")
 
         raise FileNotFoundError(f"No OCR text found for identifier '{identifier}'")
 
@@ -116,7 +171,7 @@ class ScanFetcher:
             dest.mkdir(parents=True, exist_ok=True)
 
         try:
-            async with httpx.AsyncClient(follow_redirects=True, timeout=120) as client:
+            async with httpx.AsyncClient(follow_redirects=True, timeout=120, headers={"user-agent": _BROWSER_UA}) as client:
                 resp = await client.get(url)
                 if resp.status_code != 200:
                     logger.warning(f"Failed to download page {page_num}: HTTP {resp.status_code}")
@@ -175,12 +230,31 @@ class ScanFetcher:
             return zip_path
 
         logger.info(f"Downloading JP2 zip: {zip_url}")
-        async with httpx.AsyncClient(follow_redirects=True, timeout=300) as client:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=600, headers={"user-agent": _BROWSER_UA}) as client:
             async with client.stream("GET", zip_url) as resp:
                 if resp.status_code != 200:
-                    raise FileNotFoundError(
-                        f"JP2 zip not found: HTTP {resp.status_code} from {zip_url}"
-                    )
+                    # Fallback: try direct server via metadata API
+                    http_code = resp.status_code
+                    logger.warning(f"Standard /download/ returned {http_code}, trying direct server...")
+                    direct_base = await self._get_direct_server(identifier)
+                    if direct_base:
+                        direct_url = f"{direct_base}/{identifier}_jp2.zip"
+                        logger.info(f"Trying direct server: {direct_url}")
+                        direct_resp = await client.get(direct_url)
+                        if direct_resp.status_code == 200:
+                            with open(zip_path, "wb") as f:
+                                f.write(direct_resp.content)
+                            logger.info(f"Downloaded JP2 zip via direct server: {zip_path} ({zip_path.stat().st_size:,} bytes)")
+                            return zip_path
+                        else:
+                            raise FileNotFoundError(
+                                f"JP2 zip not available via /download/ ({zip_url}: HTTP {http_code}) "
+                                f"or direct server ({direct_url}: HTTP {direct_resp.status_code})"
+                            )
+                    else:
+                        raise FileNotFoundError(
+                            f"JP2 zip not found: HTTP {http_code} from {zip_url} (no metadata/direct server available)"
+                        )
                 with open(zip_path, "wb") as f:
                     async for chunk in resp.aiter_bytes(chunk_size=1024 * 1024):
                         f.write(chunk)

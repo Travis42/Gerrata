@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 import os
 import sys
@@ -23,6 +24,24 @@ from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.vision import VisionVerifier
 from gerrata.reporter.generator import ReportGenerator
 
+
+
+def save_intermediate(cache_dir: Path, name: str, data) -> None:
+    """Save intermediate pipeline result for re-running later steps."""
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    path = cache_dir / f"{name}.json"
+    serializable = data
+    if hasattr(data, '__dict__'):
+        from dataclasses import asdict
+        serializable = asdict(data)
+    elif isinstance(data, list) and data and hasattr(data[0], 'to_dict'):
+        serializable = [item.to_dict() for item in data]
+    elif isinstance(data, list) and data and hasattr(data[0], '__dataclass_fields__'):
+        from dataclasses import asdict
+        serializable = [asdict(item) for item in data]
+    with open(path, 'w') as f:
+        json.dump(serializable, f, indent=2, default=str)
+    logging.getLogger(__name__).info(f"  Saved intermediate: {path}")
 
 def setup_logging(verbose: bool = False) -> None:
     """Configure logging."""
@@ -190,12 +209,14 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     vision_mode = args.vision_transcribe
 
     # Initialize components
-    cache_dir = Path(args.cache_dir) if args.cache_dir else None
+    cache_dir = Path(args.cache_dir) if args.cache_dir else Path("./cache")
+
     pg_fetcher = PGFetcher(cache_dir=cache_dir)
     scan_fetcher = ScanFetcher(cache_dir=cache_dir)
 
     scan_id = args.scan_id
     page_range = parse_page_range(args.page_range)
+    intermed_dir = cache_dir / scan_id if scan_id else cache_dir / f"pg{args.pg_id}"
 
     # Step 1: Parse PG text
     console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
@@ -209,6 +230,13 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print(f"  Author: {parsed.metadata.author}")
     console.print(f"  Body: {len(parsed.body_text):,} chars, {len(parsed.paragraphs)} paragraphs")
     console.print(f"  Chapters: {len(parsed.chapters)}")
+    save_intermediate(intermed_dir, "01_pg_parsed", {
+        "title": parsed.metadata.title,
+        "author": parsed.metadata.author,
+        "body_text": parsed.body_text,
+        "paragraphs": parsed.paragraphs,
+        "chapters": parsed.chapters,
+    })
     console.print(f"  Mode: {'[green]vision-first[/green]' if vision_mode else '[yellow]OCR-based[/yellow]'}")
 
     # Step 2: Get page images (vision mode) or load OCR (OCR mode)
@@ -267,11 +295,13 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             models=models,
             ocr_engine="vision",  # Use GLM vision model (best accuracy for old book pages)
             concurrency=args.concurrency,
+            cache_file=f"cache/{scan_id}_transcriptions.json",
         )
 
         transcriptions = await transcriber.transcribe_pages(page_images)
         successful = [t for t in transcriptions if t.success]
         console.print(f"  Transcribed {len(successful)}/{len(transcriptions)} pages")
+        save_intermediate(intermed_dir, "02_transcriptions", successful)
 
         if not successful:
             console.print("[red]All transcriptions failed. Falling back to OCR mode.[/red]")
@@ -330,6 +360,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         alignment_confidence = vision_aligner.alignment_confidence(alignments, len(parsed.body_text))
         console.print(f"  Matched: {len(alignments)}/{len(transcriptions)} pages")
         console.print(f"  Coverage: {alignment_confidence:.0%}")
+        save_intermediate(intermed_dir, "03_alignments", alignments)
+        save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
     elif vision_mode:
         # Vision mode was set but all transcriptions failed — already handled above
         pass
@@ -348,6 +380,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         scan_pages=scan_pages,
     )
     console.print(f"  Raw candidates: {len(candidates)}")
+    save_intermediate(intermed_dir, "04_candidates_raw", candidates)
 
     # Step 6: False positive filter
     console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
@@ -622,6 +655,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             # Fallback to offset-based
             candidate.pg_file_line = parsed.body_text[:candidate.pg_offset].count('\n') + 1
     console.print(f"  Computed line numbers for {len(candidates)} candidates")
+    save_intermediate(intermed_dir, "05_candidates_filtered", candidates)
 
     # Step 7: LLM vision verification (if configured and in vision mode)
     verified_errors: list[Error] = []

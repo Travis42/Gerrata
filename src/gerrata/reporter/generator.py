@@ -277,21 +277,21 @@ class ReportGenerator:
         Returns:
             String in "erroneous ==> corrected" format, or scan text for comparison
         """
-        # For verified scan_correct errors, always use arrow format
+        # For verified scan_correct errors, use arrow format showing PG text vs scan text
+        # Prefer image_evidence (what the verifier actually read from the page) over
+        # scan_text (the OCR transcription, which is itself unreliable).
         if error.verdict == Verdict.SCAN_CORRECT and error.confidence > 0.0:
             pg_text = error.candidate.pg_text.strip()
-            scan_text = error.candidate.scan_text.strip()
-            return f"{pg_text} ==> {scan_text}"
+            display_text = error.image_evidence.strip() or error.candidate.scan_text.strip()
+            source_label = "image" if error.image_evidence.strip() else "OCR"
+            return f"{pg_text} ==> {display_text} [{source_label}]"
 
-        # If there's a suggested_fix, use it
-        if error.suggested_fix:
-            return error.suggested_fix
-
-        # For other cases with confidence, use arrow format
+        # For other cases with confidence, prefer image_evidence
         if error.confidence > 0.0:
             pg_text = error.candidate.pg_text.strip()
-            scan_text = error.candidate.scan_text.strip()
-            return f"{pg_text} ==> {scan_text}"
+            display_text = error.image_evidence.strip() or error.candidate.scan_text.strip()
+            source_label = "image" if error.image_evidence.strip() else "OCR"
+            return f"{pg_text} ==> {display_text} [{source_label}]"
         else:
             # No LLM verification (confidence=0.0), we don't know which text is correct
             pg_text = error.candidate.pg_text.strip()

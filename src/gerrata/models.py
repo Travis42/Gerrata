@@ -133,6 +133,7 @@ class Error:
     confidence: float = 0.0  # 0.0-1.0
     reasoning: str = ""
     suggested_fix: str = ""
+    image_evidence: str = ""  # Text quoted from scan page image by verifier
     scan_image_path: Optional[str] = None
     location_description: str = ""  # e.g. "Chapter 3, paragraph 2"
     pg_file_line: int = 0  # Line number in the PG HTML file
@@ -182,6 +183,7 @@ class Error:
             "confidence": self.confidence,
             "reasoning": self.reasoning,
             "suggested_fix": self.suggested_fix,
+            "image_evidence": self.image_evidence,
             "scan_image_path": self.scan_image_path,
             "location_description": self.location_description,
             "category": self.category.value,

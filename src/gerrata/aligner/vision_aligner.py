@@ -393,32 +393,42 @@ class VisionTranscriber:
             "jpeg": "image/jpeg",
         }.get(suffix, "image/png")
 
+        import asyncio
+
+        max_retries = 3
         for model in self.models:
             # Map model name (zai/glm-4.6v → glm-4.6v) for the native API
             api_model = MODEL_NAME_MAP.get(model, model)
-            try:
-                transcription = await self._call_api(
-                    model=api_model,
-                    image_data=image_data,
-                    media_type=media_type,
-                )
-                if transcription and len(transcription.strip()) > 10:
-                    cleaned = strip_paratext(transcription.strip())
-                    # Cache the result
-                    if self.ocr_engine == "vision":
-                        self._cache_transcription(image_path, model, transcription.strip(), True)
-                        logger.info(f"  Cache saved: {image_path.name} ({len(transcription.strip())} chars)")
-                    return PageTranscription(
-                        page_num=page_num,
-                        image_path=image_path,
-                        transcription=transcription.strip(),
-                        transcription_cleaned=cleaned,
-                        model_used=model,
-                        success=True,
+            for attempt in range(max_retries + 1):
+                try:
+                    transcription = await self._call_api(
+                        model=api_model,
+                        image_data=image_data,
+                        media_type=media_type,
                     )
-            except Exception as e:
-                logger.debug(f"Model {model} failed for page {page_num}: {e}")
-                continue
+                    if transcription and len(transcription.strip()) > 10:
+                        cleaned = strip_paratext(transcription.strip())
+                        # Cache the result
+                        if self.ocr_engine == "vision":
+                            self._cache_transcription(image_path, model, transcription.strip(), True)
+                            logger.info(f"  Cache saved: {image_path.name} ({len(transcription.strip())} chars)")
+                        return PageTranscription(
+                            page_num=page_num,
+                            image_path=image_path,
+                            transcription=transcription.strip(),
+                            transcription_cleaned=cleaned,
+                            model_used=model,
+                            success=True,
+                        )
+                except Exception as e:
+                    error_str = str(e)
+                    if "429" in error_str and attempt < max_retries:
+                        wait = 5 * (attempt + 1)  # 5s, 10s, 15s
+                        logger.debug(f"Model {model} rate-limited for page {page_num}, retry {attempt+1}/{max_retries} in {wait}s")
+                        await asyncio.sleep(wait)
+                        continue
+                    logger.debug(f"Model {model} failed for page {page_num}: {e}")
+                    break  # non-429 error → try next model
 
         # Cache the failure
         if self.ocr_engine == "vision":
