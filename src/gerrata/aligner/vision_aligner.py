@@ -1517,22 +1517,121 @@ class VisionAligner:
             anchored=was_anchored,
         )
 
+    def _detect_scan_chapter(self, transcription: str) -> str | None:
+        """Extract chapter title from scan page transcription.
+
+        Scan pages often have a chapter title as the first line (on verso pages).
+        Returns the chapter title if detected, None otherwise.
+        """
+        if not transcription:
+            return None
+
+        lines = [l.strip() for l in transcription.split("\n") if l.strip()]
+        if not lines:
+            return None
+
+        first_line = lines[0]
+        # Match "CHAPTER \d+. Title" or just standalone title lines
+        ch_match = re.match(r"^CHAPTER\s+\d+[.\s]+(.+)", first_line, re.IGNORECASE)
+        if ch_match:
+            return ch_match.group(1).strip().rstrip(".")
+
+        # Standalone title: short first line that looks like a chapter title
+        # (no running header "Moby Dick", no prose, no page numbers)
+        if len(first_line) < 80 and not first_line.isdigit():
+            # Strip trailing page numbers (e.g. "The Spouter-Inn 15")
+            clean = re.sub(r"\s+\d+$", "", first_line)
+            # Strip trailing punctuation (periods, em dashes, colons)
+            clean = re.sub(r"[\.\u2014\u2013:]+\s*$", "", clean).strip()
+            clean = clean.rstrip(".")
+
+            # Skip common non-chapter first lines
+            skip = {"moby dick", "extracts", "etyymology", "contents",
+                    "preface", "introduction", "the end"}
+            if clean.lower() in skip:
+                return None
+
+            # Check if it looks like a title (capitalized words, no sentence punctuation)
+            words = clean.split()
+            if words and all(w[0].isupper() for w in words if len(w) > 2):
+                return clean
+
+        return None
+
+    def _match_chapter_heading(self, heading: str, chapters: list, current_idx: int = 0) -> int | None:
+        """Match a scan chapter heading to a PG chapter.
+
+        Uses normalized fuzzy matching on the title portion. Prefers the
+        nearest chapter to current_idx when multiple matches exist.
+
+        Args:
+            heading: Chapter title from scan (e.g. "Loomings", "The Carpet-Bag")
+            chapters: List of ChapterLocation objects
+            current_idx: Current chapter index (prefer nearby matches)
+
+        Returns:
+            Index into chapters list, or None if no match found.
+        """
+        if not heading:
+            return None
+
+        heading_norm = normalize_for_matching(heading)
+
+        # Collect all matches with their scores
+        candidates = []
+        for i, ch in enumerate(chapters):
+            # Extract title portion from "CHAPTER 1. Loomings." → "Loomings"
+            title = re.sub(r"^CHAPTER\s+\d+[.\s]+", "", ch.title, flags=re.IGNORECASE).strip().rstrip(".")
+            if not title:
+                continue
+
+            title_norm = normalize_for_matching(title)
+
+            # Exact match after normalization
+            if heading_norm == title_norm:
+                candidates.append((i, 1.0))
+                continue
+
+            # Fuzzy match: require longer titles for fuzzy to avoid
+            # short common words matching random chapters
+            if len(heading_norm) > 4 and len(title_norm) > 4:
+                ratio = SequenceMatcher(None, heading_norm, title_norm).ratio()
+                if ratio > 0.75:
+                    candidates.append((i, ratio))
+
+        if not candidates:
+            return None
+
+        # Prefer: exact match > nearby chapter > high score
+        # Sort by: exact match first, then by distance from current, then by score
+        def sort_key(item):
+            idx, score = item
+            is_exact = score >= 1.0
+            distance = abs(idx - current_idx)
+            return (not is_exact, distance, -score)
+
+        candidates.sort(key=sort_key)
+        return candidates[0][0]
+
     def align_all_pages(
         self,
         transcriptions: list[PageTranscription],
         pg_text: str,
         pg_paragraphs: list[str],
+        chapters: list | None = None,
     ) -> list[VisionAlignmentResult]:
         """Align all page transcriptions to PG text.
 
-        Pages are processed in reading order. Each page's alignment
-        constrains the next page's search window to PG text after
-        the current match (sequential alignment).
+        Pages are processed in reading order. When chapter boundaries are
+        available, each page is constrained to the current chapter's PG text
+        region, dramatically reducing false anchor matches.
 
         Args:
             transcriptions: List of page transcription results.
             pg_text: Full PG body text.
             pg_paragraphs: PG paragraphs.
+            chapters: Optional list of ChapterLocation objects for per-chapter
+                search constraints.
 
         Returns:
             List of successful alignment results.
@@ -1545,6 +1644,34 @@ class VisionAligner:
                 f"({body_offset / len(pg_text) * 100:.1f}% of text), skipping TOC/front-matter"
             )
         search_start = body_offset
+        search_end = len(pg_text)
+
+        # Chapter-based constraint tracking
+        current_chapter_idx = -1
+        if chapters:
+            # Filter to real chapters only: skip TOC entries which are
+            # tiny (20-100 chars between headings). Real chapters have
+            # body text between them (>1000 chars).
+            real_chapters = [ch for ch in chapters if ch.end_offset - ch.offset > 1000]
+            if not real_chapters:
+                real_chapters = chapters  # fallback: use all
+
+            # Replace chapters list with filtered version
+            chapters = real_chapters
+
+            # Find the first chapter at or after body_offset
+            for i, ch in enumerate(chapters):
+                if ch.offset >= body_offset:
+                    current_chapter_idx = i
+                    search_start = ch.offset
+                    break
+            if current_chapter_idx < 0 and chapters:
+                current_chapter_idx = len(chapters) - 1
+            logger.info(
+                f"Chapter-based alignment: {len(chapters)} chapters, "
+                f"starting at chapter {current_chapter_idx + 1} "
+                f"({chapters[current_chapter_idx].title if current_chapter_idx >= 0 else 'N/A'})"
+            )
 
         # Normalize PG text once for n-gram indexing
         pg_norm = normalize_for_matching(pg_text)
@@ -1573,21 +1700,57 @@ class VisionAligner:
                 if is_duplicate:
                     continue
 
+            # Chapter detection: check if this page has a chapter heading
+            # that matches a PG chapter, and constrain the search window
+            page_search_start = search_start
+            page_search_end = search_end
+
+            if chapters and current_chapter_idx >= 0:
+                heading = self._detect_scan_chapter(trans.transcription)
+                if heading:
+                    match_idx = self._match_chapter_heading(heading, chapters, current_chapter_idx)
+                    if match_idx is not None:
+                        old_idx = current_chapter_idx
+                        # Allow forward movement or staying (re-occurring heading)
+                        # but never jump backward by more than 2 chapters
+                        if match_idx >= current_chapter_idx - 2:
+                            current_chapter_idx = match_idx
+                            page_search_start = chapters[current_chapter_idx].offset
+                            page_search_end = chapters[current_chapter_idx].end_offset
+                            logger.info(
+                                f"Page {trans.page_num}: chapter detected '{heading}' → "
+                                f"chapter {current_chapter_idx + 1} "
+                                f"(pg [{page_search_start}:{page_search_end}])"
+                            )
+                else:
+                    # No heading on this page — use current chapter boundaries
+                    page_search_start = chapters[current_chapter_idx].offset
+                    page_search_end = chapters[current_chapter_idx].end_offset
+
             result = self.align_transcription_to_pg(
                 transcription=trans,
                 pg_text=pg_text,
                 pg_paragraphs=pg_paragraphs,
                 scan_page=trans.page_num,
-                search_start=search_start,
+                search_start=page_search_start,
+                search_end=page_search_end,
             )
             if result:
                 results.append(result)
                 # Only advance search_start for anchored matches (RETAS/n-gram).
-                # Brute-force matches are positionally unreliable — they can match
-                # short text to random locations, which would poison the constraint
-                # for all subsequent pages.
+                # When chapter constraints are active, also advance the chapter
+                # pointer if the match is past the current chapter boundary.
                 if result.anchored:
                     search_start = result.alignment.pg_end
+                    # Auto-advance chapter if the match landed in the next chapter
+                    if chapters and current_chapter_idx < len(chapters) - 1:
+                        next_ch = chapters[current_chapter_idx + 1]
+                        if result.alignment.pg_start >= next_ch.offset:
+                            current_chapter_idx += 1
+                            logger.debug(
+                                f"  Auto-advanced to chapter {current_chapter_idx + 1} "
+                                f"({chapters[current_chapter_idx].title})"
+                            )
                 logger.info(
                     f"Page {trans.page_num}: matched PG [{result.alignment.pg_start}:{result.alignment.pg_end}] "
                     f"(score={result.best_score:.2f}, conf={result.alignment.confidence:.2f}"

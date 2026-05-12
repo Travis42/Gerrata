@@ -452,6 +452,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             transcriptions=transcriptions,
             pg_text=parsed.body_text,
             pg_paragraphs=parsed.paragraphs,
+            chapters=parsed.chapters,
         )
         alignments = vision_aligner.get_alignments(results)
         scan_pages = vision_aligner.build_scan_pages_from_transcriptions(transcriptions)
