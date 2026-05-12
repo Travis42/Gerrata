@@ -64,7 +64,13 @@ class PGFetcher:
             self.cache_dir = None
 
     async def download(self, pg_id: int, dest: Path | str | None = None) -> Path:
-        """Download a PG text, preferring HTML format.
+        """Download a PG text, preferring plain text UTF-8 format.
+
+        Plain text is preferred over HTML because:
+        - No CSS/style block noise that confuses paragraph detection
+        - No HTML entities to unescape
+        - Smaller files (faster downloads, less memory)
+        - Same prose content, just cleaner representation
 
         Args:
             pg_id: Project Gutenberg ebook ID.
@@ -79,16 +85,19 @@ class PGFetcher:
         if dest and not dest.exists():
             dest.mkdir(parents=True, exist_ok=True)
 
-        # Try HTML first, then plain text UTF-8, then plain text
-        for fmt, subdir, ext in [
-            ("html", f"{pg_id}-h", ".htm"),
-            ("html-8", f"{pg_id}-h", ".htm"),
-            ("txt-utf8", str(pg_id), ".txt"),
-            ("txt-iso", str(pg_id) + "-8", ".txt"),
-            ("txt", str(pg_id), ".txt"),
+        # Prefer plain text (no CSS noise), fall back to HTML
+        # PG file structure:
+        #   Plain text UTF-8: /files/{pg_id}/{pg_id}-0.txt
+        #   Plain text ISO:   /files/{pg_id}/{pg_id}.txt or {pg_id}-8.txt
+        #   HTML:             /files/{pg_id}/{pg_id}-h/{pg_id}-h.htm
+        for fmt, filename, ext in [
+            ("txt-utf8", f"{pg_id}-0", ".txt"),
+            ("txt", f"{pg_id}", ".txt"),
+            ("txt-iso", f"{pg_id}-8", ".txt"),
+            ("html", f"{pg_id}-h/{pg_id}-h", ".htm"),
         ]:
             try:
-                url = f"{self.BASE_URL.format(pg_id=pg_id)}{subdir}/{subdir}{ext}"
+                url = f"{self.BASE_URL.format(pg_id=pg_id)}{filename}{ext}"
                 logger.info(f"Trying {fmt}: {url}")
                 async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
                     resp = await client.get(url)
@@ -261,6 +270,32 @@ class PGFetcher:
                     metadata.producer = value
                 elif key == "encoding":
                     metadata.encoding = value
+
+        # If no structured metadata found (common in modern PG plain texts),
+        # extract title and author from the first lines after START marker
+        if not metadata.title and start_match:
+            body_start = start_match.end()
+            # Skip past the marker line
+            nl = content.find("\n", body_start)
+            if nl != -1:
+                body_start = nl + 1
+            # Read first few non-blank lines as title/author
+            lines = []
+            for line in content[body_start:body_start + 2000].splitlines():
+                stripped = line.strip()
+                if stripped:
+                    lines.append(stripped)
+                if len(lines) >= 10:
+                    break
+
+            if lines:
+                # Title is usually the first substantial line
+                metadata.title = lines[0] if lines else ""
+                # Author is on a "By ..." line
+                for line in lines[:6]:
+                    if line.lower().startswith("by "):
+                        metadata.author = line[3:].strip()
+                        break
 
         # Look for source edition info
         source_match = re.search(
