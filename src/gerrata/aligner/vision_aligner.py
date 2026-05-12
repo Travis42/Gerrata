@@ -50,6 +50,73 @@ MODEL_NAME_MAP = {
 }
 
 
+def find_body_start(pg_text: str) -> int:
+    """Detect where prose body begins in PG text, skipping TOC/front-matter.
+
+    Algorithm:
+    1. Split into paragraphs, skip CSS/HTML noise
+    2. Find first chapter-like heading (CHAPTER, PART, Book, etc.)
+    3. Walk forward from there to find first prose paragraph:
+       - >150 chars, not all short lines, >=3 sentence-ending patterns
+    4. Fallback: walk from start looking for long prose paragraphs
+    5. Returns character offset of detected body start (0 if not found)
+
+    This prevents the aligner from matching scan front-matter to PG TOC entries,
+    which are dense chapter heading fragments that cause false anchor matches.
+    """
+    paras = [p.strip() for p in pg_text.split("\n\n") if p.strip()]
+    if not paras:
+        return 0
+
+    def _is_noise(p: str) -> bool:
+        return any(marker in p for marker in ("{", "}", "margin-", "font-"))
+
+    def _is_chapter_heading(p: str) -> bool:
+        return bool(
+            re.match(
+                r"(CHAPTER|PART|Book|Section|ACT|I+\.\s+|CHAPTER\s+[IVXLCDM]+)",
+                p.strip(),
+                re.IGNORECASE,
+            )
+        )
+
+    def _is_prose(p: str) -> bool:
+        if len(p) < 150:
+            return False
+        lines = [l for l in p.split("\n") if l.strip()]
+        if lines and all(len(l) < 100 for l in lines):
+            return False  # All short lines = TOC-like
+        sentences = len(re.findall(r"[.!?]\s+[A-Z\"]", p))
+        return sentences >= 3
+
+    # Find first chapter-like heading
+    first_chapter_idx = -1
+    for i, p in enumerate(paras):
+        if _is_noise(p):
+            continue
+        if _is_chapter_heading(p):
+            first_chapter_idx = i
+            break
+
+    # Walk forward from chapter heading (or start) to find prose
+    search_start = max(0, first_chapter_idx) if first_chapter_idx >= 0 else 0
+    for i in range(search_start, min(search_start + 50, len(paras))):
+        p = paras[i]
+        if _is_noise(p):
+            continue
+        if _is_prose(p):
+            return sum(len(paras[j]) + 2 for j in range(i))
+
+    # Fallback: no chapter heading found, search from beginning for long prose
+    for i, p in enumerate(paras):
+        if _is_noise(p):
+            continue
+        if len(p) > 500 and len(re.findall(r"[.!?]\s+[A-Z\"]", p)) >= 5:
+            return sum(len(paras[j]) + 2 for j in range(i))
+
+    return 0
+
+
 def strip_paratext(text: str) -> str:
     """Remove paratext from OCR/vision transcription: headers, page numbers, running feet.
 
@@ -1471,7 +1538,13 @@ class VisionAligner:
             List of successful alignment results.
         """
         results: list[VisionAlignmentResult] = []
-        search_start = 0  # Sequential constraint: next page searches after this
+        body_offset = find_body_start(pg_text)
+        if body_offset > 0:
+            logger.info(
+                f"Detected PG body start at offset {body_offset} "
+                f"({body_offset / len(pg_text) * 100:.1f}% of text), skipping TOC/front-matter"
+            )
+        search_start = body_offset
 
         # Normalize PG text once for n-gram indexing
         pg_norm = normalize_for_matching(pg_text)
