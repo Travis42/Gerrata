@@ -116,6 +116,7 @@ class CandidateError:
     diff_description: str = ""  # Human-readable description of the diff
     category: ErrorCategory = ErrorCategory.OCR_SCANNO
     severity: ErrorSeverity = ErrorSeverity.HIGH
+    pg_file_line: int = 0  # Line number in the PG HTML file
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -138,6 +139,11 @@ class Error:
     location_description: str = ""  # e.g. "Chapter 3, paragraph 2"
     pg_file_line: int = 0  # Line number in the PG HTML file
     chapter_title: str = ""  # Chapter title where error occurs
+
+    def __post_init__(self):
+        """Copy pg_file_line from candidate if Error's own value is still 0."""
+        if self.pg_file_line == 0 and self.candidate.pg_file_line > 0:
+            self.pg_file_line = self.candidate.pg_file_line
 
     @property
     def category(self) -> ErrorCategory:

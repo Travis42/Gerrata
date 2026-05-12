@@ -256,6 +256,51 @@ class ReportGenerator:
 
         return 0
 
+    def get_line_context(self, pg_file_line: int) -> str:
+        """Get surrounding lines from the PG HTML file for a given line number.
+
+        Returns 1 line before and 1 line after the target line, formatted
+        with line numbers and a marker on the target line.
+
+        Args:
+            pg_file_line: 1-indexed line number in the PG HTML file
+
+        Returns:
+            Formatted string with surrounding context, or empty string if unavailable
+        """
+        if not self.pg_file_path or not self.pg_file_path.exists() or pg_file_line <= 0:
+            return ""
+
+        try:
+            lines = self.pg_file_path.read_text(encoding="utf-8").splitlines()
+            if pg_file_line > len(lines):
+                return ""
+
+            context_lines: list[str] = []
+            # Previous line (1 before)
+            prev_idx = pg_file_line - 2  # 0-indexed
+            if prev_idx >= 0 and prev_idx < len(lines):
+                prev_line = self._clean_html_line(lines[prev_idx])
+                if prev_line:
+                    context_lines.append(f"Line {prev_idx + 1}: {prev_line}")
+
+            # Target line with marker
+            target_idx = pg_file_line - 1  # 0-indexed
+            target_line = self._clean_html_line(lines[target_idx])
+            if target_line:
+                context_lines.append(f"Line {pg_file_line}: {target_line}  <-- error here")
+
+            # Next line (1 after)
+            next_idx = pg_file_line  # 0-indexed
+            if next_idx < len(lines):
+                next_line = self._clean_html_line(lines[next_idx])
+                if next_line:
+                    context_lines.append(f"Line {next_idx + 1}: {next_line}")
+
+            return "\n".join(context_lines)
+        except Exception:
+            return ""
+
     def get_chapter_context(self, pg_offset: int) -> str:
         """Get the chapter title for a given PG text offset.
 
@@ -307,16 +352,19 @@ class ReportGenerator:
     def enrich_errors_with_context(self, report: Report) -> None:
         """Add line numbers and chapter context to all errors in the report.
 
-        This modifies the Error objects in place.
+        This modifies the Error objects in place, always refining line numbers
+        from body-text approximations to accurate PG HTML file line numbers.
         """
         for error in report.errors:
-            # Compute line number
-            if error.pg_file_line == 0:
-                line_num = self.compute_line_number(
-                    error.candidate.pg_offset,
-                    error.candidate.pg_text
-                )
+            # Always compute line number from PG HTML file (more accurate than body-text)
+            line_num = self.compute_line_number(
+                error.candidate.pg_offset,
+                error.candidate.pg_text
+            )
+            if line_num > 0:
                 error.pg_file_line = line_num
+                # Also update the candidate so it stays in sync
+                error.candidate.pg_file_line = line_num
 
             # Get chapter context
             if not error.chapter_title:
@@ -841,6 +889,12 @@ class ReportGenerator:
                 lines.append(f"Page {page} ({scan_url}):")
             else:
                 lines.append(f"Page {page}:")
+
+            # Add PG file line context
+            if err.pg_file_line > 0:
+                line_context = self.get_line_context(err.pg_file_line)
+                if line_context:
+                    lines.append(line_context)
 
             if context:
                 lines.append(context)

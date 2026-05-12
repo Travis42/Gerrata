@@ -641,7 +641,9 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
     candidates = filtered_candidates
 
-    # Step 6d: Calculate pg_file_line for each candidate
+    # Step 6d: Calculate pg_file_line for each candidate (body-text approximation)
+    # Note: ReportGenerator.enrich_errors_with_context() will refine these to
+    # PG HTML file line numbers using compute_line_number().
     console.print(f"[bold blue]Step {step_num + 1}d:[/bold blue] Computing line numbers...")
     for candidate in candidates:
         # Find the PG text by string search (pg_offset may be inaccurate)
