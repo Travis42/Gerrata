@@ -158,10 +158,10 @@ class TestDetectScanChapter:
         )
         assert result == "The Spouter-Inn"
 
-    def test_trailing_period_stripped(self, aligner):
-        """Trailing periods should be stripped from short titles."""
-        result = aligner._detect_scan_chapter("Nightgown\ntime, when all at once")
-        assert result == "Nightgown"
+    def test_trailing_punctuation_stripped(self, aligner):
+        """Trailing semicolons should be stripped (running headers like 'MOBY DICK;')."""
+        result = aligner._detect_scan_chapter("MOBY DICK;\nwhere that noble mole is washed")
+        assert result is None  # "Moby Dick" is in the skip list
 
     def test_empty_transcription(self, aligner):
         assert aligner._detect_scan_chapter("") is None

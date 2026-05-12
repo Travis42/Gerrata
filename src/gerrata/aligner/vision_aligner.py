@@ -1541,8 +1541,13 @@ class VisionAligner:
         if len(first_line) < 80 and not first_line.isdigit():
             # Strip trailing page numbers (e.g. "The Spouter-Inn 15")
             clean = re.sub(r"\s+\d+$", "", first_line)
-            # Strip trailing punctuation (periods, em dashes, colons)
-            clean = re.sub(r"[\.\u2014\u2013:]+\s*$", "", clean).strip()
+            # Strip trailing punctuation (periods, semicolons, em dashes, colons)
+            clean = re.sub(r"[\.\;\u2014\u2013:]+\s*$", "", clean).strip()
+
+            # Single word + trailing comma = prose continuation ("Midnight,")
+            # Multi-word titles with commas are valid ("The Negro of the Wreck,")
+            if clean.endswith(",") and len(clean.split()) == 1:
+                return None
             clean = clean.rstrip(".")
 
             # Skip common non-chapter first lines
