@@ -787,6 +787,26 @@ class ReportGenerator:
             return False
         return len(longer) - len(shorter) > 20
 
+    def _is_alignment_artifact_text(self, pg_text: str, scan_text: str) -> bool:
+        """True if the two texts share no meaningful words — likely a misalignment."""
+        import re
+        s = scan_text.strip()
+        p = pg_text.strip()
+        if not s or not p:
+            return True
+        # Short texts (single words) are likely real diffs, not artifacts
+        if len(s.split()) <= 2 and len(p.split()) <= 2:
+            return False
+        s_words = set(re.findall(r'[a-z]+', s.lower()))
+        p_words = set(re.findall(r'[a-z]+', p.lower()))
+        if not s_words or not p_words:
+            return True
+        shared = s_words & p_words
+        if not shared:
+            return True
+        meaningful_shared = {w for w in shared if len(w) > 3}
+        return not meaningful_shared
+
     def generate_errata_email(self, report: Report) -> str:
         """Generate errata report in Project Gutenberg's preferred format.
 
@@ -904,6 +924,39 @@ class ReportGenerator:
             lines.append(f"{pg_text} ==> {scan_text}")
 
             lines.append("")
+
+        # Edition variants (informational, not for submission)
+        edition_variants = [
+            e for e in report.errors
+            if e.category == ErrorCategory.EDITION_VARIANT
+            and not self._is_alignment_artifact_text(e.candidate.pg_text, e.candidate.scan_text)
+        ]
+
+        if edition_variants:
+            lines.append("---")
+            lines.append("")
+            lines.append("EDITION VARIANTS (not for submission — informational only)")
+            lines.append("")
+            lines.append(
+                "The following differences appear to be between editions "
+                "rather than errors in either version."
+            )
+            lines.append("")
+            for err in edition_variants:
+                pg_text = err.candidate.pg_text.strip()
+                scan_text = err.candidate.scan_text.strip()
+                page = self._get_ia_leaf_number(err.candidate.scan_page)
+
+                if self.scan_id:
+                    leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                    scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                    lines.append(f"Page {page} ({scan_url}):")
+                else:
+                    lines.append(f"Page {page}:")
+
+                lines.append(f"PG:    {pg_text}")
+                lines.append(f"Scan:  {scan_text}")
+                lines.append("")
 
         # Footer
         lines.append("These errata were found using Gerrata (https://github.com/nictravis/gerrata) and refined by a human reviewer (me).")
