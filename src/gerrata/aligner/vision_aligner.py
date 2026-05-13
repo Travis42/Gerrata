@@ -296,6 +296,66 @@ class SequentialTracker:
         return (start, end)
 
 
+@dataclass
+class ReverseSequentialTracker:
+    """Tracks confirmed match positions for reverse (end-to-start) sequential estimation."""
+
+    matches: list[tuple[int, int, float, int]] = field(default_factory=list)
+    # Each entry: (page_num, pg_start_offset, confidence_score, match_length)
+    # Note: stores pg_start (not pg_end) because we estimate backward
+
+    @property
+    def last_confirmed_position(self) -> int:
+        """Most recent match start from HIGH or MEDIUM confidence matches."""
+        for _pn, offset, confidence, _ml in reversed(self.matches):
+            if confidence >= 0.40:
+                return offset
+        return 0  # 0 means "unknown, default to end of text"
+
+    @property
+    def last_confirmed_page(self) -> int:
+        """Page number of the most recent HIGH or MEDIUM confidence match."""
+        for pn, _off, confidence, _ml in reversed(self.matches):
+            if confidence >= 0.40:
+                return pn
+        return 0
+
+    @property
+    def chars_per_page(self) -> float:
+        """Estimated chars per page from recent confirmed matches."""
+        recent = [(pn, off) for pn, off, conf, _ml in self.matches if conf >= 0.40]
+        if len(recent) < 2:
+            return 1500.0
+        recent = recent[-10:]
+        # In reverse, earlier pages have higher offsets
+        total_chars = abs(recent[0][1] - recent[-1][1])
+        total_pages = abs(recent[0][0] - recent[-1][0])
+        return max(500.0, total_chars / max(1, total_pages))
+
+    def expected_position(self, page_num: int) -> int:
+        """Estimate where page_num's content should start, working backward."""
+        last_pos = self.last_confirmed_position
+        last_page = self.last_confirmed_page
+        pages_gap = last_page - page_num  # positive when page_num is before last_page
+        if pages_gap <= 0:
+            return last_pos
+        return last_pos - int(pages_gap * self.chars_per_page)
+
+    def record(self, page_num: int, pg_start: int, confidence: float, match_length: int):
+        """Record a confirmed match (stores pg_start for backward estimation)."""
+        self.matches.append((page_num, pg_start, confidence, match_length))
+
+    def search_window(self, page_num: int, pg_text_length: int) -> tuple[int, int]:
+        """Return (start, end) search window centered on expected position."""
+        expected = self.expected_position(page_num)
+        if expected <= 0:
+            # No confirmed position yet — default to end of text minus estimate
+            expected = max(0, pg_text_length - (340 - page_num) * 1500)
+        start = max(0, expected - 8000)
+        end = min(pg_text_length, expected + 2000)
+        return (start, end)
+
+
 # Alignment phase thresholds
 CHAPTER_THRESHOLD = 0.50
 SEQUENTIAL_THRESHOLD = 0.40
@@ -2023,6 +2083,42 @@ class VisionAligner:
 
             # True failure
             logger.info(f"Page {page_num}: NO MATCH in any phase")
+
+        # -- Reverse pass: disabled (no recovery on Moby Dick, adds runtime) --
+        # To re-enable: uncomment the block below. Requires ReverseSequentialTracker.
+        # unmatched_indices = [i for i, r in enumerate(results) if r is None]
+        # if unmatched_indices:
+        #     logger.info(f"Reverse pass: {len(unmatched_indices)} unmatched pages to attempt")
+        #     reverse_tracker = ReverseSequentialTracker()
+        #     for i in reversed(unmatched_indices):
+        #         trans = transcriptions[i]
+        #         page_num = trans.page_num
+        #         seq_window = reverse_tracker.search_window(page_num, len(pg_text))
+        #         logger.info(f"Page {page_num}: Reverse Phase 2 [{seq_window[0]}:{seq_window[1]}]")
+        #         result = self.align_transcription_to_pg(
+        #             transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+        #             scan_page=page_num, search_start=seq_window[0], search_end=seq_window[1],
+        #             min_score=SEQUENTIAL_THRESHOLD,
+        #         )
+        #         if result:
+        #             results[i] = result
+        #             reverse_tracker.record(page_num, result.alignment.pg_start, 0.40,
+        #                 result.alignment.pg_end - result.alignment.pg_start)
+        #             logger.info(f"Page {page_num}: Reverse match [{result.alignment.pg_start}:{result.alignment.pg_end}] score={result.best_score:.2f}")
+        #             continue
+        #         logger.info(f"Page {page_num}: Reverse Phase 3 (global)")
+        #         result = self.align_transcription_to_pg(
+        #             transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+        #             scan_page=page_num, search_start=0, search_end=len(pg_text),
+        #             min_score=GLOBAL_THRESHOLD,
+        #         )
+        #         if result:
+        #             results[i] = result
+        #             reverse_tracker.record(page_num, result.alignment.pg_start, 0.35,
+        #                 result.alignment.pg_end - result.alignment.pg_start)
+        #             logger.info(f"Page {page_num}: Reverse global match [{result.alignment.pg_start}:{result.alignment.pg_end}] score={result.best_score:.2f}")
+        #             continue
+        #         logger.info(f"Page {page_num}: NO MATCH in reverse pass either")
 
         # -- Backward repair pass --
         results = self._repair_pass(results, transcriptions, pg_text, pg_paragraphs, tracker)
