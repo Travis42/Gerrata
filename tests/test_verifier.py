@@ -196,18 +196,21 @@ class TestVisionVerifier:
         v, c, r, f = verifier._derive_verdict_from_transcription("hello  world", "hello world")
         assert v == Verdict.PG_CORRECT
 
-        # Minor OCR difference (1 char edit out of many)
-        v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "the latter")
-        assert v in (Verdict.SCAN_CORRECT, Verdict.EDITION_VARIANT)
-        assert f != ""
-
-        # Single char typo — should be scan_correct with high confidence
+        # Single-char typo — scan_correct with 0.90 confidence
         v, c, r, f = verifier._derive_verdict_from_transcription("manners", "manner")
         assert v == Verdict.SCAN_CORRECT
         assert c >= 0.85
 
-        # Major difference (completely different text)
-        v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "completely different")
+        # Spelling variant — still scan_correct (>=0.8 ratio)
+        v, c, r, f = verifier._derive_verdict_from_transcription("colour", "color")
+        assert v == Verdict.SCAN_CORRECT
+
+        # Medium similarity — edition_variant
+        v, c, r, f = verifier._derive_verdict_from_transcription("the quick fox", "a quick brown fox")
+        assert v == Verdict.EDITION_VARIANT
+
+        # Very different — ambiguous
+        v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "completely different text")
         assert v == Verdict.AMBIGUOUS
 
     @pytest.mark.asyncio

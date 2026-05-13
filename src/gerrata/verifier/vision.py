@@ -477,36 +477,30 @@ class VisionVerifier:
             return (Verdict.PG_CORRECT, 0.9,
                     "Scan matches PG text (whitespace differences only).", "")
 
-        # They genuinely differ. Count the edits.
+        # They genuinely differ. Use SequenceMatcher ratio as the distance metric.
         sm = difflib.SequenceMatcher(None, pg_clean, trans_clean)
         ratio = sm.ratio()
 
-        # Compute edit distance (number of single-char changes)
-        edits = len(pg_clean) + len(trans_clean) - 2 * sm.find_longest_match(0, len(pg_clean), 0, len(trans_clean)).size
-        edit_ratio = edits / max(len(pg_clean), len(trans_clean), 1)
+        # Classification based on similarity ratio:
+        # - High similarity (>=0.8): small edits (typos, single-char changes)
+        #   → scan_correct, these are the real OCR differences worth reporting
+        # - Medium similarity (>=0.6): moderate differences, could be edition variants
+        #   → edition_variant
+        # - Low similarity (<0.6): likely misaligned or substantially different text
+        #   → ambiguous
 
-        if edit_ratio <= 0.15 and ratio >= 0.7:
-            # Minor edits (typos, single-word differences) — likely real OCR errors
-            # Use 0.90 confidence to pass the email reporter's 0.85 filter
+        if ratio >= 0.8:
             return (Verdict.SCAN_CORRECT, 0.90,
-                    f"Scan transcription differs from PG text ({ratio:.0%} similar, {edit_ratio:.0%} edits).",
+                    f"Scan transcription differs from PG text ({ratio:.0%} similar).",
                     trans_clean)
 
-        if ratio >= 0.85:
-            # Close match but more edits — edition variant or formatting difference
+        if ratio >= 0.6:
             return (Verdict.EDITION_VARIANT, 0.80,
-                    f"Scan differs slightly from PG ({ratio:.0%} similar). Possible edition variant.",
+                    f"Scan differs from PG ({ratio:.0%} similar). Possible edition variant.",
                     trans_clean)
 
-        if ratio >= 0.3:
-            # Moderate difference — scan shows different text, possible misalignment
-            return (Verdict.AMBIGUOUS, 0.50,
-                    f"Scan transcription differs from PG text ({ratio:.0%} similar). Possible misalignment.",
-                    trans_clean)
-
-        # Very different — likely misaligned or unreadable
-        return (Verdict.AMBIGUOUS, 0.3,
-                f"Scan transcription is substantially different from PG text ({ratio:.0%} similar). Possible misalignment.",
+        return (Verdict.AMBIGUOUS, 0.50,
+                f"Scan transcription substantially differs from PG ({ratio:.0%} similar). Possible misalignment.",
                 trans_clean)
 
     def _parse_batch_response(self, data: dict, items: list[tuple[int, CandidateError, str]]) -> list[Error]:
