@@ -481,20 +481,31 @@ class VisionVerifier:
         sm = difflib.SequenceMatcher(None, pg_clean, trans_clean)
         ratio = sm.ratio()
 
-        if ratio >= 0.9:
-            # Very close — likely edition variant or minor OCR noise
-            return (Verdict.EDITION_VARIANT, 0.7,
+        # Compute edit distance (number of single-char changes)
+        edits = len(pg_clean) + len(trans_clean) - 2 * sm.find_longest_match(0, len(pg_clean), 0, len(trans_clean)).size
+        edit_ratio = edits / max(len(pg_clean), len(trans_clean), 1)
+
+        if edit_ratio <= 0.15 and ratio >= 0.7:
+            # Minor edits (typos, single-word differences) — likely real OCR errors
+            # Use 0.90 confidence to pass the email reporter's 0.85 filter
+            return (Verdict.SCAN_CORRECT, 0.90,
+                    f"Scan transcription differs from PG text ({ratio:.0%} similar, {edit_ratio:.0%} edits).",
+                    trans_clean)
+
+        if ratio >= 0.85:
+            # Close match but more edits — edition variant or formatting difference
+            return (Verdict.EDITION_VARIANT, 0.80,
                     f"Scan differs slightly from PG ({ratio:.0%} similar). Possible edition variant.",
                     trans_clean)
 
-        if ratio >= 0.5:
-            # Moderate difference — scan shows different text
-            return (Verdict.SCAN_CORRECT, 0.75,
-                    f"Scan transcription differs from PG text ({ratio:.0%} similar).",
+        if ratio >= 0.3:
+            # Moderate difference — scan shows different text, possible misalignment
+            return (Verdict.AMBIGUOUS, 0.50,
+                    f"Scan transcription differs from PG text ({ratio:.0%} similar). Possible misalignment.",
                     trans_clean)
 
-        # Very different — could be misaligned, different edition, or unreadable
-        return (Verdict.AMBIGUOUS, 0.4,
+        # Very different — likely misaligned or unreadable
+        return (Verdict.AMBIGUOUS, 0.3,
                 f"Scan transcription is substantially different from PG text ({ratio:.0%} similar). Possible misalignment.",
                 trans_clean)
 

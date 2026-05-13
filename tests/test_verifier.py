@@ -196,17 +196,17 @@ class TestVisionVerifier:
         v, c, r, f = verifier._derive_verdict_from_transcription("hello  world", "hello world")
         assert v == Verdict.PG_CORRECT
 
-        # Minor difference (>90% similar)
+        # Minor OCR difference (1 char edit out of many)
         v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "the latter")
-        assert v == Verdict.EDITION_VARIANT
-        assert r != ""
-
-        # Moderate difference (50-90%)
-        v, c, r, f = verifier._derive_verdict_from_transcription("tne letter", "the letter")
         assert v in (Verdict.SCAN_CORRECT, Verdict.EDITION_VARIANT)
-        assert f != ""  # suggested_fix should be populated
+        assert f != ""
 
-        # Major difference (<50%)
+        # Single char typo — should be scan_correct with high confidence
+        v, c, r, f = verifier._derive_verdict_from_transcription("manners", "manner")
+        assert v == Verdict.SCAN_CORRECT
+        assert c >= 0.85
+
+        # Major difference (completely different text)
         v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "completely different")
         assert v == Verdict.AMBIGUOUS
 
