@@ -7,7 +7,7 @@ set -uo pipefail
 REPO="/root/projects/gerrata"
 cd "$REPO"
 
-API_KEY="REDACTED"
+API_KEY="${ZAI_API_KEY:?ZAI_API_KEY env var required}"
 WEBHOOK="--channel telegram --to '-1003815086962:3515'"
 CONCURRENCY=10
 LOG_FILE="/root/clawd/projects/gerrata-queue.log"
