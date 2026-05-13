@@ -360,10 +360,42 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
     if vision_mode:
         if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
-            # Resuming — load transcriptions from cache
+            # Resuming — load transcriptions from pipeline intermediate cache
             cached = load_intermediate(intermed_dir, "02_transcriptions")
             if not cached:
-                raise ValueError(f"--resume-from={resume_from} but 02_transcriptions.json not found in {intermed_dir}")
+                # Fallback: transcriber has its own cache file with a different
+                # format. Convert it to the pipeline format so we can resume
+                # after a crash that happened before save_intermediate ran.
+                transcriber_cache = Path(f"cache/{scan_id}_transcriptions.json")
+                if transcriber_cache.exists():
+                    logging.getLogger(__name__).info(
+                        f"Pipeline intermediate 02_transcriptions.json not found, "
+                        f"falling back to transcriber cache {transcriber_cache}"
+                    )
+                    with open(transcriber_cache) as f:
+                        tc_data = json.load(f)
+                    cached_pages = tc_data.get("pages", {})
+                    cached = []
+                    for filename, entry in sorted(cached_pages.items()):
+                        cached.append({
+                            "page_num": int("".join(filter(str.isdigit, filename)) or 0),
+                            "image_path": str(Path(f"cache/pages/{filename}")),
+                            "transcription": entry.get("text", ""),
+                            "transcription_cleaned": None,  # Will be re-derived
+                            "success": entry.get("success", bool(entry.get("text"))),
+                            "error": None,
+                            "model_used": entry.get("model", ""),
+                        })
+                    console.print(
+                        f"  [dim]Converted {len(cached)} transcriptions from "
+                        f"transcriber cache[/dim]"
+                    )
+                else:
+                    raise ValueError(
+                        f"--resume-from={resume_from} but neither "
+                        f"02_transcriptions.json nor transcriber cache found "
+                        f"in {intermed_dir}"
+                    )
             from gerrata.aligner.vision_aligner import PageTranscription
             successful = [PageTranscription(
                 page_num=t["page_num"],
