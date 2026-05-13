@@ -25,30 +25,22 @@ MODEL_NAME_MAP = {
     "zai/glm-4.6v": "glm-4.6v",
 }
 
-DEFAULT_SYSTEM_PROMPT = """You are a quality assurance expert for Project Gutenberg texts. Your job is to examine potential errors by comparing a published PG text against the original page scan (from Internet Archive or similar source).
+DEFAULT_SYSTEM_PROMPT = """You are a page transcription specialist. Your job is to examine a page scan image and transcribe exactly what you see.
 
-The PG text and the page scan may be from DIFFERENT EDITIONS of the same work. Classify each difference into one of these categories:
+You will be given a passage from a published text (the "PG text") and a scan page image. Your task:
 
-(a) **Error in PG text**: The PG text has a clear mistake (typo, OCR scanno that survived proofreading, wrong word, missing content). The scan shows the correct reading.
+1. Locate the PG text passage on the scan page image.
+2. Transcribe exactly what appears on the scan at that location — character by character, preserving the original spelling, punctuation, capitalization, hyphenation, and line breaks as they appear on the printed page.
+3. Quote 20+ characters of surrounding text from the page image to confirm you found the right location.
 
-(b) **Edition variant**: The PG text and scan use different but both valid readings (e.g., different punctuation, different word forms like "downright" vs "down-right", British vs American spelling, different paragraph breaks, etc.)
-
-(c) **Intentional modernization**: PG deliberately changed the text (e.g., modernized spelling, standardized formatting, expanded abbreviations like "shan't" → "shall not").
-
-Your role is to **observe and classify**. Read the scan page image carefully, locate the passage in question, and transcribe exactly what you see — character by character, preserving the original spelling, punctuation, and formatting as it appears on the page.
-
-When the scan and PG text differ, consider whether both readings are plausible editions of the same work. When both are valid, classify as "edition_variant" rather than choosing one as correct.
-
-When a passage is unclear, illegible, or too short to locate confidently on the page image, classify as "unable_to_verify".
-
-For each difference, respond with:
-1. Your verdict: "pg_correct" | "scan_correct" | "edition_variant" | "intentional_modernization" | "ambiguous" | "unable_to_verify"
-2. Confidence: 0.0-1.0
-3. Brief reasoning (1-2 sentences)
-4. If verdict is "scan_correct", set suggested_fix to the exact characters visible on the scan page, transcribed character-by-character
+Guidelines:
+- Transcribe what the pixels show. Preserve archaic spelling, unusual hyphenation, ligatures, and period typography exactly.
+- If the PG text and scan show the same characters, your transcription will match the PG text.
+- If they differ, your transcription will show what the scan actually has — make no corrections or editorial judgments.
+- If the passage is unclear, illegible, or you cannot locate it on the page, respond with "unable_to_verify".
 
 Respond in JSON format:
-{"verdict": "...", "confidence": 0.X, "reasoning": "...", "suggested_fix": "..."}
+{"transcription": "...", "image_evidence": "...", "unable_to_verify": false}
 """
 
 
@@ -425,44 +417,86 @@ class VisionVerifier:
     def _build_batch_prompt(self, items: list[tuple[int, CandidateError, str]]) -> str:
         """Build a batch prompt for multiple candidate errors on the same page."""
         parts = [
-            "You will review MULTIPLE potential text differences on this scan page. ",
-            "For EACH item, analyze the PG text passage against the scan page image and provide your verdict.\n\n",
+            "You will transcribe MULTIPLE passages from this scan page. ",
+            "For EACH item, locate the passage on the page image and transcribe exactly what you see.\n\n",
         ]
 
         for idx, error, pg_context in items:
             parts.append(f"**Item {idx}:**\n")
-            parts.append(f"Difference: {error.diff_description}\n")
-            parts.append(f"PG text: {error.pg_text}\n")
-            # Only provide the PG text and the scan image — the model reads
-            # the page image directly to form its own observation of the scan.
+            parts.append(f"PG text passage: {error.pg_text}\n")
             if len(error.pg_text.strip()) < 5:
-                parts.append("NOTE: This passage is too short to reliably locate on a page image. "
-                             "Default to verdict 'unable_to_verify'.\n")
+                parts.append("This passage is too short to locate. Respond with unable_to_verify: true.\n")
             if pg_context:
-                parts.append(f"PG context: {pg_context[:200]}...\n")
+                parts.append(f"Surrounding PG text: {pg_context[:200]}...\n")
             parts.append("\n")
 
         parts.append(
             "Respond with a JSON ARRAY containing one object per item, in the same order as above. "
-            "Each object must have: index (int), verdict (str), confidence (float 0-1), reasoning (str), "
-            "image_evidence (str — quote 20+ chars of surrounding text as you see it on the page image), "
-            "and optionally suggested_fix (str if verdict is scan_correct).\n\n"
+            "Each object must have: index (int), transcription (str — exact characters from the scan), "
+            "image_evidence (str — quote 20+ chars of surrounding text from the page), "
+            "and unable_to_verify (bool).\n\n"
             "Instructions:\n"
-            "1. For EACH item, locate the exact PG text passage on the scan page image.\n"
-            "2. In image_evidence, quote the surrounding text as it appears on the page to confirm you found it.\n"
-            "3. When verdict is 'scan_correct', set suggested_fix to the exact characters visible on the scan page, transcribed character-by-character.\n"
-            "4. When the relevant text is unclear or cannot be located on the page, use verdict 'unable_to_verify'.\n\n"
+            "1. For EACH item, locate the PG text passage on the scan page image.\n"
+            "2. Transcribe the exact characters visible at that location — character by character, "
+            "preserving spelling, punctuation, hyphenation, and line breaks.\n"
+            "3. In image_evidence, quote surrounding text as it appears on the page to confirm location.\n"
+            "4. If the passage is unclear or cannot be located, set unable_to_verify: true.\n\n"
             "Example format:\n"
-            '[\n  {"index": 0, "verdict": "scan_correct", "confidence": 0.9, "reasoning": "...", '
-            '"image_evidence": "...surrounding text from page...", "suggested_fix": "..."},\n'
-            '  {"index": 1, "verdict": "edition_variant", "confidence": 0.85, "reasoning": "...", '
-            '"image_evidence": "..."}\n'
-            "]\n\n"
-            "Remember: The PG text and scan may be from DIFFERENT EDITIONS. Distinguish between actual errors "
-            "and edition variants/modernizations. When in doubt, say 'edition_variant' or 'ambiguous'."
+            '[\n  {"index": 0, "transcription": "exactly what the scan shows", '
+            '"image_evidence": "...surrounding text from page...", "unable_to_verify": false},\n'
+            '  {"index": 1, "transcription": "...", '
+            '"image_evidence": "...", "unable_to_verify": false}\n'
+            "]\n"
         )
 
         return "".join(parts)
+
+    def _derive_verdict_from_transcription(
+        self, pg_text: str, transcription: str
+    ) -> tuple[Verdict, float, str, str]:
+        """Derive verdict by comparing PG text against scan transcription.
+
+        Instead of asking the LLM to make editorial judgments, we compare
+        the raw transcription to the PG text and classify mechanically.
+
+        Returns: (verdict, confidence, reasoning, suggested_fix)
+        """
+        import difflib
+
+        pg_clean = pg_text.strip()
+        trans_clean = transcription.strip()
+
+        if not trans_clean or pg_clean.lower() == trans_clean.lower():
+            return (Verdict.PG_CORRECT, 0.95, "Scan transcription matches PG text.", "")
+
+        # Compute normalized diff to ignore whitespace differences
+        pg_norm = " ".join(pg_clean.split())
+        trans_norm = " ".join(trans_clean.split())
+
+        if pg_norm == trans_norm:
+            return (Verdict.PG_CORRECT, 0.9,
+                    "Scan matches PG text (whitespace differences only).", "")
+
+        # They genuinely differ. Count the edits.
+        sm = difflib.SequenceMatcher(None, pg_clean, trans_clean)
+        ratio = sm.ratio()
+
+        if ratio >= 0.9:
+            # Very close — likely edition variant or minor OCR noise
+            return (Verdict.EDITION_VARIANT, 0.7,
+                    f"Scan differs slightly from PG ({ratio:.0%} similar). Possible edition variant.",
+                    trans_clean)
+
+        if ratio >= 0.5:
+            # Moderate difference — scan shows different text
+            return (Verdict.SCAN_CORRECT, 0.75,
+                    f"Scan transcription differs from PG text ({ratio:.0%} similar).",
+                    trans_clean)
+
+        # Very different — could be misaligned, different edition, or unreadable
+        return (Verdict.AMBIGUOUS, 0.4,
+                f"Scan transcription is substantially different from PG text ({ratio:.0%} similar). Possible misalignment.",
+                trans_clean)
 
     def _parse_batch_response(self, data: dict, items: list[tuple[int, CandidateError, str]]) -> list[Error]:
         """Parse a batch API response into Error objects."""
@@ -504,28 +538,29 @@ class VisionVerifier:
                     continue
 
                 item_result = results_map[idx]
-                verdict_str = item_result.get("verdict", "unable_to_verify")
-                confidence = float(item_result.get("confidence", 0.5))
-                reasoning = item_result.get("reasoning", "")
-                suggested_fix = item_result.get("suggested_fix", "")
-
-                # Map verdict string to enum
-                verdict_map = {
-                    "pg_correct": Verdict.PG_CORRECT,
-                    "scan_correct": Verdict.SCAN_CORRECT,
-                    "edition_variant": Verdict.EDITION_VARIANT,
-                    "intentional_modernization": Verdict.INTENTIONAL_MODERNIZATION,
-                    "ambiguous": Verdict.AMBIGUOUS,
-                    "unable_to_verify": Verdict.UNABLE_TO_VERIFY,
-                }
-                verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
-
+                transcription = item_result.get("transcription", "")
                 image_evidence = item_result.get("image_evidence", "")
+                unable = item_result.get("unable_to_verify", False)
+
+                if unable or not transcription:
+                    results.append(Error(
+                        candidate=error,
+                        verdict=Verdict.UNABLE_TO_VERIFY,
+                        confidence=0.0,
+                        reasoning="Verifier could not locate or transcribe passage.",
+                        image_evidence=image_evidence,
+                    ))
+                    continue
+
+                # Derive verdict mechanically from transcription vs PG text
+                verdict, confidence, reasoning, suggested_fix = (
+                    self._derive_verdict_from_transcription(error.pg_text, transcription)
+                )
 
                 results.append(Error(
                     candidate=error,
                     verdict=verdict,
-                    confidence=min(1.0, max(0.0, confidence)),
+                    confidence=confidence,
                     reasoning=reasoning,
                     suggested_fix=suggested_fix,
                     image_evidence=image_evidence,
@@ -585,23 +620,20 @@ class VisionVerifier:
     def _build_prompt(self, error: CandidateError, pg_context: str = "") -> str:
         """Build the user prompt for the vision model."""
         parts = [
-            "Compare the PG text passage with the scan page image and classify the difference:\n",
-            f"**Difference found:** {error.diff_description}\n",
-            f"**PG text (the published version):** {error.pg_text}\n",
+            "Locate this PG text passage on the scan page image and transcribe exactly what you see:\n\n",
+            f"**PG text passage:** {error.pg_text}\n",
         ]
         if len(error.pg_text.strip()) < 5:
             parts.append(
-                "\nNOTE: This passage is too short to reliably locate on a page image. "
-                "Default to verdict 'unable_to_verify'.\n"
+                "\nThis passage is too short to reliably locate on a page image. "
+                "Respond with unable_to_verify: true.\n"
             )
         if pg_context:
-            parts.append(f"\n**PG text context (surrounding text):**\n{pg_context}\n")
+            parts.append(f"\n**Surrounding PG text:**\n{pg_context}\n")
         parts.append(
-            "\nFirst, locate the exact PG text passage on the scan page image. "
-            "Quote 20+ characters of surrounding text from the image as evidence that you found it. "
-            "Then classify: does the scan show the same text, different text, or is this an edition variant?\n"
-            "When the text differs, transcribe exactly what you see on the page, character by character.\n"
-            "When you cannot locate the passage clearly, use verdict 'unable_to_verify'.\n"
+            "\nFind the passage on the scan page. Transcribe the exact characters visible at that "
+            "location — character by character, preserving spelling, punctuation, and hyphenation. "
+            "Include 20+ characters of surrounding text from the page in your image_evidence.\n"
         )
         return "".join(parts)
 
@@ -644,28 +676,28 @@ class VisionVerifier:
             # Try to parse JSON from the response
             result = self._extract_json(content)
 
-            verdict_str = result.get("verdict", "unable_to_verify")
-            confidence = float(result.get("confidence", 0.5))
-            reasoning = result.get("reasoning", "")
-            suggested_fix = result.get("suggested_fix", "")
-
-            # Map verdict string to enum
-            verdict_map = {
-                "pg_correct": Verdict.PG_CORRECT,
-                "scan_correct": Verdict.SCAN_CORRECT,
-                "edition_variant": Verdict.EDITION_VARIANT,
-                "intentional_modernization": Verdict.INTENTIONAL_MODERNIZATION,
-                "ambiguous": Verdict.AMBIGUOUS,
-                "unable_to_verify": Verdict.UNABLE_TO_VERIFY,
-            }
-            verdict = verdict_map.get(verdict_str.lower().strip(), Verdict.AMBIGUOUS)
-
+            transcription = result.get("transcription", "")
             image_evidence = result.get("image_evidence", "")
+            unable = result.get("unable_to_verify", False)
+
+            if unable or not transcription:
+                return Error(
+                    candidate=error,
+                    verdict=Verdict.UNABLE_TO_VERIFY,
+                    confidence=0.0,
+                    reasoning="Verifier could not locate or transcribe passage.",
+                    image_evidence=image_evidence,
+                )
+
+            # Derive verdict mechanically from transcription vs PG text
+            verdict, confidence, reasoning, suggested_fix = (
+                self._derive_verdict_from_transcription(error.pg_text, transcription)
+            )
 
             return Error(
                 candidate=error,
                 verdict=verdict,
-                confidence=min(1.0, max(0.0, confidence)),
+                confidence=confidence,
                 reasoning=reasoning,
                 suggested_fix=suggested_fix,
                 image_evidence=image_evidence,

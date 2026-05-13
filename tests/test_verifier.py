@@ -155,7 +155,7 @@ class TestVisionVerifier:
         # the model reads the page image directly.
         assert "the letter" not in prompt
         assert "Some context" in prompt
-        assert "edition" in prompt.lower()
+        assert "transcri" in prompt.lower()
 
     def test_extract_json_direct(self, verifier):
         text = '{"verdict": "scan_correct", "confidence": 0.8}'
@@ -177,10 +177,38 @@ class TestVisionVerifier:
         result = verifier._extract_json("No JSON here")
         assert result == {}
 
-    def test_system_prompt_mentions_edition_variant(self):
-        assert "edition" in DEFAULT_SYSTEM_PROMPT.lower()
-        assert "modernization" in DEFAULT_SYSTEM_PROMPT.lower()
-        assert "error" in DEFAULT_SYSTEM_PROMPT.lower()
+    def test_system_prompt_frames_verifier_as_transcriber(self):
+        assert "transcri" in DEFAULT_SYSTEM_PROMPT.lower()
+        assert "character by character" in DEFAULT_SYSTEM_PROMPT.lower()
+        assert "unable_to_verify" in DEFAULT_SYSTEM_PROMPT.lower()
+
+    def test_derive_verdict_from_transcription(self, verifier, sample_error):
+        """Verdicts are derived mechanically from transcription vs PG text."""
+        # Exact match
+        v, c, r, f = verifier._derive_verdict_from_transcription("hello world", "hello world")
+        assert v == Verdict.PG_CORRECT
+
+        # Case-insensitive match
+        v, c, r, f = verifier._derive_verdict_from_transcription("Hello World", "hello world")
+        assert v == Verdict.PG_CORRECT
+
+        # Whitespace-only difference
+        v, c, r, f = verifier._derive_verdict_from_transcription("hello  world", "hello world")
+        assert v == Verdict.PG_CORRECT
+
+        # Minor difference (>90% similar)
+        v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "the latter")
+        assert v == Verdict.EDITION_VARIANT
+        assert r != ""
+
+        # Moderate difference (50-90%)
+        v, c, r, f = verifier._derive_verdict_from_transcription("tne letter", "the letter")
+        assert v in (Verdict.SCAN_CORRECT, Verdict.EDITION_VARIANT)
+        assert f != ""  # suggested_fix should be populated
+
+        # Major difference (<50%)
+        v, c, r, f = verifier._derive_verdict_from_transcription("the letter", "completely different")
+        assert v == Verdict.AMBIGUOUS
 
     @pytest.mark.asyncio
     async def test_verify_batch_per_page_groups_by_page(self, verifier):
