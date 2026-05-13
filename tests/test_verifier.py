@@ -151,7 +151,9 @@ class TestVisionVerifier:
     def test_build_prompt(self, verifier, sample_error):
         prompt = verifier._build_prompt(sample_error, "Some context around the error.")
         assert "tne letter" in prompt
-        assert "the letter" in prompt
+        # scan_text is intentionally excluded to prevent hallucination —
+        # the model reads the page image directly.
+        assert "the letter" not in prompt
         assert "Some context" in prompt
         assert "edition" in prompt.lower()
 

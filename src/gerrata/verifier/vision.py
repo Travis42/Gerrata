@@ -21,15 +21,13 @@ from gerrata.models import CandidateError, Error, Verdict
 logger = logging.getLogger(__name__)
 
 MODEL_NAME_MAP = {
-    "zai/glm-4.6v": "glm-4.6v",
-    "zai/glm-4.5v": "glm-4.5v",
-    "zai/glm-4.6v-flashx": "glm-4.6v-flashx",
     "zai/glm-ocr": "glm-ocr",
+    "zai/glm-4.6v": "glm-4.6v",
 }
 
-DEFAULT_SYSTEM_PROMPT = """You are a quality assurance expert for Project Gutenberg texts. You are comparing a published PG text against the original page scan (from Internet Archive or similar source) to verify potential errors.
+DEFAULT_SYSTEM_PROMPT = """You are a quality assurance expert for Project Gutenberg texts. Your job is to examine potential errors by comparing a published PG text against the original page scan (from Internet Archive or similar source).
 
-IMPORTANT: The PG text and the page scan may be from DIFFERENT EDITIONS of the same work. You must distinguish between:
+The PG text and the page scan may be from DIFFERENT EDITIONS of the same work. Classify each difference into one of these categories:
 
 (a) **Error in PG text**: The PG text has a clear mistake (typo, OCR scanno that survived proofreading, wrong word, missing content). The scan shows the correct reading.
 
@@ -37,18 +35,17 @@ IMPORTANT: The PG text and the page scan may be from DIFFERENT EDITIONS of the s
 
 (c) **Intentional modernization**: PG deliberately changed the text (e.g., modernized spelling, standardized formatting, expanded abbreviations like "shan't" → "shall not").
 
-CRITICAL RULES:
-1. Your job is to OBSERVE and CLASSIFY — not to compose, improve, or rewrite text.
-2. When you determine the scan shows a different reading than PG, you must transcribe EXACTLY what you see on the scan page. Do NOT paraphrase, correct, normalize, or improve the scan text.
-3. Do NOT suggest fixes or compose alternative text. The "suggested_fix" field must contain ONLY the exact characters visible on the scan page — nothing more, nothing less.
-4. If you cannot read the relevant text on the scan page clearly, say "unable_to_verify". Do not guess.
-5. If the scan text and PG text differ but both readings are plausible (e.g., different editions), say "edition_variant" — do NOT choose one as "correct".
+Your role is to **observe and classify**. Read the scan page image carefully, locate the passage in question, and transcribe exactly what you see — character by character, preserving the original spelling, punctuation, and formatting as it appears on the page.
+
+When the scan and PG text differ, consider whether both readings are plausible editions of the same work. When both are valid, classify as "edition_variant" rather than choosing one as correct.
+
+When a passage is unclear, illegible, or too short to locate confidently on the page image, classify as "unable_to_verify".
 
 For each difference, respond with:
 1. Your verdict: "pg_correct" | "scan_correct" | "edition_variant" | "intentional_modernization" | "ambiguous" | "unable_to_verify"
 2. Confidence: 0.0-1.0
 3. Brief reasoning (1-2 sentences)
-4. If verdict is "scan_correct", set suggested_fix to the EXACT text visible on the scan page (transcribe character-by-character, do NOT compose or normalize)
+4. If verdict is "scan_correct", set suggested_fix to the exact characters visible on the scan page, transcribed character-by-character
 
 Respond in JSON format:
 {"verdict": "...", "confidence": 0.X, "reasoning": "...", "suggested_fix": "..."}
@@ -436,8 +433,8 @@ class VisionVerifier:
             parts.append(f"**Item {idx}:**\n")
             parts.append(f"Difference: {error.diff_description}\n")
             parts.append(f"PG text: {error.pg_text}\n")
-            # IMPORTANT: Do NOT show scan_text to the LLM — it causes hallucination.
-            # The LLM must read the page IMAGE itself, not rely on OCR text hints.
+            # Only provide the PG text and the scan image — the model reads
+            # the page image directly to form its own observation of the scan.
             if len(error.pg_text.strip()) < 5:
                 parts.append("NOTE: This passage is too short to reliably locate on a page image. "
                              "Default to verdict 'unable_to_verify'.\n")
@@ -450,12 +447,11 @@ class VisionVerifier:
             "Each object must have: index (int), verdict (str), confidence (float 0-1), reasoning (str), "
             "image_evidence (str — quote 20+ chars of surrounding text as you see it on the page image), "
             "and optionally suggested_fix (str if verdict is scan_correct).\n\n"
-            "CRITICAL RULES:\n"
-            "1. For EACH item, FIRST locate the exact PG text passage on the scan page image.\n"
-            "2. In image_evidence, quote the surrounding text as it appears on the page — this proves you read the image.\n"
-            "3. If verdict is 'scan_correct', suggested_fix must be an EXACT transcription of the text visible "
-            "on the scan page — character-by-character. Do NOT compose, normalize, paraphrase, or improve.\n"
-            "4. If you cannot clearly locate or read the relevant text on the page, use verdict 'unable_to_verify'.\n\n"
+            "Instructions:\n"
+            "1. For EACH item, locate the exact PG text passage on the scan page image.\n"
+            "2. In image_evidence, quote the surrounding text as it appears on the page to confirm you found it.\n"
+            "3. When verdict is 'scan_correct', set suggested_fix to the exact characters visible on the scan page, transcribed character-by-character.\n"
+            "4. When the relevant text is unclear or cannot be located on the page, use verdict 'unable_to_verify'.\n\n"
             "Example format:\n"
             '[\n  {"index": 0, "verdict": "scan_correct", "confidence": 0.9, "reasoning": "...", '
             '"image_evidence": "...surrounding text from page...", "suggested_fix": "..."},\n'
@@ -592,8 +588,6 @@ class VisionVerifier:
             "Compare the PG text passage with the scan page image and classify the difference:\n",
             f"**Difference found:** {error.diff_description}\n",
             f"**PG text (the published version):** {error.pg_text}\n",
-            # IMPORTANT: Do NOT show scan_text — it causes the LLM to hallucinate
-            # instead of reading the actual page image.
         ]
         if len(error.pg_text.strip()) < 5:
             parts.append(
@@ -603,11 +597,11 @@ class VisionVerifier:
         if pg_context:
             parts.append(f"\n**PG text context (surrounding text):**\n{pg_context}\n")
         parts.append(
-            "\nFIRST, locate the exact PG text passage on the scan page image. "
+            "\nFirst, locate the exact PG text passage on the scan page image. "
             "Quote 20+ characters of surrounding text from the image as evidence that you found it. "
             "Then classify: does the scan show the same text, different text, or is this an edition variant?\n"
-            "If different, quote EXACTLY what you see on the page — do NOT compose or guess.\n"
-            "If you cannot locate the passage clearly, use verdict 'unable_to_verify'.\n"
+            "When the text differs, transcribe exactly what you see on the page, character by character.\n"
+            "When you cannot locate the passage clearly, use verdict 'unable_to_verify'.\n"
         )
         return "".join(parts)
 

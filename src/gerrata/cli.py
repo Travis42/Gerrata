@@ -211,6 +211,18 @@ def build_parser() -> argparse.ArgumentParser:
         default=5,
         help="Number of concurrent API calls for transcription and verification (default: 5)",
     )
+    parser.add_argument(
+        "--verify-provider",
+        type=str,
+        default="",
+        choices=["zai", "openrouter", "openai", "anthropic"],
+        help="Preset API provider for verification. Sets --verify-url and --verify-key "
+             "automatically. Override with --verify-url/--verify-key if needed. "
+             "zai: Z.AI native API (default). "
+             "openrouter: openrouter.ai (reads OPENROUTER_API_KEY env var or ~/.secrets/openrouter.key). "
+             "openai: OpenAI API. "
+             "anthropic: Anthropic API.",
+    )
     return parser
 
 
@@ -222,6 +234,56 @@ def parse_page_range(range_str: str) -> tuple[int, int] | None:
     if len(parts) != 2:
         raise ValueError(f"Invalid page range format: {range_str} (expected 'START-END')")
     return int(parts[0]), int(parts[1])
+
+
+def resolve_verify_provider(args: argparse.Namespace) -> tuple[str, str]:
+    """Resolve verification API URL and key from provider preset.
+
+    Priority: explicit --verify-url/--verify-key > --verify-provider preset > defaults.
+
+    Returns (url, key).
+    """
+    # Explicit overrides take priority
+    if args.verify_url and args.verify_key:
+        return args.verify_url, args.verify_key
+
+    provider = args.verify_provider
+
+    if provider == "openrouter":
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        key = args.verify_key
+        if not key:
+            key = os.environ.get("OPENROUTER_API_KEY", "")
+        if not key:
+            key_path = Path.home() / ".secrets" / "openrouter.key"
+            if key_path.exists():
+                key = key_path.read_text().strip()
+        if not key:
+            raise ValueError(
+                "OpenRouter provider requires an API key. Set OPENROUTER_API_KEY env var "
+                "or create ~/.secrets/openrouter.key"
+            )
+        return url, key
+
+    if provider == "openai":
+        url = "https://api.openai.com/v1/chat/completions"
+        key = args.verify_key or os.environ.get("OPENAI_API_KEY", "")
+        if not key:
+            raise ValueError("OpenAI provider requires OPENAI_API_KEY env var")
+        return url, key
+
+    if provider == "anthropic":
+        # Anthropic uses the OpenAI-compatible Messages API format
+        url = "https://api.anthropic.com/v1/messages"
+        key = args.verify_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        if not key:
+            raise ValueError("Anthropic provider requires ANTHROPIC_API_KEY env var")
+        return url, key
+
+    # Default: Z.AI (uses --vision-url/--vision-key if set, or env var)
+    url = args.verify_url or args.vision_url
+    key = args.verify_key or args.vision_key
+    return url, key
 
 
 async def run_pipeline(args: argparse.Namespace) -> Report:
@@ -704,7 +766,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         if not shorter:
             return False
         
-        starts_with_quote = shorter[0] in '"\"\u00ab'  # " " «
+        starts_with_quote = shorter[0] in '"\u201c\u201d\u2018\u00ab'  # " " ' ' «
         if not starts_with_quote:
             return False
         
@@ -780,9 +842,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     verified_errors: list[Error] = []
 
     # Determine verify config (fallback to vision config if not set)
-    verify_url = args.verify_url or args.vision_url
-    verify_key = args.verify_key or args.vision_key
-    verify_model = args.verify_model or args.vision_model or "zai/glm-4.6v"
+    verify_url, verify_key = resolve_verify_provider(args)
+    verify_model = args.verify_model or args.vision_model
 
     if args.no_verify or not vision_mode:
         console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (--no-verify or OCR mode)")
