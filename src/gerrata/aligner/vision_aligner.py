@@ -2107,6 +2107,19 @@ class VisionAligner:
                 continue
 
             # -- Phase 3: Global search --
+            # Skip global search for front/end-matter pages that lack body text.
+            # Phase 3 can search entire PG text and still fail for TOC pages.
+            # This prevents wasteful global searches on appendix pages.
+            if results[i] is None and trans.success and len(trans.transcription_cleaned) > 0:
+                # If we have actual content but couldn't match it locally,
+                # Phase 3 would search entire book — wasteful for appendix.
+                logger.info(
+                    f"Page {page_num}: skipping Phase 3 (global) "
+                    f"(transcription has content {len(trans.transcription_cleaned)} chars, "
+                    f"likely front/end-matter)"
+                )
+                continue
+
             logger.info(f"Page {page_num}: Phase 3 (global) [0:{len(pg_text)}]")
             result = self.align_transcription_to_pg(
                 transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
