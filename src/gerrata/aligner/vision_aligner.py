@@ -295,6 +295,28 @@ class SequentialTracker:
         end = min(pg_text_length, expected + 8000)
         return (start, end)
 
+    def reanchor(self) -> bool:
+        """Reset tracker to last N high-confidence matches to prevent drift.
+
+        When processing many pages, small alignment errors accumulate in
+        chars_per_page estimation, causing the search window to drift. This
+        keeps only recent confirmed matches, resetting the baseline.
+
+        Returns True if tracker was re-anchored (had enough data), False if
+        there's insufficient history to re-anchor safely.
+        """
+        recent = [(pn, off, conf, ml) for pn, off, conf, ml in self.matches if conf >= 0.40]
+        if len(recent) < 3:
+            return False
+        # Keep only the last 10 high-confidence matches
+        self.matches = [(pn, off, conf, ml) for pn, off, conf, ml in self.matches if conf >= 0.40][-10:]
+        old_cpp = self.chars_per_page
+        logger.info(
+            f"Tracker re-anchored: kept last {len(self.matches)} confirmed matches, "
+            f"chars_per_page {old_cpp:.0f} → {self.chars_per_page:.0f}"
+        )
+        return True
+
 
 @dataclass
 class ReverseSequentialTracker:
@@ -360,6 +382,9 @@ class ReverseSequentialTracker:
 CHAPTER_THRESHOLD = 0.50
 SEQUENTIAL_THRESHOLD = 0.40
 GLOBAL_THRESHOLD = 0.35
+
+# Drift control: re-anchor tracker every N pages
+REANCHOR_INTERVAL = 50
 
 
 @dataclass
@@ -1983,8 +2008,29 @@ class VisionAligner:
             )
 
         # -- Forward pass: three-phase alignment --
+        # Track pages since last re-anchor for drift control
+        pages_since_reanchor = 0
+
         for i, trans in enumerate(transcriptions):
             page_num = trans.page_num
+
+            # Skip pages with very short transcriptions (blank, decorative, title
+            # pages). These produce noise in alignment without contributing coverage.
+            if trans.success and trans.transcription and len(trans.transcription.strip()) < 30:
+                logger.info(
+                    f"Page {page_num}: skipping short transcription "
+                    f"({len(trans.transcription.strip())} chars < 30 min)"
+                )
+                continue
+            if not trans.success or not trans.transcription:
+                logger.info(f"Page {page_num}: skipping failed/empty transcription")
+                continue
+
+            # Periodic re-anchor to prevent drift
+            pages_since_reanchor += 1
+            if pages_since_reanchor >= REANCHOR_INTERVAL:
+                tracker.reanchor()
+                pages_since_reanchor = 0
 
             # Skip duplicate pages
             if trans.transcription_cleaned:
@@ -2069,7 +2115,20 @@ class VisionAligner:
             )
             if result:
                 results[i] = result
-                tracker.record(page_num, result.alignment.pg_end, 0.35,
+                # When Phase 3 lands, the sequential tracker was wrong (drifted).
+                # If the global match scored well, treat it as a tracker correction
+                # rather than a low-confidence hit. This prevents future pages from
+                # being constrained by the stale sequential estimate.
+                if result.best_score >= SEQUENTIAL_THRESHOLD:
+                    correction_conf = 0.40
+                    logger.info(
+                        f"Page {page_num}: Phase 3 global match corrected tracker "
+                        f"(score={result.best_score:.2f} >= {SEQUENTIAL_THRESHOLD}, "
+                        f"promoted to confidence {correction_conf})"
+                    )
+                else:
+                    correction_conf = 0.35
+                tracker.record(page_num, result.alignment.pg_end, correction_conf,
                              result.alignment.pg_end - result.alignment.pg_start)
                 current_chapter_idx = self._update_chapter_from_position(
                     result.alignment.pg_start, real_chapters, current_chapter_idx
