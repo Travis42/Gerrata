@@ -20,10 +20,8 @@ from gerrata.models import CandidateError, Error, Verdict
 
 logger = logging.getLogger(__name__)
 
-MODEL_NAME_MAP = {
-    "zai/glm-ocr": "glm-ocr",
-    "zai/glm-4.6v": "glm-4.6v",
-}
+# No model name mapping needed — pass model names directly to OpenRouter
+MODEL_NAME_MAP = {}
 
 DEFAULT_SYSTEM_PROMPT = """You are a page transcription specialist. Your job is to examine a page scan image and transcribe exactly what you see.
 

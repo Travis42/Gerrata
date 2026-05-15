@@ -5,8 +5,7 @@ Replaces the OCR-text-based coarse aligner with a vision model approach:
 2. Match transcribed text against PG text paragraphs using fuzzy matching
 3. Return Alignment objects with transcribed text included
 
-The vision model is accessed via the OpenClaw image tool or direct API call.
-Default model: zai/glm-4.6v, fallback: zai/glm-4.5v.
+Default model: google/gemma-4-31b-it via OpenRouter.
 """
 
 from __future__ import annotations
@@ -25,6 +24,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+# Load OpenRouter key from file if env var not set
+def _load_openrouter_key() -> str:
+    key = os.environ.get("OPENROUTER_API_KEY", "")
+    if not key:
+        key_path = Path.home() / ".secrets" / "openrouter.key"
+        if key_path.exists():
+            key = key_path.read_text().strip()
+    return key
+
 logger = logging.getLogger(__name__)
 
 # Default transcription prompt
@@ -35,19 +43,16 @@ TRANSCRIPTION_PROMPT = (
     "Do not add any commentary or formatting."
 )
 
-# Default API configuration
-# Z.AI native GLM API — this endpoint supports vision (unlike the OpenAI-compatible proxy)
-DEFAULT_API_URL = "https://api.z.ai/api/paas/v4/chat/completions"
-DEFAULT_API_KEY = os.environ.get("ZAI_API_KEY", "")
-DEFAULT_MODELS = ["zai/glm-4.6v", "zai/glm-4.5v"]
+# Default API configuration — OpenRouter
+DEFAULT_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+DEFAULT_API_KEY = os.environ.get("OPENROUTER_API_KEY", "") or (
+    Path.home().joinpath(".secrets/openrouter.key").read_text().strip()
+    if Path.home().joinpath(".secrets/openrouter.key").exists() else ""
+)
+DEFAULT_MODELS = ["google/gemma-4-31b-it"]
 
-# Map from "zai/" prefixed model names to actual API model names
-MODEL_NAME_MAP = {
-    "zai/glm-4.6v": "glm-4.6v",
-    "zai/glm-4.5v": "glm-4.5v",
-    "zai/glm-4.6v-flashx": "glm-4.6v-flashx",
-    "zai/glm-ocr": "glm-ocr",
-}
+# Map from model name aliases to actual API model names
+MODEL_NAME_MAP = {}
 
 
 def find_body_start(pg_text: str) -> int:
@@ -279,6 +284,9 @@ class SequentialTracker:
         """Estimate where page_num's content should start in PG text."""
         last_pos = self.last_confirmed_position
         last_page = self.last_confirmed_page
+        if last_page == 0:
+            # No confirmed position yet — start from beginning
+            return 0
         pages_gap = page_num - last_page
         if pages_gap <= 0:
             return last_pos
@@ -295,12 +303,24 @@ class SequentialTracker:
         end = min(pg_text_length, expected + 8000)
         return (start, end)
 
-    def reanchor(self) -> bool:
+    def reanchor(
+        self,
+        aligner=None,
+        transcription=None,
+        pg_text: str = "",
+        pg_paragraphs: list[str] | None = None,
+        page_num: int = 0,
+    ) -> bool:
         """Reset tracker to last N high-confidence matches to prevent drift.
 
         When processing many pages, small alignment errors accumulate in
         chars_per_page estimation, causing the search window to drift. This
         keeps only recent confirmed matches, resetting the baseline.
+
+        When aligner, transcription, pg_text, and pg_paragraphs are provided,
+        also runs RETAS without sequential constraint to verify tracker accuracy.
+        If the RETAS-estimated position differs from the tracker's expected
+        position by more than 1.5× chars_per_page, the tracker is reset.
 
         Returns True if tracker was re-anchored (had enough data), False if
         there's insufficient history to re-anchor safely.
@@ -311,71 +331,77 @@ class SequentialTracker:
         # Keep only the last 10 high-confidence matches
         self.matches = [(pn, off, conf, ml) for pn, off, conf, ml in self.matches if conf >= 0.40][-10:]
         old_cpp = self.chars_per_page
+
+        # Enhanced re-anchor: verify with unconstrained RETAS if aligner provided
+        if (
+            aligner is not None
+            and transcription is not None
+            and pg_text
+            and pg_paragraphs is not None
+        ):
+            self._verify_with_unconstrained_retas(
+                aligner, transcription, pg_text, pg_paragraphs, page_num
+            )
+
         logger.info(
             f"Tracker re-anchored: kept last {len(self.matches)} confirmed matches, "
             f"chars_per_page {old_cpp:.0f} → {self.chars_per_page:.0f}"
         )
         return True
 
+    def _verify_with_unconstrained_retas(
+        self,
+        aligner,
+        transcription,
+        pg_text: str,
+        pg_paragraphs: list[str],
+        page_num: int,
+    ) -> None:
+        """Run RETAS without constraint and compare to tracker's expected position.
 
-@dataclass
-class ReverseSequentialTracker:
-    """Tracks confirmed match positions for reverse (end-to-start) sequential estimation."""
+        If the difference exceeds 1.5× chars_per_page, reset the tracker to
+        the RETAS-estimated position.
+        """
+        try:
+            body_offset = find_body_start(pg_text)
+            result = aligner.align_transcription_to_pg(
+                transcription=transcription,
+                pg_text=pg_text,
+                pg_paragraphs=pg_paragraphs,
+                scan_page=page_num,
+                search_start=body_offset,
+                search_end=len(pg_text),
+                min_score=SEQUENTIAL_THRESHOLD,
+            )
+            if result is not None:
+                retas_position = result.alignment.pg_start
+                expected = self.expected_position(page_num)
+                cpp = self.chars_per_page
+                threshold = int(cpp * 1.5)
+                difference = abs(retas_position - expected)
 
-    matches: list[tuple[int, int, float, int]] = field(default_factory=list)
-    # Each entry: (page_num, pg_start_offset, confidence_score, match_length)
-    # Note: stores pg_start (not pg_end) because we estimate backward
-
-    @property
-    def last_confirmed_position(self) -> int:
-        """Most recent match start from HIGH or MEDIUM confidence matches."""
-        for _pn, offset, confidence, _ml in reversed(self.matches):
-            if confidence >= 0.40:
-                return offset
-        return 0  # 0 means "unknown, default to end of text"
-
-    @property
-    def last_confirmed_page(self) -> int:
-        """Page number of the most recent HIGH or MEDIUM confidence match."""
-        for pn, _off, confidence, _ml in reversed(self.matches):
-            if confidence >= 0.40:
-                return pn
-        return 0
-
-    @property
-    def chars_per_page(self) -> float:
-        """Estimated chars per page from recent confirmed matches."""
-        recent = [(pn, off) for pn, off, conf, _ml in self.matches if conf >= 0.40]
-        if len(recent) < 2:
-            return 1500.0
-        recent = recent[-10:]
-        # In reverse, earlier pages have higher offsets
-        total_chars = abs(recent[0][1] - recent[-1][1])
-        total_pages = abs(recent[0][0] - recent[-1][0])
-        return max(500.0, total_chars / max(1, total_pages))
-
-    def expected_position(self, page_num: int) -> int:
-        """Estimate where page_num's content should start, working backward."""
-        last_pos = self.last_confirmed_position
-        last_page = self.last_confirmed_page
-        pages_gap = last_page - page_num  # positive when page_num is before last_page
-        if pages_gap <= 0:
-            return last_pos
-        return last_pos - int(pages_gap * self.chars_per_page)
-
-    def record(self, page_num: int, pg_start: int, confidence: float, match_length: int):
-        """Record a confirmed match (stores pg_start for backward estimation)."""
-        self.matches.append((page_num, pg_start, confidence, match_length))
-
-    def search_window(self, page_num: int, pg_text_length: int) -> tuple[int, int]:
-        """Return (start, end) search window centered on expected position."""
-        expected = self.expected_position(page_num)
-        if expected <= 0:
-            # No confirmed position yet — default to end of text minus estimate
-            expected = max(0, pg_text_length - (340 - page_num) * 1500)
-        start = max(0, expected - 8000)
-        end = min(pg_text_length, expected + 2000)
-        return (start, end)
+                if difference > threshold:
+                    logger.warning(
+                        f"Re-anchor verification: RETAS position {retas_position} differs "
+                        f"from tracker expected {expected} by {difference} chars "
+                        f"(threshold={threshold}, cpp={cpp:.0f}). Resetting tracker."
+                    )
+                    # Reset tracker: keep only this RETAS-derived match
+                    self.matches = [
+                        (
+                            page_num,
+                            result.alignment.pg_end,
+                            result.best_score,
+                            result.alignment.pg_end - result.alignment.pg_start,
+                        )
+                    ]
+                else:
+                    logger.debug(
+                        f"Re-anchor verification: tracker accurate "
+                        f"(expected={expected}, retas={retas_position}, diff={difference})"
+                    )
+        except Exception as e:
+            logger.debug(f"Re-anchor verification failed: {e}")
 
 
 # Alignment phase thresholds
@@ -384,7 +410,7 @@ SEQUENTIAL_THRESHOLD = 0.40
 GLOBAL_THRESHOLD = 0.35
 
 # Drift control: re-anchor tracker every N pages
-REANCHOR_INTERVAL = 50
+REANCHOR_INTERVAL = 10
 
 
 @dataclass
@@ -427,7 +453,7 @@ class VisionTranscriber:
             concurrency: Number of concurrent API calls (default: 1).
         """
         self.api_url = api_url
-        self.api_key = api_key or DEFAULT_API_KEY
+        self.api_key = api_key or _load_openrouter_key() or DEFAULT_API_KEY
         self.models = models or DEFAULT_MODELS
         self.prompt = prompt
         self.timeout = timeout
@@ -1056,72 +1082,6 @@ class VisionAligner:
             anchor_pg_char_positions,
         )
 
-    def _anchor_transcription(
-        self,
-        trans_norm: str,
-        pg_norm: str,
-        search_start: int = 0,
-        search_end: int = -1,
-    ) -> tuple[int | None, int]:
-        """Anchor a transcription to PG text using unique n-gram matching.
-
-        Legacy method kept as fallback when unique word anchoring fails.
-        """
-        if search_end == -1:
-            search_end = len(pg_norm)
-        pg_search = pg_norm[search_start:search_end]
-
-        trans_words = trans_norm.split()
-        if len(trans_words) < 3:
-            return None, 0
-
-        # Build index of all n-gram positions in PG text for efficient lookup
-        # We try n-grams of sizes 4..8, longest first (most specific)
-        pg_words = pg_search.split()
-
-        # Find all n-gram positions in PG search region
-        def find_ngram_positions(ngram: str, text: str) -> list[int]:
-            """Find all positions of an n-gram in text."""
-            positions = []
-            start = 0
-            while True:
-                idx = text.find(ngram, start)
-                if idx == -1:
-                    break
-                positions.append(idx)
-                start = idx + 1
-            return positions
-
-        # Collect candidate anchors with their uniqueness and position
-        candidates: list[tuple[int, int, bool, int]] = []  # (pg_pos, length, is_unique, ngram_size)
-
-        for ngram_size in range(8, 3, -1):  # 8, 7, 6, 5, 4 — longest first
-            for i in range(len(trans_words) - ngram_size + 1):
-                ngram = " ".join(trans_words[i : i + ngram_size])
-                positions = find_ngram_positions(ngram, pg_search)
-                for pos in positions:
-                    is_unique = len(positions) == 1
-                    # Prefer unique, longer n-grams
-                    candidates.append((pos + search_start, len(ngram), is_unique, ngram_size))
-                # If we found a unique anchor with this ngram_size, that's good enough
-                if any(c[2] for c in candidates if c[3] == ngram_size):
-                    break
-            # If we have any unique anchors from this size, we can stop trying shorter
-            if any(c[2] for c in candidates):
-                break
-
-        if not candidates:
-            return None, 0
-
-        # Rank candidates: unique > non-unique, then longer n-gram, then longer anchor string
-        def rank_key(c: tuple) -> tuple:
-            pos, length, is_unique, ngram_size = c
-            return (0 if is_unique else 1, -ngram_size, -length)
-
-        candidates.sort(key=rank_key)
-        best = candidates[0]
-        return best[0], best[1]
-
     def _unique_word_anchor_to_position(
         self,
         anchor_pg_char_positions: list[int],
@@ -1175,281 +1135,6 @@ class VisionAligner:
 
         return max(0, int(median_estimate))
 
-    def _score_windowed_match(
-        self,
-        trans_norm: str,
-        pg_norm: str,
-        pg_text: str,
-        anchor_pos: int,
-    ) -> tuple[float, int, int]:
-        """Score transcription against PG text around an anchored position.
-
-        Extracts a window of PG text centered on the anchor position and
-        computes a fuzzy match score.
-
-        Args:
-            trans_norm: Normalized transcription text.
-            pg_norm: Normalized PG text.
-            pg_text: Raw PG text (for offset mapping).
-            anchor_pos: Position of anchor in pg_norm.
-
-        Returns:
-            Tuple of (score, pg_start_raw, pg_end_raw).
-        """
-        trans_len = len(trans_norm)
-
-        # Window size: transcription length × 2.5 to allow for edition differences
-        window_size = max(500, trans_len * 3)
-        window_start = max(0, anchor_pos - window_size // 4)
-        window_end = min(len(pg_norm), anchor_pos + window_size)
-
-        pg_window = pg_norm[window_start:window_end]
-
-        # Try SequenceMatcher on the window
-        score = SequenceMatcher(None, trans_norm, pg_window).ratio()
-
-        # Also try matching against the paragraph that contains the anchor
-        # Map pg_norm position back to pg_text position (approximate)
-        # pg_norm strips punctuation but preserves character order roughly
-        pg_start_approx = window_start
-        pg_end_approx = min(len(pg_text), window_end + 200)  # Account for punctuation removal
-
-        return score, pg_start_approx, pg_end_approx
-
-    @staticmethod
-    def _find_all_positions(text: str, phrase: str) -> list[int]:
-        """Find all character positions where phrase occurs in text."""
-        positions = []
-        start = 0
-        while True:
-            idx = text.find(phrase, start)
-            if idx == -1:
-                break
-            positions.append(idx)
-            start = idx + 1
-        return positions
-
-    def _grow_string_anchor(
-        self,
-        trans_norm: str,
-        pg_norm: str,
-        search_start: int = 0,
-        search_end: int = -1,
-        min_word_len: int = 3,
-    ) -> tuple[int | None, bool]:
-        """Grow a string from scan transcription until unique match in PG.
-
-        Returns (pg_char_position, is_confident) or (None, False).
-        """
-        if search_end == -1:
-            search_end = len(pg_norm)
-        pg_search = pg_norm[search_start:search_end]
-
-        trans_words = trans_norm.split()
-        if len(trans_words) < 2:
-            return None, False
-
-        # Skip leading short words
-        start_idx = 0
-        while start_idx < len(trans_words) and len(trans_words[start_idx]) < min_word_len:
-            start_idx += 1
-
-        if start_idx >= len(trans_words):
-            return None, False
-
-        # Try forward growth (from scan start)
-        result = self._grow_forward(trans_words, start_idx, pg_search)
-
-        if result is not None:
-            pg_pos, n_words, is_unique = result
-            # Validate: does the matched PG region also match in the scan?
-            if is_unique and self._validate_anchor(pg_search, pg_pos, n_words, trans_norm):
-                return search_start + pg_pos, True
-            elif not is_unique:
-                # Multiple matches — use the first one but mark unconfident
-                return search_start + pg_pos, False
-
-        # Try backward growth (from scan end)
-        result = self._grow_backward(trans_words, pg_search)
-        if result is not None:
-            pg_pos, n_words, is_unique = result
-            return search_start + pg_pos, is_unique
-
-        return None, False
-
-    def _grow_forward(
-        self,
-        trans_words: list[str],
-        start_idx: int,
-        pg_search: str,
-    ) -> tuple[int, int, bool] | None:
-        """Grow word string forward from start_idx until unique match."""
-        last_match_count = 0
-        last_match_pos = -1
-
-        for n in range(1, len(trans_words) - start_idx + 1):
-            phrase = " ".join(trans_words[start_idx : start_idx + n])
-
-            # Find all matches in PG search region
-            positions = self._find_all_positions(pg_search, phrase)
-            match_count = len(positions)
-
-            if match_count == 0:
-                # String has diverged (OCR error or edition difference)
-                # Return last known position if we had one
-                if last_match_count > 0 and last_match_pos >= 0:
-                    return last_match_pos, n - 1, False  # unconfident
-                return None
-
-            if match_count == 1:
-                return positions[0], n, True  # confident
-
-            # match_count > 1: still ambiguous, keep growing
-            # Track first match position as fallback
-            last_match_count = match_count
-            last_match_pos = positions[0]
-
-        # Exhausted all words without uniqueness
-        if last_match_count > 0:
-            return last_match_pos, len(trans_words) - start_idx, False
-        return None
-
-    def _grow_backward(
-        self,
-        trans_words: list[str],
-        pg_search: str,
-    ) -> tuple[int, int, bool] | None:
-        """Grow word string backward from end of scan transcription."""
-        last_match_count = 0
-        last_match_pos = -1
-
-        for n in range(1, len(trans_words) + 1):
-            end_idx = len(trans_words) - n + 1
-            start_idx = max(0, end_idx - n)
-            phrase = " ".join(trans_words[start_idx:end_idx])
-
-            positions = self._find_all_positions(pg_search, phrase)
-            match_count = len(positions)
-
-            if match_count == 0:
-                if last_match_count > 0 and last_match_pos >= 0:
-                    return last_match_pos, n - 1, False
-                return None
-
-            if match_count == 1:
-                return positions[0], n, True
-
-            last_match_count = match_count
-            last_match_pos = positions[0]
-
-        if last_match_count > 0:
-            return last_match_pos, len(trans_words), False
-        return None
-
-    def _validate_anchor(
-        self,
-        pg_search: str,
-        pg_pos: int,
-        n_words: int,
-        trans_norm: str,
-    ) -> bool:
-        """Validate anchor by checking PG region also appears uniquely in scan."""
-        pg_words = pg_search[pg_pos:].split()[:n_words]
-        if len(pg_words) < 2:
-            return False
-        pg_phrase = " ".join(pg_words)
-        count = self._find_all_positions(trans_norm, pg_phrase)
-        return len(count) == 1
-
-    @staticmethod
-    def _map_norm_to_raw(norm_pos: int, raw_text: str, raw_len: int) -> int:
-        """Map a position in normalized text back to the original raw text.
-
-        Normalization removes punctuation and collapses whitespace, so the
-        normalized text is shorter. We approximate by finding the nearest
-        alphanumeric character at or after the raw position corresponding
-        to the normalized position.
-        """
-        if norm_pos <= 0:
-            return 0
-        # Simple approximation: norm_pos / norm_len * raw_len
-        # This is rough but sufficient for offset estimation
-        return min(int(norm_pos * raw_len / max(1, raw_len * 0.95)), raw_len - 1)
-
-    @staticmethod
-    def _build_norm_offset_map(raw_text: str) -> list[int]:
-        """Build a mapping from normalized text positions to raw text positions.
-
-        Returns a list where map[i] = position in raw_text corresponding to
-        position i in normalized text.
-        """
-        norm_to_raw = []
-        raw_pos = 0
-        for ch in raw_text.lower():
-            if ch.isalnum() or ch == " ":
-                norm_to_raw.append(raw_pos)
-            raw_pos += 1
-        return norm_to_raw
-
-    def _find_best_window(
-        self,
-        trans_norm: str,
-        pg_norm: str,
-        anchor_pos: int,
-    ) -> tuple[int, int, float]:
-        """Find the best scoring window of PG text around an anchor position.
-
-        Tries multiple window sizes and positions around the anchor to find
-        the highest SequenceMatcher ratio. The window is in pg_norm space.
-
-        Args:
-            trans_norm: Normalized transcription.
-            pg_norm: Normalized PG text.
-            anchor_pos: Anchor position in pg_norm.
-
-        Returns:
-            Tuple of (window_start, window_end, best_score).
-        """
-        trans_len = len(trans_norm)
-
-        best_score = 0.0
-        best_start = 0
-        best_end = 0
-
-        # Try multiple window sizes, from tight to loose
-        # The window should be roughly the same size as the transcription
-        window_sizes = [
-            trans_len,           # Same size (best for exact matches)
-            int(trans_len * 1.3),  # 30% larger (allows for headers/footers)
-            int(trans_len * 1.6),  # 60% larger
-            int(trans_len * 2.0),  # 2x (significant edition differences)
-        ]
-
-        for window_size in window_sizes:
-            # Try sliding the window around the anchor
-            # The anchor should be roughly in the first third of the transcription
-            # (transcription starts near the top of the page)
-            for offset_pct in [0.0, 0.1, 0.2, 0.3, -0.1]:
-                offset = int(window_size * offset_pct)
-                win_start = max(0, anchor_pos - offset)
-                win_end = min(len(pg_norm), win_start + window_size)
-                if win_end - win_start < min(100, trans_len * 0.5):
-                    continue
-
-                pg_window = pg_norm[win_start:win_end]
-                score = SequenceMatcher(None, trans_norm, pg_window).ratio()
-
-                # Weight: prefer windows closer to transcription length
-                length_ratio = min(win_end - win_start, trans_len) / max(win_end - win_start, trans_len)
-                weighted = score * (0.7 + 0.3 * length_ratio)
-
-                if weighted > best_score:
-                    best_score = score
-                    best_start = win_start
-                    best_end = win_end
-
-        return best_start, best_end, best_score
-
     def align_transcription_to_pg(
         self,
         transcription: PageTranscription,
@@ -1460,11 +1145,15 @@ class VisionAligner:
         search_end: int = -1,
         min_score: float = 0.35,
     ) -> VisionAlignmentResult | None:
-        """Align a single page transcription to PG text.
+        """Align a single page transcription to PG text using RETAS only.
 
-        Uses n-gram anchoring to find the correct region of PG text,
-        then scores the match within focused windows. Falls back to
-        brute-force matching if anchoring fails.
+        Uses unique word anchoring (RETAS) to find the correct region of PG text.
+        No fallback to GSA, n-gram, or brute-force matching — if RETAS cannot
+        anchor the page, it is returned as unmatched.
+
+        After scoring, applies an edit density quality check: if the aligned
+        window has more than 15% edit operations relative to its length, the
+        alignment is rejected.
 
         Args:
             transcription: The page transcription result.
@@ -1492,9 +1181,6 @@ class VisionAligner:
         # Normalize PG text once
         pg_norm = normalize_for_matching(pg_text)
 
-        # Build offset map for norm→raw conversion
-        norm_map = self._build_norm_offset_map(pg_text)
-
         # Determine search window from sequential constraint
         effective_start = search_start
         effective_end = search_end if search_end != -1 else len(pg_norm)
@@ -1503,360 +1189,179 @@ class VisionAligner:
         best_pg_start = 0
         best_pg_end = 0
         best_match_len = 0
-        was_anchored = False  # Track whether match came from RETAS/n-gram anchors
+        best_pg_raw = ""
 
-        # ── Phase 1: RETAS unique word anchoring (preferred) ──
+        # ── RETAS unique word anchoring (sole aligner) ──
         anchor_result = self._find_unique_word_anchor(
             trans_text, pg_text,
             search_start=effective_start,
             search_end=effective_end,
         )
 
-        if anchor_result is not None:
-            anchor_pg_word_positions, anchor_trans_word_positions, anchor_pg_char_positions = anchor_result
+        if anchor_result is None:
+            logger.debug(f"Page {scan_page}: RETAS found no unique word anchors")
+            return None
 
-            # Estimate where the transcription starts in PG text.
-            # Use norm-space positions to avoid raw→norm offset drift.
-            pg_norm_words = re.findall(r'[a-z0-9]+', pg_norm)
-            trans_word_count = len(self._tokenize_words(trans_text))
-            anchor_pg_norm_char_positions = []
-            for word_idx in anchor_pg_word_positions:
-                if word_idx < len(pg_norm_words):
-                    # Find norm char position of this word index
-                    pos = 0
-                    count = 0
-                    for m in re.finditer(r'[a-z0-9]+', pg_norm):
-                        if count == word_idx:
-                            anchor_pg_norm_char_positions.append(m.start())
-                            break
-                        count += 1
-                    else:
-                        anchor_pg_norm_char_positions.append(0)
+        anchor_pg_word_positions, anchor_trans_word_positions, anchor_pg_char_positions = anchor_result
 
-            estimated_norm_start = self._unique_word_anchor_to_position(
-                anchor_pg_norm_char_positions,
-                anchor_trans_word_positions,
-                trans_word_count,
-                len(pg_norm),
-                len(trans_norm),
-            )
+        # Estimate where the transcription starts in PG text.
+        # Use norm-space positions to avoid raw→norm offset drift.
+        pg_norm_words = re.findall(r'[a-z0-9]+', pg_norm)
+        trans_word_count = len(self._tokenize_words(trans_text))
+        anchor_pg_norm_char_positions = []
+        for word_idx in anchor_pg_word_positions:
+            if word_idx < len(pg_norm_words):
+                # Find norm char position of this word index
+                pos = 0
+                count = 0
+                for m in re.finditer(r'[a-z0-9]+', pg_norm):
+                    if count == word_idx:
+                        anchor_pg_norm_char_positions.append(m.start())
+                        break
+                    count += 1
+                else:
+                    anchor_pg_norm_char_positions.append(0)
+
+        estimated_norm_start = self._unique_word_anchor_to_position(
+            anchor_pg_norm_char_positions,
+            anchor_trans_word_positions,
+            trans_word_count,
+            len(pg_norm),
+            len(trans_norm),
+        )
+
+        logger.debug(
+            f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
+            f"estimated PG norm start ~{estimated_norm_start}"
+        )
+
+        # ── Direct interpolation when ≥3 anchors ──
+        if len(anchor_pg_char_positions) >= 3 and anchor_trans_word_positions:
+            pg_words = self._tokenize_words(pg_text)
+            avg_chars_per_word = len(pg_text) / max(1, len(pg_words))
+
+            estimated_pg_start = min(anchor_pg_char_positions) - min(anchor_trans_word_positions) * avg_chars_per_word
+            estimated_pg_start = max(0, estimated_pg_start)
+            # Scale transcription length to raw text space
+            norm_scale = len(pg_text) / max(1, len(pg_norm))
+            estimated_pg_end = estimated_pg_start + len(trans_norm) * norm_scale
+            estimated_pg_end = min(len(pg_text), estimated_pg_end)
+
+            best_pg_start = int(estimated_pg_start)
+            best_pg_end = int(estimated_pg_end)
+
+            best_pg_raw = pg_text[best_pg_start:best_pg_end]
+            best_pg_norm_window = normalize_for_matching(best_pg_raw)
+            final_score = SequenceMatcher(None, trans_norm, best_pg_norm_window).ratio()
+
+            best_ratio = final_score
+            weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
+            best_score = weighted_score
+            best_match_len = best_pg_end - best_pg_start
+            best_pg_end = min(best_pg_end, len(pg_text))
 
             logger.debug(
-                f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
-                f"estimated PG norm start ~{estimated_norm_start}"
+                f"  RETAS direct interpolation (≥3 anchors): pg_text[{best_pg_start}:{best_pg_end}], "
+                f"score={final_score:.3f}"
             )
+        else:
+            # ── Sliding window (when 1-2 anchors) ──
+            trans_len = len(trans_norm)
 
-            # ── Direct interpolation when ≥3 anchors ──
-            # When RETAS finds 3+ confirmed unique word anchors, interpolate directly
-            # from anchors instead of using a fuzzy sliding window. This avoids
-            # micro-misalignments caused by sliding window ambiguity (see HEGEL fix spec).
-            if len(anchor_pg_char_positions) >= 3 and anchor_trans_word_positions:
-                pg_words = self._tokenize_words(pg_text)
-                trans_words_list = self._tokenize_words(trans_text)
-                avg_chars_per_word = len(pg_text) / max(1, len(pg_words))
+            if anchor_pg_char_positions:
+                anchor_positions_sorted = sorted(anchor_pg_char_positions)
+                median_idx = len(anchor_positions_sorted) // 2
+                median_anchor_pos = anchor_positions_sorted[median_idx]
 
-                estimated_pg_start = min(anchor_pg_char_positions) - min(anchor_trans_word_positions) * avg_chars_per_word
-                estimated_pg_start = max(0, estimated_pg_start)
-                # Scale transcription length to raw text space
-                norm_scale = len(pg_text) / max(1, len(pg_norm))
-                estimated_pg_end = estimated_pg_start + len(trans_norm) * norm_scale
-                estimated_pg_end = min(len(pg_text), estimated_pg_end)
-
-                best_pg_start = int(estimated_pg_start)
-                best_pg_end = int(estimated_pg_end)
-
-                # Score the interpolated window
-                best_pg_raw = pg_text[best_pg_start:best_pg_end]
-                best_pg_norm_window = normalize_for_matching(best_pg_raw)
-                final_score = SequenceMatcher(None, trans_norm, best_pg_norm_window).ratio()
-
-                best_ratio = final_score
-                weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
-                best_score = weighted_score
-                best_match_len = best_pg_end - best_pg_start
-                best_pg_end = min(best_pg_end, len(pg_text))
-                was_anchored = True
+                if anchor_trans_word_positions and trans_word_count > 0:
+                    pg_words = self._tokenize_words(pg_text)
+                    chars_per_word_est = len(pg_text) / max(1, len(pg_words))
+                    first_trans_word = min(anchor_trans_word_positions)
+                    first_anchor_raw = min(anchor_pg_char_positions)
+                    estimated_start = first_anchor_raw - int(first_trans_word * chars_per_word_est)
+                    estimated_start = max(0, estimated_start)
+                else:
+                    estimated_start = median_anchor_pos
 
                 logger.debug(
-                    f"  RETAS direct interpolation (≥3 anchors): pg_text[{best_pg_start}:{best_pg_end}], "
-                    f"score={final_score:.3f}"
-                )
-            else:
-                # ── Phase 2: Sliding window best match (fallback when <3 anchors) ──
-                # After anchoring, use a sliding window to find the *best-matching substring*
-                # of the PG text against the transcription, rather than extrapolating from
-                # anchor positions. This produces tighter windows that reduce "absent in scan" noise.
-                trans_len = len(trans_norm)
-                trans_word_count = len(self._tokenize_words(trans_text))
-
-                if anchor_pg_char_positions:
-                    # Get the median anchor position as our starting point
-                    anchor_positions_sorted = sorted(anchor_pg_char_positions)
-                    median_idx = len(anchor_positions_sorted) // 2
-                    median_anchor_pos = anchor_positions_sorted[median_idx]
-
-                    # Also get the estimated start from anchor interpolation
-                    if anchor_trans_word_positions and trans_word_count > 0:
-                        pg_words = self._tokenize_words(pg_text)
-                        chars_per_word_est = len(pg_text) / max(1, len(pg_words))
-                        first_trans_word = min(anchor_trans_word_positions)
-                        first_anchor_raw = min(anchor_pg_char_positions)
-                        estimated_start = first_anchor_raw - int(first_trans_word * chars_per_word_est)
-                        estimated_start = max(0, estimated_start)
-                    else:
-                        estimated_start = median_anchor_pos
-
-                    logger.debug(
-                        f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
-                        f"median anchor at {median_anchor_pos}, estimated start ~{estimated_start}"
-                    )
-
-                    # Sliding window approach: try different start positions around the anchor
-                    # and score each to find the best matching window
-                    window_size = int(trans_len * 1.2)  # Allow 20% extra for edition differences
-                    best_sliding_score = 0.0
-                    best_sliding_start = 0
-                    best_sliding_end = 0
-
-                    # Search range: ±150 chars around estimated start, in 20-char increments
-                    # Tightened from ±300/50 to reduce micro-misalignment on repetitive text
-                    search_range = 150
-                    step_size = 20
-
-                    for offset in range(-search_range, search_range + 1, step_size):
-                        # Calculate window start position
-                        start_pos = max(0, estimated_start + offset)
-
-                        # Ensure the window doesn't go beyond PG text bounds
-                        end_pos = min(len(pg_text), start_pos + window_size)
-
-                        # Extract and normalize the PG window
-                        pg_window = pg_text[start_pos:end_pos]
-                        pg_window_norm = normalize_for_matching(pg_window)
-
-                        # Score this window against the transcription
-                        if len(pg_window_norm) >= trans_len * 0.5:  # Only score reasonably-sized windows
-                            score = SequenceMatcher(None, trans_norm, pg_window_norm).ratio()
-
-                            # Small preference for windows closer to the estimated position
-                            # (reduces bias toward windows at the very start/end of text)
-                            distance_penalty = abs(offset) / search_range * 0.05
-                            adjusted_score = score - distance_penalty
-
-                            if adjusted_score > best_sliding_score:
-                                best_sliding_score = adjusted_score
-                                best_sliding_start = start_pos
-                                best_sliding_end = end_pos
-
-                    # If we found a good match with sliding window, use it
-                    if best_sliding_score > 0:
-                        # Normalize the best window for final scoring
-                        best_pg_raw = pg_text[best_sliding_start:best_sliding_end]
-                        best_pg_norm = normalize_for_matching(best_pg_raw)
-                        final_score = SequenceMatcher(None, trans_norm, best_pg_norm).ratio()
-
-                        logger.debug(
-                            f"  Sliding window: pg_text[{best_sliding_start}:{best_sliding_end}] "
-                            f"(len={best_sliding_end - best_sliding_start}), score={final_score:.3f}"
-                        )
-
-                        best_pg_start = best_sliding_start
-                        best_pg_end = best_sliding_end
-                        best_ratio = final_score
-                        weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
-
-                        if weighted_score > best_score:
-                            best_score = weighted_score
-                            best_match_len = best_pg_end - best_pg_start
-                            best_pg_end = min(best_pg_end, len(pg_text))
-                            was_anchored = True
-
-                            logger.debug(
-                                f"  RETAS final: pg_text[{best_pg_start}:{best_pg_end}], "
-                                f"score={best_ratio:.3f}"
-                            )
-        # ── Phase 1.5: Growing-String Anchor (GSA) ──
-        if best_score == 0:
-            gsa_pos, gsa_confident = self._grow_string_anchor(
-                trans_norm, pg_norm,
-                search_start=effective_start,
-                search_end=effective_end,
-            )
-
-            if gsa_pos is not None:
-                logger.debug(
-                    f"Page {scan_page}: GSA anchor at pg_norm[{gsa_pos}] "
-                    f"(confident={gsa_confident})"
+                    f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
+                    f"median anchor at {median_anchor_pos}, estimated start ~{estimated_start}"
                 )
 
-                # Use GSA position as anchor estimate, then do sliding window
-                window_size = int(len(trans_norm) * 1.2)
+                window_size = int(trans_len * 1.2)
                 best_sliding_score = 0.0
-                search_range = 100  # tighter than RETAS since GSA is more precise
-                step_size = 10
+                best_sliding_start = 0
+                best_sliding_end = 0
+
+                search_range = 150
+                step_size = 20
 
                 for offset in range(-search_range, search_range + 1, step_size):
-                    start_pos = max(0, gsa_pos + offset)
+                    start_pos = max(0, estimated_start + offset)
                     end_pos = min(len(pg_text), start_pos + window_size)
                     pg_window = pg_text[start_pos:end_pos]
                     pg_window_norm = normalize_for_matching(pg_window)
 
-                    if len(pg_window_norm) >= len(trans_norm) * 0.5:
+                    if len(pg_window_norm) >= trans_len * 0.5:
                         score = SequenceMatcher(None, trans_norm, pg_window_norm).ratio()
-                        if score > best_sliding_score:
-                            best_sliding_score = score
-                            best_pg_start = start_pos
-                            best_pg_end = end_pos
+                        distance_penalty = abs(offset) / search_range * 0.05
+                        adjusted_score = score - distance_penalty
 
-                if best_sliding_score > self.match_threshold:
-                    best_pg_raw = pg_text[best_pg_start:best_pg_end]
-                    best_pg_norm_window = normalize_for_matching(best_pg_raw)
-                    final_score = SequenceMatcher(None, trans_norm, best_pg_norm_window).ratio()
+                        if adjusted_score > best_sliding_score:
+                            best_sliding_score = adjusted_score
+                            best_sliding_start = start_pos
+                            best_sliding_end = end_pos
 
-                    best_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
-                    best_match_len = best_pg_end - best_pg_start
-                    best_pg_end = min(best_pg_end, len(pg_text))
-                    was_anchored = gsa_confident  # only advance constraint if confident
+                if best_sliding_score > 0:
+                    best_pg_raw = pg_text[best_sliding_start:best_sliding_end]
+                    best_pg_norm = normalize_for_matching(best_pg_raw)
+                    final_score = SequenceMatcher(None, trans_norm, best_pg_norm).ratio()
 
-        # ── Fallback: N-gram anchoring if RETAS found no anchors ──
-        if best_score == 0:
-            anchor_pos, anchor_len = self._anchor_transcription(
-                trans_norm, pg_norm,
-                search_start=effective_start,
-                search_end=effective_end,
-            )
+                    best_pg_start = best_sliding_start
+                    best_pg_end = best_sliding_end
+                    best_ratio = final_score
+                    weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
 
-            if anchor_pos is not None:
-                logger.debug(
-                    f"Page {scan_page}: n-gram anchor at pg_norm[{anchor_pos}] "
-                    f"(len={anchor_len}, search=[{effective_start}:{effective_end}])"
-                )
+                    if weighted_score > best_score:
+                        best_score = weighted_score
+                        best_match_len = best_pg_end - best_pg_start
+                        best_pg_end = min(best_pg_end, len(pg_text))
 
-                win_start, win_end, win_score = self._find_best_window(
-                    trans_norm, pg_norm, anchor_pos
-                )
+                        logger.debug(
+                            f"  RETAS sliding window: pg_text[{best_pg_start}:{best_pg_end}], "
+                            f"score={best_ratio:.3f}"
+                        )
 
-                if win_score > self.match_threshold * 0.4:
-                    best_score = win_score * (1.0 + 0.3 * min(1.0, (win_end - win_start) / 500.0))
-                    best_match_len = win_end - win_start
-                    was_anchored = True
-
-                    if win_start < len(norm_map):
-                        best_pg_start = norm_map[win_start]
-                    else:
-                        best_pg_start = len(pg_text) - 1
-                    if win_end - 1 < len(norm_map) and win_end > 0:
-                        best_pg_end = norm_map[win_end - 1] + 20
-                    else:
-                        best_pg_end = len(pg_text)
-                    best_pg_end = min(best_pg_end, len(pg_text))
-
-                # Paragraph-level matching near the n-gram anchor
-                para_best_score = 0.0
-                para_best_start = 0
-                para_best_end = 0
-                para_best_len = 0
-
-                for i, para in enumerate(pg_paragraphs):
-                    para_start_raw = pg_text.find(para)
-                    if para_start_raw == -1:
-                        continue
-                    if para_start_raw < effective_start - 200:
-                        continue
-                    if effective_end != len(pg_norm) and para_start_raw > effective_end + 200:
-                        continue
-
-                    para_norm = normalize_for_matching(para)
-                    if len(para_norm) < self.min_match_chars:
-                        continue
-
-                    para_in_pg = pg_norm.find(para_norm)
-                    if para_in_pg == -1:
-                        continue
-                    distance = abs(para_in_pg - anchor_pos)
-                    max_distance = max(300, len(trans_norm) * 2.0)
-                    if distance > max_distance:
-                        continue
-
-                    for combo in range(4):
-                        combined_parts = []
-                        for j in range(max(0, i - combo // 2), min(len(pg_paragraphs), i + combo + 1)):
-                            combined_parts.append(pg_paragraphs[j])
-                        combined = "\n\n".join(combined_parts)
-                        combined_norm = normalize_for_matching(combined)
-                        if len(combined_norm) < self.min_match_chars:
-                            continue
-
-                        score = SequenceMatcher(None, trans_norm, combined_norm).ratio()
-                        weighted = score * (1.0 + 0.3 * min(1.0, len(combined_norm) / 500.0))
-                        if weighted > para_best_score:
-                            para_best_score = weighted
-                            para_best_start = pg_text.find(combined_parts[0])
-                            last_para = combined_parts[-1]
-                            para_best_end = pg_text.find(last_para, para_best_start) + len(last_para)
-                            para_best_len = len(combined_norm)
-
-                if para_best_score > best_score:
-                    best_score = para_best_score
-                    best_pg_start = para_best_start
-                    best_pg_end = para_best_end
-                    best_match_len = para_best_len
-                    was_anchored = True
-
-        # ── Final fallback: Brute-force matching ──
-        if best_score == 0:
-            logger.debug(f"Page {scan_page}: no anchor found, falling back to brute-force")
-
-            pg_chunks = chunk_text_for_matching(pg_text, min_length=self.min_chunk_length)
-
-            for i, para in enumerate(pg_paragraphs):
-                para_start = pg_text.find(para)
-                if para_start == -1:
-                    continue
-                if para_start < effective_start - 200:
-                    continue
-                if effective_end != len(pg_norm) and para_start > effective_end + 200:
-                    continue
-
-                para_norm = normalize_for_matching(para)
-                if len(para_norm) < self.min_match_chars:
-                    continue
-                score = SequenceMatcher(None, trans_norm, para_norm).ratio()
-                weighted = score * (1.0 + 0.3 * min(1.0, len(para_norm) / 500.0))
-                if weighted > best_score:
-                    best_score = weighted
-                    best_match_len = len(para_norm)
-                    best_pg_start = para_start
-                    best_pg_end = para_start + len(para)
-
-            for i, chunk in enumerate(pg_chunks):
-                chunk_norm = normalize_for_matching(chunk)
-                if len(chunk_norm) < self.min_match_chars:
-                    continue
-                chunk_prefix = chunk[:80]
-                idx = pg_text.find(chunk_prefix)
-                if idx == -1:
-                    continue
-                if idx < effective_start - 200:
-                    continue
-                if effective_end != len(pg_norm) and idx > effective_end + 200:
-                    continue
-                score = SequenceMatcher(None, trans_norm, chunk_norm).ratio()
-                weighted = score * (1.0 + 0.3 * min(1.0, len(chunk_norm) / 500.0))
-                if weighted > best_score:
-                    best_score = weighted
-                    best_match_len = len(chunk_norm)
-                    best_pg_start = idx
-                    best_pg_end = idx + len(chunk)
-
+        # ── Score threshold check ──
         # Use raw score (unweighted) for threshold check
-        raw_score = best_score / (1.0 + 0.3 * min(1.0, best_match_len / 500.0)) if best_match_len else 0.0
+        raw_score = best_score / (1.0 + 0.2 * min(1.0, best_match_len / 500.0)) if best_match_len else 0.0
 
         if raw_score < self.match_threshold:
             logger.debug(
                 f"Page {scan_page}: raw score {raw_score:.2f} below threshold {self.match_threshold}"
             )
             return None
+
+        # ── Post-alignment edit density quality check (Recovery 4) ──
+        # Reject alignments with too many edits relative to alignment length.
+        # Only applies for longer transcriptions (>100 chars) where the density
+        # metric is meaningful. Short transcriptions (headers, chapter starts)
+        # inherently have high edit density due to interpolation imprecision.
+        if best_pg_raw and len(best_pg_raw) > 0 and len(trans_norm) > 100:
+            aligned_pg_norm = normalize_for_matching(best_pg_raw)
+            sm = SequenceMatcher(None, trans_norm, aligned_pg_norm)
+            total_edits = 0
+            for op, i1, i2, j1, j2 in sm.get_opcodes():
+                if op != 'equal':
+                    total_edits += max(i2 - i1, j2 - j1)
+            alignment_length = max(len(trans_norm), len(aligned_pg_norm))
+            edit_density = total_edits / alignment_length if alignment_length > 0 else 0.0
+
+            if edit_density > 0.15:
+                logger.debug(
+                    f"Page {scan_page}: edit density {edit_density:.3f} > 0.15, rejecting alignment"
+                )
+                return None
 
         # Clamp offsets
         best_pg_start = max(0, min(best_pg_start, len(pg_text)))
@@ -1866,11 +1371,16 @@ class VisionAligner:
         confidence = min(1.0, raw_score * 1.2)
         if len(trans_norm) < 50:
             confidence *= 0.7
-        # Bonus for longer matches
         if best_match_len > 200:
             confidence = min(1.0, confidence + 0.1)
 
-        # Import here to avoid circular imports
+        # Check minimum score threshold
+        if best_score < min_score:
+            logger.debug(
+                f"Page {scan_page}: score {best_score:.3f} below threshold {min_score:.2f}"
+            )
+            return None
+
         from gerrata.models import Alignment, AlignmentMethod
 
         alignment = Alignment(
@@ -1882,19 +1392,78 @@ class VisionAligner:
             method=AlignmentMethod.LLM_VISION,
         )
 
-        # Check minimum score threshold
-        if best_score < min_score:
-            logger.debug(
-                f"Page {scan_page}: score {best_score:.3f} below threshold {min_score:.2f}"
-            )
-            return None
-
         return VisionAlignmentResult(
             alignment=alignment,
             transcription=transcription,
             best_score=best_score,
-            anchored=was_anchored,
+            anchored=True,  # RETAS always anchors when it returns
         )
+
+    @staticmethod
+    def check_position_consistency(
+        prev_pg_end: int,
+        prev_page_num: int,
+        pg_start: int,
+        page_num: int,
+        chars_per_page: float,
+    ) -> bool:
+        """Check if the gap between consecutive alignments is within expected bounds.
+
+        An anomaly is detected when the actual gap between the previous alignment's
+        end and the current alignment's start is outside 0.5×-2.0× the expected gap.
+
+        Args:
+            prev_pg_end: PG text offset where the previous page's alignment ended.
+            prev_page_num: Page number of the previous confirmed alignment.
+            pg_start: PG text offset where the current page's alignment starts.
+            page_num: Current page number.
+            chars_per_page: Estimated characters per page.
+
+        Returns:
+            True if position is consistent (no anomaly), False if anomaly detected.
+        """
+        pages_between = page_num - prev_page_num - 1
+        if pages_between < 0:
+            return True  # Same or earlier page, can't check consistency
+        actual_gap = pg_start - prev_pg_end
+        expected_gap = chars_per_page * pages_between
+
+        if expected_gap <= 0:
+            # Consecutive pages — expected gap is ~0, but allow some paratext.
+            # Use chars_per_page as reference for bounds.
+            lower_bound = -chars_per_page * 0.5
+            upper_bound = chars_per_page * 2.0
+        else:
+            lower_bound = expected_gap * 0.5
+            upper_bound = expected_gap * 2.0
+
+        return lower_bound <= actual_gap <= upper_bound
+
+    @staticmethod
+    def check_scoring_regression(
+        current_score: float,
+        rolling_scores: list[float],
+        threshold: float = 0.20,
+    ) -> bool:
+        """Check if current score has dropped significantly below rolling average.
+
+        Args:
+            current_score: The alignment score of the current page.
+            rolling_scores: List of recent alignment scores (up to 10).
+            threshold: Fractional drop threshold (default 0.20 = 20%).
+
+        Returns:
+            True if scoring regression detected (current > threshold% below average).
+        """
+        if len(rolling_scores) < 5:
+            return False  # Not enough data to establish a baseline
+
+        avg = sum(rolling_scores) / len(rolling_scores)
+        if avg <= 0:
+            return False
+
+        drop_fraction = (avg - current_score) / avg
+        return drop_fraction > threshold + 1e-9
 
     def _detect_scan_chapter(self, transcription: str) -> str | None:
         """Extract chapter title from scan page transcription.
@@ -2004,11 +1573,18 @@ class VisionAligner:
         pg_paragraphs: list[str],
         chapters: list | None = None,
     ) -> list[VisionAlignmentResult]:
-        """Align all page transcriptions to PG text using three-phase fallback.
+        """Align all page transcriptions to PG text using RETAS with recovery.
 
         Phase 1 (chapter-constrained): Fast, usually correct. Requires score >= 0.50.
         Phase 2 (sequential neighborhood): Covers drift. Requires score >= 0.40.
-        Phase 3 (global search): Guaranteed coverage. Requires score >= 0.35.
+
+        Recovery mechanisms:
+        - Position consistency check (Recovery 1): detects missing pages.
+        - Scoring regression monitor (Recovery 2): detects slow drift.
+        - Periodic forced re-anchor (Recovery 3): every 10 pages, verifies with
+          unconstrained RETAS and resets tracker if needed.
+        - Post-alignment edit density check (Recovery 4): built into
+          align_transcription_to_pg.
 
         After forward pass, a backward repair pass fills remaining gaps
         using bilateral constraints from neighboring confirmed matches.
@@ -2043,9 +1619,9 @@ class VisionAligner:
                 f"({real_chapters[current_chapter_idx].title if current_chapter_idx >= 0 else 'N/A'})"
             )
 
-        # -- Forward pass: three-phase alignment --
-        # Track pages since last re-anchor for drift control
+        # -- Forward pass: RETAS-only alignment with recovery --
         pages_since_reanchor = 0
+        rolling_scores: list[float] = []
 
         for i, trans in enumerate(transcriptions):
             page_num = trans.page_num
@@ -2062,10 +1638,16 @@ class VisionAligner:
                 logger.info(f"Page {page_num}: skipping failed/empty transcription")
                 continue
 
-            # Periodic re-anchor to prevent drift
+            # Recovery 3: Periodic forced re-anchor (every REANCHOR_INTERVAL pages)
             pages_since_reanchor += 1
             if pages_since_reanchor >= REANCHOR_INTERVAL:
-                tracker.reanchor()
+                tracker.reanchor(
+                    aligner=self,
+                    transcription=trans,
+                    pg_text=pg_text,
+                    pg_paragraphs=pg_paragraphs,
+                    page_num=page_num,
+                )
                 pages_since_reanchor = 0
 
             # Skip duplicate pages
@@ -2111,6 +1693,9 @@ class VisionAligner:
                     results[i] = result
                     tracker.record(page_num, result.alignment.pg_end, 0.50,
                                  result.alignment.pg_end - result.alignment.pg_start)
+                    rolling_scores.append(result.best_score)
+                    if len(rolling_scores) > 10:
+                        rolling_scores.pop(0)
                     current_chapter_idx = self._update_chapter_from_position(
                         result.alignment.pg_start, real_chapters, current_chapter_idx
                     )
@@ -2129,9 +1714,88 @@ class VisionAligner:
                 min_score=SEQUENTIAL_THRESHOLD,
             )
             if result:
+                # Recovery 1: Position consistency check
+                position_ok = True
+                if tracker.last_confirmed_position > 0 and tracker.last_confirmed_page > 0:
+                    position_ok = self.check_position_consistency(
+                        prev_pg_end=tracker.last_confirmed_position,
+                        prev_page_num=tracker.last_confirmed_page,
+                        pg_start=result.alignment.pg_start,
+                        page_num=page_num,
+                        chars_per_page=tracker.chars_per_page,
+                    )
+                    if not position_ok:
+                        logger.warning(
+                            f"Page {page_num}: position anomaly detected "
+                            f"(pg_start={result.alignment.pg_start}, "
+                            f"prev_end={tracker.last_confirmed_position}, "
+                            f"pages={tracker.last_confirmed_page}→{page_num})"
+                        )
+
+                # Recovery 2: Scoring regression check
+                scoring_ok = True
+                if rolling_scores and not self.check_scoring_regression(result.best_score, rolling_scores):
+                    scoring_ok = False
+                    avg = sum(rolling_scores) / len(rolling_scores)
+                    logger.warning(
+                        f"Page {page_num}: scoring regression "
+                        f"(score={result.best_score:.2f}, rolling_avg={avg:.2f})"
+                    )
+
+                # If any recovery triggered, re-run RETAS without constraint
+                if not position_ok or not scoring_ok:
+                    logger.info(
+                        f"Page {page_num}: recovery triggered "
+                        f"(position_ok={position_ok}, scoring_ok={scoring_ok}), "
+                        f"re-running unconstrained RETAS"
+                    )
+                    body_off = find_body_start(pg_text)
+                    unconstrained = self.align_transcription_to_pg(
+                        transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
+                        scan_page=page_num, search_start=body_off, search_end=len(pg_text),
+                        min_score=SEQUENTIAL_THRESHOLD,
+                    )
+                    if unconstrained:
+                        # Compare unconstrained result to tracker expectation
+                        expected = tracker.expected_position(page_num)
+                        cpp = tracker.chars_per_page
+                        threshold = int(cpp * 1.5)
+                        difference = abs(unconstrained.alignment.pg_start - expected)
+
+                        if difference > threshold:
+                            logger.warning(
+                                f"Page {page_num}: unconstrained RETAS corrected tracker "
+                                f"(expected={expected}, retas={unconstrained.alignment.pg_start}, "
+                                f"diff={difference}, threshold={threshold})"
+                            )
+                            result = unconstrained
+                            # Reset tracker to the corrected position
+                            tracker.matches = [
+                                (
+                                    page_num,
+                                    result.alignment.pg_end,
+                                    result.best_score,
+                                    result.alignment.pg_end - result.alignment.pg_start,
+                                )
+                            ]
+                        else:
+                            logger.debug(
+                                f"Page {page_num}: unconstrained RETAS confirms tracker "
+                                f"(diff={difference} < threshold={threshold})"
+                            )
+                    # If unconstrained RETAS also failed, skip this page
+                    else:
+                        logger.info(
+                            f"Page {page_num}: unconstrained RETAS also failed, skipping"
+                        )
+                        continue
+
                 results[i] = result
                 tracker.record(page_num, result.alignment.pg_end, 0.40,
                              result.alignment.pg_end - result.alignment.pg_start)
+                rolling_scores.append(result.best_score)
+                if len(rolling_scores) > 10:
+                    rolling_scores.pop(0)
                 current_chapter_idx = self._update_chapter_from_position(
                     result.alignment.pg_start, real_chapters, current_chapter_idx
                 )
@@ -2142,91 +1806,8 @@ class VisionAligner:
                 )
                 continue
 
-            # -- Phase 3: Global search --
-            # Skip global search for front/end-matter pages that lack body text.
-            # Phase 3 can search entire PG text and still fail for TOC pages.
-            # This prevents wasteful global searches on appendix pages.
-            if results[i] is None and trans.success and len(trans.transcription_cleaned) > 0:
-                # If we have actual content but couldn't match it locally,
-                # Phase 3 would search entire book — wasteful for appendix.
-                logger.info(
-                    f"Page {page_num}: skipping Phase 3 (global) "
-                    f"(transcription has content {len(trans.transcription_cleaned)} chars, "
-                    f"likely front/end-matter)"
-                )
-                continue
-
-            logger.info(f"Page {page_num}: Phase 3 (global) [0:{len(pg_text)}]")
-            result = self.align_transcription_to_pg(
-                transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
-                scan_page=page_num, search_start=0, search_end=len(pg_text),
-                min_score=GLOBAL_THRESHOLD,
-            )
-            if result:
-                results[i] = result
-                # When Phase 3 lands, the sequential tracker was wrong (drifted).
-                # If the global match scored well, treat it as a tracker correction
-                # rather than a low-confidence hit. This prevents future pages from
-                # being constrained by the stale sequential estimate.
-                if result.best_score >= SEQUENTIAL_THRESHOLD:
-                    correction_conf = 0.40
-                    logger.info(
-                        f"Page {page_num}: Phase 3 global match corrected tracker "
-                        f"(score={result.best_score:.2f} >= {SEQUENTIAL_THRESHOLD}, "
-                        f"promoted to confidence {correction_conf})"
-                    )
-                else:
-                    correction_conf = 0.35
-                tracker.record(page_num, result.alignment.pg_end, correction_conf,
-                             result.alignment.pg_end - result.alignment.pg_start)
-                current_chapter_idx = self._update_chapter_from_position(
-                    result.alignment.pg_start, real_chapters, current_chapter_idx
-                )
-                logger.info(
-                    f"Page {page_num}: Phase 3 match "
-                    f"[{result.alignment.pg_start}:{result.alignment.pg_end}] "
-                    f"score={result.best_score:.2f} LOW"
-                )
-                continue
-
-            # True failure
-            logger.info(f"Page {page_num}: NO MATCH in any phase")
-
-        # -- Reverse pass: disabled (no recovery on Moby Dick, adds runtime) --
-        # To re-enable: uncomment the block below. Requires ReverseSequentialTracker.
-        # unmatched_indices = [i for i, r in enumerate(results) if r is None]
-        # if unmatched_indices:
-        #     logger.info(f"Reverse pass: {len(unmatched_indices)} unmatched pages to attempt")
-        #     reverse_tracker = ReverseSequentialTracker()
-        #     for i in reversed(unmatched_indices):
-        #         trans = transcriptions[i]
-        #         page_num = trans.page_num
-        #         seq_window = reverse_tracker.search_window(page_num, len(pg_text))
-        #         logger.info(f"Page {page_num}: Reverse Phase 2 [{seq_window[0]}:{seq_window[1]}]")
-        #         result = self.align_transcription_to_pg(
-        #             transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
-        #             scan_page=page_num, search_start=seq_window[0], search_end=seq_window[1],
-        #             min_score=SEQUENTIAL_THRESHOLD,
-        #         )
-        #         if result:
-        #             results[i] = result
-        #             reverse_tracker.record(page_num, result.alignment.pg_start, 0.40,
-        #                 result.alignment.pg_end - result.alignment.pg_start)
-        #             logger.info(f"Page {page_num}: Reverse match [{result.alignment.pg_start}:{result.alignment.pg_end}] score={result.best_score:.2f}")
-        #             continue
-        #         logger.info(f"Page {page_num}: Reverse Phase 3 (global)")
-        #         result = self.align_transcription_to_pg(
-        #             transcription=trans, pg_text=pg_text, pg_paragraphs=pg_paragraphs,
-        #             scan_page=page_num, search_start=0, search_end=len(pg_text),
-        #             min_score=GLOBAL_THRESHOLD,
-        #         )
-        #         if result:
-        #             results[i] = result
-        #             reverse_tracker.record(page_num, result.alignment.pg_start, 0.35,
-        #                 result.alignment.pg_end - result.alignment.pg_start)
-        #             logger.info(f"Page {page_num}: Reverse global match [{result.alignment.pg_start}:{result.alignment.pg_end}] score={result.best_score:.2f}")
-        #             continue
-        #         logger.info(f"Page {page_num}: NO MATCH in reverse pass either")
+            # No match — log and skip (no Phase 3 / global search)
+            logger.info(f"Page {page_num}: NO MATCH")
 
         # -- Backward repair pass --
         results = self._repair_pass(results, transcriptions, pg_text, pg_paragraphs, tracker)

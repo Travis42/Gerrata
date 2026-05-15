@@ -7,7 +7,11 @@ set -uo pipefail
 REPO="/root/projects/gerrata"
 cd "$REPO"
 
-API_KEY="${ZAI_API_KEY:?ZAI_API_KEY env var required}"
+API_KEY="${OPENROUTER_API_KEY:-$(cat ~/.secrets/openrouter.key 2>/dev/null)}"
+if [ -z "$API_KEY" ]; then
+  echo "ERROR: OPENROUTER_API_KEY env var or ~/.secrets/openrouter.key required" >&2
+  exit 1
+fi
 WEBHOOK="--channel telegram --to '-1003815086962:3515'"
 CONCURRENCY=10
 LOG_FILE="/root/clawd/projects/gerrata-queue.log"
@@ -69,7 +73,7 @@ run_book() {
     echo "" | tee -a "$LOG_FILE"
     echo "Attempt $attempt/$max_attempts..." | tee -a "$LOG_FILE"
 
-    ZAI_API_KEY="$API_KEY" gerrata "$pg_id" \
+    OPENROUTER_API_KEY="$API_KEY" gerrata "$pg_id" \
       --scan-id "$scan_id" \
       --concurrency "$CONCURRENCY" \
       --output ./reports \

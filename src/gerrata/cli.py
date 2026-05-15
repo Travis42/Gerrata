@@ -147,14 +147,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--vision-url",
         type=str,
-        default="https://api.z.ai/api/paas/v4/chat/completions",
+        default="https://openrouter.ai/api/v1/chat/completions",
         help="Vision model API URL for page transcription (Step 3)",
     )
     parser.add_argument(
         "--vision-key",
         type=str,
-        default=os.environ.get("ZAI_API_KEY", ""),
-        help="Vision model API key for transcription (default: ZAI_API_KEY environment variable)",
+        default=os.environ.get("OPENROUTER_API_KEY", ""),
+        help="Vision model API key for transcription (default: OPENROUTER_API_KEY environment variable)",
     )
     parser.add_argument(
         "--vision-model",
@@ -280,9 +280,13 @@ def resolve_verify_provider(args: argparse.Namespace) -> tuple[str, str]:
             raise ValueError("Anthropic provider requires ANTHROPIC_API_KEY env var")
         return url, key
 
-    # Default: Z.AI (uses --vision-url/--vision-key if set, or env var)
+    # Default: OpenRouter (uses --vision-url/--vision-key if set, or env var / key file)
     url = args.verify_url or args.vision_url
     key = args.verify_key or args.vision_key
+    if not key:
+        key_path = Path.home() / ".secrets" / "openrouter.key"
+        if key_path.exists():
+            key = key_path.read_text().strip()
     return url, key
 
 

@@ -24,20 +24,21 @@
 # Install
 pip install gerrata
 
-# Set your vision model API key (Z.AI)
-export ZAI_API_KEY="your-api-key-here"
+# Set your OpenRouter API key
+export OPENROUTER_API_KEY="your-api-key-here"
+# Or store it in ~/.secrets/openrouter.key
 
 # Run on a PG book
 gerrata 43 \
   --scan-id "06-stevenson-jekyll-hyde" \
-  --vision-key "$ZAI_API_KEY" \
+  --vision-key "$OPENROUTER_API_KEY" \
   -o reports
 ```
 
 This will:
 - Download PG #43 (Dr. Jekyll and Mr. Hyde) from Project Gutenberg
 - Download the scan pages from the Internet Archive
-- Transcribe each page with a vision model
+- Transcribe each page with a vision model (Gemma 4 31B via OpenRouter)
 - Align, diff, filter, and verify
 - Generate reports in `./reports/`
 
@@ -296,16 +297,28 @@ The test fixture uses IA identifier `06-stevenson-jekyll-hyde`:
 
 The tool needs access to a vision-capable LLM (for page transcription and error verification). It works with **any OpenAI-compatible API** — just set the URL and key.
 
+**Default provider: OpenRouter** (Gemma 4 31B)
+
 **Option 1: Environment variable (simplest)**
 
 ```bash
-export ZAI_API_KEY="your-key-here"
+export OPENROUTER_API_KEY="your-key-here"
 gerrata 43 --scan-id "some-scan-id" -o reports
 ```
 
-The `ZAI_API_KEY` env var is picked up automatically. You can skip `--vision-key` when it's set.
+The `OPENROUTER_API_KEY` env var is picked up automatically. You can skip `--vision-key` when it's set.
 
-**Option 2: CLI flags**
+**Option 2: Key file**
+
+```bash
+# Store once
+echo "your-key-here" > ~/.secrets/openrouter.key
+
+# Run (key loaded automatically)
+gerrata 43 --scan-id "some-scan-id" -o reports
+```
+
+**Option 3: CLI flags**
 
 ```bash
 gerrata 43 \
@@ -314,7 +327,7 @@ gerrata 43 \
   -o reports
 ```
 
-**Option 3: Using a different provider (OpenAI, Anthropic, etc.)**
+**Option 4: Using a different provider (OpenAI, Anthropic, etc.)**
 
 Any OpenAI-compatible endpoint works. For example, with OpenAI:
 
@@ -327,30 +340,17 @@ gerrata 43 \
   -o reports
 ```
 
-With a local Ollama instance:
-
-```bash
-gerrata 43 \
-  --scan-id "some-scan-id" \
-  --vision-url "http://localhost:11434/v1/chat/completions" \
-  --vision-model "llama3.2-vision" \
-  -o reports
-```
-
-The default is Z.AI (`api.z.ai`) with GLM-OCR, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
+The default is OpenRouter with Gemma 4 31B, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
 
 ### Split Endpoint Configuration
 
-You can use different API endpoints for transcription and verification. This is useful when you want to use GLM-OCR for transcription (specialized for document layout parsing) and a different model for verification.
+You can use different API endpoints for transcription and verification if needed.
 
 ```bash
 gerrata 43 \
   --scan-id "some-scan-id" \
-  --vision-url "https://api.z.ai/api/paas/v4/layout_parsing" \
-  --vision-model "glm-ocr" \
-  --vision-key "$ZAI_API_KEY" \
-  --verify-url "https://api.z.ai/api/paas/v4/chat/completions" \
-  --verify-model "glm-4.6v" \
+  --vision-model "google/gemma-4-31b-it" \
+  --verify-model "google/gemma-4-31b-it" \
   -o reports
 ```
 
@@ -358,9 +358,9 @@ If you only specify `--vision-*` flags, the same endpoint will be used for both 
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `--vision-url` | `https://api.z.ai/api/paas/v4/chat/completions` | API endpoint for page transcription (Step 3) |
-| `--vision-key` | `$ZAI_API_KEY` | API key for transcription |
-| `--vision-model` | auto-select | Model name for transcription (e.g., `glm-ocr`, `glm-4.6v`) |
+| `--vision-url` | `https://openrouter.ai/api/v1/chat/completions` | API endpoint for page transcription (Step 3) |
+| `--vision-key` | `$OPENROUTER_API_KEY` or `~/.secrets/openrouter.key` | API key for transcription |
+| `--vision-model` | `google/gemma-4-31b-it` | Model name for transcription |
 | `--verify-url` | same as `--vision-url` | API endpoint for verification (Step 7) |
 | `--verify-key` | same as `--vision-key` | API key for verification |
 | `--verify-model` | same as `--vision-model` | Model name for verification |
@@ -377,7 +377,7 @@ pip install -e ".[dev]"
 pytest tests/ -q
 
 # Run with verbose output
-gerrata 43 --scan-id "06-stevenson-jekyll-hyde" --vision-key "$ZAI_API_KEY" -v
+gerrata 43 --scan-id "06-stevenson-jekyll-hyde" --vision-key "$OPENROUTER_API_KEY" -v
 
 # Re-filter saved results (no API calls needed)
 python3 replay_filters.py reports/gutenberg43-*-errata.json
