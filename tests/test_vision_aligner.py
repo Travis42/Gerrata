@@ -124,12 +124,12 @@ class TestVisionTranscriber:
         with patch.object(
             transcriber, "_call_api",
             new_callable=AsyncMock,
-            return_value="The quick brown fox jumps over the lazy dog."
+            return_value='It is therefore a vain fancy to regard Spirit as immersed merely in the natural finite existence, and as seeking to raise itself from this limited existence to the absolute. Spirit is not something external to nature; it is the truth of nature itself, the very essence of which is to transcend its own immediacy and to enter into the realm of freedom. The movement of Spirit is thus not a departure from nature, but its own self-realization. In the process of its development, Spirit exhibits itself in three distinct forms: first as Spirit in itself, then as Spirit for itself, and finally as Spirit in and for itself. Each of these stages represents a necessary moment in the self-determination of the Idea, and each is grounded in the logical necessity of the concept. The history of philosophy is nothing other than the progressive unfolding of this dialectical movement, in which each system of thought emerges as a necessary moment in the self-development of absolute knowledge.'
         ):
             result = await transcriber.transcribe_page(img_path, page_num=0)
 
         assert result.success
-        assert "quick brown fox" in result.transcription
+        assert "Spirit is not something external" in result.transcription
         assert result.model_used == "test-model"
 
     @pytest.mark.asyncio
@@ -151,7 +151,7 @@ class TestVisionTranscriber:
             call_count += 1
             if model == "model-1":
                 raise Exception("Model 1 failed")
-            return "Transcribed text from fallback model."
+            return 'It is therefore a vain fancy to regard Spirit as immersed merely in the natural finite existence, and as seeking to raise itself from this limited existence to the absolute. Spirit is not something external to nature; it is the truth of nature itself, the very essence of which is to transcend its own immediacy and to enter into the realm of freedom. The movement of Spirit is thus not a departure from nature, but its own self-realization. In the process of its development, Spirit exhibits itself in three distinct forms: first as Spirit in itself, then as Spirit for itself, and finally as Spirit in and for itself. Each of these stages represents a necessary moment in the self-determination of the Idea, and each is grounded in the logical necessity of the concept. The history of philosophy is nothing other than the progressive unfolding of this dialectical movement, in which each system of thought emerges as a necessary moment in the self-development of absolute knowledge.'
 
         with patch.object(transcriber, "_call_api", side_effect=mock_call):
             result = await transcriber.transcribe_page(img_path, page_num=3)
@@ -185,7 +185,7 @@ class TestVisionTranscriber:
             # Simulate variable processing time
             await asyncio.sleep(0.01 * len(image_paths))
             # Extract page number from the call (simulated)
-            return "Transcribed text"
+            return 'It is therefore a vain fancy to regard Spirit as immersed merely in the natural finite existence, and as seeking to raise itself from this limited existence to the absolute. Spirit is not something external to nature; it is the truth of nature itself, the very essence of which is to transcend its own immediacy and to enter into the realm of freedom. The movement of Spirit is thus not a departure from nature, but its own self-realization. In the process of its development, Spirit exhibits itself in three distinct forms: first as Spirit in itself, then as Spirit for itself, and finally as Spirit in and for itself. Each of these stages represents a necessary moment in the self-determination of the Idea, and each is grounded in the logical necessity of the concept. The history of philosophy is nothing other than the progressive unfolding of this dialectical movement, in which each system of thought emerges as a necessary moment in the self-development of absolute knowledge.'
 
         with patch.object(
             transcriber, "_call_api",

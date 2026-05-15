@@ -10,6 +10,7 @@ Default model: google/gemma-4-31b-it via OpenRouter.
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import hashlib
 import json
@@ -42,6 +43,48 @@ TRANSCRIPTION_PROMPT = (
     "Preserve original spelling, punctuation, and line breaks. "
     "Do not add any commentary or formatting."
 )
+
+# Minimum cleaned transcription length to accept as "successful".
+# Pages of real text typically yield 500-4000 chars after paratext stripping.
+# A response shorter than this likely means the model refused, produced garbage,
+# or the page is blank/decorative. Set conservatively low to avoid false negatives.
+MIN_TRANSCRIPTION_CHARS = 100
+
+# Patterns that indicate the model refused or produced meta-commentary
+# instead of transcribing the page.
+REFUSAL_PATTERNS = [
+    r"^i (can't|cannot|am unable|don't|do not)",
+    r"^i'm (not able|unable|sorry)",
+    r"^as an ai",
+    r"^i am (an?|not)",
+    r"^sorry,? (i|but|but i)",
+    r"^(i )?apologize",
+    r"^this (image|page|scan) (is |appears )?(unclear|illegible|blurry|blank|too dark|damaged)",
+    r"^(the )?(image|text|page) (is |appears )?(not|too|very)",
+    r"^unable to (read|transcribe|determine|process)",
+    r"^no (text|readable|visible|content)",
+]
+
+
+def check_transcription_quality(raw: str, cleaned: str) -> tuple[bool, str]:
+    """Check if a transcription is usable or should be rejected.
+
+    Returns (is_good, reason). If is_good is False, reason explains why.
+    No extra LLM calls — uses only heuristic checks on the text.
+    """
+    if not raw or not raw.strip():
+        return False, "empty response"
+
+    first_line = raw.strip().split(chr(10))[0].strip().lower()
+    for pattern in REFUSAL_PATTERNS:
+        if re.match(pattern, first_line, re.IGNORECASE):
+            return False, f"refusal pattern matched: {first_line[:60]}"
+
+    if len(cleaned) < MIN_TRANSCRIPTION_CHARS:
+        return False, f"cleaned text too short ({len(cleaned)} chars < {MIN_TRANSCRIPTION_CHARS})"
+
+    return True, ""
+
 
 # Default API configuration — OpenRouter
 DEFAULT_API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -128,6 +171,7 @@ def strip_paratext(text: str) -> str:
     PG texts never include page headers, page numbers, running feet, or short decorative
     lines. Removing these before matching dramatically improves alignment quality.
     """
+    # ... existing implementation unchanged ...
     lines = text.split("\n")
     cleaned = []
 
@@ -465,7 +509,7 @@ class VisionTranscriber:
         self.cache_stats = {"hits": 0, "misses": 0, "saves": 0}
 
     def _load_cache(self) -> dict:
-        """Load transcription cache from disk."""
+        """Load transcription cache from disk, evicting entries for wrong models."""
         if not self.cache_file or not self.cache_file.exists():
             return {"version": 1, "model": "", "pages": {}}
 
@@ -476,6 +520,23 @@ class VisionTranscriber:
                 if not isinstance(cache, dict) or "pages" not in cache:
                     logger.warning(f"Invalid cache file {self.cache_file}, starting fresh")
                     return {"version": 1, "model": "", "pages": {}}
+                # Evict entries cached for a different model — they're useless
+                # and would waste API calls on retry (cache miss + re-fail).
+                current_model = self.models[0] if self.models else ""
+                evicted = 0
+                stale_pages = {}
+                for filename, entry in cache.get("pages", {}).items():
+                    if entry.get("model") != current_model:
+                        evicted += 1
+                    else:
+                        stale_pages[filename] = entry
+                if evicted > 0:
+                    cache["pages"] = stale_pages
+                    logger.info(
+                        f"Evicted {evicted} stale cache entries (model != {current_model})"
+                    )
+                    # Rewrite cache immediately so we don't carry stale data
+                    self._save_cache_from(cache)
                 return cache
         except (json.JSONDecodeError, IOError) as e:
             logger.warning(f"Failed to load cache {self.cache_file}: {e}")
@@ -485,6 +546,10 @@ class VisionTranscriber:
         """Save transcription cache to disk."""
         if not self.cache_file or self.disable_cache:
             return
+        self._save_cache_from(self.cache_data)
+
+    def _save_cache_from(self, cache_data: dict) -> None:
+        """Save cache data dict to disk (used by _save_cache and _load_cache)."""
 
         try:
             # Ensure parent directory exists
@@ -492,7 +557,7 @@ class VisionTranscriber:
             # Write atomically
             temp_file = self.cache_file.with_suffix(".tmp")
             with open(temp_file, "w") as f:
-                json.dump(self.cache_data, f, indent=2)
+                json.dump(cache_data, f, indent=2)
             temp_file.replace(self.cache_file)
         except IOError as e:
             logger.warning(f"Failed to save cache {self.cache_file}: {e}")
@@ -594,17 +659,23 @@ class VisionTranscriber:
             primary_model = self.models[0] if self.models else "unknown"
             cached_text = self._get_cached_transcription(image_path, primary_model)
             if cached_text is not None:
-                # Cache hit
+                # Cache hit — still validate quality
                 cleaned = strip_paratext(cached_text)
-                logger.info(f"  Cache hit: {image_path.name} (cached, {len(cached_text)} chars)")
-                return PageTranscription(
-                    page_num=page_num,
-                    image_path=image_path,
-                    transcription=cached_text,
-                    transcription_cleaned=cleaned,
-                    model_used=primary_model,
-                    success=True,
-                )
+                is_good, reason = check_transcription_quality(cached_text, cleaned)
+                if is_good:
+                    logger.info(f"  Cache hit: {image_path.name} (cached, {len(cached_text)} chars)")
+                    return PageTranscription(
+                        page_num=page_num,
+                        image_path=image_path,
+                        transcription=cached_text,
+                        transcription_cleaned=cleaned,
+                        model_used=primary_model,
+                        success=True,
+                    )
+                else:
+                    logger.warning(
+                        f"  Cache hit but failed quality check: {image_path.name} — {reason}, re-transcribing"
+                    )
 
         # Try Tesseract first (local, free, fast)
         if self.ocr_engine == "tesseract":
@@ -648,18 +719,25 @@ class VisionTranscriber:
                     )
                     if transcription and len(transcription.strip()) > 10:
                         cleaned = strip_paratext(transcription.strip())
-                        # Cache the result
-                        if self.ocr_engine == "vision":
-                            self._cache_transcription(image_path, model, transcription.strip(), True)
-                            logger.info(f"  Cache saved: {image_path.name} ({len(transcription.strip())} chars)")
-                        return PageTranscription(
-                            page_num=page_num,
-                            image_path=image_path,
-                            transcription=transcription.strip(),
-                            transcription_cleaned=cleaned,
-                            model_used=model,
-                            success=True,
-                        )
+                        is_good, reason = check_transcription_quality(transcription.strip(), cleaned)
+                        if is_good:
+                            if self.ocr_engine == "vision":
+                                self._cache_transcription(image_path, model, transcription.strip(), True)
+                                logger.info(f"  Cache saved: {image_path.name} ({len(transcription.strip())} chars)")
+                            return PageTranscription(
+                                page_num=page_num,
+                                image_path=image_path,
+                                transcription=transcription.strip(),
+                                transcription_cleaned=cleaned,
+                                model_used=model,
+                                success=True,
+                            )
+                        else:
+                            logger.warning(
+                                f"  Quality check failed: {image_path.name} — {reason}"
+                            )
+                            # Don't cache — let retry happen
+                            continue
                 except Exception as e:
                     error_str = str(e)
                     if "429" in error_str and attempt < max_retries:
@@ -724,12 +802,51 @@ class VisionTranscriber:
         results_raw.sort(key=lambda x: x[0])
         results = [r[1] for r in results_raw]
 
+        # Identify failed pages
+        failed_indices = [(i, r) for i, r in enumerate(results) if not r.success]
+        successes = len(results) - len(failed_indices)
+
+        # Retry failed pages once with a brief pause
+        if failed_indices:
+            logger.warning(
+                f"{len(failed_indices)} pages failed, retrying once... (pages: "
+                f"{', '.join(str(image_paths[i].name) for i, _ in failed_indices[:5])}{'...' if len(failed_indices) > 5 else ''})"
+            )
+            await asyncio.sleep(2)  # Brief pause before retry
+            semaphore = asyncio.Semaphore(self.concurrency)
+
+            async def retry_page(idx, path):
+                async with semaphore:
+                    result = await self.transcribe_page(path, page_num=idx)
+                    return (idx, result)
+
+            retry_tasks = [retry_page(idx, image_paths[idx]) for idx, _ in failed_indices]
+            retry_results = await asyncio.gather(*retry_tasks)
+            for idx, retry_result in retry_results:
+                results[idx] = retry_result
+
+            still_failed = [(i, r) for i, r in enumerate(results) if not r.success]
+            recovered = len(failed_indices) - len(still_failed)
+            if recovered > 0:
+                logger.info(f"Retry recovered {recovered} of {len(failed_indices)} failed pages")
+            if still_failed:
+                logger.error(
+                    f"{len(still_failed)} pages still failed after retry: "
+                    f"{', '.join(image_paths[i].name for i, _ in still_failed)}"
+                )
+
         # Print summary statistics
-        if not self.disable_cache and self.cache_stats["hits"] + self.cache_stats["misses"] > 0:
-            fresh = self.cache_stats["saves"]
-            cached = self.cache_stats["hits"]
-            total = len(results)
-            logger.info(f"Transcribed {total}/{len(image_paths)} pages ({cached} from cache, {fresh} fresh)")
+        successes = sum(1 for r in results if r.success)
+        fresh = self.cache_stats["saves"]
+        cached = self.cache_stats["hits"]
+        failed = len(results) - successes
+        logger.info(
+            f"Transcription complete: {successes}/{len(image_paths)} pages OK "
+            f"({cached} from cache, {fresh} fresh, {failed} failed)"
+        )
+        if failed > 0:
+            failed_names = [image_paths[i].name for i, r in enumerate(results) if not r.success]
+            logger.warning(f"Failed pages: {', '.join(failed_names)}")
 
         return results
 
