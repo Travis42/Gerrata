@@ -23,6 +23,15 @@ def normalize_for_diff(text: str) -> str:
     but normalizes whitespace and unicode.
     """
     text = unicodedata.normalize("NFC", text)
+    # Strip PG italics markup: _word_ → word
+    text = re.sub(r"_([^_]+)_", r"\1", text)
+    # Normalize PG footnote markers: [N] → superscript-like for comparison
+    # PG uses [1], [2], etc. Scans often have ¹, ², etc. — normalize both to nothing
+    # since footnote numbering is a convention, not content
+    text = re.sub(r"\[\d+\]", "FOOTNOTE", text)
+    text = re.sub(r"[¹²³⁴⁵⁶⁷⁸⁹⁰]+", "FOOTNOTE", text)
+    # Collapse hyphenation artifacts from line breaks: word- word → word
+    text = re.sub(r"(\w)-\s+", r"\1", text)
     # Normalize whitespace to single spaces
     text = re.sub(r"\s+", " ", text).strip()
     return text
@@ -221,6 +230,23 @@ class TextDiffChecker:
         scan_page: int,
     ) -> CandidateError | None:
         """Classify a diff operation into an error category."""
+        # Skip diffs that are only PG italics markup differences
+        pg_stripped = re.sub(r"_([^_]+)_", r"\1", pg_segment)
+        if pg_stripped == scan_segment:
+            return None
+
+        # Skip diffs that are only footnote marker style differences
+        pg_footnotes = re.sub(r"\[\d+\]", "FOOTNOTE", pg_segment)
+        scan_footnotes = re.sub(r"[¹²³⁴⁵⁶⁷⁸⁹⁰]+", "FOOTNOTE", scan_segment)
+        if pg_footnotes == scan_footnotes:
+            return None
+
+        # Skip hyphenation artifacts
+        pg_unhyph = re.sub(r"(\w)-\s+", r"\1", pg_segment)
+        scan_unhyph = re.sub(r"(\w)-\s+", r"\1", scan_segment)
+        if pg_unhyph == scan_unhyph:
+            return None
+
         if tag == "replace":
             # Words differ between PG and scan
             diff_desc = f"PG has '{pg_segment}' where scan has '{scan_segment}'"

@@ -1546,99 +1546,135 @@ class VisionAligner:
                 f"estimated PG norm start ~{estimated_norm_start}"
             )
 
-            # ── Phase 2: Sliding window best match (Solution B from RESEARCH-ALIGNMENT.md) ──
-            # After anchoring, use a sliding window to find the *best-matching substring*
-            # of the PG text against the transcription, rather than extrapolating from
-            # anchor positions. This produces tighter windows that reduce "absent in scan" noise.
-            trans_len = len(trans_norm)
-            trans_word_count = len(self._tokenize_words(trans_text))
+            # ── Direct interpolation when ≥3 anchors ──
+            # When RETAS finds 3+ confirmed unique word anchors, interpolate directly
+            # from anchors instead of using a fuzzy sliding window. This avoids
+            # micro-misalignments caused by sliding window ambiguity (see HEGEL fix spec).
+            if len(anchor_pg_char_positions) >= 3 and anchor_trans_word_positions:
+                pg_words = self._tokenize_words(pg_text)
+                trans_words_list = self._tokenize_words(trans_text)
+                avg_chars_per_word = len(pg_text) / max(1, len(pg_words))
 
-            if anchor_pg_char_positions:
-                # Get the median anchor position as our starting point
-                anchor_positions_sorted = sorted(anchor_pg_char_positions)
-                median_idx = len(anchor_positions_sorted) // 2
-                median_anchor_pos = anchor_positions_sorted[median_idx]
+                estimated_pg_start = min(anchor_pg_char_positions) - min(anchor_trans_word_positions) * avg_chars_per_word
+                estimated_pg_start = max(0, estimated_pg_start)
+                # Scale transcription length to raw text space
+                norm_scale = len(pg_text) / max(1, len(pg_norm))
+                estimated_pg_end = estimated_pg_start + len(trans_norm) * norm_scale
+                estimated_pg_end = min(len(pg_text), estimated_pg_end)
 
-                # Also get the estimated start from anchor interpolation
-                if anchor_trans_word_positions and trans_word_count > 0:
-                    pg_words = self._tokenize_words(pg_text)
-                    chars_per_word_est = len(pg_text) / max(1, len(pg_words))
-                    first_trans_word = min(anchor_trans_word_positions)
-                    first_anchor_raw = min(anchor_pg_char_positions)
-                    estimated_start = first_anchor_raw - int(first_trans_word * chars_per_word_est)
-                    estimated_start = max(0, estimated_start)
-                else:
-                    estimated_start = median_anchor_pos
+                best_pg_start = int(estimated_pg_start)
+                best_pg_end = int(estimated_pg_end)
+
+                # Score the interpolated window
+                best_pg_raw = pg_text[best_pg_start:best_pg_end]
+                best_pg_norm_window = normalize_for_matching(best_pg_raw)
+                final_score = SequenceMatcher(None, trans_norm, best_pg_norm_window).ratio()
+
+                best_ratio = final_score
+                weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
+                best_score = weighted_score
+                best_match_len = best_pg_end - best_pg_start
+                best_pg_end = min(best_pg_end, len(pg_text))
+                was_anchored = True
 
                 logger.debug(
-                    f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
-                    f"median anchor at {median_anchor_pos}, estimated start ~{estimated_start}"
+                    f"  RETAS direct interpolation (≥3 anchors): pg_text[{best_pg_start}:{best_pg_end}], "
+                    f"score={final_score:.3f}"
                 )
+            else:
+                # ── Phase 2: Sliding window best match (fallback when <3 anchors) ──
+                # After anchoring, use a sliding window to find the *best-matching substring*
+                # of the PG text against the transcription, rather than extrapolating from
+                # anchor positions. This produces tighter windows that reduce "absent in scan" noise.
+                trans_len = len(trans_norm)
+                trans_word_count = len(self._tokenize_words(trans_text))
 
-                # Sliding window approach: try different start positions around the anchor
-                # and score each to find the best matching window
-                window_size = int(trans_len * 1.2)  # Allow 20% extra for edition differences
-                best_sliding_score = 0.0
-                best_sliding_start = 0
-                best_sliding_end = 0
+                if anchor_pg_char_positions:
+                    # Get the median anchor position as our starting point
+                    anchor_positions_sorted = sorted(anchor_pg_char_positions)
+                    median_idx = len(anchor_positions_sorted) // 2
+                    median_anchor_pos = anchor_positions_sorted[median_idx]
 
-                # Search range: ±300 chars around estimated start, in 50-char increments
-                # This covers the uncertainty in anchor positioning while being efficient
-                search_range = 300
-                step_size = 50
-
-                for offset in range(-search_range, search_range + 1, step_size):
-                    # Calculate window start position
-                    start_pos = max(0, estimated_start + offset)
-
-                    # Ensure the window doesn't go beyond PG text bounds
-                    end_pos = min(len(pg_text), start_pos + window_size)
-
-                    # Extract and normalize the PG window
-                    pg_window = pg_text[start_pos:end_pos]
-                    pg_window_norm = normalize_for_matching(pg_window)
-
-                    # Score this window against the transcription
-                    if len(pg_window_norm) >= trans_len * 0.5:  # Only score reasonably-sized windows
-                        score = SequenceMatcher(None, trans_norm, pg_window_norm).ratio()
-
-                        # Small preference for windows closer to the estimated position
-                        # (reduces bias toward windows at the very start/end of text)
-                        distance_penalty = abs(offset) / search_range * 0.05
-                        adjusted_score = score - distance_penalty
-
-                        if adjusted_score > best_sliding_score:
-                            best_sliding_score = adjusted_score
-                            best_sliding_start = start_pos
-                            best_sliding_end = end_pos
-
-                # If we found a good match with sliding window, use it
-                if best_sliding_score > 0:
-                    # Normalize the best window for final scoring
-                    best_pg_raw = pg_text[best_sliding_start:best_sliding_end]
-                    best_pg_norm = normalize_for_matching(best_pg_raw)
-                    final_score = SequenceMatcher(None, trans_norm, best_pg_norm).ratio()
+                    # Also get the estimated start from anchor interpolation
+                    if anchor_trans_word_positions and trans_word_count > 0:
+                        pg_words = self._tokenize_words(pg_text)
+                        chars_per_word_est = len(pg_text) / max(1, len(pg_words))
+                        first_trans_word = min(anchor_trans_word_positions)
+                        first_anchor_raw = min(anchor_pg_char_positions)
+                        estimated_start = first_anchor_raw - int(first_trans_word * chars_per_word_est)
+                        estimated_start = max(0, estimated_start)
+                    else:
+                        estimated_start = median_anchor_pos
 
                     logger.debug(
-                        f"  Sliding window: pg_text[{best_sliding_start}:{best_sliding_end}] "
-                        f"(len={best_sliding_end - best_sliding_start}), score={final_score:.3f}"
+                        f"Page {scan_page}: RETAS anchor found with {len(anchor_pg_char_positions)} anchors, "
+                        f"median anchor at {median_anchor_pos}, estimated start ~{estimated_start}"
                     )
 
-                    best_pg_start = best_sliding_start
-                    best_pg_end = best_sliding_end
-                    best_ratio = final_score
-                    weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
+                    # Sliding window approach: try different start positions around the anchor
+                    # and score each to find the best matching window
+                    window_size = int(trans_len * 1.2)  # Allow 20% extra for edition differences
+                    best_sliding_score = 0.0
+                    best_sliding_start = 0
+                    best_sliding_end = 0
 
-                    if weighted_score > best_score:
-                        best_score = weighted_score
-                        best_match_len = best_pg_end - best_pg_start
-                        best_pg_end = min(best_pg_end, len(pg_text))
-                        was_anchored = True
+                    # Search range: ±150 chars around estimated start, in 20-char increments
+                    # Tightened from ±300/50 to reduce micro-misalignment on repetitive text
+                    search_range = 150
+                    step_size = 20
+
+                    for offset in range(-search_range, search_range + 1, step_size):
+                        # Calculate window start position
+                        start_pos = max(0, estimated_start + offset)
+
+                        # Ensure the window doesn't go beyond PG text bounds
+                        end_pos = min(len(pg_text), start_pos + window_size)
+
+                        # Extract and normalize the PG window
+                        pg_window = pg_text[start_pos:end_pos]
+                        pg_window_norm = normalize_for_matching(pg_window)
+
+                        # Score this window against the transcription
+                        if len(pg_window_norm) >= trans_len * 0.5:  # Only score reasonably-sized windows
+                            score = SequenceMatcher(None, trans_norm, pg_window_norm).ratio()
+
+                            # Small preference for windows closer to the estimated position
+                            # (reduces bias toward windows at the very start/end of text)
+                            distance_penalty = abs(offset) / search_range * 0.05
+                            adjusted_score = score - distance_penalty
+
+                            if adjusted_score > best_sliding_score:
+                                best_sliding_score = adjusted_score
+                                best_sliding_start = start_pos
+                                best_sliding_end = end_pos
+
+                    # If we found a good match with sliding window, use it
+                    if best_sliding_score > 0:
+                        # Normalize the best window for final scoring
+                        best_pg_raw = pg_text[best_sliding_start:best_sliding_end]
+                        best_pg_norm = normalize_for_matching(best_pg_raw)
+                        final_score = SequenceMatcher(None, trans_norm, best_pg_norm).ratio()
 
                         logger.debug(
-                            f"  RETAS final: pg_text[{best_pg_start}:{best_pg_end}], "
-                            f"score={best_ratio:.3f}"
+                            f"  Sliding window: pg_text[{best_sliding_start}:{best_sliding_end}] "
+                            f"(len={best_sliding_end - best_sliding_start}), score={final_score:.3f}"
                         )
+
+                        best_pg_start = best_sliding_start
+                        best_pg_end = best_sliding_end
+                        best_ratio = final_score
+                        weighted_score = final_score * (1.0 + 0.2 * min(1.0, (best_pg_end - best_pg_start) / 500.0))
+
+                        if weighted_score > best_score:
+                            best_score = weighted_score
+                            best_match_len = best_pg_end - best_pg_start
+                            best_pg_end = min(best_pg_end, len(pg_text))
+                            was_anchored = True
+
+                            logger.debug(
+                                f"  RETAS final: pg_text[{best_pg_start}:{best_pg_end}], "
+                                f"score={best_ratio:.3f}"
+                            )
         # ── Phase 1.5: Growing-String Anchor (GSA) ──
         if best_score == 0:
             gsa_pos, gsa_confident = self._grow_string_anchor(
@@ -1656,8 +1692,8 @@ class VisionAligner:
                 # Use GSA position as anchor estimate, then do sliding window
                 window_size = int(len(trans_norm) * 1.2)
                 best_sliding_score = 0.0
-                search_range = 200  # tighter than RETAS since GSA is more precise
-                step_size = 25
+                search_range = 100  # tighter than RETAS since GSA is more precise
+                step_size = 10
 
                 for offset in range(-search_range, search_range + 1, step_size):
                     start_pos = max(0, gsa_pos + offset)

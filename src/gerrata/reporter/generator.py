@@ -827,18 +827,30 @@ class ReportGenerator:
         else:
             pg_filename = f"{pg_id}-h.htm"
 
-        # Filter: scan_correct + high confidence + exclude certain categories
-        # Also apply stage-1 text-based alignment artifact filters
+        # Filter: high-confidence scan_correct errors OR unverified errors with
+        # real content categories (not formatting/ambiguous/alignment artifacts).
+        # When verification is skipped (--no-verify), confidence=0 and
+        # verdict=UNABLE_TO_VERIFY, so we use the candidate category instead.
+        SUBMIT_CATEGORIES = {
+            ErrorCategory.OCR_SCANNO,
+            ErrorCategory.WRONG_WORD,
+            ErrorCategory.MISSING_WORD,
+            ErrorCategory.EXTRA_WORD,
+            ErrorCategory.MISSING_CONTENT,
+            ErrorCategory.MISSING_PUNCTUATION,
+            ErrorCategory.ENCODING_ERROR,
+        }
+        skip_categories = {
+            ErrorCategory.EDITION_VARIANT,
+            ErrorCategory.MODERNIZATION,
+            ErrorCategory.INTENTIONAL_CHANGE,
+            ErrorCategory.ALIGNMENT_ARTIFACT,
+            ErrorCategory.FORMATTING_ERROR,
+            ErrorCategory.AMBIGUOUS,
+        }
         submit_ready = [
             e for e in report.errors
-            if e.verdict == Verdict.SCAN_CORRECT
-            and e.confidence >= 0.85
-            and e.category not in (
-                ErrorCategory.EDITION_VARIANT,
-                ErrorCategory.MODERNIZATION,
-                ErrorCategory.INTENTIONAL_CHANGE,
-                ErrorCategory.ALIGNMENT_ARTIFACT,
-            )
+            if e.category not in skip_categories
             and not self._is_absent_entry(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_cutoff_artifact(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_long_mismatch(e.candidate.pg_text, e.candidate.scan_text)

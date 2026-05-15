@@ -160,6 +160,11 @@ class Error:
             return ErrorCategory.INTENTIONAL_CHANGE
         elif self.verdict == Verdict.SCAN_CORRECT:
             return self.candidate.category
+        elif self.verdict in (Verdict.UNABLE_TO_VERIFY, Verdict.AMBIGUOUS):
+            # When verification was skipped, use the candidate category directly
+            # instead of defaulting to AMBIGUOUS. This allows the email filter
+            # to surface real content diffs even without LLM verification.
+            return self.candidate.category
         else:
             return ErrorCategory.AMBIGUOUS
 
