@@ -558,6 +558,26 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         alignment_confidence = vision_aligner.alignment_confidence(alignments, len(parsed.body_text))
         console.print(f"  Matched: {len(alignments)}/{len(transcriptions)} pages")
         console.print(f"  Coverage: {alignment_confidence:.0%}")
+
+        # Step 4a: Validate and correct alignment offset
+        alignments, validation = vision_aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=parsed.body_text,
+        )
+        console.print(f"  Validation: {validation.verdict}")
+        if validation.verdict == "corrected":
+            console.print(f"  Offset corrected: {validation.offset_mean:+.0f} chars (σ={validation.offset_stddev:.0f})")
+            console.print(f"  Accuracy: {validation.pages_correct}/{validation.sample_size} samples")
+        elif validation.verdict == "drift_corrected":
+            console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
+            console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
+            console.print(f"  Accuracy: {validation.pages_correct}/{validation.sample_size} samples")
+        elif validation.verdict == "failed":
+            console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
+        elif validation.verdict == "failed":
+            console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
+
         save_intermediate(intermed_dir, "03_alignments", alignments)
         save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
     elif vision_mode:

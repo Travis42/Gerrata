@@ -341,7 +341,15 @@ class SequentialTracker:
         self.matches.append((page_num, pg_end, confidence, match_length))
 
     def search_window(self, page_num: int, pg_text_length: int) -> tuple[int, int]:
-        """Return (start, end) search window centered on expected position."""
+        """Return (start, end) search window centered on expected position.
+
+        When no confirmed position exists (cold start), return a wide window
+        covering the full text so the first successful alignment can lock on
+        anywhere in the book.
+        """
+        if self.last_confirmed_page == 0:
+            # Cold start: search entire text to find first lock-on point
+            return (0, pg_text_length)
         expected = self.expected_position(page_num)
         start = max(0, expected - 2000)
         end = min(pg_text_length, expected + 8000)
@@ -466,6 +474,23 @@ class VisionAlignmentResult:
     matched_pg_chunks: list[str] = field(default_factory=list)
     best_score: float = 0.0
     anchored: bool = True  # True if RETAS found unique word anchors; False for brute-force only
+
+
+@dataclass
+class ValidationResult:
+    """Result of post-alignment validation."""
+
+    offset_mean: float = 0.0  # Mean offset in chars (positive = PG position too high)
+    offset_stddev: float = 0.0  # Standard deviation of offsets (raw, not residual)
+    residual_stddev: float = 0.0  # Stddev of residuals after linear regression fit
+    drift_slope: float = 0.0  # Linear drift rate (chars per page)
+    drift_intercept: float = 0.0  # Linear drift intercept (chars at page 0)
+    sample_size: int = 0  # Number of pages sampled
+    pages_correct: int = 0  # Pages where |offset| < offset_tolerance
+    pages_incorrect: int = 0  # Pages where |offset| >= offset_tolerance
+    corrected: bool = False  # Whether correction was applied
+    dropped: int = 0  # Pages dropped during re-scoring
+    verdict: str = "ok"  # "ok" | "corrected" | "drift_corrected" | "failed"
 
 
 class VisionTranscriber:
@@ -2058,6 +2083,246 @@ class VisionAligner:
 
         covered = sum(a.pg_end - a.pg_start for a in alignments)
         return min(1.0, covered / pg_text_len)
+
+    def _extract_distinctive_phrase(self, cleaned_text: str, start_offset: int = 30) -> str | None:
+        """Extract a distinctive phrase from cleaned transcription for PG matching.
+
+        Skips the first `start_offset` chars (chapter titles/headers), then
+        extracts a 30-80 char sentence fragment suitable for str.find() search.
+        """
+        text = cleaned_text[start_offset:]
+        if not text or len(text) < 20:
+            return None
+
+        # Find a sentence boundary after the header skip
+        for delim in [". ", "! ", "? "]:
+            idx = text.find(delim)
+            if 0 < idx < 60:
+                text = text[idx + 2:]
+                break
+
+        if len(text) < 20:
+            return None
+
+        # Take 30-80 chars (stop at sentence boundary if within range)
+        phrase = text[:80]
+        for delim in [". ", "! ", "? "]:
+            idx = phrase.find(delim)
+            if 30 <= idx <= 80:
+                phrase = phrase[: idx + 1]
+                break
+
+        # If still too long, truncate at a word boundary
+        if len(phrase) > 80:
+            space_idx = phrase[:80].rfind(" ")
+            if space_idx > 30:
+                phrase = phrase[:space_idx]
+
+        return phrase.strip() if len(phrase.strip()) >= 20 else None
+
+    def validate_and_correct(
+        self,
+        alignments: list,
+        transcriptions: list,
+        pg_text: str,
+        sample_size: int = 20,
+        offset_tolerance: int = 500,
+    ) -> tuple[list, ValidationResult]:
+        """Validate alignment offsets and correct systematic drift.
+
+        After align_all_pages(), run a validation pass that samples pages,
+        extracts distinctive phrases from transcriptions, and measures offset
+        against PG text. If a consistent shift is detected, corrects all
+        alignments. No additional LLM calls — uses cached data only.
+
+        Args:
+            alignments: List of Alignment objects from align_all_pages().
+            transcriptions: List of PageTranscription objects.
+            pg_text: The full Project Gutenberg body text.
+            sample_size: Max number of pages to sample.
+            offset_tolerance: Max acceptable per-page offset in chars.
+
+        Returns:
+            Tuple of (corrected_alignments, ValidationResult).
+        """
+        result = ValidationResult()
+
+        if not alignments:
+            return alignments, result
+
+        # Build lookup: page_num → transcription
+        trans_by_page: dict[int, PageTranscription] = {}
+        for t in transcriptions:
+            if t.success and t.transcription_cleaned:
+                trans_by_page[t.page_num] = t
+
+        # Step 1: Sample pages spread across the book
+        sorted_alignments = sorted(alignments, key=lambda a: a.scan_page)
+        n = len(sorted_alignments)
+        step = max(1, n // sample_size)
+
+        candidates: list[tuple] = []  # (alignment, transcription, confidence)
+        for i in range(0, n, step):
+            a = sorted_alignments[i]
+            t = trans_by_page.get(a.scan_page)
+            if t and len(t.transcription_cleaned) >= 50:
+                candidates.append((a, t, a.confidence))
+
+        # Sort by confidence descending, take top sample_size
+        candidates.sort(key=lambda x: x[2], reverse=True)
+        candidates = candidates[:sample_size]
+        result.sample_size = len(candidates)
+
+        # Edge case: too few valid samples
+        if len(candidates) < 5:
+            logger.info(
+                f"Validation skipped: only {len(candidates)} valid samples (< 5 required)"
+            )
+            return alignments, result
+
+        # Step 2: Measure per-sample offset
+        norm_pg = normalize_for_matching(pg_text)
+        page_offsets: list[tuple[int, int]] = []  # (scan_page, offset)
+
+        for alignment, trans, _conf in candidates:
+            phrase = self._extract_distinctive_phrase(trans.transcription_cleaned)
+            if not phrase:
+                continue
+
+            norm_phrase = normalize_for_matching(phrase)
+            if len(norm_phrase) < 15:
+                continue
+
+            found_pos = norm_pg.find(norm_phrase)
+            if found_pos == -1:
+                # Try shorter substrings
+                for sub_len in [len(norm_phrase) // 2, 15]:
+                    if sub_len < 15:
+                        break
+                    found_pos = norm_pg.find(norm_phrase[:sub_len])
+                    if found_pos != -1:
+                        break
+
+            if found_pos == -1:
+                continue
+
+            # If phrase appears multiple times, pick the position closest to alignment
+            search_start = norm_pg.find(norm_phrase[:30]) if len(norm_phrase) >= 30 else found_pos
+            if search_start != -1:
+                next_pos = norm_pg.find(norm_phrase[:30], search_start + 1)
+                if next_pos != -1:
+                    if abs(found_pos - alignment.pg_start) > abs(next_pos - alignment.pg_start):
+                        found_pos = next_pos
+
+            page_offset = found_pos - alignment.pg_start
+            page_offsets.append((alignment.scan_page, page_offset))
+
+        if len(page_offsets) < 5:
+            logger.info(
+                f"Validation skipped: only {len(page_offsets)} offset measurements (< 5)"
+            )
+            return alignments, result
+
+        result.sample_size = len(page_offsets)
+
+        # Step 3: Compute statistics
+        offsets_only = [o for _, o in page_offsets]
+        result.offset_mean = sum(offsets_only) / len(offsets_only)
+        variance = sum((o - result.offset_mean) ** 2 for o in offsets_only) / len(offsets_only)
+        result.offset_stddev = variance**0.5
+        result.pages_correct = sum(1 for o in offsets_only if abs(o) < offset_tolerance)
+        result.pages_incorrect = len(page_offsets) - result.pages_correct
+
+        accuracy = result.pages_correct / len(page_offsets)
+
+        # Step 3b: Linear regression for drift detection
+        # Fit: offset = slope * page + intercept
+        n_samples = len(page_offsets)
+        sum_x = sum(p for p, _ in page_offsets)
+        sum_y = sum(o for _, o in page_offsets)
+        sum_xy = sum(p * o for p, o in page_offsets)
+        sum_x2 = sum(p * p for p, _ in page_offsets)
+        denom = n_samples * sum_x2 - sum_x * sum_x
+
+        if denom != 0:
+            result.drift_slope = (n_samples * sum_xy - sum_x * sum_y) / denom
+            result.drift_intercept = (sum_y - result.drift_slope * sum_x) / n_samples
+        else:
+            result.drift_slope = 0.0
+            result.drift_intercept = result.offset_mean
+
+        # Compute residual stddev (how well the line fits)
+        if denom != 0:
+            residuals = [o - (result.drift_slope * p + result.drift_intercept) for p, o in page_offsets]
+            residual_var = sum(r * r for r in residuals) / len(residuals)
+            result.residual_stddev = residual_var**0.5
+        else:
+            result.residual_stddev = result.offset_stddev
+
+        # Step 4: Decision
+        if accuracy >= 0.8:
+            result.verdict = "ok"
+            logger.info(
+                f"Validation ok: {result.pages_correct}/{result.sample_size} samples "
+                f"within tolerance, mean_offset={result.offset_mean:+.0f}"
+            )
+            return alignments, result
+
+        # Check if the drift is linear (good fit) or random (bad fit)
+        # A good linear fit means residual stddev << raw stddev
+        # Threshold: residual < 30% of raw stddev indicates meaningful linear trend
+        linear_fit_quality = result.residual_stddev / max(result.offset_stddev, 1.0)
+
+        if linear_fit_quality < 0.30 and abs(result.drift_slope) > 10:
+            # Cumulative drift — apply per-page linear correction
+            result.verdict = "drift_corrected"
+            result.corrected = True
+            first_page = min(p for p, _ in page_offsets)
+            for a in alignments:
+                page_relative = a.scan_page - first_page
+                correction = round(result.drift_slope * page_relative + result.drift_intercept)
+                a.pg_start += correction
+                a.pg_end += correction
+                a.pg_start = max(0, a.pg_start)
+                a.pg_end = max(a.pg_start, min(a.pg_end, len(pg_text)))
+            logger.info(
+                f"Alignment drift-corrected: slope={result.drift_slope:.1f} chars/page, "
+                f"intercept={result.drift_intercept:+.0f}, "
+                f"raw_σ={result.offset_stddev:.0f}, residual_σ={result.residual_stddev:.0f}"
+            )
+            return alignments, result
+
+        if result.offset_stddev < 1500:
+            # Moderate scatter — constant shift + drop worst
+            result.verdict = "corrected"
+            result.corrected = True
+            shift = round(result.offset_mean)
+            for a in alignments:
+                a.pg_start += shift
+                a.pg_end += shift
+                a.pg_start = max(0, a.pg_start)
+                a.pg_end = max(a.pg_start, min(a.pg_end, len(pg_text)))
+            # Drop bottom 20% by confidence
+            if alignments:
+                threshold_conf = sorted(a.confidence for a in alignments)[len(alignments) // 5]
+                dropped_count = sum(1 for a in alignments if a.confidence < threshold_conf)
+                alignments = [a for a in alignments if a.confidence >= threshold_conf]
+                result.dropped = dropped_count
+            logger.info(
+                f"Alignment corrected + rescored: shifted {shift:+d} chars, "
+                f"dropped {result.dropped} low-confidence pages "
+                f"(mean={result.offset_mean:+.0f}, σ={result.offset_stddev:.0f})"
+            )
+            return alignments, result
+
+        # Random errors, not a correctable pattern
+        result.verdict = "failed"
+        logger.warning(
+            f"Alignment validation failed: offset inconsistent "
+            f"(mean={result.offset_mean:+.0f}, σ={result.offset_stddev:.0f}, "
+            f"drift_slope={result.drift_slope:.1f}, fit_quality={linear_fit_quality:.2f})"
+        )
+        return alignments, result
 
 # Paratext stripping needs to be added as a function
 # I'll write it inline

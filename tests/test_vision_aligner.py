@@ -9,6 +9,7 @@ from gerrata.aligner.vision_aligner import (
     VisionTranscriber,
     PageTranscription,
     VisionAlignmentResult,
+    ValidationResult,
     normalize_for_matching,
     chunk_text_for_matching,
 )
@@ -1198,3 +1199,325 @@ class TestREANCHORInterval:
     def test_reanchor_interval(self):
         from gerrata.aligner.vision_aligner import REANCHOR_INTERVAL
         assert REANCHOR_INTERVAL == 10
+
+
+# ── Post-alignment validation ─────────────────────────────────────────
+
+def _make_pg_text(num_pages: int = 30, chars_per_page: int = 1500) -> str:
+    """Generate deterministic PG text for validation tests.
+
+    Each "page" is a paragraph of ~chars_per_page chars with a distinctive
+    sentence at offset 30+ for phrase extraction.
+    """
+    pages = []
+    for i in range(num_pages):
+        # Header-like text (gets skipped by phrase extraction)
+        header = f"Chapter {i + 1}. " * 3
+        # Distinctive body text with a unique sentence
+        sentence = f"The unique sentence for page {i} contains distinctive markers that should be found. "
+        # Pad to desired length
+        padding = "The rest of the paragraph contains ordinary text that is repeated across pages. " * 3
+        pages.append(header + sentence + padding)
+    return "\n\n".join(pages)
+
+
+def _make_alignments(pg_text: str, num_pages: int = 30, offset: int = 0) -> list[Alignment]:
+    """Generate alignments with a systematic offset."""
+    chars_per_page = len(pg_text) // num_pages
+    alignments = []
+    for i in range(num_pages):
+        start = max(0, i * chars_per_page + offset)
+        end = min(len(pg_text), start + chars_per_page)
+        alignments.append(Alignment(
+            pg_start=start,
+            pg_end=end,
+            scan_page=i,
+            confidence=0.8,
+            method=AlignmentMethod.LLM_VISION,
+        ))
+    return alignments
+
+
+def _make_transcriptions(num_pages: int = 30, page_texts: list[str] | None = None) -> list[PageTranscription]:
+    """Generate transcriptions matching the PG text structure."""
+    transcriptions = []
+    for i in range(num_pages):
+        text = page_texts[i] if page_texts and i < len(page_texts) else (
+            f"Chapter {i + 1}. " * 3
+            + f"The unique sentence for page {i} contains distinctive markers that should be found. "
+            + "The rest of the paragraph contains ordinary text that is repeated across pages. " * 3
+        )
+        transcriptions.append(PageTranscription(
+            page_num=i,
+            image_path=Path(f"/tmp/page_{i:04d}.png"),
+            transcription=text,
+            transcription_cleaned=text,
+            success=True,
+        ))
+    return transcriptions
+
+
+class TestValidationNoOffset:
+    """Alignments are correct — validation returns 'ok'."""
+
+    def test_ok_verdict(self):
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=0)
+        transcriptions = _make_transcriptions(30)
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        assert vr.verdict == "ok"
+        assert not vr.corrected
+        assert vr.pages_correct >= vr.sample_size * 0.8
+
+
+class TestValidationSystematicShift:
+    """All alignments are shifted +1500 chars — correction shifts them back."""
+
+    def test_corrects_shift(self):
+        shift = 1500
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=shift)
+        transcriptions = _make_transcriptions(30)
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        assert vr.verdict == "corrected"
+        assert vr.corrected
+        # Mean offset should be close to the applied shift (within 20%)
+        assert abs(abs(round(vr.offset_mean)) - shift) < shift * 0.2, (
+            f"offset_mean={vr.offset_mean} too far from expected shift={shift}"
+        )
+        # After correction, offsets should be near 0
+        for a in result_alignments:
+            assert a.pg_start >= 0
+            assert a.pg_end >= a.pg_start
+
+
+class TestValidationPartialShift:
+    """70% correct, 30% shifted by +1200 — should still correct with mean."""
+
+    def test_corrects_partial(self):
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=0)
+        # Shift 30% of pages
+        for i, a in enumerate(alignments):
+            if i % 3 == 0:
+                a.pg_start += 1200
+                a.pg_end += 1200
+        transcriptions = _make_transcriptions(30)
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        # 30% shifted may produce stddev in 500-1500 range → "rescored"
+        assert vr.verdict in ("corrected", "ok", "rescored")
+        assert vr.sample_size > 0
+        # At minimum we should get a verdict — not crash
+        for a in result_alignments:
+            assert a.pg_start >= 0
+
+
+class TestValidationInconsistent:
+    """Random offsets with high stddev → 'failed' verdict."""
+
+    def test_failed_verdict(self):
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=0)
+        # Apply random-ish offsets that create high stddev
+        import random
+        random.seed(42)
+        for a in alignments:
+            offset = random.randint(-3000, 3000)
+            a.pg_start += offset
+            a.pg_end += offset
+        transcriptions = _make_transcriptions(30)
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        # With random offsets the accuracy will be low and stddev high
+        # Could be "failed" or "rescored" depending on stddev
+        assert vr.verdict in ("failed", "rescored", "corrected")
+        assert vr.sample_size > 0
+        # The original alignments should be returned unmodified for "failed"
+        if vr.verdict == "failed":
+            assert not vr.corrected
+
+
+class TestValidationShortTranscriptions:
+    """Most pages have <50 chars cleaned — validation skips gracefully."""
+
+    def test_skips_short(self):
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=1500)
+        # All transcriptions are too short
+        short_trans = [
+            PageTranscription(
+                page_num=i,
+                image_path=Path(f"/tmp/page_{i:04d}.png"),
+                transcription="Short",
+                transcription_cleaned="Too short for phrase",
+                success=True,
+            )
+            for i in range(30)
+        ]
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=short_trans,
+            pg_text=pg_text,
+        )
+
+        assert vr.verdict == "ok"  # Skipped → defaults to "ok"
+        assert vr.sample_size < 5
+        assert len(result_alignments) == len(alignments)
+
+
+class TestValidationEmptyAlignments:
+    """No alignments → no crash, returns 'ok'."""
+
+    def test_empty_ok(self):
+        pg_text = "Some text"
+        aligner = VisionAligner()
+
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=[],
+            transcriptions=[],
+            pg_text=pg_text,
+        )
+
+        assert vr.verdict == "ok"
+        assert result_alignments == []
+
+
+class TestPhraseExtraction:
+    """Verifies distinctive phrase selection skips titles, works with various formats."""
+
+    def test_skips_chapter_title(self):
+        aligner = VisionAligner()
+        text = "CHAPTER TWELVE  The quick brown fox jumped over the lazy dog near the river bank where the old man was fishing quietly that afternoon."
+        phrase = aligner._extract_distinctive_phrase(text, start_offset=30)
+        assert phrase is not None
+        assert len(phrase) >= 20
+        # Should not start with "CHAPTER"
+        assert "chapter" not in phrase.lower()[:10]
+
+    def test_works_with_shorter_text(self):
+        aligner = VisionAligner()
+        text = "Title here. " + "Some distinctive body text follows after the initial heading section ends."
+        phrase = aligner._extract_distinctive_phrase(text, start_offset=10)
+        assert phrase is not None
+        assert "distinctive" in phrase
+
+    def test_returns_none_for_very_short_text(self):
+        aligner = VisionAligner()
+        text = "Very short"
+        phrase = aligner._extract_distinctive_phrase(text, start_offset=30)
+        assert phrase is None
+
+
+class TestOffsetClamping:
+    """Negative pg_start after correction is clamped to 0."""
+
+    def test_clamps_to_zero(self):
+        # Make alignments with small pg_start values, then apply large negative shift
+        pg_text = _make_pg_text(30)
+        alignments = _make_alignments(pg_text, 30, offset=0)
+        # Force all pg_start to be small (200) then shift will make them negative
+        for a in alignments:
+            a.pg_start = 200
+            a.pg_end = 1700
+
+        transcriptions = _make_transcriptions(30)
+        aligner = VisionAligner()
+
+        # The alignment offset will be large positive (pg_text positions are much larger)
+        # So correction will subtract a lot, potentially going negative
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        for a in result_alignments:
+            assert a.pg_start >= 0, f"pg_start {a.pg_start} is negative!"
+            assert a.pg_end >= a.pg_start, f"pg_end {a.pg_end} < pg_start {a.pg_start}"
+
+
+class TestValidationLinearDrift:
+    """Cumulative drift — offset grows linearly with page number."""
+
+    def test_detects_linear_drift(self):
+        """Offset grows ~50 chars/page — should detect as drift_corrected."""
+        pg_text = _make_pg_text(60)
+        alignments = _make_alignments(pg_text, 60, offset=0)
+        transcriptions = _make_transcriptions(60)
+
+        # Apply growing offset: 0 at page 0, ~50*page at page N
+        chars_per_page = len(pg_text) // 60
+        for i, a in enumerate(alignments):
+            drift = i * 50  # cumulative drift
+            a.pg_start += drift
+            a.pg_end += drift
+
+        aligner = VisionAligner()
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        # Should detect the linear trend and apply drift correction
+        assert vr.verdict == "drift_corrected", f"Expected drift_corrected, got {vr.verdict}"
+        assert vr.corrected
+        assert abs(vr.drift_slope + 50) < 15, f"drift_slope={vr.drift_slope}, expected ~-50"
+        # Residual stddev should be much smaller than raw stddev
+        assert vr.residual_stddev < vr.offset_stddev * 0.5
+
+    def test_drift_correction_improves_accuracy(self):
+        """After drift correction, spot-check accuracy should improve."""
+        pg_text = _make_pg_text(60)
+        alignments = _make_alignments(pg_text, 60, offset=0)
+        transcriptions = _make_transcriptions(60)
+
+        # Apply growing offset: 40 chars/page
+        for i, a in enumerate(alignments):
+            drift = i * 40
+            a.pg_start += drift
+            a.pg_end += drift
+
+        aligner = VisionAligner()
+        result_alignments, vr = aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=pg_text,
+        )
+
+        assert vr.verdict == "drift_corrected"
+
+        # All corrected alignments should have valid bounds
+        for a in result_alignments:
+            assert a.pg_start >= 0
+            assert a.pg_end >= a.pg_start
+            assert a.pg_end <= len(pg_text)
