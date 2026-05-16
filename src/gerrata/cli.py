@@ -18,6 +18,7 @@ from gerrata.models import Error, Report, PGMetadata
 from gerrata.fetcher.pg import PGFetcher, PGParsedText
 from gerrata.fetcher.scans import ScanFetcher, ScanData
 from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
+from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker
 from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.vision import VisionVerifier
@@ -505,23 +506,30 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         save_intermediate(intermed_dir, "03_alignments", [a.to_dict() for a in alignments])
         save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
     elif successful:
-        # Align transcriptions to PG text
+        # Align transcriptions to PG text using global word-sequence matching
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
-        vision_aligner = VisionAligner(match_threshold=0.35, min_match_chars=40)
-        results = vision_aligner.align_all_pages(
+        console.print(f"  [dim]Using global anchor aligner (word-level matching)[/dim]")
+        global_aligner = GlobalAnchorAligner(
+            min_phrase_words=8,
+            max_phrases_per_page=5,
+            min_score=0.35,
+        )
+        alignments = global_aligner.align_all_pages(
             transcriptions=transcriptions,
             pg_text=parsed.body_text,
             pg_paragraphs=parsed.paragraphs,
             chapters=parsed.chapters,
         )
-        alignments = vision_aligner.get_alignments(results)
-        scan_pages = vision_aligner.build_scan_pages_from_transcriptions(transcriptions)
+        scan_pages = VisionAligner().build_scan_pages_from_transcriptions(transcriptions)
 
-        alignment_confidence = vision_aligner.alignment_confidence(alignments, len(parsed.body_text))
+        alignment_confidence = global_aligner.alignment_confidence(alignments, len(parsed.body_text))
         console.print(f"  Matched: {len(alignments)}/{len(transcriptions)} pages")
         console.print(f"  Coverage: {alignment_confidence:.0%}")
 
         # Step 4a: Validate and correct alignment offset
+        # Note: Global anchor alignment doesn't accumulate sequential drift,
+        # so we only run offset validation (not drift correction).
+        vision_aligner = VisionAligner()
         alignments, validation = vision_aligner.validate_and_correct(
             alignments=alignments,
             transcriptions=transcriptions,
@@ -532,11 +540,21 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             console.print(f"  Offset corrected: {validation.offset_mean:+.0f} chars (σ={validation.offset_stddev:.0f})")
             console.print(f"  Accuracy: {validation.pages_correct}/{validation.sample_size} samples")
         elif validation.verdict == "drift_corrected":
-            console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
-            console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
-            console.print(f"  Accuracy: {validation.pages_correct}/{validation.sample_size} samples")
-        elif validation.verdict == "failed":
-            console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
+            # Global anchor aligner shouldn't have drift — reject the correction
+            # if accuracy is low (suggests the correction is harmful)
+            if validation.pages_correct / max(validation.sample_size, 1) < 0.5:
+                console.print(f"  [yellow]Drift correction rejected: low accuracy ({validation.pages_correct}/{validation.sample_size})[/yellow]")
+                console.print(f"  [dim](Global anchor alignment doesn't accumulate drift)[/dim]")
+                # Revert to uncorrected alignments
+                alignments = global_aligner.align_all_pages(
+                    transcriptions=transcriptions,
+                    pg_text=parsed.body_text,
+                )
+                scan_pages = VisionAligner().build_scan_pages_from_transcriptions(transcriptions)
+            else:
+                console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
+                console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
+                console.print(f"  Accuracy: {validation.pages_correct}/{validation.sample_size} samples")
         elif validation.verdict == "failed":
             console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
 

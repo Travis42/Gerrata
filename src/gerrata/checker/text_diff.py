@@ -152,8 +152,12 @@ class TextDiffChecker:
 
         for alignment in alignments:
             pg_passage = pg_text[alignment.pg_start:alignment.pg_end]
-            scan_page_idx = min(alignment.scan_page, len(scan_pages) - 1) if scan_pages else 0
-            scan_page = scan_pages[scan_page_idx] if scan_pages else None
+            # Find matching scan page by page number, not list index
+            scan_page = None
+            for sp in scan_pages:
+                if getattr(sp, 'page_num', None) == alignment.scan_page:
+                    scan_page = sp
+                    break
 
             # Prefer vision transcription over OCR text
             if scan_page and getattr(scan_page, 'vision_text', '') and scan_page.vision_text:
