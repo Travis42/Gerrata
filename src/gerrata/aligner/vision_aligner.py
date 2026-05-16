@@ -36,12 +36,31 @@ def _load_openrouter_key() -> str:
 
 logger = logging.getLogger(__name__)
 
-# Default transcription prompt
+# Default transcription prompt — aggressively literal to prevent modernization
 TRANSCRIPTION_PROMPT = (
-    "Transcribe all the text on this page image. "
-    "Return ONLY the transcribed text, nothing else. "
-    "Preserve original spelling, punctuation, and line breaks. "
-    "Do not add any commentary or formatting."
+    "Reproduce the text on this page EXACTLY as printed. Every letter, "
+    "every punctuation mark, every space. This is a 19th-century book — "
+    "it uses archaic spellings that are NOT errors. Your job is to "
+    "reproduce them, not fix them.\n\n"
+    "Examples of what you MUST preserve (not change):\n"
+    "- bowlders (NOT boulders)\n"
+    "- unappropriate (NOT inappropriate)\n"
+    "- subtile (NOT subtle)\n"
+    "- colour (NOT color)\n"
+    "- chuse (NOT choose)\n"
+    "- Honour (NOT Honor)\n"
+    "- shew (NOT show)\n"
+    "- sopha (NOT sofa)\n"
+    "- staid (NOT stayed)\n"
+    "- cloaths (NOT clothes)\n"
+    "- connexion (NOT connection)\n"
+    "- publick (NOT public)\n"
+    "- comprehended (NOT comprized)\n\n"
+    "If you modernize, normalize, or 'correct' any spelling, "
+    "you are destroying the historical record. "
+    "Do NOT add, remove, or rearrange any words. "
+    "Preserve all line breaks. "
+    "Return ONLY the reproduced text."
 )
 
 # Minimum cleaned transcription length to accept as "successful".
