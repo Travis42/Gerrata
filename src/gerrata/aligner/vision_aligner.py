@@ -5,7 +5,7 @@ Replaces the OCR-text-based coarse aligner with a vision model approach:
 2. Match transcribed text against PG text paragraphs using fuzzy matching
 3. Return Alignment objects with transcribed text included
 
-Default model: google/gemma-4-31b-it via OpenRouter.
+Default model: google/gemini-3.1-flash-lite via OpenRouter.
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ DEFAULT_API_KEY = os.environ.get("OPENROUTER_API_KEY", "") or (
     Path.home().joinpath(".secrets/openrouter.key").read_text().strip()
     if Path.home().joinpath(".secrets/openrouter.key").exists() else ""
 )
-DEFAULT_MODELS = ["google/gemma-4-31b-it"]
+DEFAULT_MODELS = ["google/gemini-3.1-flash-lite"]
 
 # Map from model name aliases to actual API model names
 MODEL_NAME_MAP = {}

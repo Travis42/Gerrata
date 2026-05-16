@@ -9,7 +9,7 @@
 ## How It Works
 
 1. **Fetch** the PG text (HTML or plain text) and the corresponding source scan from the Internet Archive
-2. **Transcribe** each scan page using a vision model (GLM-OCR) to get clean text from the physical book pages
+2. **Transcribe** each scan page using a vision model (vision LLM) to get clean text from the physical book pages
 3. **Align** transcriptions to the PG text using the RETAS algorithm (unique word anchors → LCS ordering → position lock → local diff)
 4. **Diff** aligned passages to find candidate errors
 5. **Filter** false positives using rule-based heuristics (alignment artifacts, typography variants, punctuation normalization, HTML leaks, cutoff fragments, quoted fragments)
@@ -38,7 +38,7 @@ gerrata 43 \
 This will:
 - Download PG #43 (Dr. Jekyll and Mr. Hyde) from Project Gutenberg
 - Download the scan pages from the Internet Archive
-- Transcribe each page with a vision model (Gemma 4 31B via OpenRouter)
+- Transcribe each page with a vision model (Gemini 3.1 Flash Lite via OpenRouter)
 - Align, diff, filter, and verify
 - Generate reports in `./reports/`
 
@@ -297,7 +297,7 @@ The test fixture uses IA identifier `06-stevenson-jekyll-hyde`:
 
 The tool needs access to a vision-capable LLM (for page transcription and error verification). It works with **any OpenAI-compatible API** — just set the URL and key.
 
-**Default provider: OpenRouter** (Gemma 4 31B)
+**Default provider: OpenRouter** (Gemini 3.1 Flash Lite)
 
 **Option 1: Environment variable (simplest)**
 
@@ -340,7 +340,7 @@ gerrata 43 \
   -o reports
 ```
 
-The default is OpenRouter with Gemma 4 31B, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
+The default is OpenRouter with Gemini 3.1 Flash Lite, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
 
 ### Split Endpoint Configuration
 
@@ -349,8 +349,8 @@ You can use different API endpoints for transcription and verification if needed
 ```bash
 gerrata 43 \
   --scan-id "some-scan-id" \
-  --vision-model "google/gemma-4-31b-it" \
-  --verify-model "google/gemma-4-31b-it" \
+  --vision-model "google/gemini-3.1-flash-lite" \
+  --verify-model "google/gemini-3.1-flash-lite" \
   -o reports
 ```
 
@@ -360,7 +360,7 @@ If you only specify `--vision-*` flags, the same endpoint will be used for both 
 |------|---------|---------|
 | `--vision-url` | `https://openrouter.ai/api/v1/chat/completions` | API endpoint for page transcription (Step 3) |
 | `--vision-key` | `$OPENROUTER_API_KEY` or `~/.secrets/openrouter.key` | API key for transcription |
-| `--vision-model` | `google/gemma-4-31b-it` | Model name for transcription |
+| `--vision-model` | `google/gemini-3.1-flash-lite` | Model name for transcription |
 | `--verify-url` | same as `--vision-url` | API endpoint for verification (Step 7) |
 | `--verify-key` | same as `--vision-key` | API key for verification |
 | `--verify-model` | same as `--vision-model` | Model name for verification |

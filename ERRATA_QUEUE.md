@@ -33,6 +33,7 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 | PG # | Book | Status | Notes |
 |------|------|--------|-------|
+| 25344 | The Scarlett Letter | no errata found after scan | -- |
 | various | Frankenstein | Not chosen, low likelihood of acceptance | -- |
 | 58169 | Hegel Vol 3 | no errata found after scan | -- |
 | 2701 | Moby Dick | ❌ Rejected by PG | Wrong edition |
