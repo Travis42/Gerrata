@@ -777,6 +777,34 @@ class ReportGenerator:
             return False
         return len(shorter) <= 8
 
+    def _is_substring_fragment(self, pg_text: str, scan_text: str) -> bool:
+        """True if one side is a substring of the other (alignment boundary artifact).
+
+        When the PG and scan windows are offset by a few words, the diff checker
+        produces diffs where one side is a word fragment that appears as a
+        substring of the other side's full word. E.g. "oment" vs "the moment",
+        "airs," vs "the stairs,". These are never real errata — they're just
+        alignment window misalignment.
+        """
+        s, p = scan_text.strip(), pg_text.strip()
+        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+
+        # Short side must be ≤10 chars and no spaces (single word fragment)
+        if len(shorter) > 10:
+            return False
+        if ' ' in shorter:
+            return False
+
+        # Short side must be a substring of the long side
+        if shorter.lower() not in longer.lower():
+            return False
+
+        # The longer side must be at least 3 chars more (otherwise it's a real diff)
+        if len(longer) - len(shorter) < 3:
+            return False
+
+        return True
+
     def _is_quoted_fragment(self, pg_text: str, scan_text: str) -> bool:
         """True if short side starts with quote and length diff > 20."""
         s, p = scan_text.strip(), pg_text.strip()
@@ -859,6 +887,7 @@ class ReportGenerator:
             and not self._is_all_caps_header(e.candidate.scan_text)
             and not self._is_suffix_fragment(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_quoted_fragment(e.candidate.pg_text, e.candidate.scan_text)
+            and not self._is_substring_fragment(e.candidate.pg_text, e.candidate.scan_text)
         ]
 
         # Deduplicate by offset proximity (within 50 chars)

@@ -9,11 +9,6 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 ## Tier 1 — Ready to Run (verified edition + scan needed)
 
-### PG #25344 — The Scarlet Letter (1878 Osgood)
-- **PG Source:** J.R. Osgood & Co., Boston, 1878. Illustrated by Mary Hallock Foote
-- **Scan:** [scarletletter00hawt](https://archive.org/details/scarletletter00hawt) — JP2 ✅
-- **Match:** Exact — Library of Congress scan
-
 ### PG #42486 — The Turn of the Screw (1898 Macmillan)
 - **PG Source:** The Macmillan Company, 1898. From "The Two Magics"
 - **Scan:** [twomagicsturnofs00jameiala](https://archive.org/details/twomagicsturnofs00jameiala) — JP2 ✅
