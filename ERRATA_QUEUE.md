@@ -9,11 +9,6 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 ## Tier 1 — Ready to Run (verified edition + scan needed)
 
-### PG #42486 — The Turn of the Screw (1898 Macmillan)
-- **PG Source:** The Macmillan Company, 1898. From "The Two Magics"
-- **Scan:** [twomagicsturnofs00jameiala](https://archive.org/details/twomagicsturnofs00jameiala) — JP2 ✅
-- **Match:** Exact — 1898 Macmillan
-
 ## Tier 2 — Needs Attention
 
 ### PG #1400 — Great Expectations (1867?) — PARTIAL MATCH
@@ -28,6 +23,7 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 | PG # | Book | Status | Notes |
 |------|------|--------|-------|
+| 42486 | The Turn of the Screw | no errata found after scan | -- |
 | 25344 | The Scarlett Letter | no errata found after scan | -- |
 | various | Frankenstein | Not chosen, low likelihood of acceptance | -- |
 | 58169 | Hegel Vol 3 | no errata found after scan | -- |

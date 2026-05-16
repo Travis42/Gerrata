@@ -190,12 +190,14 @@ class ScanFetcher:
             return None
 
     def _jp2_to_png(self, jp2_path: Path) -> Path:
-        """Convert a JP2 image to PNG using Pillow."""
-        from PIL import Image
+        """Convert a JP2 image to PNG using OpenCV (Pillow lacks JP2 support)."""
+        import cv2
 
         png_path = jp2_path.with_suffix(".png")
-        img = Image.open(jp2_path)
-        img.save(png_path, "PNG")
+        img = cv2.imread(str(jp2_path), cv2.IMREAD_ANYCOLOR)
+        if img is None:
+            raise ValueError(f"OpenCV could not read {jp2_path}")
+        cv2.imwrite(str(png_path), img)
         logger.info(f"Converted {jp2_path.name} to {png_path.name}")
         return png_path
 
@@ -278,7 +280,7 @@ class ScanFetcher:
         Returns:
             Sorted list of paths to extracted PNG files.
         """
-        from PIL import Image
+        import cv2
 
         dest = dest or self.cache_dir or zip_path.parent
         if not dest.exists():
@@ -310,15 +312,17 @@ class ScanFetcher:
                     png_files.append(png_path)
                     continue
 
-                # Extract JP2 from zip to temp, then convert
+                # Extract JP2 from zip to temp, then convert with OpenCV
                 jp2_data = zf.read(jp2_name)
                 jp2_temp = dest / f"_temp_{page_num}.jp2"
                 jp2_temp.write_bytes(jp2_data)
 
                 try:
-                    img = Image.open(jp2_temp)
-                    img.load()
-                    img.save(png_path, "PNG")
+                    img = cv2.imread(str(jp2_temp), cv2.IMREAD_ANYCOLOR)
+                    if img is None:
+                        logger.warning(f"Failed to read {jp2_name}")
+                        continue
+                    cv2.imwrite(str(png_path), img)
                     png_files.append(png_path)
                     logger.debug(f"Extracted page {page_num}: {png_path.name}")
                 except Exception as e:
