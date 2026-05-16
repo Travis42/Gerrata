@@ -514,7 +514,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             )
             scan_pages = scan_data.pages
 
-    if vision_mode and resume_from in ("candidates-raw", "candidates-filtered"):
+    if vision_mode and resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
         # Resume from alignments cache
         cached = load_intermediate(intermed_dir, "03_alignments")
         if not cached:
@@ -542,6 +542,26 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         alignment_confidence = VisionAligner().alignment_confidence(alignments, len(parsed.body_text))
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
         console.print(f"  [dim]Resumed {len(alignments)} alignments from 03_alignments (coverage {alignment_confidence:.0%})[/dim]")
+
+        # Validate and correct cached alignments
+        vision_aligner = VisionAligner()
+        alignments, validation = vision_aligner.validate_and_correct(
+            alignments=alignments,
+            transcriptions=transcriptions,
+            pg_text=parsed.body_text,
+        )
+        console.print(f"  Validation: {validation.verdict}")
+        if validation.verdict == "drift_corrected":
+            console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
+            console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
+        elif validation.verdict == "corrected":
+            console.print(f"  Offset corrected: {validation.offset_mean:+.0f} chars (σ={validation.offset_stddev:.0f})")
+        elif validation.verdict == "failed":
+            console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
+
+        # Save corrected alignments back to cache
+        save_intermediate(intermed_dir, "03_alignments", [a.to_dict() for a in alignments])
+        save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
     elif vision_mode and successful:
         # Align transcriptions to PG text
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
