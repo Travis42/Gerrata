@@ -17,7 +17,6 @@ from rich.logging import RichHandler
 from gerrata.models import Error, Report, PGMetadata
 from gerrata.fetcher.pg import PGFetcher, PGParsedText
 from gerrata.fetcher.scans import ScanFetcher, ScanData
-from gerrata.aligner.coarse import CoarseAligner
 from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
 from gerrata.checker.text_diff import TextDiffChecker
 from gerrata.checker.rules import FalsePositiveFilter
@@ -93,12 +92,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Local path to PG text file (skip download)",
     )
     parser.add_argument(
-        "--ocr-file",
-        type=str,
-        default="",
-        help="Local path to OCR text file (skip download)",
-    )
-    parser.add_argument(
         "--pages-dir",
         type=str,
         default="",
@@ -130,19 +123,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--no-verify",
         action="store_true",
-        help="Skip LLM vision verification and use OCR-based alignment (fast, free)",
+        help="Skip LLM vision verification (fast, free)",
     )
     parser.add_argument(
         "--vision-transcribe",
         action="store_true",
         default=True,
-        help="Use vision model to transcribe pages for alignment (default: true)",
-    )
-    parser.add_argument(
-        "--no-vision-transcribe",
-        dest="vision_transcribe",
-        action="store_false",
-        help="Disable vision transcription, use OCR-based alignment instead",
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--vision-url",
@@ -295,9 +282,6 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     logger = logging.getLogger(__name__)
     console = Console()
 
-    # Determine mode
-    vision_mode = args.vision_transcribe
-
     # Initialize components
     cache_dir = Path(args.cache_dir) if args.cache_dir else Path("./cache")
 
@@ -351,18 +335,16 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             "paragraphs": parsed.paragraphs,
             "chapters": parsed.chapters,
         })
-        console.print(f"  Mode: {'[green]vision-first[/green]' if vision_mode else '[yellow]OCR-based[/yellow]'}")
 
-    # Determine vision_mode when resuming — check if transcriptions cache exists
+    # Check transcriptions cache for resume
     if resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
         cached_transcriptions = load_intermediate(intermed_dir, "02_transcriptions")
-        vision_mode = cached_transcriptions is not None
 
-    # Step 2: Get page images (vision mode) or load OCR (OCR mode)
+    # Step 2: Get page images
     alignments = []
     scan_pages = []
 
-    if vision_mode:
+    if True:
         if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
             # Resuming — load transcriptions from pipeline intermediate cache
             cached = load_intermediate(intermed_dir, "02_transcriptions")
@@ -472,49 +454,10 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             save_intermediate(intermed_dir, "02_transcriptions", successful)
 
             if not successful:
-                console.print("[red]All transcriptions failed. Falling back to OCR mode.[/red]")
-                vision_mode = False
-            # end else (non-resume) block for Steps 2-3
+                console.print("[red]All transcriptions failed. Aborting pipeline.[/red]")
+                return
 
-    if not vision_mode:
-        # OCR-based pipeline (original)
-        console.print("[bold blue]Step 2:[/bold blue] Loading scan OCR text...")
-        if args.ocr_file:
-            scan_data = await scan_fetcher.prepare_scan(
-                identifier=scan_id or f"pg{args.pg_id}",
-                ocr_file=args.ocr_file,
-                jp2_pattern=args.jp2_pattern,
-                known_pages=0,
-            )
-        elif not vision_mode:
-            if not scan_id:
-                raise ValueError("Either --scan-id or --ocr-file is required")
-
-            scan_data = await scan_fetcher.prepare_scan(
-                identifier=scan_id,
-                jp2_pattern=args.jp2_pattern,
-            )
-        else:
-            scan_data = None
-            console.print("  Skipping OCR (vision mode)")
-
-        if not vision_mode:
-            scan_full_text = "\n\n".join(p.ocr_text for p in scan_data.pages if p.ocr_text)
-            console.print(f"  Source: {scan_data.source_url}")
-            console.print(f"  OCR: {len(scan_full_text):,} chars, {len(scan_data.pages)} pages")
-
-            # Align using LCS
-            console.print("[bold blue]Step 3:[/bold blue] Aligning PG text to scan (LCS)...")
-            coarse_aligner = CoarseAligner()
-            alignments = coarse_aligner.align(
-                pg_text=parsed.body_text,
-                pg_paragraphs=parsed.paragraphs,
-                scan_ocr_text=scan_full_text,
-                scan_pages=scan_data.pages,
-            )
-            scan_pages = scan_data.pages
-
-    if vision_mode and resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
+    if resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
         # Resume from alignments cache
         cached = load_intermediate(intermed_dir, "03_alignments")
         if not cached:
@@ -534,7 +477,6 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             from gerrata.fetcher.scans import ScanPage
             scan_pages = [ScanPage(
                 page_num=p["page_num"],
-                ocr_text=p.get("ocr_text", ""),
                 vision_text=p.get("vision_text", ""),
                 image_path=Path(p["image_path"]) if p.get("image_path") else None,
             ) for p in cached_pages]
@@ -562,7 +504,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         # Save corrected alignments back to cache
         save_intermediate(intermed_dir, "03_alignments", [a.to_dict() for a in alignments])
         save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
-    elif vision_mode and successful:
+    elif successful:
         # Align transcriptions to PG text
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
         vision_aligner = VisionAligner(match_threshold=0.35, min_match_chars=40)
@@ -600,16 +542,9 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
         save_intermediate(intermed_dir, "03_alignments", alignments)
         save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
-    elif vision_mode:
-        # Vision mode was set but all transcriptions failed — already handled above
-        pass
-    else:
-        alignment_confidence = CoarseAligner().alignment_confidence(alignments, len(parsed.body_text))
-        console.print(f"  Alignments: {len(alignments)}")
-        console.print(f"  Coverage: {alignment_confidence:.0%}")
 
     # Step 5: Text diff
-    step_num = 5 if vision_mode else 4
+    step_num = 5
     if resume_from == "candidates-filtered":
         cached = load_intermediate(intermed_dir, "04_candidates_raw")
         if not cached:
@@ -921,8 +856,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     verify_url, verify_key = resolve_verify_provider(args)
     verify_model = args.verify_model or args.vision_model
 
-    if args.no_verify or not vision_mode:
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (--no-verify or OCR mode)")
+    if args.no_verify:
+        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (--no-verify)")
         for candidate in candidates:
             verified_errors.append(Error(candidate=candidate))
     elif verify_url and verify_key:
