@@ -2274,10 +2274,13 @@ class VisionAligner:
         linear_fit_quality = result.residual_stddev / max(result.offset_stddev, 1.0)
 
         if linear_fit_quality < 0.30 and abs(result.drift_slope) > 10:
-            # Cumulative drift — apply per-page linear correction
+            # Cumulative drift — apply per-page linear correction, then re-measure
+            # and apply residual constant shift in one pass
             result.verdict = "drift_corrected"
             result.corrected = True
             first_page = min(p for p, _ in page_offsets)
+
+            # Phase 1: linear drift correction
             for a in alignments:
                 page_relative = a.scan_page - first_page
                 correction = round(result.drift_slope * page_relative + result.drift_intercept)
@@ -2285,11 +2288,56 @@ class VisionAligner:
                 a.pg_end += correction
                 a.pg_start = max(0, a.pg_start)
                 a.pg_end = max(a.pg_start, min(a.pg_end, len(pg_text)))
-            logger.info(
-                f"Alignment drift-corrected: slope={result.drift_slope:.1f} chars/page, "
-                f"intercept={result.drift_intercept:+.0f}, "
-                f"raw_σ={result.offset_stddev:.0f}, residual_σ={result.residual_stddev:.0f}"
-            )
+
+            # Phase 2: re-measure offsets on corrected alignments to find residual shift
+            residual_offsets = []
+            for alignment, trans, _conf in candidates:
+                phrase = self._extract_distinctive_phrase(trans.transcription_cleaned)
+                if not phrase:
+                    continue
+                norm_phrase = normalize_for_matching(phrase)
+                if len(norm_phrase) < 15:
+                    continue
+                found_pos = norm_pg.find(norm_phrase)
+                if found_pos == -1:
+                    for sub_len in [len(norm_phrase) // 2, 15]:
+                        if sub_len < 15:
+                            break
+                        found_pos = norm_pg.find(norm_phrase[:sub_len])
+                        if found_pos != -1:
+                            break
+                if found_pos == -1:
+                    continue
+                residual_offsets.append(found_pos - alignment.pg_start)
+
+            if len(residual_offsets) >= 5:
+                residual_mean = sum(residual_offsets) / len(residual_offsets)
+                residual_shift = round(residual_mean)
+                if abs(residual_shift) > 50:
+                    for a in alignments:
+                        a.pg_start += residual_shift
+                        a.pg_end += residual_shift
+                        a.pg_start = max(0, a.pg_start)
+                        a.pg_end = max(a.pg_start, min(a.pg_end, len(pg_text)))
+                    result.drift_intercept += residual_shift
+                    logger.info(
+                        f"Alignment drift-corrected: slope={result.drift_slope:.1f} chars/page, "
+                        f"intercept={result.drift_intercept:+.0f}, "
+                        f"raw_σ={result.offset_stddev:.0f}, residual_σ={result.residual_stddev:.0f}, "
+                        f"second_pass_shift={residual_shift:+d}"
+                    )
+                else:
+                    logger.info(
+                        f"Alignment drift-corrected: slope={result.drift_slope:.1f} chars/page, "
+                        f"intercept={result.drift_intercept:+.0f}, "
+                        f"raw_σ={result.offset_stddev:.0f}, residual_σ={result.residual_stddev:.0f}"
+                    )
+            else:
+                logger.info(
+                    f"Alignment drift-corrected: slope={result.drift_slope:.1f} chars/page, "
+                    f"intercept={result.drift_intercept:+.0f}, "
+                    f"raw_σ={result.offset_stddev:.0f}, residual_σ={result.residual_stddev:.0f}"
+                )
             return alignments, result
 
         if result.offset_stddev < 1500:
