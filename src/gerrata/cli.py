@@ -22,6 +22,7 @@ from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker
 from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.vision import VisionVerifier
+from gerrata.verifier.programmatic import ProgrammaticVerifier
 from gerrata.reporter.generator import ReportGenerator
 
 
@@ -124,7 +125,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--no-verify",
         action="store_true",
-        help="Skip LLM vision verification (fast, free)",
+        help="Skip all verification (fast, free)",
+    )
+    parser.add_argument(
+        "--use-llm-verify",
+        action="store_true",
+        help="Use LLM vision verification instead of programmatic scoring (slower, costs API calls)",
     )
     parser.add_argument(
         "--vision-transcribe",
@@ -867,58 +873,68 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print(f"  Computed line numbers for {len(candidates)} candidates")
     save_intermediate(intermed_dir, "05_candidates_filtered", candidates)
 
-    # Step 7: LLM vision verification (if configured and in vision mode)
+    # Step 7: Verification
     verified_errors: list[Error] = []
 
-    # Determine verify config (fallback to vision config if not set)
-    verify_url, verify_key = resolve_verify_provider(args)
-    verify_model = args.verify_model or args.vision_model
-
-    if args.no_verify:
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (--no-verify)")
-        for candidate in candidates:
-            verified_errors.append(Error(candidate=candidate))
-    elif verify_url and verify_key:
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] LLM vision verification...")
-        verifier = VisionVerifier(
-            api_url=verify_url,
-            api_key=verify_key,
-            model=verify_model,
-            concurrency=args.concurrency,
+    if args.no_verify or not getattr(args, 'use_llm_verify', False):
+        # Programmatic verification (default) — fast, deterministic, no hallucination
+        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
+        prog_verifier = ProgrammaticVerifier(
+            pg_text=parsed.body_text,
+            alignments=alignments,
         )
+        verified_errors = prog_verifier.verify_batch(candidates)
 
-        # Use batch verification for better performance and rate limit handling
-        def get_image_path(error):
-            if scan_pages:
-                page_idx = min(error.scan_page, len(scan_pages) - 1)
-                if scan_pages[page_idx].image_path:
-                    return Path(scan_pages[page_idx].image_path)
-            return None
-
-        def get_pg_context(error):
-            # Find the PG text by string search (pg_offset may be inaccurate)
-            pg_text = error.pg_text
-            if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
-                pg_text = error.scan_text
-            pos = parsed.body_text.find(pg_text)
-            if pos >= 0:
-                start = max(0, pos - 200)
-                end = min(len(parsed.body_text), pos + len(pg_text) + 200)
-                return parsed.body_text[start:end]
-            # Fallback to offset-based
-            return parsed.body_text[max(0, error.pg_offset - 200):error.pg_offset + 200]
-
-        verified_errors = await verifier.verify_batch_per_page(
-            candidates,
-            get_image_path=get_image_path,
-            get_pg_context=get_pg_context,
-        )
-
-        console.print(f"  Verified: {len(verified_errors)}")
+        # Count by confidence level
+        high = sum(1 for e in verified_errors if e.confidence >= 0.8)
+        med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
+        low = sum(1 for e in verified_errors if e.confidence < 0.5)
+        console.print(f"  High confidence (≥0.8): {high}")
+        console.print(f"  Medium confidence (0.5-0.8): {med}")
+        console.print(f"  Low confidence (<0.5): {low}")
+        console.print(f"  Total verified: {len(verified_errors)}")
     else:
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping LLM verification (not configured)")
-        for candidate in candidates:
-            verified_errors.append(Error(candidate=candidate))
+        # Legacy LLM vision verification (opt-in)
+        verify_url, verify_key = resolve_verify_provider(args)
+        verify_model = args.verify_model or args.vision_model
+
+        if verify_url and verify_key:
+            console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] LLM vision verification...")
+            verifier = VisionVerifier(
+                api_url=verify_url,
+                api_key=verify_key,
+                model=verify_model,
+                concurrency=args.concurrency,
+            )
+
+            def get_image_path(error):
+                if scan_pages:
+                    page_idx = min(error.scan_page, len(scan_pages) - 1)
+                    if scan_pages[page_idx].image_path:
+                        return Path(scan_pages[page_idx].image_path)
+                return None
+
+            def get_pg_context(error):
+                pg_text = error.pg_text
+                if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
+                    pg_text = error.scan_text
+                pos = parsed.body_text.find(pg_text)
+                if pos >= 0:
+                    start = max(0, pos - 200)
+                    end = min(len(parsed.body_text), pos + len(pg_text) + 200)
+                    return parsed.body_text[start:end]
+                return parsed.body_text[max(0, error.pg_offset - 200):error.pg_offset + 200]
+
+            verified_errors = await verifier.verify_batch_per_page(
+                candidates,
+                get_image_path=get_image_path,
+                get_pg_context=get_pg_context,
+            )
+            console.print(f"  Verified: {len(verified_errors)}")
+        else:
+            console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping verification (not configured)")
+            for candidate in candidates:
+                verified_errors.append(Error(candidate=candidate))
 
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")

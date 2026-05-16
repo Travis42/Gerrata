@@ -851,6 +851,7 @@ class ReportGenerator:
         submit_ready = [
             e for e in report.errors
             if e.category not in skip_categories
+            and e.confidence >= 0.4  # skip very low confidence (likely artifacts)
             and not self._is_absent_entry(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_cutoff_artifact(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_long_mismatch(e.candidate.pg_text, e.candidate.scan_text)
