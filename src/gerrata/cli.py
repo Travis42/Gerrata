@@ -153,8 +153,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--vision-model",
         type=str,
-        default="",
-        help="Vision model name for transcription (default: auto-select from fallback chain)",
+        default="gemini-3.1-flash-lite",
+        help="Vision model name for transcription (default: gemini-3.1-flash-lite)",
     )
     parser.add_argument(
         "--verify-url",
@@ -171,8 +171,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--verify-model",
         type=str,
-        default="",
-        help="Vision model name for verification (default: same as --vision-model)",
+        default="gemini-3.1-flash-lite",
+        help="Vision model name for verification (default: gemini-3.1-flash-lite)",
     )
     parser.add_argument(
         "--page-range",
@@ -202,8 +202,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--concurrency",
         type=int,
-        default=5,
-        help="Number of concurrent API calls for transcription and verification (default: 5)",
+        default=10,
+        help="Number of concurrent API calls for transcription and verification (default: 10)",
     )
     parser.add_argument(
         "--verify-provider",
