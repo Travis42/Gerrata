@@ -46,10 +46,12 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
     start = time.time()
 
     cmd = [
-        sys.executable, "-m", "gerrata",
+        "gerrata",
         str(pg_id),
         "--scan-id", ia_id,
         "--concurrency", "10",
+        "--cache-dir", str(CACHE_DIR),
+        "--output", str(REPORTS_DIR),
     ]
 
     print(f"  Running: {' '.join(cmd)}")

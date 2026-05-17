@@ -166,9 +166,11 @@ def main():
     if not args.dry_run:
         import shutil
         _, _, free = shutil.disk_usage("/")
+        total = shutil.disk_usage("/").total
         free_gb = free / (1024 ** 3)
-        total_gb = shutil.disk_usage("/").total / (1024 ** 3)
-        print(f"Disk: {free_gb:.1f} GB free of {total_gb:.1f} GB ({100*free/total_gb:.0f}% used)")
+        total_gb = total / (1024 ** 3)
+        pct = 100 * free / total
+        print(f"Disk: {free_gb:.1f} GB free of {total_gb:.1f} GB ({pct:.0f}% used)")
 
 
 if __name__ == "__main__":
