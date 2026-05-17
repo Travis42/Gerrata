@@ -23,6 +23,8 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 | PG # | Book | Status | Notes |
 |------|------|--------|-------|
+| 11 | Alice's Adventures in Wonderland | 5x errata found, submitted | -- |
+| 76 | ADVENTURES OF HUCKLEBERRY FINN| 2x errata found, submitted | -- |
 | 42486 | The Turn of the Screw | no errata found after scan | -- |
 | 25344 | The Scarlett Letter | no errata found after scan | -- |
 | various | Frankenstein | Not chosen, low likelihood of acceptance | -- |

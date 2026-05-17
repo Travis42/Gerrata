@@ -4,7 +4,7 @@
 Usage:
     python3 scripts/batch_process.py [--queue queue.json] [--limit N] [--no-cleanup]
 
-    --queue      Queue file (default: cache/batch_queue.json)
+    --queue      Queue file (default: cache/batch_queue_manual.json)
     --limit N    Process at most N books
     --no-cleanup Don't clean up after each book
     --start N    Start from book N in queue (resume)
@@ -49,7 +49,6 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
         "gerrata",
         str(pg_id),
         "--scan-id", ia_id,
-        "--concurrency", "10",
         "--cache-dir", str(CACHE_DIR),
         "--output", str(REPORTS_DIR),
     ]
@@ -92,7 +91,7 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Run gerrata on batch queue")
-    parser.add_argument("--queue", default=str(CACHE_DIR / "batch_queue.json"))
+    parser.add_argument("--queue", default=str(CACHE_DIR / "batch_queue_manual.json"))
     parser.add_argument("--limit", type=int, default=0, help="Max books to process")
     parser.add_argument("--no-cleanup", action="store_true")
     parser.add_argument("--start", type=int, default=0, help="Start from book N")
