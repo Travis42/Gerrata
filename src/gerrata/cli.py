@@ -121,11 +121,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Enable verbose logging",
     )
-    parser.add_argument(
-        "--no-verify",
-        action="store_true",
-        help="Skip all verification (fast, free)",
-    )
+
     parser.add_argument(
         "--vision-transcribe",
         action="store_true",
@@ -785,30 +781,22 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print(f"  Computed line numbers for {len(candidates)} candidates")
     save_intermediate(intermed_dir, "05_candidates_filtered", candidates)
 
-    # Step 7: Verification
-    verified_errors: list[Error] = []
+    # Step 7: Programmatic verification — fast, deterministic, no hallucination
+    console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
+    prog_verifier = ProgrammaticVerifier(
+        pg_text=parsed.body_text,
+        alignments=alignments,
+    )
+    verified_errors = prog_verifier.verify_batch(candidates)
 
-    if args.no_verify:
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping verification (--no-verify)")
-        for candidate in candidates:
-            verified_errors.append(Error(candidate=candidate))
-    else:
-        # Programmatic verification — fast, deterministic, no hallucination
-        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
-        prog_verifier = ProgrammaticVerifier(
-            pg_text=parsed.body_text,
-            alignments=alignments,
-        )
-        verified_errors = prog_verifier.verify_batch(candidates)
-
-        # Count by confidence level
-        high = sum(1 for e in verified_errors if e.confidence >= 0.8)
-        med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
-        low = sum(1 for e in verified_errors if e.confidence < 0.5)
-        console.print(f"  High confidence (≥0.8): {high}")
-        console.print(f"  Medium confidence (0.5-0.8): {med}")
-        console.print(f"  Low confidence (<0.5): {low}")
-        console.print(f"  Total verified: {len(verified_errors)}")
+    # Count by confidence level
+    high = sum(1 for e in verified_errors if e.confidence >= 0.8)
+    med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
+    low = sum(1 for e in verified_errors if e.confidence < 0.5)
+    console.print(f"  High confidence (≥0.8): {high}")
+    console.print(f"  Medium confidence (0.5-0.8): {med}")
+    console.print(f"  Low confidence (<0.5): {low}")
+    console.print(f"  Total verified: {len(verified_errors)}")
 
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")

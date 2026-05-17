@@ -541,7 +541,6 @@ class TestCLI:
         args = parser.parse_args(["43", "--output", "/tmp/reports"])
         assert args.pg_id == 43
         assert args.output == "/tmp/reports"
-        assert not args.no_verify
         assert not args.verbose
 
     def test_build_parser_all_options(self):
@@ -551,10 +550,8 @@ class TestCLI:
             "43",
             "--scan-id", "test-id",
             "--pg-file", "/tmp/pg.txt",
-            "--ocr-file", "/tmp/ocr.txt",
             "--output", "/tmp/out",
             "--verbose",
-            "--no-verify",
             "--strict",
             "--vision-url", "http://api.test.com",
             "--vision-key", "test-key",
@@ -563,9 +560,7 @@ class TestCLI:
         assert args.pg_id == 43
         assert args.scan_id == "test-id"
         assert args.pg_file == "/tmp/pg.txt"
-        assert args.ocr_file == "/tmp/ocr.txt"
         assert args.verbose
-        assert args.no_verify
         assert args.strict
         assert args.vision_url == "http://api.test.com"
         assert args.vision_model == "test-model"

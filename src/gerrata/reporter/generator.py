@@ -855,10 +855,8 @@ class ReportGenerator:
         else:
             pg_filename = f"{pg_id}.txt"
 
-        # Filter: high-confidence scan_correct errors OR unverified errors with
-        # real content categories (not formatting/ambiguous/alignment artifacts).
-        # When verification is skipped (--no-verify), confidence=0 and
-        # verdict=UNABLE_TO_VERIFY, so we use the candidate category instead.
+        # Filter: high-confidence scan_correct errors with real content categories
+        # (not formatting/ambiguous/alignment artifacts).
         SUBMIT_CATEGORIES = {
             ErrorCategory.OCR_SCANNO,
             ErrorCategory.WRONG_WORD,
