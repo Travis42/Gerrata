@@ -58,7 +58,7 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
         cmd,
         capture_output=True,
         text=True,
-        timeout=600,  # 10 min max per book
+        timeout=1800,  # 30 min max per book (large scans need more time)
         cwd=SCRIPTS_DIR.parent,
     )
 

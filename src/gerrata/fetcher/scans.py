@@ -211,6 +211,11 @@ class ScanFetcher:
         The zip contains all JP2 page images for the scan.
         Individual JP2 URLs often 404 — the zip is the reliable source.
 
+        Features:
+        - Retry with exponential backoff on 503/429/500 errors
+        - Resume partial downloads using HTTP Range header
+        - Fallback to direct server via metadata API
+
         Args:
             identifier: IA identifier (e.g. "06-stevenson-jekyll-hyde").
             dest: Directory to save the zip. Defaults to cache_dir.
@@ -218,6 +223,7 @@ class ScanFetcher:
         Returns:
             Path to the downloaded zip file.
         """
+        import asyncio
         import httpx
 
         dest = dest or self.cache_dir
@@ -228,41 +234,127 @@ class ScanFetcher:
         zip_path = (dest / f"{identifier}_jp2.zip") if dest else Path(f"{identifier}_jp2.zip")
 
         if zip_path.exists():
-            logger.info(f"JP2 zip already cached: {zip_path}")
-            return zip_path
+            # Check if the file looks complete (non-zero size)
+            if zip_path.stat().st_size > 0:
+                logger.info(f"JP2 zip already cached: {zip_path}")
+                return zip_path
+            else:
+                logger.info(f"JP2 zip exists but is empty, re-downloading: {zip_path}")
+                zip_path.unlink()
 
-        logger.info(f"Downloading JP2 zip: {zip_url}")
-        async with httpx.AsyncClient(follow_redirects=True, timeout=600, headers={"user-agent": _BROWSER_UA}) as client:
-            async with client.stream("GET", zip_url) as resp:
-                if resp.status_code != 200:
-                    # Fallback: try direct server via metadata API
-                    http_code = resp.status_code
-                    logger.warning(f"Standard /download/ returned {http_code}, trying direct server...")
-                    direct_base = await self._get_direct_server(identifier)
-                    if direct_base:
-                        direct_url = f"{direct_base}/{identifier}_jp2.zip"
-                        logger.info(f"Trying direct server: {direct_url}")
-                        direct_resp = await client.get(direct_url)
-                        if direct_resp.status_code == 200:
-                            with open(zip_path, "wb") as f:
-                                f.write(direct_resp.content)
-                            logger.info(f"Downloaded JP2 zip via direct server: {zip_path} ({zip_path.stat().st_size:,} bytes)")
-                            return zip_path
-                        else:
-                            raise FileNotFoundError(
-                                f"JP2 zip not available via /download/ ({zip_url}: HTTP {http_code}) "
-                                f"or direct server ({direct_url}: HTTP {direct_resp.status_code})"
+        max_retries = 5
+        base_delay = 10  # seconds
+        partial_path = zip_path.with_suffix(".zip.partial")
+
+        for attempt in range(max_retries + 1):
+            existing_size = 0
+            if partial_path.exists():
+                existing_size = partial_path.stat().st_size
+                if existing_size > 0:
+                    logger.info(f"Resuming partial download from {existing_size:,} bytes (attempt {attempt + 1}/{max_retries + 1})")
+                else:
+                    partial_path.unlink()
+
+            headers = {"user-agent": _BROWSER_UA}
+            if existing_size > 0:
+                headers["Range"] = f"bytes={existing_size}-"
+
+            try:
+                async with httpx.AsyncClient(follow_redirects=True, timeout=600, headers=headers) as client:
+                    async with client.stream("GET", zip_url) as resp:
+                        if resp.status_code in (503, 429, 500, 502):
+                            delay = base_delay * (2 ** attempt) + (0.5 * attempt)
+                            logger.warning(f"IA returned HTTP {resp.status_code}, retrying in {delay:.0f}s (attempt {attempt + 1}/{max_retries + 1})")
+                            await resp.aclose()
+                            await asyncio.sleep(delay)
+                            continue
+
+                        if resp.status_code == 416:
+                            # Range not satisfiable — file is already complete or too large
+                            logger.info(f"Range request returned 416, file may be complete")
+                            if existing_size > 0:
+                                partial_path.rename(zip_path)
+                                logger.info(f"JP2 zip complete (resumed): {zip_path} ({zip_path.stat().st_size:,} bytes)")
+                                return zip_path
+                            continue
+
+                        if resp.status_code not in (200, 206):
+                            # Non-retryable error — try direct server fallback
+                            http_code = resp.status_code
+                            logger.warning(f"Standard /download/ returned {http_code}, trying direct server...")
+                            await resp.aclose()
+                            direct_path = await self._try_direct_server_download(
+                                client, identifier, zip_path, partial_path, existing_size
                             )
-                    else:
-                        raise FileNotFoundError(
-                            f"JP2 zip not found: HTTP {http_code} from {zip_url} (no metadata/direct server available)"
-                        )
-                with open(zip_path, "wb") as f:
+                            if direct_path:
+                                return direct_path
+                            raise FileNotFoundError(
+                                f"JP2 zip not found: HTTP {http_code} from {zip_url} (direct server also failed)"
+                            )
+
+                        # Stream the response to file
+                        mode = "ab" if (existing_size > 0 and resp.status_code == 206) else "wb"
+                        downloaded = existing_size
+                        with open(partial_path, mode) as f:
+                            async for chunk in resp.aiter_bytes(chunk_size=1024 * 1024):
+                                f.write(chunk)
+                                downloaded += len(chunk)
+
+                # Verify the download looks valid
+                partial_path.rename(zip_path)
+                logger.info(f"Downloaded JP2 zip: {zip_path} ({zip_path.stat().st_size:,} bytes)")
+                return zip_path
+
+            except (httpx.RemoteProtocolError, httpx.ReadError, httpx.ConnectError) as e:
+                delay = base_delay * (2 ** attempt) + (0.5 * attempt)
+                logger.warning(f"Connection error during download: {e}, retrying in {delay:.0f}s (attempt {attempt + 1}/{max_retries + 1})")
+                await asyncio.sleep(delay)
+                continue
+
+        # All retries exhausted
+        if partial_path.exists():
+            partial_path.unlink()
+        raise FileNotFoundError(
+            f"JP2 zip download failed after {max_retries + 1} attempts: {zip_url}"
+        )
+
+    async def _try_direct_server_download(
+        self,
+        client: httpx.AsyncClient,
+        identifier: str,
+        zip_path: Path,
+        partial_path: Path,
+        existing_size: int = 0,
+    ) -> Path | None:
+        """Try downloading via direct server as fallback. Returns path on success, None on failure."""
+        direct_base = await self._get_direct_server(identifier)
+        if not direct_base:
+            return None
+
+        direct_url = f"{direct_base}/{identifier}_jp2.zip"
+        logger.info(f"Trying direct server: {direct_url}")
+
+        try:
+            headers = {"user-agent": _BROWSER_UA}
+            if existing_size > 0:
+                headers["Range"] = f"bytes={existing_size}-"
+
+            async with client.stream("GET", direct_url) as resp:
+                if resp.status_code not in (200, 206):
+                    logger.warning(f"Direct server returned HTTP {resp.status_code}")
+                    return None
+
+                mode = "ab" if (existing_size > 0 and resp.status_code == 206) else "wb"
+                with open(partial_path, mode) as f:
                     async for chunk in resp.aiter_bytes(chunk_size=1024 * 1024):
                         f.write(chunk)
 
-        logger.info(f"Downloaded JP2 zip: {zip_path} ({zip_path.stat().st_size:,} bytes)")
-        return zip_path
+            partial_path.rename(zip_path)
+            logger.info(f"Downloaded JP2 zip via direct server: {zip_path} ({zip_path.stat().st_size:,} bytes)")
+            return zip_path
+        except Exception as e:
+            logger.warning(f"Direct server download failed: {e}")
+            return None
 
     def extract_jp2_zip(
         self,
