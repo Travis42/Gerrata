@@ -853,7 +853,7 @@ class ReportGenerator:
         if self.pg_file_path:
             pg_filename = self.pg_file_path.name
         else:
-            pg_filename = f"{pg_id}-h.htm"
+            pg_filename = f"{pg_id}.txt"
 
         # Filter: high-confidence scan_correct errors OR unverified errors with
         # real content categories (not formatting/ambiguous/alignment artifacts).

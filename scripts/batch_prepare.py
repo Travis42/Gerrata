@@ -24,8 +24,14 @@ CACHE_DIR = Path(__file__).parent.parent / "cache"
 QUEUE_FILE = CACHE_DIR / "batch_queue.json"
 ERRATA_QUEUE = Path(__file__).parent.parent / "ERRATA_QUEUE.md"
 
-# Already processed books (PG IDs)
-PROCESSED = {2701, 84, 1342, 43, 42486, 58169}
+# Load completed books from completed.json
+def load_completed() -> set[int]:
+    """Load set of completed PG IDs from cache/completed.json."""
+    completed_path = CACHE_DIR / "completed.json"
+    if completed_path.exists():
+        with open(completed_path) as f:
+            return {b["pg_id"] for b in json.load(f)}
+    return set()
 
 # Non-English PG IDs to skip
 SKIP_NON_ENGLISH = {
@@ -230,6 +236,8 @@ def build_queue(limit: int = 30) -> list[dict]:
 
     queue = []
     skipped = []
+    PROCESSED = load_completed()
+    print(f"  Already completed: {sorted(PROCESSED)}")
 
     for book in books[:limit]:
         pg_id = book["pg_id"]
