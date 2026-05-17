@@ -23,6 +23,7 @@ are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full reje
 
 | PG # | Book | Status | Notes |
 |------|------|--------|-------|
+| 25977 | My Recollections of Lord Byron| 4x errata found, submitted | -- |
 | 26449 | Rambles of an Archaeologogist Among Old Books and in Old Places| 1x errata found, submitted | -- |
 | 28054 | Lord Milner's Work in South Africa | no errata found after scan | -- |
 | 28054 | The Brothers Karamazov | no errata found after scan | -- |
