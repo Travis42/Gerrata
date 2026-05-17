@@ -63,7 +63,7 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
     )
 
     elapsed = time.time() - start
-    success = result.returncode == 0
+    success = result.returncode in (0, 1, 2)  # 0=clean, 1=low-conf errors, 2=high-conf errors
 
     # Count errors from report
     error_count = 0

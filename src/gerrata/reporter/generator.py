@@ -918,6 +918,7 @@ class ReportGenerator:
         if self.scan_id:
             lines.append(f"I verified the following changes against the Internet Archive scan:")
             lines.append(f"https://archive.org/details/{self.scan_id}")
+            lines.append(f"NOTE: Page numbers are 'of the scan' not 'of the book.'")
         else:
             lines.append("Source scans: Internet Archive")
 
