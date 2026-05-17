@@ -21,7 +21,6 @@ from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
 from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker
 from gerrata.checker.rules import FalsePositiveFilter
-from gerrata.verifier.vision import VisionVerifier
 from gerrata.verifier.programmatic import ProgrammaticVerifier
 from gerrata.reporter.generator import ReportGenerator
 
@@ -128,11 +127,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip all verification (fast, free)",
     )
     parser.add_argument(
-        "--use-llm-verify",
-        action="store_true",
-        help="Use LLM vision verification instead of programmatic scoring (slower, costs API calls)",
-    )
-    parser.add_argument(
         "--vision-transcribe",
         action="store_true",
         default=True,
@@ -155,24 +149,6 @@ def build_parser() -> argparse.ArgumentParser:
         type=str,
         default="gemini-3.1-flash-lite",
         help="Vision model name for transcription (default: gemini-3.1-flash-lite)",
-    )
-    parser.add_argument(
-        "--verify-url",
-        type=str,
-        default="",
-        help="Vision model API URL for verification (Step 7) (default: same as --vision-url)",
-    )
-    parser.add_argument(
-        "--verify-key",
-        type=str,
-        default="",
-        help="Vision model API key for verification (default: same as --vision-key)",
-    )
-    parser.add_argument(
-        "--verify-model",
-        type=str,
-        default="gemini-3.1-flash-lite",
-        help="Vision model name for verification (default: gemini-3.1-flash-lite)",
     )
     parser.add_argument(
         "--page-range",
@@ -203,19 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--concurrency",
         type=int,
         default=10,
-        help="Number of concurrent API calls for transcription and verification (default: 10)",
-    )
-    parser.add_argument(
-        "--verify-provider",
-        type=str,
-        default="",
-        choices=["zai", "openrouter", "openai", "anthropic"],
-        help="Preset API provider for verification. Sets --verify-url and --verify-key "
-             "automatically. Override with --verify-url/--verify-key if needed. "
-             "zai: Z.AI native API (default). "
-             "openrouter: openrouter.ai (reads OPENROUTER_API_KEY env var or ~/.secrets/openrouter.key). "
-             "openai: OpenAI API. "
-             "anthropic: Anthropic API.",
+        help="Number of concurrent API calls (default: 10)",
     )
     return parser
 
@@ -230,58 +194,6 @@ def parse_page_range(range_str: str) -> tuple[int, int] | None:
     return int(parts[0]), int(parts[1])
 
 
-def resolve_verify_provider(args: argparse.Namespace) -> tuple[str, str]:
-    """Resolve verification API URL and key from provider preset.
-
-    Priority: explicit --verify-url/--verify-key > --verify-provider preset > defaults.
-
-    Returns (url, key).
-    """
-    # Explicit overrides take priority
-    if args.verify_url and args.verify_key:
-        return args.verify_url, args.verify_key
-
-    provider = args.verify_provider
-
-    if provider == "openrouter":
-        url = "https://openrouter.ai/api/v1/chat/completions"
-        key = args.verify_key
-        if not key:
-            key = os.environ.get("OPENROUTER_API_KEY", "")
-        if not key:
-            key_path = Path.home() / ".secrets" / "openrouter.key"
-            if key_path.exists():
-                key = key_path.read_text().strip()
-        if not key:
-            raise ValueError(
-                "OpenRouter provider requires an API key. Set OPENROUTER_API_KEY env var "
-                "or create ~/.secrets/openrouter.key"
-            )
-        return url, key
-
-    if provider == "openai":
-        url = "https://api.openai.com/v1/chat/completions"
-        key = args.verify_key or os.environ.get("OPENAI_API_KEY", "")
-        if not key:
-            raise ValueError("OpenAI provider requires OPENAI_API_KEY env var")
-        return url, key
-
-    if provider == "anthropic":
-        # Anthropic uses the OpenAI-compatible Messages API format
-        url = "https://api.anthropic.com/v1/messages"
-        key = args.verify_key or os.environ.get("ANTHROPIC_API_KEY", "")
-        if not key:
-            raise ValueError("Anthropic provider requires ANTHROPIC_API_KEY env var")
-        return url, key
-
-    # Default: OpenRouter (uses --vision-url/--vision-key if set, or env var / key file)
-    url = args.verify_url or args.vision_url
-    key = args.verify_key or args.vision_key
-    if not key:
-        key_path = Path.home() / ".secrets" / "openrouter.key"
-        if key_path.exists():
-            key = key_path.read_text().strip()
-    return url, key
 
 
 async def run_pipeline(args: argparse.Namespace) -> Report:
@@ -876,8 +788,12 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     # Step 7: Verification
     verified_errors: list[Error] = []
 
-    if args.no_verify or not getattr(args, 'use_llm_verify', False):
-        # Programmatic verification (default) — fast, deterministic, no hallucination
+    if args.no_verify:
+        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping verification (--no-verify)")
+        for candidate in candidates:
+            verified_errors.append(Error(candidate=candidate))
+    else:
+        # Programmatic verification — fast, deterministic, no hallucination
         console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
         prog_verifier = ProgrammaticVerifier(
             pg_text=parsed.body_text,
@@ -893,48 +809,6 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print(f"  Medium confidence (0.5-0.8): {med}")
         console.print(f"  Low confidence (<0.5): {low}")
         console.print(f"  Total verified: {len(verified_errors)}")
-    else:
-        # Legacy LLM vision verification (opt-in)
-        verify_url, verify_key = resolve_verify_provider(args)
-        verify_model = args.verify_model or args.vision_model
-
-        if verify_url and verify_key:
-            console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] LLM vision verification...")
-            verifier = VisionVerifier(
-                api_url=verify_url,
-                api_key=verify_key,
-                model=verify_model,
-                concurrency=args.concurrency,
-            )
-
-            def get_image_path(error):
-                if scan_pages:
-                    page_idx = min(error.scan_page, len(scan_pages) - 1)
-                    if scan_pages[page_idx].image_path:
-                        return Path(scan_pages[page_idx].image_path)
-                return None
-
-            def get_pg_context(error):
-                pg_text = error.pg_text
-                if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
-                    pg_text = error.scan_text
-                pos = parsed.body_text.find(pg_text)
-                if pos >= 0:
-                    start = max(0, pos - 200)
-                    end = min(len(parsed.body_text), pos + len(pg_text) + 200)
-                    return parsed.body_text[start:end]
-                return parsed.body_text[max(0, error.pg_offset - 200):error.pg_offset + 200]
-
-            verified_errors = await verifier.verify_batch_per_page(
-                candidates,
-                get_image_path=get_image_path,
-                get_pg_context=get_pg_context,
-            )
-            console.print(f"  Verified: {len(verified_errors)}")
-        else:
-            console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Skipping verification (not configured)")
-            for candidate in candidates:
-                verified_errors.append(Error(candidate=candidate))
 
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")
