@@ -58,7 +58,7 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
         cmd,
         capture_output=True,
         text=True,
-        timeout=1800,  # 30 min max per book (large scans need more time)
+        timeout=7200,  # 2 hours max per book (large scans + IA retries)
         cwd=SCRIPTS_DIR.parent,
     )
 
@@ -91,7 +91,7 @@ def run_gerrata(pg_id: int, ia_id: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Run gerrata on batch queue")
-    parser.add_argument("--queue", default=str(CACHE_DIR / "batch_queue_manual.json"))
+    parser.add_argument("--queue", default=str(CACHE_DIR / "queue.json"))
     parser.add_argument("--limit", type=int, default=0, help="Max books to process")
     parser.add_argument("--no-cleanup", action="store_true")
     parser.add_argument("--start", type=int, default=0, help="Start from book N")

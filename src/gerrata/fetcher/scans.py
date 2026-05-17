@@ -242,8 +242,8 @@ class ScanFetcher:
                 logger.info(f"JP2 zip exists but is empty, re-downloading: {zip_path}")
                 zip_path.unlink()
 
-        max_retries = 5
-        base_delay = 10  # seconds
+        max_retries = 8
+        base_delay = 30  # seconds
         partial_path = zip_path.with_suffix(".zip.partial")
 
         for attempt in range(max_retries + 1):
