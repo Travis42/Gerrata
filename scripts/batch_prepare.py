@@ -284,11 +284,13 @@ def build_queue(limit: int = 30) -> list[dict]:
         ia_result = search_ia_scan(book["title"], book["author"], edition.get("year"))
         if ia_result:
             print(f"FOUND: {ia_result['ia_id']}")
+            ia_id = ia_result["ia_id"]
             queue.append({
                 "pg_id": pg_id,
                 "title": book["title"],
                 "author": book["author"],
-                "ia_id": ia_result["ia_id"],
+                "ia_id": ia_id,
+                "ia_url": f"https://archive.org/details/{ia_id}",
                 "ia_title": ia_result["title"],
                 "ia_year": ia_result["year"],
                 "edition_year": edition.get("year"),
