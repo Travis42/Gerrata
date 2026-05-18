@@ -71,6 +71,15 @@ def cleanup_book(book_dir: Path, dry_run: bool = False) -> dict:
         if not dry_run:
             trans_cache.unlink()
 
+    # 3b. Remove crash-resilient transcription JSONL log
+    transcription_log = book_dir / "02_transcriptions.jsonl"
+    if transcription_log.exists():
+        size = transcription_log.stat().st_size
+        freed += size
+        removed.append((str(transcription_log), size))
+        if not dry_run:
+            transcription_log.unlink()
+
     # 4. Remove intermediate heavy files
     heavy_files = [
         "03_scan_pages.json",

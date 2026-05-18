@@ -362,6 +362,21 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             console.print("[bold blue]Step 3:[/bold blue] Transcribing pages with vision model...")
 
             models = [args.vision_model] if args.vision_model else None
+
+            # Set up crash-resilient JSONL log for auto-resume
+            transcription_log = intermed_dir / "02_transcriptions.jsonl"
+            completed_pages = set()
+            if transcription_log.exists():
+                import json as _json
+                for _line in transcription_log.read_text().strip().splitlines():
+                    if _line:
+                        try:
+                            completed_pages.add(int(_json.loads(_line).get("page_num", -1)))
+                        except (_json.JSONDecodeError, ValueError):
+                            pass
+                if completed_pages:
+                    console.print(f"  [dim]Auto-resume: {len(completed_pages)}/{len(page_images)} pages already transcribed[/dim]")
+
             transcriber = VisionTranscriber(
             api_url=args.vision_url,
             api_key=args.vision_key or None,
@@ -369,6 +384,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             ocr_engine="vision",  # Use GLM vision model (best accuracy for old book pages)
             concurrency=args.concurrency,
             cache_file=f"cache/{scan_id}_transcriptions.json",
+            transcription_log=transcription_log,
         )
 
             transcriptions = await transcriber.transcribe_pages(page_images)

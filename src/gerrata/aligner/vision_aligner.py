@@ -526,6 +526,7 @@ class VisionTranscriber:
         cache_file: str | Path | None = None,
         disable_cache: bool = False,
         concurrency: int = 1,
+        transcription_log: str | Path | None = None,
     ):
         """Initialize transcriber.
 
@@ -539,6 +540,8 @@ class VisionTranscriber:
             cache_file: Path to transcription cache file (default: cache/transcription_cache.json).
             disable_cache: If True, disable all caching.
             concurrency: Number of concurrent API calls (default: 1).
+            transcription_log: Path to JSONL file for crash-resilient transcription progress.
+                Each completed page is appended as one line. Used for auto-resume after crashes.
         """
         self.api_url = api_url
         self.api_key = api_key or _load_openrouter_key() or DEFAULT_API_KEY
@@ -549,6 +552,7 @@ class VisionTranscriber:
         self.cache_file = Path(cache_file) if cache_file else None
         self.disable_cache = disable_cache
         self.concurrency = concurrency
+        self.transcription_log = Path(transcription_log) if transcription_log else None
         self.cache_data = self._load_cache() if not disable_cache and self.cache_file else {}
         self.cache_stats = {"hits": 0, "misses": 0, "saves": 0}
 
@@ -605,6 +609,51 @@ class VisionTranscriber:
             temp_file.replace(self.cache_file)
         except IOError as e:
             logger.warning(f"Failed to save cache {self.cache_file}: {e}")
+
+    # --- Crash-resilient JSONL transcription log ---
+
+    def _load_transcription_log(self) -> set[int]:
+        """Load set of page numbers already recorded in the JSONL log."""
+        if not self.transcription_log or not self.transcription_log.exists():
+            return set()
+        completed = set()
+        try:
+            with open(self.transcription_log, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        entry = json.loads(line)
+                        completed.add(int(entry.get("page_num", -1)))
+                    except (json.JSONDecodeError, ValueError):
+                        continue
+        except IOError as e:
+            logger.warning(f"Failed to read transcription log {self.transcription_log}: {e}")
+        return completed
+
+    def _append_transcription_log(self, page_transcription) -> None:
+        """Append a completed page transcription to the JSONL log.
+
+        This is called after each successful page, so the log survives crashes.
+        """
+        if not self.transcription_log:
+            return
+        try:
+            self.transcription_log.parent.mkdir(parents=True, exist_ok=True)
+            entry = {
+                "page_num": page_transcription.page_num,
+                "image_path": str(page_transcription.image_path) if page_transcription.image_path else None,
+                "transcription": page_transcription.transcription,
+                "transcription_cleaned": page_transcription.transcription_cleaned,
+                "success": page_transcription.success,
+                "error": page_transcription.error,
+                "model_used": page_transcription.model_used or "",
+            }
+            with open(self.transcription_log, "a") as f:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except IOError as e:
+            logger.warning(f"Failed to write transcription log: {e}")
 
     def _compute_image_hash(self, image_path: Path) -> str:
         """Compute SHA-256 hash of an image file."""
@@ -801,6 +850,7 @@ class VisionTranscriber:
             page_num=page_num,
             image_path=image_path,
             transcription="",
+            transcription_cleaned="",
             success=False,
             error="All models failed",
         )
@@ -821,12 +871,22 @@ class VisionTranscriber:
         """
         import asyncio
 
+        # Auto-resume: load completed pages from JSONL log
+        logged_pages = self._load_transcription_log()
+        if logged_pages:
+            logger.info(
+                f"Resuming transcription: {len(logged_pages)}/{len(image_paths)} pages already logged"
+            )
+
         if self.concurrency > 1:
             logger.info(f"Using {self.concurrency} concurrent API calls for transcription")
 
         semaphore = asyncio.Semaphore(self.concurrency)
 
         async def process_page(i, path):
+            # Skip pages already in the JSONL log (crash resume)
+            if i in logged_pages:
+                return (i, None)  # None signals "already done"
             async with semaphore:
                 logger.info(f"Transcribing page {i+1}/{len(image_paths)}: {path.name}")
                 result = await self.transcribe_page(path, page_num=i)
@@ -835,6 +895,8 @@ class VisionTranscriber:
                     if not (self.ocr_engine == "vision" and
                             self._get_cached_transcription(path, result.model_used)):
                         logger.info(f"  → {len(result.transcription)} chars via {result.model_used}")
+                    # Append to crash-resilient log
+                    self._append_transcription_log(result)
                 else:
                     logger.warning(f"  → Failed: {result.error}")
                 return (i, result)
@@ -842,13 +904,44 @@ class VisionTranscriber:
         tasks = [process_page(i, path) for i, path in enumerate(image_paths)]
         results_raw = await asyncio.gather(*tasks)
 
-        # Sort by original index to maintain ordering
-        results_raw.sort(key=lambda x: x[0])
-        results = [r[1] for r in results_raw]
+        # Build full results list: load logged pages from JSONL, fill in fresh results
+        results: list[PageTranscription | None] = [None] * len(image_paths)
+
+        # Load logged pages from JSONL
+        if logged_pages:
+            logged_transcriptions: dict[int, PageTranscription] = {}
+            if self.transcription_log and self.transcription_log.exists():
+                with open(self.transcription_log, "r") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            entry = json.loads(line)
+                            pt = PageTranscription(
+                                page_num=int(entry.get("page_num", 0)),
+                                image_path=Path(entry["image_path"]) if entry.get("image_path") else None,
+                                transcription=entry.get("transcription", ""),
+                                transcription_cleaned=entry.get("transcription_cleaned", ""),
+                                success=entry.get("success", False),
+                                error=entry.get("error"),
+                                model_used=entry.get("model_used", ""),
+                            )
+                            logged_transcriptions[pt.page_num] = pt
+                        except (json.JSONDecodeError, ValueError, KeyError):
+                            continue
+            for idx, pt in logged_transcriptions.items():
+                if 0 <= idx < len(results):
+                    results[idx] = pt
+
+        # Fill in freshly transcribed pages
+        for idx, result in results_raw:
+            if result is not None:
+                results[idx] = result
 
         # Identify failed pages
-        failed_indices = [(i, r) for i, r in enumerate(results) if not r.success]
-        successes = len(results) - len(failed_indices)
+        failed_indices = [(i, r) for i, r in enumerate(results) if r is not None and not r.success]
+        successes = len([r for r in results if r is not None and r.success])
 
         # Retry failed pages once with a brief pause
         if failed_indices:
@@ -868,8 +961,11 @@ class VisionTranscriber:
             retry_results = await asyncio.gather(*retry_tasks)
             for idx, retry_result in retry_results:
                 results[idx] = retry_result
+                # Log retried pages too
+                if retry_result.success:
+                    self._append_transcription_log(retry_result)
 
-            still_failed = [(i, r) for i, r in enumerate(results) if not r.success]
+            still_failed = [(i, r) for i, r in enumerate(results) if r is not None and not r.success]
             recovered = len(failed_indices) - len(still_failed)
             if recovered > 0:
                 logger.info(f"Retry recovered {recovered} of {len(failed_indices)} failed pages")
@@ -880,7 +976,7 @@ class VisionTranscriber:
                 )
 
         # Print summary statistics
-        successes = sum(1 for r in results if r.success)
+        successes = sum(1 for r in results if r is not None and r.success)
         fresh = self.cache_stats["saves"]
         cached = self.cache_stats["hits"]
         failed = len(results) - successes
