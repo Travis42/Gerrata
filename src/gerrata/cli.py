@@ -166,7 +166,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--resume-from",
         type=str,
-        choices=["pg-parsed", "transcriptions", "alignments", "candidates-raw", "candidates-filtered"],
+        choices=["pg-parsed", "transcriptions", "alignments", "candidates-raw", "pre-verify", "pre-report", "candidates-filtered"],
         default="",
         help="Resume pipeline from an intermediate save point. "
              "Requires cached results in the scan ID cache directory.",
@@ -208,8 +208,48 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     intermed_dir = cache_dir / scan_id if scan_id else cache_dir / f"pg{args.pg_id}"
     resume_from = args.resume_from
 
+    # Handle deprecated alias
+    if resume_from == "candidates-filtered":
+        console.print("[yellow]WARNING: --resume-from=candidates-filtered is deprecated, use --resume-from=pre-verify[/yellow]")
+        resume_from = "pre-verify"
+
+    # Print pipeline stage diagram
+    STAGES = [
+        ("pg-parse", "01_pg_parsed"),
+        ("transcribe", "02_transcriptions"),
+        ("align", "03_alignments"),
+        ("diff", "04_candidates_raw"),
+        ("filter", "05_candidates_filtered"),
+        ("verify", "06_verified_errors"),
+        ("report", None),
+    ]
+    RESUME_ORDER = ["pg-parsed", "transcriptions", "alignments", "candidates-raw", "pre-verify", "pre-report"]
+    RESUME_INDEX = RESUME_ORDER.index(resume_from) if resume_from else -1
+
+    # Map resume points to stage indices
+    RESUME_TO_STAGE = {
+        "pg-parsed": 0,
+        "transcriptions": 1,
+        "alignments": 2,
+        "candidates-raw": 3,
+        "pre-verify": 5,
+        "pre-report": 6,
+    }
+
+    stage_labels = []
+    for i, (name, intermed) in enumerate(STAGES):
+        if resume_from and i < RESUME_TO_STAGE.get(resume_from, 0):
+            stage_labels.append(f"[dim]{name} ✓ cached[/dim]")
+        elif resume_from and i == RESUME_TO_STAGE.get(resume_from, -1):
+            stage_labels.append(f"[bold cyan]{name} ← resume[/bold cyan]")
+        else:
+            stage_labels.append(f"[bold]{name}[/bold]")
+    pipeline_str = " → ".join(stage_labels)
+    console.print(f"[bold]Pipeline:[/bold] {pipeline_str}")
+    console.print()
+
     # Step 1: Parse PG text
-    if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
+    if resume_from in ("transcriptions", "alignments", "candidates-raw", "pre-verify", "pre-report"):
         cached = load_intermediate(intermed_dir, "01_pg_parsed")
         if not cached:
             raise ValueError(f"--resume-from={resume_from} but 01_pg_parsed.json not found in {intermed_dir}")
@@ -252,7 +292,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         })
 
     # Check transcriptions cache for resume
-    if resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
+    if resume_from in ("alignments", "candidates-raw", "pre-verify", "pre-report"):
         cached_transcriptions = load_intermediate(intermed_dir, "02_transcriptions")
 
     # Step 2: Get page images
@@ -260,7 +300,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     scan_pages = []
 
     if True:
-        if resume_from in ("transcriptions", "alignments", "candidates-raw", "candidates-filtered"):
+        if resume_from in ("transcriptions", "alignments", "candidates-raw", "pre-verify", "pre-report"):
             # Resuming — load transcriptions from pipeline intermediate cache
             cached = load_intermediate(intermed_dir, "02_transcriptions")
             if not cached:
@@ -397,7 +437,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 console.print("[red]All transcriptions failed. Aborting pipeline.[/red]")
                 return
 
-    if resume_from in ("alignments", "candidates-raw", "candidates-filtered"):
+    if resume_from in ("alignments", "candidates-raw", "pre-verify", "pre-report"):
         # Resume from alignments cache
         cached = load_intermediate(intermed_dir, "03_alignments")
         if not cached:
@@ -502,14 +542,13 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
     # Step 5: Text diff
     step_num = 5
-    if resume_from == "candidates-filtered":
-        cached = load_intermediate(intermed_dir, "04_candidates_raw")
+    if resume_from == "pre-verify":
+        cached = load_intermediate(intermed_dir, "05_candidates_filtered")
         if not cached:
-            raise ValueError("--resume-from=candidates-filtered but 04_candidates_raw.json not found")
+            raise ValueError("--resume-from=pre-verify but 05_candidates_filtered.json not found")
         from gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
         candidates = []
         for c in cached:
-            # Reconstruct enums that were serialized as strings
             c_copy = dict(c)
             if "category" in c_copy and isinstance(c_copy["category"], str):
                 c_copy["category"] = ErrorCategory(c_copy["category"])
@@ -517,7 +556,22 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 c_copy["severity"] = ErrorSeverity(c_copy["severity"])
             candidates.append(CandidateError(**c_copy))
         console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
-        console.print(f"  [dim]Resumed {len(candidates)} raw candidates from 04_candidates_raw[/dim]")
+        console.print(f"  [dim]Skipped — resumed {len(candidates)} filtered candidates from 05_candidates_filtered[/dim]")
+    elif resume_from == "pre-report":
+        cached = load_intermediate(intermed_dir, "06_verified_errors")
+        if not cached:
+            raise ValueError("--resume-from=pre-report but 06_verified_errors.json not found")
+        from gerrata.models import Error, ErrorCategory, ErrorSeverity
+        verified_errors = []
+        for e in cached:
+            e_copy = dict(e)
+            if "category" in e_copy and isinstance(e_copy["category"], str):
+                e_copy["category"] = ErrorCategory(e_copy["category"])
+            if "severity" in e_copy and isinstance(e_copy["severity"], str):
+                e_copy["severity"] = ErrorSeverity(e_copy["severity"])
+            verified_errors.append(Error(**e_copy))
+        console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
+        console.print(f"  [dim]Skipped — resumed {len(verified_errors)} verified errors from 06_verified_errors[/dim]")
     else:
         console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
         checker = TextDiffChecker()
@@ -529,238 +583,35 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print(f"  Raw candidates: {len(candidates)}")
         save_intermediate(intermed_dir, "04_candidates_raw", candidates)
 
-    # Step 6: False positive filter
-    console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
-    fp_filter = FalsePositiveFilter(strict=args.strict)
-    candidates = fp_filter.filter(candidates)
-    console.print(f"  After filtering: {len(candidates)}")
+    # Step 6: False positive filter + additional filtering + line numbers
+    if resume_from not in ("pre-verify", "pre-report"):
+        # Step 6: False positive filter
+        console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
+        fp_filter = FalsePositiveFilter(strict=args.strict)
+        candidates = fp_filter.filter(candidates)
+        console.print(f"  After filtering: {len(candidates)}")
 
-    # Step 6b: Word-boundary cutoff artifact filter
-    def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
-        """Check if a diff is a word-boundary cutoff artifact.
-
-        Diffs like "hen"→"when" are alignment artifacts where text was split at
-        a word boundary during transcription. The scan says "when" but the PG
-        alignment picked up only "hen" because the 'w' was part of a previous
-        matched segment. These are not real errata.
-
-        Args:
-            scan_text: Text from the scan transcription
-            pg_text: Text from the PG text
-
-        Returns:
-            True if this is likely a cutoff artifact
-        """
-        from gerrata.models import ErrorCategory
-
-        s = scan_text.strip()
-        p = pg_text.strip()
-
-        # Both must be single words (no spaces)
-        if ' ' in s or ' ' in p:
+        # Step 6b: Word-boundary cutoff artifact filter
+        def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
+            """Check if a diff is a word-boundary cutoff artifact."""
+            from gerrata.models import ErrorCategory
+            s = scan_text.strip()
+            p = pg_text.strip()
+            if ' ' in s or ' ' in p:
+                return False
+            if abs(len(s) - len(p)) != 1:
+                return False
+            longer, shorter = (s, p) if len(s) > len(p) else (p, s)
+            if not longer.startswith(shorter) and not longer.endswith(shorter):
+                return False
+            if len(shorter) <= 3:
+                return True
             return False
 
-        # One must be suffix of the other with exactly 1 char difference
-        if abs(len(s) - len(p)) != 1:
-            return False
-
-        longer, shorter = (s, p) if len(s) > len(p) else (p, s)
-
-        # Check if shorter is a prefix or suffix of longer
-        if not longer.startswith(shorter) and not longer.endswith(shorter):
-            return False
-
-        # If the shorter text is ≤ 3 chars, it's likely a fragment, not a real word
-        # This catches "hen" (3 chars) but passes "clause" (6 chars)
-        if len(shorter) <= 3:
-            return True
-
-        return False
-
-    # Apply cutoff artifact filter
-    filtered_candidates = []
-    artifacts_count = 0
-    for candidate in candidates:
-        if is_cutoff_artifact(candidate.scan_text, candidate.pg_text):
-            # Mark as alignment artifact
-            from gerrata.models import CandidateError, ErrorCategory
-            # Create a new candidate with the artifact category
-            artifact_candidate = CandidateError(
-                pg_text=candidate.pg_text,
-                scan_text=candidate.scan_text,
-                pg_offset=candidate.pg_offset,
-                scan_page=candidate.scan_page,
-                diff_description=candidate.diff_description,
-                category=ErrorCategory.ALIGNMENT_ARTIFACT,
-                severity=candidate.severity,
-            )
-            filtered_candidates.append(artifact_candidate)
-            artifacts_count += 1
-        else:
-            filtered_candidates.append(candidate)
-
-    candidates = filtered_candidates
-    if artifacts_count > 0:
-        console.print(f"  Filtered {artifacts_count} word-boundary cutoff artifacts")
-
-    # Step 6b: Filter absent-in-PG entries
-    # These are text present in the scan but completely missing from PG —
-    # often alignment artifacts where the diff spanned a paragraph boundary.
-    absent_count = 0
-    filtered_candidates = []
-    for candidate in candidates:
-        if '(absent in PG)' in candidate.pg_text or '(absent in scan)' in candidate.scan_text:
-            absent_count += 1
-            continue
-        filtered_candidates.append(candidate)
-    candidates = filtered_candidates
-    if absent_count > 0:
-        console.print(f"  Filtered {absent_count} absent-text entries (alignment artifacts)")
-
-    # Step 6c: Additional false positive filters
-    console.print(f"[bold blue]Step {step_num + 1}c:[/bold blue] Additional filtering...")
-
-    # Filter 1: Long mismatch filter
-    def is_long_mismatch(scan_text: str, pg_text: str) -> bool:
-        """Check if a diff is a long mismatch artifact.
-        
-        Alignment sometimes spans multiple sentences, producing diffs where one side
-        is a short phrase and the other is 40+ chars of unrelated text.
-        
-        Args:
-            scan_text: Text from the scan transcription
-            pg_text: Text from the PG text
-            
-        Returns:
-            True if this is likely a long mismatch artifact
-        """
-        return len(scan_text.strip()) > 40 or len(pg_text.strip()) > 40
-
-    # Filter 2: HTML artifact filter
-    def is_html_artifact(scan_text: str, pg_text: str) -> bool:
-        """Check if a diff contains HTML/image markup artifacts.
-        
-        GLM-OCR sometimes picks up HTML markup from the scan.
-        
-        Args:
-            scan_text: Text from the scan transcription
-            pg_text: Text from the PG text
-            
-        Returns:
-            True if this contains HTML/image markup
-        """
-        combined = scan_text + pg_text
-        return any(marker in combined for marker in ['<div', '<span', 'bbox=', '![](', '<img', '</div'])
-
-    # Filter 3: ALL CAPS header filter
-    def is_all_caps_header(scan_text: str) -> bool:
-        """Check if scan text is an ALL CAPS header artifact.
-        
-        Chapter titles and ornamental headers get mismatched.
-        Only check scan_text since pg_text could legitimately be uppercase.
-        
-        Args:
-            scan_text: Text from the scan transcription
-            
-        Returns:
-            True if this is likely an ALL CAPS header mismatch
-        """
-        stripped = scan_text.strip()
-        return stripped.isupper() and len(stripped) > 5
-
-    # Filter 4: Suffix fragment filter (extended)
-    def is_suffix_fragment(scan_text: str, pg_text: str) -> bool:
-        """Check if a diff is a suffix/prefix fragment artifact.
-        
-        Longer word-boundary fragments like "terson,"→"Utterson,", "ugh"→"through".
-        These are cases where the diff picked up a tail end of a word.
-        
-        Args:
-            scan_text: Text from the scan transcription
-            pg_text: Text from the PG text
-            
-        Returns:
-            True if this is likely a suffix fragment artifact
-        """
-        s = scan_text.strip()
-        p = pg_text.strip()
-        
-        # Both must be single tokens (no spaces in shorter)
-        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
-        if ' ' in shorter:
-            return False
-        
-        # Length difference must be small (≤3 chars)
-        if len(longer) - len(shorter) > 3:
-            return False
-        
-        # Shorter must be a suffix of longer
-        if not longer.endswith(shorter):
-            return False
-        
-        # Exception: singular/plural (e.g., "clause" → "clauses")
-        # If longer ends with 's' and removing it gives the shorter text, it's a real error
-        if longer.endswith('s') and longer[:-1] == shorter and len(shorter) >= 4:
-            return False  # Likely a real singular/plural difference
-        if longer.endswith('es') and longer[:-2] == shorter and len(shorter) >= 4:
-            return False  # Same for -es endings
-        
-        # Exception: the shorter text is long enough to be a real word (≥6 chars)
-        # Let's be conservative: only filter if shorter is ≤8 chars
-        if len(shorter) > 8:
-            return False
-        
-        return True
-
-    # Filter 5: Quoted fragment filter
-    def is_quoted_fragment(scan_text: str, pg_text: str) -> bool:
-        """Check if a diff is a quoted fragment artifact.
-        
-        When dialogue starts with a quotation mark, the alignment sometimes grabs
-        just the opening quote+word while PG has the full quoted sentence.
-        
-        Args:
-            scan_text: Text from the scan transcription
-            pg_text: Text from the PG text
-            
-        Returns:
-            True if this is likely a quoted fragment artifact
-        """
-        s = scan_text.strip()
-        p = pg_text.strip()
-        
-        # Check if shorter starts with a quote
-        shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
-        if not shorter:
-            return False
-        
-        starts_with_quote = shorter[0] in '"\u201c\u201d\u2018\u00ab'  # " " ' ' «
-        if not starts_with_quote:
-            return False
-        
-        # Length difference must be significant (>20 chars)
-        if len(longer) - len(shorter) <= 20:
-            return False
-        
-        return True
-
-    # Apply all filters
-    FILTERS = [
-        ("Long mismatches", is_long_mismatch),
-        ("HTML artifacts", is_html_artifact),
-        ("ALL CAPS headers", lambda s, p: is_all_caps_header(s)),
-        ("Suffix fragments", is_suffix_fragment),
-        ("Quoted fragments", is_quoted_fragment),
-    ]
-
-    filtered_candidates = []
-    filter_counts = {name: 0 for name, _ in FILTERS}
-    
-    for candidate in candidates:
-        filtered = False
-        for filter_name, filter_fn in FILTERS:
-            if filter_fn(candidate.scan_text, candidate.pg_text):
-                # Mark as alignment artifact
+        filtered_candidates = []
+        artifacts_count = 0
+        for candidate in candidates:
+            if is_cutoff_artifact(candidate.scan_text, candidate.pg_text):
                 from gerrata.models import CandidateError, ErrorCategory
                 artifact_candidate = CandidateError(
                     pg_text=candidate.pg_text,
@@ -772,56 +623,159 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                     severity=candidate.severity,
                 )
                 filtered_candidates.append(artifact_candidate)
-                filter_counts[filter_name] += 1
-                filtered = True
-                break
-        if not filtered:
+                artifacts_count += 1
+            else:
+                filtered_candidates.append(candidate)
+        candidates = filtered_candidates
+        if artifacts_count > 0:
+            console.print(f"  Filtered {artifacts_count} word-boundary cutoff artifacts")
+
+        # Step 6b: Filter absent-in-PG entries
+        absent_count = 0
+        filtered_candidates = []
+        for candidate in candidates:
+            if '(absent in PG)' in candidate.pg_text or '(absent in scan)' in candidate.scan_text:
+                absent_count += 1
+                continue
             filtered_candidates.append(candidate)
+        candidates = filtered_candidates
+        if absent_count > 0:
+            console.print(f"  Filtered {absent_count} absent-text entries (alignment artifacts)")
 
-    # Log filtering results
-    total_filtered = sum(filter_counts.values())
-    if total_filtered > 0:
-        console.print(f"  Filtered {total_filtered} additional alignment artifacts:")
-        for filter_name, count in filter_counts.items():
-            if count > 0:
-                console.print(f"    - {filter_name}: {count}")
+        # Step 6c: Additional false positive filters
+        console.print(f"[bold blue]Step {step_num + 1}c:[/bold blue] Additional filtering...")
 
-    candidates = filtered_candidates
+        def is_long_mismatch(scan_text: str, pg_text: str) -> bool:
+            return len(scan_text.strip()) > 40 or len(pg_text.strip()) > 40
 
-    # Step 6d: Calculate pg_file_line for each candidate (body-text approximation)
-    # Note: ReportGenerator.enrich_errors_with_context() will refine these to
-    # PG HTML file line numbers using compute_line_number().
-    console.print(f"[bold blue]Step {step_num + 1}d:[/bold blue] Computing line numbers...")
-    for candidate in candidates:
-        # Find the PG text by string search (pg_offset may be inaccurate)
-        pg_text = candidate.pg_text
-        if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
-            pg_text = candidate.scan_text
-        pos = parsed.body_text.find(pg_text)
-        if pos >= 0:
-            candidate.pg_file_line = parsed.body_text[:pos].count('\n') + 1
+        def is_html_artifact(scan_text: str, pg_text: str) -> bool:
+            combined = scan_text + pg_text
+            return any(marker in combined for marker in ['<div', '<span', 'bbox=', '![](', '<img', '</div'])
+
+        def is_all_caps_header(scan_text: str) -> bool:
+            stripped = scan_text.strip()
+            return stripped.isupper() and len(stripped) > 5
+
+        def is_suffix_fragment(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+            shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+            if ' ' in shorter:
+                return False
+            if len(longer) - len(shorter) > 3:
+                return False
+            if not longer.endswith(shorter):
+                return False
+            if longer.endswith('s') and longer[:-1] == shorter and len(shorter) >= 4:
+                return False
+            if longer.endswith('es') and longer[:-2] == shorter and len(shorter) >= 4:
+                return False
+            if len(shorter) > 8:
+                return False
+            return True
+
+        def is_quoted_fragment(scan_text: str, pg_text: str) -> bool:
+            s = scan_text.strip()
+            p = pg_text.strip()
+            shorter, longer = (s, p) if len(s) <= len(p) else (p, s)
+            if not shorter:
+                return False
+            starts_with_quote = shorter[0] in '"\u201c\u201d\u2018\u00ab'
+            if not starts_with_quote:
+                return False
+            if len(longer) - len(shorter) <= 20:
+                return False
+            return True
+
+        FILTERS = [
+            ("Long mismatches", is_long_mismatch),
+            ("HTML artifacts", is_html_artifact),
+            ("ALL CAPS headers", lambda s, p: is_all_caps_header(s)),
+            ("Suffix fragments", is_suffix_fragment),
+            ("Quoted fragments", is_quoted_fragment),
+        ]
+
+        filtered_candidates = []
+        filter_counts = {name: 0 for name, _ in FILTERS}
+        for candidate in candidates:
+            filtered = False
+            for filter_name, filter_fn in FILTERS:
+                if filter_fn(candidate.scan_text, candidate.pg_text):
+                    from gerrata.models import CandidateError, ErrorCategory
+                    artifact_candidate = CandidateError(
+                        pg_text=candidate.pg_text,
+                        scan_text=candidate.scan_text,
+                        pg_offset=candidate.pg_offset,
+                        scan_page=candidate.scan_page,
+                        diff_description=candidate.diff_description,
+                        category=ErrorCategory.ALIGNMENT_ARTIFACT,
+                        severity=candidate.severity,
+                    )
+                    filtered_candidates.append(artifact_candidate)
+                    filter_counts[filter_name] += 1
+                    filtered = True
+                    break
+            if not filtered:
+                filtered_candidates.append(candidate)
+
+        total_filtered = sum(filter_counts.values())
+        if total_filtered > 0:
+            console.print(f"  Filtered {total_filtered} additional alignment artifacts:")
+            for filter_name, count in filter_counts.items():
+                if count > 0:
+                    console.print(f"    - {filter_name}: {count}")
+        candidates = filtered_candidates
+
+        # Step 6d: Calculate pg_file_line for each candidate
+        console.print(f"[bold blue]Step {step_num + 1}d:[/bold blue] Computing line numbers...")
+        for candidate in candidates:
+            pg_text = candidate.pg_text
+            if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
+                pg_text = candidate.scan_text
+            pos = parsed.body_text.find(pg_text)
+            if pos >= 0:
+                candidate.pg_file_line = parsed.body_text[:pos].count('\n') + 1
+            else:
+                candidate.pg_file_line = parsed.body_text[:candidate.pg_offset].count('\n') + 1
+        console.print(f"  Computed line numbers for {len(candidates)} candidates")
+        save_intermediate(intermed_dir, "05_candidates_filtered", candidates)
+    else:
+        if resume_from == "pre-verify":
+            console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
+            console.print(f"  [dim]Skipped — loaded pre-filtered candidates from 05_candidates_filtered[/dim]")
         else:
-            # Fallback to offset-based
-            candidate.pg_file_line = parsed.body_text[:candidate.pg_offset].count('\n') + 1
-    console.print(f"  Computed line numbers for {len(candidates)} candidates")
-    save_intermediate(intermed_dir, "05_candidates_filtered", candidates)
+            console.print(f"[bold blue]Step {step_num + 1}:[/bold blue] Filtering false positives...")
+            console.print(f"  [dim]Skipped — loaded verified errors from 06_verified_errors[/dim]")
 
-    # Step 7: Programmatic verification — fast, deterministic, no hallucination
-    console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
-    prog_verifier = ProgrammaticVerifier(
-        pg_text=parsed.body_text,
-        alignments=alignments,
-    )
-    verified_errors = prog_verifier.verify_batch(candidates)
+    # Step 7: Programmatic verification
+    if resume_from != "pre-report":
+        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
+        prog_verifier = ProgrammaticVerifier(
+            pg_text=parsed.body_text,
+            alignments=alignments,
+        )
+        verified_errors = prog_verifier.verify_batch(candidates)
 
-    # Count by confidence level
-    high = sum(1 for e in verified_errors if e.confidence >= 0.8)
-    med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
-    low = sum(1 for e in verified_errors if e.confidence < 0.5)
-    console.print(f"  High confidence (≥0.8): {high}")
-    console.print(f"  Medium confidence (0.5-0.8): {med}")
-    console.print(f"  Low confidence (<0.5): {low}")
-    console.print(f"  Total verified: {len(verified_errors)}")
+        # Save verified errors as intermediate
+        save_intermediate(intermed_dir, "06_verified_errors", verified_errors)
+
+        high = sum(1 for e in verified_errors if e.confidence >= 0.8)
+        med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
+        low = sum(1 for e in verified_errors if e.confidence < 0.5)
+        console.print(f"  High confidence (≥0.8): {high}")
+        console.print(f"  Medium confidence (0.5-0.8): {med}")
+        console.print(f"  Low confidence (<0.5): {low}")
+        console.print(f"  Total verified: {len(verified_errors)}")
+    else:
+        console.print(f"[bold blue]Step {step_num + 2}:[/bold blue] Programmatic verification...")
+        high = sum(1 for e in verified_errors if e.confidence >= 0.8)
+        med = sum(1 for e in verified_errors if 0.5 <= e.confidence < 0.8)
+        low = sum(1 for e in verified_errors if e.confidence < 0.5)
+        console.print(f"  [dim]Skipped — resumed {len(verified_errors)} verified errors from 06_verified_errors[/dim]")
+        console.print(f"  High confidence (≥0.8): {high}")
+        console.print(f"  Medium confidence (0.5-0.8): {med}")
+        console.print(f"  Low confidence (<0.5): {low}")
+        console.print(f"  Total verified: {len(verified_errors)}")
 
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")
