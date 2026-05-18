@@ -385,6 +385,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             concurrency=args.concurrency,
             cache_file=f"cache/{scan_id}_transcriptions.json",
             transcription_log=transcription_log,
+            cleanup_pages=True,
         )
 
             transcriptions = await transcriber.transcribe_pages(page_images)

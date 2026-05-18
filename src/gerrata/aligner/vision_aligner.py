@@ -527,6 +527,7 @@ class VisionTranscriber:
         disable_cache: bool = False,
         concurrency: int = 1,
         transcription_log: str | Path | None = None,
+        cleanup_pages: bool = False,
     ):
         """Initialize transcriber.
 
@@ -538,10 +539,12 @@ class VisionTranscriber:
             timeout: Request timeout in seconds.
             ocr_engine: "tesseract" (local, free) or "vision" (LLM API).
             cache_file: Path to transcription cache file (default: cache/transcription_cache.json).
-            disable_cache: If True, disable all caching.
+        disable_cache: If True, disable all caching.
             concurrency: Number of concurrent API calls (default: 1).
             transcription_log: Path to JSONL file for crash-resilient transcription progress.
                 Each completed page is appended as one line. Used for auto-resume after crashes.
+            cleanup_pages: If True, delete PNG files after successful transcription to free
+                memory and disk. Essential for large books (500+ pages) on constrained systems.
         """
         self.api_url = api_url
         self.api_key = api_key or _load_openrouter_key() or DEFAULT_API_KEY
@@ -553,8 +556,19 @@ class VisionTranscriber:
         self.disable_cache = disable_cache
         self.concurrency = concurrency
         self.transcription_log = Path(transcription_log) if transcription_log else None
+        self.cleanup_pages = cleanup_pages
         self.cache_data = self._load_cache() if not disable_cache and self.cache_file else {}
         self.cache_stats = {"hits": 0, "misses": 0, "saves": 0}
+
+    def _cleanup_page_image(self, image_path: Path) -> None:
+        """Delete a page PNG after successful transcription to free memory and disk."""
+        if not self.cleanup_pages or not image_path or not image_path.exists():
+            return
+        try:
+            image_path.unlink()
+            logger.debug(f"Cleaned up page image: {image_path.name}")
+        except IOError as e:
+            logger.debug(f"Failed to clean up {image_path.name}: {e}")
 
     def _load_cache(self) -> dict:
         """Load transcription cache from disk, evicting entries for wrong models."""
@@ -897,6 +911,8 @@ class VisionTranscriber:
                         logger.info(f"  → {len(result.transcription)} chars via {result.model_used}")
                     # Append to crash-resilient log
                     self._append_transcription_log(result)
+                    # Free memory/disk by deleting the page image
+                    self._cleanup_page_image(path)
                 else:
                     logger.warning(f"  → Failed: {result.error}")
                 return (i, result)
@@ -964,6 +980,7 @@ class VisionTranscriber:
                 # Log retried pages too
                 if retry_result.success:
                     self._append_transcription_log(retry_result)
+                    self._cleanup_page_image(image_paths[idx])
 
             still_failed = [(i, r) for i, r in enumerate(results) if r is not None and not r.success]
             recovered = len(failed_indices) - len(still_failed)
