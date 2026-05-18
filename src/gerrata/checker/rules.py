@@ -14,6 +14,7 @@ import re
 from dataclasses import dataclass
 
 from gerrata.models import CandidateError, ErrorCategory
+from gerrata.checker.us_uk_spelling import is_us_uk_variant
 
 logger = logging.getLogger(__name__)
 
@@ -179,6 +180,16 @@ class FalsePositiveFilter:
         has_initials = bool(re.search(r'[a-z]\.[a-z]', combined_lower))
         pg_words = re.sub(r"[^\w]", "", pg)
         scan_words = re.sub(r"[^\w]", "", scan)
+
+        # Check for US/UK spelling variants — filter these as false positives
+        # Both spellings are correct English; neither is a transcription error.
+        if is_us_uk_variant(pg_words, scan_words):
+            return FilterResult(
+                error=error,
+                is_false_positive=True,
+                reason="US/UK spelling variant (not a scanno)",
+            )
+
         if pg_words == scan_words and not has_initials:
             return FilterResult(
                 error=error,
