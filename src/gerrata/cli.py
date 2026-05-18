@@ -322,6 +322,14 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             elif args.jp2_zip:
                 # Use local zip
                 zip_path = Path(args.jp2_zip)
+                if not scan_id:
+                    # Derive scan_id from filename: "draculabr00stokuoft_jp2.zip" → "draculabr00stokuoft"
+                    stem = zip_path.stem
+                    if stem.endswith("_jp2"):
+                        scan_id = stem[:-4]
+                        console.print(f"  Derived scan_id: {scan_id}")
+                    else:
+                        console.print(f"  [dim]Could not derive scan_id from filename — report will show 'local'[/dim]")
                 extract_dir = zip_path.parent / "pages"
                 page_images = scan_fetcher.extract_jp2_zip(
                     zip_path, dest=extract_dir, page_range=page_range
