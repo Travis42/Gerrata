@@ -3,22 +3,11 @@
 Updated: 2026-05-15
 
 ## Provenance Policy
-After PG rejected our Moby Dick errata (wrong edition), we now require **verified source edition**
-before running the pipeline. Only books where the PG text explicitly states its source edition
-are eligible. See `research/2026-05-15-pg-feedback-lessons.md` for the full rejection analysis.
+PG requires the scan compared against to match the edition that the PG text is based on.  But also...
 
 # PG editions are not tied to any one edition, necessarily
-- errata should be limited to real errors of total misunderstanding or misspelling, rather than attempting to match diction to a specific edition of a work.  
+- errata should be limited to real errors of total misunderstanding, rather than attempting to match diction to a specific edition of a work.  
 - British vs American spellings fall wherever the PG text ended up originally, and aren't errata.
-
-
-
-
-princicipally→principally, permited→permitted, tratorous→traitorous, teh→the
-
-permited, tratorous, dispotic, splended, expdition, paticipating, appretiated, preparatoy, knowlede, Boulonge, Strasburg, etc.
-
-Real scannos visible: appretiated→appreciated, Boulogne→Boulonge, Strasburgh→Strasburg, instigation→investigation, objections→abjections, ennobled→enabled.
 
 ## Processed
 
