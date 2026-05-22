@@ -9,11 +9,11 @@
 ## How It Works
 
 1. **Fetch** the PG text (HTML or plain text) and the corresponding source scan from the Internet Archive
-2. **Transcribe** each scan page using a vision model (vision LLM) to get clean text from the physical book pages
-3. **Align** transcriptions to the PG text using the RETAS algorithm (unique word anchors → LCS ordering → position lock → local diff)
+2. **Transcribe** each scan page using a vision model to get clean text from the physical book pages
+3. **Align** transcriptions to the PG text using global word-sequence matching (distinctive phrase anchors → position lock)
 4. **Diff** aligned passages to find candidate errors
-5. **Filter** false positives using rule-based heuristics (alignment artifacts, typography variants, punctuation normalization, HTML leaks, cutoff fragments, quoted fragments)
-6. **Verify** remaining candidates by showing them to a vision model that looks at the actual scan page and classifies each difference: real error, edition variant, or intentional modernization
+5. **Filter** false positives using rule-based heuristics (alignment artifacts, typography variants, US/UK spelling, modernization, hyphenation, cutoff fragments)
+6. **Verify** remaining candidates with programmatic confidence scoring (context match, edit distance, alignment quality, diff characteristics)
 7. **Report** produces two files:
    - `errata_email.txt` — ready to send to PG, with only confirmed errors in arrow format
    - `review_needed.txt` — items that need human judgment before submitting
@@ -24,7 +24,7 @@
 # Install
 pip install gerrata
 
-# Set your OpenRouter API key
+# Set your API key (vision model is needed for page transcription)
 export OPENROUTER_API_KEY="your-api-key-here"
 # Or store it in ~/.secrets/openrouter.key
 
@@ -42,7 +42,7 @@ This will:
 - Align, diff, filter, and verify
 - Generate reports in `./reports/`
 
-### Using Local Files
+## Using Local Files
 
 If you already have the files, skip the downloads:
 
@@ -50,11 +50,21 @@ If you already have the files, skip the downloads:
 gerrata 43 \
   --pg-file /path/to/43-h.htm \
   --jp2-zip /path/to/06-stevenson-jekyll-hyde_jp2.zip \
-  --vision-key "$ZAI_API_KEY" \
+  --vision-key "$OPENROUTER_API_KEY" \
   -o reports
 ```
 
-### Page Range
+You can also point to a directory of pre-extracted PNG page images:
+
+```bash
+gerrata 43 \
+  --pg-file /path/to/43-h.htm \
+  --pages-dir /path/to/extracted-pages \
+  --vision-key "$OPENROUTER_API_KEY" \
+  -o reports
+```
+
+## Page Range
 
 To process a subset of pages (useful for testing or large books):
 
@@ -62,61 +72,39 @@ To process a subset of pages (useful for testing or large books):
 gerrata 43 \
   --scan-id "06-stevenson-jekyll-hyde" \
   --page-range "40-100" \
-  --vision-key "$ZAI_API_KEY" \
+  --vision-key "$OPENROUTER_API_KEY" \
   -o reports
 ```
 
-### Resuming from an Intermediate Step
+## Pipeline Resume
 
-The pipeline saves intermediate results at each step. If you want to re-run from a specific step (e.g., after fixing a bug in the aligner), use `--resume-from`:
+The pipeline saves intermediate results at each step. If a run crashes or you want to re-run from a specific step (e.g., after fixing a bug in filtering), use `--resume-from`:
 
 ```bash
-# Re-run from alignment (skips PG parsing, page extraction, and transcription)
+# Re-run from verification (skips PG parsing, page extraction, transcription, alignment, and diff)
 gerrata 2701 \
   --scan-id mobydick0001herm \
-  --resume-from alignments \
-  --vision-url "https://openrouter.ai/api/v1/chat/completions" \
-  --vision-key "$OPENROUTER_KEY" \
-  --vision-model "qwen/qwen3-vl-8b-instruct" \
-  --verify-model "mistralai/mistral-small-3.2-24b-instruct" \
+  --resume-from pre-verify \
+  --vision-key "$OPENROUTER_API_KEY" \
   -o reports
 ```
 
-Available resume points:
+### Available Resume Points
 
-| Resume point | What it skips | When to use |
+→ pg-parsed → transcribe → align → diff → filter → verify → report
+
+| Resume point | Skips these steps | When to use |
 |---|---|---|
-| `pg-parsed` | PG text download + parse | Testing alignment or later steps |
-| `transcriptions` | + page images + vision transcription | Testing alignment, diff, or later steps |
-| `alignments` | + alignment computation | Testing diff, filtering, verification, or reporting |
-| `candidates-raw` | + text diff | Testing filtering, verification, or reporting |
-| `candidates-filtered` | + false positive filtering | Testing verification or reporting |
+| `pg-parsed` | Download + parse PG text | Testing alignment or later |
+| `transcriptions` | + page images + transcription | Testing alignment, diff, or later |
+| `alignments` | + alignment computation | Testing diff, filtering, or later |
+| `candidates-raw` | + text diff | Testing filtering, verification, or later |
+| `pre-verify` | + false positive filtering | Testing verification or reporting |
+| `pre-report` | + programmatic verification | Testing report generation |
 
 Intermediate files are saved in `cache/{scan-id}/` (e.g., `cache/mobydick0001herm/01_pg_parsed.json`, `02_transcriptions.json`, etc.).
 
-### Skip Verification (Fast/Free)
-
-Omit LLM verification if you just want raw diffs:
-
-```bash
-gerrata 43 \
-  --scan-id "06-stevenson-jekyll-hyde" \
-  --no-verify \
-  --vision-key "$ZAI_API_KEY" \
-  -o reports
-```
-
-### Re-filtering Saved Results
-
-After a pipeline run, you may want to tighten the errata email without re-running the entire pipeline (which involves expensive vision API calls). The replay script applies filters to the saved JSON and regenerates the email:
-
-```bash
-python3 replay_filters.py reports/gutenberg43-the-strange-case-of-dr-jekyll-and-mr-hyde_errata.json
-```
-
-This applies all alignment-artifact filters, deduplicates by offset proximity, then runs post-dedup filters (punctuation-only changes, quote-start fragments) and uses a stricter ≥85% confidence threshold. Output goes to `reports/replay_output/`.
-
-**Why two paths?** The pipeline's `generator.py` produces reports with a conservative ≥80% threshold and `Line N` references (matching the PG HTML file). The replay script produces a separate, tighter email with `Page N` references (matching the scan) and context sentences — useful for manual review before submitting to PG.
+Crash-resilient transcription is built in: if the process dies mid-transcription, a JSONL log tracks completed pages. Resuming will skip already-transcribed pages automatically.
 
 ## Output Files
 
@@ -129,43 +117,29 @@ After a pipeline run, the output directory contains:
 | `gutenberg{ID}-*_errata_email.txt` | Submit-ready errata report in PG's preferred format |
 | `gutenberg{ID}-*_review_needed.txt` | Items needing human review before submission |
 
-### errata_email.txt (pipeline output)
+### errata_email.txt
 
-Generated by the pipeline. Uses line numbers and arrow format:
-
-```
-The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson
- [EBook #43]
- File: 43-h.htm
- Verified against Internet Archive scan: https://archive.org/details/06-stevenson-jekyll-hyde
-
- 3 errors ready for submission
- 5 items need your review (see review_needed.txt)
-
- Line 100:
- Context: ...every time he looked at my prisoner...
- respectors ==> respecters
-```
-
-### errata_email.txt (replay output)
-
-Generated by `replay_filters.py`. Uses page numbers (matching the scan) and context sentences for easier visual verification:
+Generated by the pipeline. Uses page numbers, scan links, and arrow format:
 
 ```
-The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson
- [EBook #43]
- File: 43-h.htm
+In Alice's Adventures in Wonderland, by Lewis Carroll, [EBook #11],
+File: 11.txt,
+I verified the following changes against the Internet Archive scan:
+https://archive.org/details/alicesadventur00carr
+NOTE: Page numbers are 'of the scan' not 'of the book.'
 
- 39 errors ready for submission
+Page 24 (https://archive.org/details/alicesadventur00carr/page/n24/mode/1up):
+How funny it'll seem to come out among the people that walk with their heads downward!
+downward! ==> downwards!
 
-Page 42: sawbones turn -> Sawbones turned
-  Context: Well, sir, he was like the rest of us; every time he looked at my prisoner, I saw that sawbones turn sick and white with the desire to kill him.
+Page 105 (https://archive.org/details/alicesadventur00carr/page/n105/mode/1up):
+The cook threw a frying-pan after her as she went out, but it just missed her.
+went out, ==> went,
 
-Page 59: respectors -> respecters
-  Context: For these two were old friends, old mates both at school and college, both thorough respectors of themselves and of each other, and what does not always follow, men who thoroughly enjoyed each other&rsquo;s company.
+---
 
-Page 102: plies -> piles
-  Context: A closet was filled with wine; the plate was of silver, the napery elegant; a good picture hung upon the walls, a gift (as Utterson supposed) from Henry Jekyll, who was much of a connoisseur; and the carpets were of many plies and agreeable in colour.
+These errata were found using Gerrata (https://github.com/travis42/gerrata) and refined by a human reviewer (me).
+Please reach out if you would like to discuss Gerrata or this report.
 ```
 
 ### review_needed.txt
@@ -173,13 +147,16 @@ Page 102: plies -> piles
 Items the tool couldn't confidently classify. Each includes the verdict, a scan page link for manual verification, and a prompt for what to decide:
 
 ```
+Quality Audit Review Items: The Strange Case Of Dr. Jekyll And Mr. Hyde (PG #43)
+
 2 items need your decision before submission
 ---
 
-[?] Line 335, Page 1, (STORY OF THE DOOR)
+[?] Line 335, Page 48, (STORY OF THE DOOR)
     PG text: returned Enfield. "But
     Scan text: " But
     Verdict: unable_to_verify (50%)
+    Reasoning: Low context match suggests possible alignment issue
     Action needed: Check scan and decide if PG punctuation is wrong
     Scan page: https://archive.org/details/06-stevenson-jekyll-hyde/page/n48/mode/1up
 ```
@@ -192,52 +169,61 @@ Verdict prefixes:
 
 ## Filtering
 
-The pipeline applies filters in two stages:
+The pipeline applies filters at multiple stages:
 
-### Stage 1: Alignment artifact filters (before verification)
+### Stage 1: False Positive Filter (programmatic)
 
-Applied to raw candidates before LLM verification, to avoid wasting API calls:
+Deterministic rules applied before verification:
 
-| Filter | What it catches |
-|--------|----------------|
-| Absent text | `(absent in PG)` or `(absent in scan)` markers from window overshoot |
-| Word-boundary cutoff | Short fragments like `hen` → `when` (≤3 char suffix) |
-| Long mismatch | One side >40 chars (alignment spanned too far) |
-| HTML artifact | `<div>`, `<span>`, `bbox=` leaked from scan OCR |
-| ALL CAPS header | Chapter titles matched as errors |
-| Suffix fragment | `terson` → `Utterson` (≤8 char tail fragment) |
-| Quoted fragment | Opening quote grabbed alone, rest of sentence on other side |
+→ Alignment artifacts (absent in PG/scan, long mismatches, HTML leaks)
+→ Typography conversions (smart quotes, em dashes, ligatures)
+→ Intentional modernizations (e.g., `someone` ↔ `some one`, `tonight` ↔ `to-night`)
+→ US/UK spelling variants (e.g., `favour` ↔ `favor`, `colour` ↔ `color`)
+→ Edition variants (e.g., `;` ↔ `:`, spelling differences)
+→ Punctuation/whitespace-only changes
+→ Line-breaking hyphenation artifacts (e.g., `some- thing` ↔ `something`)
 
-### Stage 2: Post-verification filters (email generation)
+### Stage 2: Alignment Artifact Filters (pipeline)
 
-Applied when generating the errata email:
+Applied to raw candidates before verification:
 
-| Filter | What it catches |
-|--------|----------------|
-| Confidence < 0.8 | Low-confidence classifications (pipeline) or < 0.85 (replay) |
-| Edition variant | `;` ↔ `:`, `downright` ↔ `down-right`, spelling differences |
-| Intentional modernization | `someone` ↔ `some one`, `tonight` ↔ `to-night` |
-| Alignment artifact | Category-tagged items from stage 1 |
-| Dedup (offset) | Same error found multiple times within 50 chars |
-| Dedup (line) | Multiple errors on the same PG file line |
+→ Absent text: `(absent in PG)` or `(absent in scan)` markers from window overshoot
+→ Word-boundary cutoff: Short fragments like `hen` → `when` (≤3 char suffix)
+→ Long mismatch: One side >40 chars (alignment spanned too far)
+→ HTML artifact: `<div>`, `<span>`, `bbox=` leaked from scan OCR
+→ ALL CAPS header: Chapter titles matched as errors
+→ Suffix fragment: `terson` → `Utterson` (≤8 char tail fragment)
+→ Quoted fragment: Opening quote grabbed alone, rest of sentence on other side
 
-### Stage 2b: Replay post-dedup filters
+### Stage 3: Report Filters (email generation)
 
-Additional filters applied only by `replay_filters.py` after offset dedup:
+Applied when building the errata email:
 
-| Filter | What it catches |
-|--------|----------------|
-| Punctuation-only | `men;` → `men :` (stripped words identical) |
-| Quote-start fragment | `eplied Poole, "and` → `" and` (dialogue reassembly) |
+→ Low confidence (< 0.4) — likely artifacts
+→ Alignment artifacts, edition variants, modernization — already classified
+→ Deduplication (within 50 char offset proximity)
+→ Punctuation-only and quote-start fragment filters (post-dedup)
+
+## Programmatic Verification
+
+Gerrata uses deterministic confidence scoring instead of LLM verification. Each candidate gets a confidence score (0.0–1.0) based on:
+
+1. **Context match ratio** — how well the surrounding words match between PG and scan
+2. **Edit distance** — how similar the PG and scan words are
+3. **Alignment quality** — the confidence of the page alignment
+4. **Diff characteristics** — word lengths, single-vs-multi-word diffs
+
+Scores above 0.8 are considered high-confidence. The errata email includes items with confidence ≥ 0.4 (lowered threshold catches more candidates; the review file shows lower-confidence items for manual inspection).
 
 ## Filing an Errata Report with Project Gutenberg
 
 ### How to Submit
 
-1. **Review** the replay email output (`reports/replay_output/gutenberg43-errata_email.txt`)
-2. **Verify** errors by checking context sentences and, if needed, the scan page images
-3. **Remove** any items you disagree with from the email
-4. **Email** the final content to:
+1. **Review** the errata email output (`reports/gutenberg{ID}-*_errata_email.txt`)
+2. **Verify** errors by checking context and the scan page links
+3. **Check** `review_needed.txt` for items that need your judgment
+4. **Remove** any items you disagree with from the email
+5. **Email** the final content to:
 
    **errata2026@pglaf.org** (remove spaces)
 
@@ -248,23 +234,11 @@ Additional filters applied only by `replay_filters.py` after offset dedup:
 PG's errata page (<https://www.gutenberg.org/help/errata.html>) specifies:
 - Include the **full title, author, and eBook number**
 - Include the **file name** (e.g., `43-h.htm`)
-- Use **line numbers** to pinpoint errors
+- Use **line numbers** or **page numbers** to pinpoint errors
 - Give **enough context** to find the error (not just a single common word)
 - Use the **arrow format**: `erroneous ==> corrected`
 - **Do NOT** send full corrected paragraphs — it buries the error
 - When you've verified against a scan, **mention the source used**
-
-### Example Errata Report
-
-```
-In Stevenson's "The Strange Case Of Dr. Jekyll And Mr. Hyde," EBook #43, File: 43-h.htm,
-
-Verified against Internet Archive scan: https://archive.org/details/06-stevenson-jekyll-hyde
-
- Line 130, in the chapter "SEARCH FOR MR. HYDE":
- assed
- assed ==> passed
-```
 
 ## Finding a Source Scan
 
@@ -287,6 +261,34 @@ The test fixture uses IA identifier `06-stevenson-jekyll-hyde`:
 - PDF: <https://archive.org/download/06-stevenson-jekyll-hyde/06-Stevenson-JekyllHyde.pdf>
 - JP2 zip: <https://archive.org/download/06-stevenson-jekyll-hyde/06-stevenson-jekyll-hyde_jp2.zip>
 
+## Batch Processing
+
+Gerrata includes scripts for auditing multiple books in sequence.
+
+### Build a Queue
+
+```bash
+# Build queue from PG Top 100, search IA for matching scans
+python3 scripts/batch_prepare.py --limit 30
+```
+
+This creates `cache/batch_queue.json` with books that have matching IA scans and haven't been processed yet.
+
+### Process a Queue
+
+```bash
+# Process the full queue
+python3 scripts/batch_process.py
+
+# Process just the next 5 books
+python3 scripts/batch_process.py --limit 5
+
+# Resume from book 10 in the queue
+python3 scripts/batch_process.py --start 10
+```
+
+Each book runs the full pipeline, generates reports, and cleans up disk space afterward. Completed books are tracked in `cache/completed.json`.
+
 ## Requirements
 
 - Python 3.10+
@@ -295,7 +297,7 @@ The test fixture uses IA identifier `06-stevenson-jekyll-hyde`:
 
 ### Setting Up an API Key
 
-The tool needs access to a vision-capable LLM (for page transcription and error verification). It works with **any OpenAI-compatible API** — just set the URL and key.
+The tool needs access to a vision-capable LLM for page transcription. It works with **any OpenAI-compatible API** — just set the URL and key.
 
 **Default provider: OpenRouter** (Gemini 3.1 Flash Lite)
 
@@ -329,7 +331,7 @@ gerrata 43 \
 
 **Option 4: Using a different provider (OpenAI, Anthropic, etc.)**
 
-Any OpenAI-compatible endpoint works. For example, with OpenAI:
+Any OpenAI-compatible endpoint works:
 
 ```bash
 gerrata 43 \
@@ -342,30 +344,19 @@ gerrata 43 \
 
 The default is OpenRouter with Gemini 3.1 Flash Lite, but this is not a hard dependency — change `--vision-url` and `--vision-model` to use whichever provider you prefer.
 
-### Split Endpoint Configuration
-
-You can use different API endpoints for transcription and verification if needed.
-
-```bash
-gerrata 43 \
-  --scan-id "some-scan-id" \
-  --vision-model "google/gemini-3.1-flash-lite" \
-  --verify-model "google/gemini-3.1-flash-lite" \
-  -o reports
-```
-
-If you only specify `--vision-*` flags, the same endpoint will be used for both transcription and verification (backward compatible).
+### Configuration Reference
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `--vision-url` | `https://openrouter.ai/api/v1/chat/completions` | API endpoint for page transcription (Step 3) |
+| `--vision-url` | `https://openrouter.ai/api/v1/chat/completions` | API endpoint for page transcription |
 | `--vision-key` | `$OPENROUTER_API_KEY` or `~/.secrets/openrouter.key` | API key for transcription |
-| `--vision-model` | `google/gemini-3.1-flash-lite` | Model name for transcription |
-| `--verify-url` | same as `--vision-url` | API endpoint for verification (Step 7) |
-| `--verify-key` | same as `--vision-key` | API key for verification |
-| `--verify-model` | same as `--vision-model` | Model name for verification |
-
-**Note:** Page transcription and verification both require a model that can read images. Text-only models won't work for these steps. Use `--no-verify` to skip verification (you'll still need vision for transcription unless you also use `--no-vision-transcribe`).
+| `--vision-model` | `gemini-3.1-flash-lite` | Model name for transcription |
+| `--page-range` | all pages | Page range to process, e.g. `40-100` |
+| `--concurrency` | `10` | Number of concurrent API calls |
+| `--strict` | off | Use strict filtering (keep more candidates) |
+| `--resume-from` | — | Resume from an intermediate save point |
+| `--output`, `-o` | `./reports` | Output directory for reports |
+| `--verbose`, `-v` | off | Enable verbose logging |
 
 ## Development
 
@@ -378,9 +369,6 @@ pytest tests/ -q
 
 # Run with verbose output
 gerrata 43 --scan-id "06-stevenson-jekyll-hyde" --vision-key "$OPENROUTER_API_KEY" -v
-
-# Re-filter saved results (no API calls needed)
-python3 replay_filters.py reports/gutenberg43-*-errata.json
 ```
 
 ## License
