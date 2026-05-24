@@ -1,0 +1,2172 @@
+In Nostromo: A Tale of the Seaboard, by Joseph Conrad, [EBook #2021],
+File: 2021.txt,
+I verified the following changes against the Internet Archive scan:
+https://archive.org/details/nostromotaleofse00conruoft
+NOTE: Page numbers are 'of the scan' not 'of the book.'
+
+
+Page 17 (https://archive.org/details/nostromotaleofse00conruoft/page/n17/mode/1up):
+The dawn breaks high behind the towering and serrated wall of the Cordillera, a clear-cut vision of dark peaks rearing their steep slopes on a lofty pedestal of forest rising from the very edge of the shore.
+forest ==> forests
+
+Page 18 (https://archive.org/details/nostromotaleofse00conruoft/page/n18/mode/1up):
+Unless perchance a sombre thunder-head breaks away from the main body to career all over the gulf till it escapes into the offing beyond Azuera, where it bursts suddenly into flame and crashes like a sinster pirate-ship of the air, hove-to above the horizon, engaging the sea.
+sinster ==> sinister
+
+Page 22 (https://archive.org/details/nostromotaleofse00conruoft/page/n22/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 22 (https://archive.org/details/nostromotaleofse00conruoft/page/n22/mode/1up):
+Amongst them the white head of Higuerota rises majestically upon the blue.
+Amongst ==> Among
+
+Page 23 (https://archive.org/details/nostromotaleofse00conruoft/page/n23/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 24 (https://archive.org/details/nostromotaleofse00conruoft/page/n24/mode/1up):
+I engaged him to be the foreman of our lightermen, and caretaker of our jetty.
+foreman ==> captain
+
+Page 25 (https://archive.org/details/nostromotaleofse00conruoft/page/n25/mode/1up):
+ra would have been a dead ==> Nostromo: A Tale of the Seaboard
+
+Page 30 (https://archive.org/details/nostromotaleofse00conruoft/page/n30/mode/1up):
+Luis, a cinnamon-coloured mulatto with a sprouting moustache and thick, dark lips, would stop sweeping the cafe with a broom of palm-leaves to let a gentle shudder run down his spine.
+cinnamon-coloured ==> cinnamon-colored
+
+Page 30 (https://archive.org/details/nostromotaleofse00conruoft/page/n30/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 32 (https://archive.org/details/nostromotaleofse00conruoft/page/n32/mode/1up):
+“Now we are going to be burnt; and I bent my knee to him.
+burnt; ==> burned;
+
+Page 35 (https://archive.org/details/nostromotaleofse00conruoft/page/n35/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 36 (https://archive.org/details/nostromotaleofse00conruoft/page/n36/mode/1up):
+The party he led were babbling excitedly in Italian and Spanish, inciting each other to the pursuit.
+each other ==> one another
+
+Page 36 (https://archive.org/details/nostromotaleofse00conruoft/page/n36/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 37 (https://archive.org/details/nostromotaleofse00conruoft/page/n37/mode/1up):
+” At her feet the hens made off in all directions, with immense strides; if there were any engineers from up the line staying in Sulaco, a young English face or two would appear at the billiard-room occupying one end of the house; but at the other end, in the cafe, Luis, the mulatto, took good care not to show himself.
+cafe, ==> café,
+
+Page 38 (https://archive.org/details/nostromotaleofse00conruoft/page/n38/mode/1up):
+The Indian girls, with hair like flowing black manes, and dressed only in a shift and short petticoat, stared dully from under the square-cut fringes on their foreheads; the noisy frizzling of fat had stopped, the fumes floated upwards in sunshine, a strong smell of burnt onions hung in the drowsy heat, enveloping the house; and the eye lost itself in a vast flat expanse of grass to the west, as if the plain between the Sierra overtopping Sulaco and the coast range away there towards Esmeralda had been as big as half the world.
+oated upwards ==> floated upward
+
+Page 38 (https://archive.org/details/nostromotaleofse00conruoft/page/n38/mode/1up):
+“Now we are going to be burnt; and I bent my knee to him.
+burnt ==> burned
+
+Page 39 (https://archive.org/details/nostromotaleofse00conruoft/page/n39/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 43 (https://archive.org/details/nostromotaleofse00conruoft/page/n43/mode/1up):
+He loved his children, but girls belong more to the mother, and much of his affection had been expended in the worship and service of liberty.
+mother, ==> mother more,
+
+Page 43 (https://archive.org/details/nostromotaleofse00conruoft/page/n43/mode/1up):
+As to the town leperos, sir, the sight of his black whiskers and white teeth was enough for them. They quailed before him, sir.
+them. ==> the Seaboard
+
+Page 43 (https://archive.org/details/nostromotaleofse00conruoft/page/n43/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 44 (https://archive.org/details/nostromotaleofse00conruoft/page/n44/mode/1up):
+Now it was his only reading, and in order not to be deprived of it (the print was small) he had consented to accept the present of a pair of silver-mounted spectacles from Senora Emilia Gould, the wife of the Englishman who managed the silver mine in the mountains three leagues from the town.
+Senora ==> Señora
+
+Page 46 (https://archive.org/details/nostromotaleofse00conruoft/page/n46/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 47 (https://archive.org/details/nostromotaleofse00conruoft/page/n47/mode/1up):
+Some slight incident, a chance word would set him off talking on the beach to the Italian fishermen of Maldonado, in the little shop he kept afterwards (in Valparaiso) to his countrymen customers; of an evening, suddenly, in the cafe at one end of the Casa Viola (the other was reserved for the English engineers) to the select clientele of engine-drivers and foremen of the railway shops.
+clientele ==> clientèle
+
+Page 47 (https://archive.org/details/nostromotaleofse00conruoft/page/n47/mode/1up):
+With their handsome, bronzed, lean faces, shiny black ringlets, glistening eyes, broad-chested, bearded, sometimes a tiny gold ring in the lobe of the ear, the aristocracy of the railway works listened to him, turning away from their cards or dominoes. Here and there a fair-haired Basque studied his hand meantime, waiting without protest.
+dominoes. ==> dominos.
+
+Page 47 (https://archive.org/details/nostromotaleofse00conruoft/page/n47/mode/1up):
+My principal authority for the history of Costaguana is, of course, my venerated friend, the late Don Jose Avellanos, Minister to the Courts of England and Spain, etc.
+Costaguana ==> Castaguana
+
+Page 48 (https://archive.org/details/nostromotaleofse00conruoft/page/n48/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 48 (https://archive.org/details/nostromotaleofse00conruoft/page/n48/mode/1up):
+He had come on purpose to Sulaco, and there was a one-o’clock dinner-party, a convite offered by the O.
+convite ==> convitè
+
+Page 48 (https://archive.org/details/nostromotaleofse00conruoft/page/n48/mode/1up):
+” In these very words eighteen months before the Excellentissimo Senor don Vincente Ribiera, the Dictator of Costaguana, had described the National Central Railway in his great speech at the turning of the first sod.
+Excellentissimo ==> Excellentisimo
+
+Page 48 (https://archive.org/details/nostromotaleofse00conruoft/page/n48/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 52 (https://archive.org/details/nostromotaleofse00conruoft/page/n52/mode/1up):
+It had been lying for ages ensconced behind its natural barriers, repelling modern enterprise by the precipices of its mountain range, by its shallow harbour opening into the everlasting calms of a gulf full of clouds, by the benighted state of mind of the owners of its fertile territory--all these aristocratic old Spanish families, all those Don Ambrosios this and Don Fernandos that, who seemed actually to dislike and distrust the coming of the railway over their lands.
+families, ==> familes,
+
+Page 53 (https://archive.org/details/nostromotaleofse00conruoft/page/n53/mode/1up):
+Another story was that their father had been nothing but a charcoal burner in the woods, and their mother a baptised Indian woman from the far interior.
+baptised ==> baptized
+
+Page 55 (https://archive.org/details/nostromotaleofse00conruoft/page/n55/mode/1up):
+They gave him his dinner in a stone hut like a cubical boulder, with no door or windows in its two openings; a bright fire of sticks (brought on muleback from the first valley below) burning outside, sent in a wavering glare; and two candles in tin candlesticks--lighted, it was explained to him, in his honour--stood on a sort of rough camp table, at which he sat on the right hand of the chief.
+boulder, ==> bowlder,
+
+Page 55 (https://archive.org/details/nostromotaleofse00conruoft/page/n55/mode/1up):
+They gave him his dinner in a stone hut like a cubical boulder, with no door or windows in its two openings; a bright fire of sticks (brought on muleback from the first valley below) burning outside, sent in a wavering glare; and two candles in tin candlesticks--lighted, it was explained to him, in his honour--stood on a sort of rough camp table, at which he sat on the right hand of the chief.
+honour--stood ==> honor—stood
+
+Page 55 (https://archive.org/details/nostromotaleofse00conruoft/page/n55/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 57 (https://archive.org/details/nostromotaleofse00conruoft/page/n57/mode/1up):
+Gould, “the first lady of Sulaco,” whom we may safely leave to the secret devotion of Dr.
+Gould ==> Goulds’
+
+Page 60 (https://archive.org/details/nostromotaleofse00conruoft/page/n60/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> señor
+
+Page 61 (https://archive.org/details/nostromotaleofse00conruoft/page/n61/mode/1up):
+The doctor, with his habit of sceptical, bitter speech, had no other means of showing his profound respect for the character of the woman who was known in the country as the English Senora. He presented this tribute very seriously indeed; it was no trifle for a man of his habits.
+Senora. ==> señora.
+
+Page 61 (https://archive.org/details/nostromotaleofse00conruoft/page/n61/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 62 (https://archive.org/details/nostromotaleofse00conruoft/page/n62/mode/1up):
+It was the same Guzman Bento who, becoming later Perpetual President, famed for his ruthless and cruel tyranny, readied his apotheosis in the popular legend of a sanguinary land-haunting spectre whose body had been carried off by the devil in person from the brick mausoleum in the nave of the Church of Assumption in Sta.
+readied ==> reached
+
+Page 63 (https://archive.org/details/nostromotaleofse00conruoft/page/n63/mode/1up):
+It astonished you to hear him talk Spanish (Castillan, as the natives say) or the Indian dialect of the country-people so naturally.
+(Castillan, ==> (Castilian,
+
+Page 65 (https://archive.org/details/nostromotaleofse00conruoft/page/n65/mode/1up):
+In the early days of her Costaguana life, the little lady used to clench her hands with exasperation at not being able to take the public affairs of the country as seriously as the incidental atrocity of methods deserved.
+clench ==> clinch
+
+Page 65 (https://archive.org/details/nostromotaleofse00conruoft/page/n65/mode/1up):
+She saw in them a comedy of naive pretences, but hardly anything genuine except her own appalled indignation.
+naive ==> naïve
+
+Page 65 (https://archive.org/details/nostromotaleofse00conruoft/page/n65/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches, ==> mustaches,
+
+Page 66 (https://archive.org/details/nostromotaleofse00conruoft/page/n66/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corrédor
+
+Page 67 (https://archive.org/details/nostromotaleofse00conruoft/page/n67/mode/1up):
+” Then giving up the empty cup into his young friend’s hand, extended with a smile, he continued to expatiate upon the patriotic nature of the San Tome mine for the simple pleasure of talking fluently, it seemed, while his reclining body jerked backwards and forwards in a rocking-chair of the sort exported from the United States.
+backwards ==> backward
+
+Page 67 (https://archive.org/details/nostromotaleofse00conruoft/page/n67/mode/1up):
+” Then giving up the empty cup into his young friend’s hand, extended with a smile, he continued to expatiate upon the patriotic nature of the San Tome mine for the simple pleasure of talking fluently, it seemed, while his reclining body jerked backwards and forwards in a rocking-chair of the sort exported from the United States.
+forwards ==> forward
+
+Page 67 (https://archive.org/details/nostromotaleofse00conruoft/page/n67/mode/1up):
+The town of Sulaco itself--tops of walls, a great cupola, gleams of white miradors in a vast grove of orange trees--lies between the mountains and the plain, at some little distance from its harbour and out of the direct line of sight from the sea.
+between ==> beween
+
+Page 70 (https://archive.org/details/nostromotaleofse00conruoft/page/n70/mode/1up):
+“Now we are going to be burnt; and I bent my knee to him.
+burnt ==> burned
+
+Page 71 (https://archive.org/details/nostromotaleofse00conruoft/page/n71/mode/1up):
+Such was also the opinion of a stout, loud-voiced lady of French extraction, the daughter, she said, of an officer of high rank (_officier superieur de l’armee_), who was accommodated with lodgings within the walls of a secularized convent next door to the Ministry of Finance.
+superieur ==> supérieur
+
+Page 71 (https://archive.org/details/nostromotaleofse00conruoft/page/n71/mode/1up):
+l’armee), ==> l’armée),
+
+Page 71 (https://archive.org/details/nostromotaleofse00conruoft/page/n71/mode/1up):
+_Pas moyen, mon garcon. C’est dommage, tout de meme.
+garcon. ==> garçon.
+
+Page 71 (https://archive.org/details/nostromotaleofse00conruoft/page/n71/mode/1up):
+C’est dommage, tout de meme. Ah!
+meme. ==> même.
+
+Page 72 (https://archive.org/details/nostromotaleofse00conruoft/page/n72/mode/1up):
+--qu’il faut avaler la pilule_.”
+pilule_.” ==> pilule."
+
+Page 81 (https://archive.org/details/nostromotaleofse00conruoft/page/n81/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 82 (https://archive.org/details/nostromotaleofse00conruoft/page/n82/mode/1up):
+The American had his womankind with him, but seemed lonely while they were sketching all day long the old doorways and the turreted corners of the mediaeval houses.
+mediaeval ==> mediæval
+
+Page 87 (https://archive.org/details/nostromotaleofse00conruoft/page/n87/mode/1up):
+Bare clusters of enormous rocks sprinkle with tiny black dots the smooth dome of snow.
+cluster ==> clusters
+
+Page 87 (https://archive.org/details/nostromotaleofse00conruoft/page/n87/mode/1up):
+She lingered, approaching her face to the clusters of flowers here and there as if to give time to her thoughts to catch up with her slow footsteps along the straight vista of the corredor.
+corredor. ==> corridor.
+
+Page 91 (https://archive.org/details/nostromotaleofse00conruoft/page/n91/mode/1up):
+But its safety, its continued existence as an enterprise, giving a return to men--to strangers, comparative strangers--who invest money in it, is left altogether in my hands.
+e strangers--who ==> comparative strangers—who
+
+Page 91 (https://archive.org/details/nostromotaleofse00conruoft/page/n91/mode/1up):
+She lingered, approaching her face to the clusters of flowers here and there as if to give time to her thoughts to catch up with her slow footsteps along the straight vista of the corredor.
+corredor. ==> corridor.
+
+Page 99 (https://archive.org/details/nostromotaleofse00conruoft/page/n99/mode/1up):
+She saw in them a comedy of naive pretences, but hardly anything genuine except her own appalled indignation.
+naive ==> naïve
+
+Page 99 (https://archive.org/details/nostromotaleofse00conruoft/page/n99/mode/1up):
+And rather more than a year later, during his unexpected appearance in Sulaco, he had emphasized his uncompromising attitude with a freedom of sincerity permitted to his wealth and influence.
+ng his unexpected ==> Nostromo: A Tale of the Seaboard
+
+Page 100 (https://archive.org/details/nostromotaleofse00conruoft/page/n100/mode/1up):
+Some scornful young men, insignificant pieces of minor machinery in that eleven-storey-high workshop of great affairs, expressed frankly their private opinion that the great chief had done at last something silly, and was ashamed of his folly; others, elderly and insignificant, but full of romantic reverence for the business that had devoured their best years, used to mutter darkly and knowingly that this was a portentous sign; that the Holroyd connection meant by-and-by to get hold of the whole Republic of Costaguana, lock, stock, and barrel.
+eleven-storey-high ==> eleven-story-high
+
+Page 102 (https://archive.org/details/nostromotaleofse00conruoft/page/n102/mode/1up):
+human. “Viva Costaguana!” ==> hu"Viva Costaguana!"
+
+Page 104 (https://archive.org/details/nostromotaleofse00conruoft/page/n104/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corrédor
+
+Page 105 (https://archive.org/details/nostromotaleofse00conruoft/page/n105/mode/1up):
+First of all the thing is perfectly credible: Italians were swarming into the Occidental Province at the time, as anybody who will read further can see; and secondly, there was no one who could stand so well by the side of Giorgio Viola the Garibaldino, the Idealist of the old, humanitarian revolutions.
+further ==> farther
+
+Page 108 (https://archive.org/details/nostromotaleofse00conruoft/page/n108/mode/1up):
+A spreading cotton-wool tree shaded a thatched ranche by the road; the trudging files of burdened Indians taking off their hats, would lift sad, mute eyes to the cavalcade raising the dust of the crumbling camino real made by the hands of their enslaved forefathers.
+cotton-wool ==> cotton-wood
+
+Page 108 (https://archive.org/details/nostromotaleofse00conruoft/page/n108/mode/1up):
+She knew its sights and its hospitality, dispensed with a sort of slumbrous dignity in those great houses presenting long, blind walls and heavy portals to the wind-swept pastures.
+slumbrous ==> slumberous
+
+Page 109 (https://archive.org/details/nostromotaleofse00conruoft/page/n109/mode/1up):
+And on all the lips she found a weary desire for peace, the dread of officialdom with its nightmarish parody of administration without law, without security, and without justice.
+nightmarish ==> nightmareish
+
+Page 109 (https://archive.org/details/nostromotaleofse00conruoft/page/n109/mode/1up):
+Don Pepe--the old Costaguana major--after much display of solicitude for the delicate lady, had ended by conferring upon her the name of the “Never-tired Senora.” Mrs.
+Senora.” ==> Señora.”
+
+Page 110 (https://archive.org/details/nostromotaleofse00conruoft/page/n110/mode/1up):
+The heavy stonework of bridges and churches left by the conquerors proclaimed the disregard of human labour, the tribute-labour of vanished nations.
+tribute-labour ==> tribute-labor
+
+Page 110 (https://archive.org/details/nostromotaleofse00conruoft/page/n110/mode/1up):
+One more figure of those stirring times I would like to mention: and that is Antonia Avellanos--the “beautiful Antonia.
+those ==> these
+
+Page 111 (https://archive.org/details/nostromotaleofse00conruoft/page/n111/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 116 (https://archive.org/details/nostromotaleofse00conruoft/page/n116/mode/1up):
+Years afterwards, grown older as the famous Captain Fidanza, with a stake in the country, going about his many affairs followed by respectful glances in the modernized streets of Sulaco, calling on the widow of the cargador, attending the Lodge, listening in unmoved silence to anarchist speeches at the meeting, the enigmatical patron of the new revolutionary agitation, the trusted, the wealthy comrade Fidanza with the knowledge of his moral ruin locked up in his breast, he remains essentially a Man of the People.
+streets ==> Street
+
+Page 116 (https://archive.org/details/nostromotaleofse00conruoft/page/n116/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 117 (https://archive.org/details/nostromotaleofse00conruoft/page/n117/mode/1up):
+At night the body of clouds advancing higher up the sky smothers the whole quiet gulf below with an impenetrable darkness, in which the sound of the falling showers can be heard beginning and ceasing abruptly--now here, now there.
+sound ==> sounds
+
+Page 117 (https://archive.org/details/nostromotaleofse00conruoft/page/n117/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor,” ==> señor,”
+
+Page 117 (https://archive.org/details/nostromotaleofse00conruoft/page/n117/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 118 (https://archive.org/details/nostromotaleofse00conruoft/page/n118/mode/1up):
+A peaceable Cholo wearing these colours (unusual in Costaguana) was somehow very seldom beaten to within an inch of his life on a charge of disrespect to the town police; neither ran he much risk of being suddenly lassoed on the road by a recruiting party of lanceros--a method of voluntary enlistment looked upon as almost legal in the Republic.
+Cholo ==> Chulo
+
+Page 119 (https://archive.org/details/nostromotaleofse00conruoft/page/n119/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches, ==> mustaches,
+
+Page 120 (https://archive.org/details/nostromotaleofse00conruoft/page/n120/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 121 (https://archive.org/details/nostromotaleofse00conruoft/page/n121/mode/1up):
+It was reported in Sulaco that up there “at the mountain” Don Pepe walked about precipitous paths, girt with a great sword and in a shabby uniform with tarnished bullion epaulettes of a senior major.
+epaulettes ==> epaulets
+
+Page 121 (https://archive.org/details/nostromotaleofse00conruoft/page/n121/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 121 (https://archive.org/details/nostromotaleofse00conruoft/page/n121/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches, ==> mustaches,
+
+Page 121 (https://archive.org/details/nostromotaleofse00conruoft/page/n121/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 121 (https://archive.org/details/nostromotaleofse00conruoft/page/n121/mode/1up):
+Gould-- “No two stones could come together anywhere without the Gobernador hearing the click, senora.”
+senora.” ==> señora.”
+
+Page 125 (https://archive.org/details/nostromotaleofse00conruoft/page/n125/mode/1up):
+maravillosa,” Fathe ==> maravillosa," Father
+
+Page 125 (https://archive.org/details/nostromotaleofse00conruoft/page/n125/mode/1up):
+For that last duty before he slept Don Pepe did actually gird his old sword on the verandah of an unmistakable American white frame house, which Father Roman called the presbytery.
+verandah ==> veranda
+
+Page 127 (https://archive.org/details/nostromotaleofse00conruoft/page/n127/mode/1up):
+The pasadero in Rincon swore that on calm nights, by listening intently, he could catch the sound in his doorway as of a storm in the mountains.
+pasadero ==> posadero
+
+Page 127 (https://archive.org/details/nostromotaleofse00conruoft/page/n127/mode/1up):
+A party of men who had been to Sulaco with a herd of black bulls for the next corrida had reported that from the porch of the posada in Rincon, only a short league from the town, the lights on the mountain were visible, twinkling above the trees.
+lights ==> the Seaboard
+
+Page 127 (https://archive.org/details/nostromotaleofse00conruoft/page/n127/mode/1up):
+” Thus professionally spoke Don Pepe, the fighter, with pendent moustaches, a nut-brown, lean face, and a clean run of a cast-iron jaw, suggesting the type of a cattle-herd horseman from the great Llanos of the South.
+Pepe, ==> Pépé,
+
+Page 129 (https://archive.org/details/nostromotaleofse00conruoft/page/n129/mode/1up):
+From the heavy family coaches full of stately senoras and black-eyed senoritas rolling solemnly in the shaded alley white hands were waved towards her with animation in a flutter of greetings.
+senoras ==> señoras
+
+Page 129 (https://archive.org/details/nostromotaleofse00conruoft/page/n129/mode/1up):
+On the occasion when the fires under the first set of retorts in their shed had glowed far into the night she did not retire to rest on the rough cadre set up for her in the as yet bare frame-house till she had seen the first spongy lump of silver yielded to the hazards of the world by the dark depths of the Gould Concession; she had laid her unmercenary hands, with an eagerness that made them tremble, upon the first silver ingot turned out still warm from the mould; and by her imaginative estimate of its power she endowed that lump of metal with a justificative conception, as though it were not a mere fact, but something far-reaching and impalpable, like the true expression of an emotion or the emergence of a principle.
+spongy ==> spungy
+
+Page 129 (https://archive.org/details/nostromotaleofse00conruoft/page/n129/mode/1up):
+On the occasion when the fires under the first set of retorts in their shed had glowed far into the night she did not retire to rest on the rough cadre set up for her in the as yet bare frame-house till she had seen the first spongy lump of silver yielded to the hazards of the world by the dark depths of the Gould Concession; she had laid her unmercenary hands, with an eagerness that made them tremble, upon the first silver ingot turned out still warm from the mould; and by her imaginative estimate of its power she endowed that lump of metal with a justificative conception, as though it were not a mere fact, but something far-reaching and impalpable, like the true expression of an emotion or the emergence of a principle.
+emergence ==> emergency
+
+Page 129 (https://archive.org/details/nostromotaleofse00conruoft/page/n129/mode/1up):
+Gould’s water-colour sketch; she had made it hastily one day from a cleared patch in the bushes, sitting in the shade of a roof of straw erected for her on three rough poles under Don Pepe’s direction.
+Pepe’s ==> Pépé’s
+
+Page 132 (https://archive.org/details/nostromotaleofse00conruoft/page/n132/mode/1up):
+Still looking at the ingot of silver, she shook her head at Don Pepe’s remark-- “If it had not been for the lawless tyranny of your Government, Don Pepe, many an outlaw now with Hernandez would be living peaceably and happy by the honest work of his hands.
+peaceably ==> peaceable
+
+Page 133 (https://archive.org/details/nostromotaleofse00conruoft/page/n133/mode/1up):
+In fact, the mine, with its organization, its population growing fiercely attached to their position of privileged safety, with its armoury, with its Don Pepe, with its armed body of serenos (where, it was said, many an outlaw and deserter--and even some members of Hernandez’s band--had found a place), the mine was a power in the land.
+armoury, ==> armory,
+
+Page 133 (https://archive.org/details/nostromotaleofse00conruoft/page/n133/mode/1up):
+” The prominent man (who was then a person in power, with a lemon-coloured face and a very short and curly, not to say woolly, head of hair) went so far in his temporary discontent as to shake his yellow fist under the nose of his interlocutor, and shriek--
+lemon-coloured ==> lemon-colored
+
+Page 134 (https://archive.org/details/nostromotaleofse00conruoft/page/n134/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 135 (https://archive.org/details/nostromotaleofse00conruoft/page/n135/mode/1up):
+The good man, having spent a clear thirty years of his life on the high seas before getting what he called a “shore billet,” was astonished at the importance of transactions (other than relating to shipping) which take place on dry land.
+(other ==> (others
+
+Page 136 (https://archive.org/details/nostromotaleofse00conruoft/page/n136/mode/1up):
+Don Pepe padlocked each door in succession, and at the signal of his whistle the string of carts would move off, closely surrounded by the clank of spur and carbine, with jolts and cracking of whips, with a sudden deep rumble over the boundary bridge (“into the land of thieves and sanguinary macaques,” Don Pepe defined that crossing); hats bobbing in the first light of the dawn, on the heads of cloaked figures; Winchesters on hip; bridle hands protruding lean and brown from under the falling folds of the ponchos.
+macaques,” ==> maçaques,”
+
+Page 137 (https://archive.org/details/nostromotaleofse00conruoft/page/n137/mode/1up):
+The sleepy people in the little clusters of huts, in the small ranches near the road, recognized by the headlong sound the charge of the San Tome silver escort towards the crumbling wall of the city on the Campo side.
+ranches ==> ranchos
+
+Page 137 (https://archive.org/details/nostromotaleofse00conruoft/page/n137/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 141 (https://archive.org/details/nostromotaleofse00conruoft/page/n141/mode/1up):
+Sir John had been extremely feted in Sulaco, next to the President-Dictator, a fact which might have accounted for the evident ill-humour General Montero displayed at lunch given on board the Juno just before she was to sail, taking away from Sulaco the President-Dictator and the distinguished foreign guests in his train.
+feted ==> fêted
+
+Page 141 (https://archive.org/details/nostromotaleofse00conruoft/page/n141/mode/1up):
+Sir John had been extremely feted in Sulaco, next to the President-Dictator, a fact which might have accounted for the evident ill-humour General Montero displayed at lunch given on board the Juno just before she was to sail, taking away from Sulaco the President-Dictator and the distinguished foreign guests in his train.
+ill-humour ==> ill-humor
+
+Page 142 (https://archive.org/details/nostromotaleofse00conruoft/page/n142/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 143 (https://archive.org/details/nostromotaleofse00conruoft/page/n143/mode/1up):
+During the respectful, appreciative buzz of voices that followed the speech, General Montero raised a pair of heavy, drooping eyelids and rolled his eyes with a sort of uneasy dullness from face to face.
+dullness ==> dulness
+
+Page 143 (https://archive.org/details/nostromotaleofse00conruoft/page/n143/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 146 (https://archive.org/details/nostromotaleofse00conruoft/page/n146/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 146 (https://archive.org/details/nostromotaleofse00conruoft/page/n146/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 147 (https://archive.org/details/nostromotaleofse00conruoft/page/n147/mode/1up):
+Charles, coming up to take leave of Sir John, heard him say, as he bent over his wife’s hand, “Certainly.
+Sir John, heard ==> the Seaboard
+
+Page 147 (https://archive.org/details/nostromotaleofse00conruoft/page/n147/mode/1up):
+Gould, for a protege of yours!
+protege ==> protégé
+
+Page 151 (https://archive.org/details/nostromotaleofse00conruoft/page/n151/mode/1up):
+The throng thickened; the guitars tinkled louder; other horsemen sat motionless, smoking calmly above the heads of the crowd; it eddied and pushed before the doors of the high-roofed building, whence issued a shuffle and thumping of feet in time to the dance music vibrating and shrieking with a racking rhythm, overhung by the tremendous, sustained, hollow roar of the gombo.
+horsemen ==> horseman
+
+Page 151 (https://archive.org/details/nostromotaleofse00conruoft/page/n151/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 151 (https://archive.org/details/nostromotaleofse00conruoft/page/n151/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 152 (https://archive.org/details/nostromotaleofse00conruoft/page/n152/mode/1up):
+Her arms and neck emerged plump and bare from a snowy chemisette; the blue woollen skirt, with all the fullness gathered in front, scanty on the hips and tight across the back, disclosed the provoking action of her walk.
+fullness ==> fulness
+
+Page 152 (https://archive.org/details/nostromotaleofse00conruoft/page/n152/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 154 (https://archive.org/details/nostromotaleofse00conruoft/page/n154/mode/1up):
+What an audacious spitfire she was! The people aware of this scene were calling out urgently to others in the crowd.
+was! The people aware ==> Nostromo: A Tale
+
+Page 154 (https://archive.org/details/nostromotaleofse00conruoft/page/n154/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 162 (https://archive.org/details/nostromotaleofse00conruoft/page/n162/mode/1up):
+The Sala of the Provincial Assembly (in the Municipal Buildings of Sulaco), with its portraits of the Liberators on the walls and an old flag of Cortez preserved in a glass case above the President’s chair, had heard all these speeches--the early one containing the impassioned declaration “Militarism is the enemy,” the famous one of the “trembling balance” delivered on the occasion of the vote for the raising of a second Sulaco regiment in the defence of the reforming Government; and when the provinces again displayed their old flags (proscribed in Guzman Bento’s time) there was another of those great orations, when Don Jose greeted these old emblems of the war of Independence, brought out again in the name of new Ideals.
+aising of a second ==> the Seaboard
+
+Page 163 (https://archive.org/details/nostromotaleofse00conruoft/page/n163/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 163 (https://archive.org/details/nostromotaleofse00conruoft/page/n163/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 166 (https://archive.org/details/nostromotaleofse00conruoft/page/n166/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelans ==> Corbelàns
+
+Page 166 (https://archive.org/details/nostromotaleofse00conruoft/page/n166/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan. Don Jose Avellanos depended very much upon the devotion of his beloved Antonia.
+Corbelan. ==> Corbelàn.
+
+Page 166 (https://archive.org/details/nostromotaleofse00conruoft/page/n166/mode/1up):
+The other young ladies of Sulaco stood in awe of her character and accomplishments.
+ladies of Sulaco stood in awe of her ==> the Seaboard
+
+Page 168 (https://archive.org/details/nostromotaleofse00conruoft/page/n168/mode/1up):
+In justice to myself, and to allay the fears of prospective readers, I beg to point out that the few historical allusions are never dragged in for the sake of parading my unique erudition, but that each of them is closely related to actuality; either throwing a light on the nature of current events or affecting directly the fortunes of the people of whom I speak.
+fortunes ==> fortune
+
+Page 171 (https://archive.org/details/nostromotaleofse00conruoft/page/n171/mode/1up):
+A letter from Moraga explained afterwards that the initiative, and even the very text, of the incendiary allocution came, in reality, from the other Montero, the ex-guerillero, the _Commandante de Plaza_.
+ex-guerillero, ==> ex-guerrillero,
+
+Page 174 (https://archive.org/details/nostromotaleofse00conruoft/page/n174/mode/1up):
+From the heavy family coaches full of stately senoras and black-eyed senoritas rolling solemnly in the shaded alley white hands were waved towards her with animation in a flutter of greetings.
+senoras ==> señoras
+
+Page 174 (https://archive.org/details/nostromotaleofse00conruoft/page/n174/mode/1up):
+From the heavy family coaches full of stately senoras and black-eyed senoritas rolling solemnly in the shaded alley white hands were waved towards her with animation in a flutter of greetings.
+senoritas ==> señoritas
+
+Page 174 (https://archive.org/details/nostromotaleofse00conruoft/page/n174/mode/1up):
+Nostromo directed the embarkation, under the superintendendence of Captain Mitchell, red-faced in the sun, conspicuous in a white waistcoat, representing the allied and anxious goodwill of all the material interests of civilization.
+superintendendence ==> superintendence
+
+Page 175 (https://archive.org/details/nostromotaleofse00conruoft/page/n175/mode/1up):
+His part, his inclination, and his policy were united in one endeavour to keep unchecked the flow of treasure he had started single-handed from the re-opened scar in the flank of the mountain.
+endeavour ==> endeavor
+
+Page 175 (https://archive.org/details/nostromotaleofse00conruoft/page/n175/mode/1up):
+Amongst them the white head of Higuerota rises majestically upon the blue.
+Amongst ==> Among
+
+Page 180 (https://archive.org/details/nostromotaleofse00conruoft/page/n180/mode/1up):
+feroce), ==> féroce),
+
+Page 181 (https://archive.org/details/nostromotaleofse00conruoft/page/n181/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 181 (https://archive.org/details/nostromotaleofse00conruoft/page/n181/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 185 (https://archive.org/details/nostromotaleofse00conruoft/page/n185/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor,” ==> señor,”
+
+Page 186 (https://archive.org/details/nostromotaleofse00conruoft/page/n186/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 188 (https://archive.org/details/nostromotaleofse00conruoft/page/n188/mode/1up):
+There Father Roman said Mass every day before a sombre altar-piece representing the Resurrection, the grey slab of the tombstone balanced on one corner, a figure soaring upwards, long-limbed and livid, in an oval of pallid light, and a helmeted brown legionary smitten down, right across the bituminous foreground.
+upwards, ==> upward,
+
+Page 189 (https://archive.org/details/nostromotaleofse00conruoft/page/n189/mode/1up):
+“Senora!” he remonstrated, with great feeling, “in the name of God, reflect!
+“Senora!” ==> “Señora,”
+
+Page 189 (https://archive.org/details/nostromotaleofse00conruoft/page/n189/mode/1up):
+How can there be any glory for a man like me in overcoming that bald-headed embustero with the dyed moustaches?”
+moustaches?” ==> mustaches?”
+
+Page 189 (https://archive.org/details/nostromotaleofse00conruoft/page/n189/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 190 (https://archive.org/details/nostromotaleofse00conruoft/page/n190/mode/1up):
+He alluded himself quite openly to the current story how once, during some campaign (when in command of a brigade), he had gambled away his horses, pistols, and accoutrements, to the very epaulettes, playing monte with his colonels the night before the battle.
+epaulettes, ==> epaulets,
+
+Page 191 (https://archive.org/details/nostromotaleofse00conruoft/page/n191/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 192 (https://archive.org/details/nostromotaleofse00conruoft/page/n192/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 193 (https://archive.org/details/nostromotaleofse00conruoft/page/n193/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 193 (https://archive.org/details/nostromotaleofse00conruoft/page/n193/mode/1up):
+Si, senores! Fear nothing, develop the country, work, work!
+senores! ==> señores!
+
+Page 193 (https://archive.org/details/nostromotaleofse00conruoft/page/n193/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 194 (https://archive.org/details/nostromotaleofse00conruoft/page/n194/mode/1up):
+jete.” ==> jeté."
+
+Page 195 (https://archive.org/details/nostromotaleofse00conruoft/page/n195/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+d’ltalia ==> d'Italia
+
+Page 195 (https://archive.org/details/nostromotaleofse00conruoft/page/n195/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+sunburnt, ==> sunburned,
+
+Page 195 (https://archive.org/details/nostromotaleofse00conruoft/page/n195/mode/1up):
+She seldom failed to speak to her protege; moreover, the excitement, the heat, and the dust had made her thirsty.
+protege; ==> protégé;
+
+Page 196 (https://archive.org/details/nostromotaleofse00conruoft/page/n196/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 196 (https://archive.org/details/nostromotaleofse00conruoft/page/n196/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+” Young Scarfe stared, astounded.
+stared, ==> started,
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+Linda had brought out a glass of water on a tray, with extreme care; Giselle presented her with a bunch of flowers gathered hastily.
+flowers gathered hastily. ==> the Seaboard
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+“Luckily, Montero is not a Caesar,” Decoud continued.
+Caesar,” ==> Cæsar,”
+
+Page 197 (https://archive.org/details/nostromotaleofse00conruoft/page/n197/mode/1up):
+“Not the two Monteros put together would make a decent parody of a Caesar.” He crossed his arms on his breast, looking at Senor Avellanos, who had returned to his immobility.
+Caesar.” ==> Cæsar.”
+
+Page 198 (https://archive.org/details/nostromotaleofse00conruoft/page/n198/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 200 (https://archive.org/details/nostromotaleofse00conruoft/page/n200/mode/1up):
+You are right, Don Jose. The natural treasures of Costaguana are of importance to the progressive Europe represented by this youth, just as three hundred years ago the wealth of our Spanish fathers was a serious object to the rest of Europe--as represented by the bold buccaneers.
+Jose. ==> José.
+
+Page 200 (https://archive.org/details/nostromotaleofse00conruoft/page/n200/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 203 (https://archive.org/details/nostromotaleofse00conruoft/page/n203/mode/1up):
+The last of his fortune was passing away from him against worthless receipts, he wrote, in a rage, whilst he was being pointed out as an individual who had known how to secure enormous advantages from the necessities of his country.
+whilst ==> while
+
+Page 204 (https://archive.org/details/nostromotaleofse00conruoft/page/n204/mode/1up):
+We are a wonderful people, but it has always been our fate to be”--he did not say “robbed,” but added, after a pause--“exploited!
+eople, but it has always ==> the Seaboard
+
+Page 206 (https://archive.org/details/nostromotaleofse00conruoft/page/n206/mode/1up):
+There Father Roman said Mass every day before a sombre altar-piece representing the Resurrection, the grey slab of the tombstone balanced on one corner, a figure soaring upwards, long-limbed and livid, in an oval of pallid light, and a helmeted brown legionary smitten down, right across the bituminous foreground.
+upwards, ==> upward,
+
+Page 207 (https://archive.org/details/nostromotaleofse00conruoft/page/n207/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 208 (https://archive.org/details/nostromotaleofse00conruoft/page/n208/mode/1up):
+This show is just over, and I hear there has been a great dance at Don Juste Lopez’s last night.
+Juste ==> Justo
+
+Page 208 (https://archive.org/details/nostromotaleofse00conruoft/page/n208/mode/1up):
+Now it was his only reading, and in order not to be deprived of it (the print was small) he had consented to accept the present of a pair of silver-mounted spectacles from Senora Emilia Gould, the wife of the Englishman who managed the silver mine in the mountains three leagues from the town.
+Senora ==> Señora
+
+Page 209 (https://archive.org/details/nostromotaleofse00conruoft/page/n209/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 210 (https://archive.org/details/nostromotaleofse00conruoft/page/n210/mode/1up):
+murmured in a shocked tone. “Well,” ==> murmured. "Well,"
+
+Page 210 (https://archive.org/details/nostromotaleofse00conruoft/page/n210/mode/1up):
+exemple!” ==> example!"
+
+Page 212 (https://archive.org/details/nostromotaleofse00conruoft/page/n212/mode/1up):
+transported with joy. ==> transported.
+
+Page 212 (https://archive.org/details/nostromotaleofse00conruoft/page/n212/mode/1up):
+” About the same time, too, his brother had turned up from Europe, where he had gone apparently as secretary to a consul.
+Europe, ==> Eruope,
+
+Page 216 (https://archive.org/details/nostromotaleofse00conruoft/page/n216/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 216 (https://archive.org/details/nostromotaleofse00conruoft/page/n216/mode/1up):
+This was a tete-a-tete of extreme impropriety; something of which in the whole extent of the Republic only the extraordinary Antonia could be capable--the poor, motherless girl, never accompanied, with a careless father, who had thought only of making her learned.
+tete-a-tete ==> tête-àtête
+
+Page 218 (https://archive.org/details/nostromotaleofse00conruoft/page/n218/mode/1up):
+He is amazing, your uncle, the last of the Corbelans. He glittered exceedingly in his vestments with a great crimson velvet cross down his back.
+Corbelans. ==> Corbelàns.
+
+Page 219 (https://archive.org/details/nostromotaleofse00conruoft/page/n219/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan. Don Jose Avellanos depended very much upon the devotion of his beloved Antonia.
+Corbelan. ==> Corbelàn.
+
+Page 220 (https://archive.org/details/nostromotaleofse00conruoft/page/n220/mode/1up):
+Monygham--or else catechising Don Pepe or perhaps listening to Padre Roman. They are all down here to-day--all her ministers of state.
+Roman. ==> Romàn.
+
+Page 225 (https://archive.org/details/nostromotaleofse00conruoft/page/n225/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 225 (https://archive.org/details/nostromotaleofse00conruoft/page/n225/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 226 (https://archive.org/details/nostromotaleofse00conruoft/page/n226/mode/1up):
+” Father Corbelan’s deep voice resounded all over the room, making all the heads turn on the shoulders.
+Corbelan’s ==> Corbelàn's
+
+Page 226 (https://archive.org/details/nostromotaleofse00conruoft/page/n226/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores, ==> Señores,
+
+Page 226 (https://archive.org/details/nostromotaleofse00conruoft/page/n226/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 226 (https://archive.org/details/nostromotaleofse00conruoft/page/n226/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 228 (https://archive.org/details/nostromotaleofse00conruoft/page/n228/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 228 (https://archive.org/details/nostromotaleofse00conruoft/page/n228/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 228 (https://archive.org/details/nostromotaleofse00conruoft/page/n228/mode/1up):
+” Father Corbelan’s deep voice resounded all over the room, making all the heads turn on the shoulders.
+Corbelan’s ==> Corbelàn's
+
+Page 229 (https://archive.org/details/nostromotaleofse00conruoft/page/n229/mode/1up):
+” Father Corbelan’s deep voice resounded all over the room, making all the heads turn on the shoulders.
+Corbelan’s ==> Corbelàn's
+
+Page 229 (https://archive.org/details/nostromotaleofse00conruoft/page/n229/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 229 (https://archive.org/details/nostromotaleofse00conruoft/page/n229/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 230 (https://archive.org/details/nostromotaleofse00conruoft/page/n230/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 230 (https://archive.org/details/nostromotaleofse00conruoft/page/n230/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 230 (https://archive.org/details/nostromotaleofse00conruoft/page/n230/mode/1up):
+Gould, for a protege of yours!
+protege ==> protégé
+
+Page 230 (https://archive.org/details/nostromotaleofse00conruoft/page/n230/mode/1up):
+These were the results of the Grand Vicar’s zeal.
+Grand ==> Great
+
+Page 231 (https://archive.org/details/nostromotaleofse00conruoft/page/n231/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 231 (https://archive.org/details/nostromotaleofse00conruoft/page/n231/mode/1up):
+ironically: “Those ==> ironically, "These
+
+Page 232 (https://archive.org/details/nostromotaleofse00conruoft/page/n232/mode/1up):
+” He rolled his black eyes upwards. By the side of the frail diplomatist--the life and soul of the party--he seemed gigantic, with a gleam of fanaticism in the glance.
+upwards. ==> upward.
+
+Page 235 (https://archive.org/details/nostromotaleofse00conruoft/page/n235/mode/1up):
+Under providence we owed our preservation to my Capataz de Cargadores, as they called him in the town, a man who, when I discovered his value, sir, was just the bos’n of an Italian ship, a big Genoese ship, one of the few European ships that ever came to Sulaco with a general cargo before the building of the National Central.
+Capataz de Cargadores ==> capataz of the cargadores
+
+Page 235 (https://archive.org/details/nostromotaleofse00conruoft/page/n235/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 237 (https://archive.org/details/nostromotaleofse00conruoft/page/n237/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 237 (https://archive.org/details/nostromotaleofse00conruoft/page/n237/mode/1up):
+” “Senora,” cried Don Pepe, with enthusiasm, “it is true!
+“Senor ==> “Señor
+
+Page 237 (https://archive.org/details/nostromotaleofse00conruoft/page/n237/mode/1up):
+Of course the Ribierist Government will do away with all that--when it gets established firmly. Meantime--”
+tablished firmly. Meantime--” ==> Nostromo: A Tale of the Seaboard
+
+Page 238 (https://archive.org/details/nostromotaleofse00conruoft/page/n238/mode/1up):
+meditative astonishment. “What ==> the Seaboard "What
+
+Page 238 (https://archive.org/details/nostromotaleofse00conruoft/page/n238/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 239 (https://archive.org/details/nostromotaleofse00conruoft/page/n239/mode/1up):
+It’s my last card to play.”
+It’s my last card to play.” ==> the Seaboard
+
+Page 240 (https://archive.org/details/nostromotaleofse00conruoft/page/n240/mode/1up):
+That afternoon when I came in, a shrinking yet defiant sinner, to say the final good-bye I received a hand-squeeze that made my heart leap and saw a tear that took my breath away.
+afternoon ==> afterroon
+
+Page 242 (https://archive.org/details/nostromotaleofse00conruoft/page/n242/mode/1up):
+Charley!” “No,” ==> Charles!" "No,"
+
+Page 243 (https://archive.org/details/nostromotaleofse00conruoft/page/n243/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corridor
+
+Page 243 (https://archive.org/details/nostromotaleofse00conruoft/page/n243/mode/1up):
+In the streaks of light falling through the open doors of the reception-rooms, the blossoms, white and red and pale lilac, came out vivid with the brilliance of flowers in a stream of sunshine; and Mrs.
+brilliance ==> brillance
+
+Page 247 (https://archive.org/details/nostromotaleofse00conruoft/page/n247/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 249 (https://archive.org/details/nostromotaleofse00conruoft/page/n249/mode/1up):
+He could not believe his own motives if he did not make them first a part of some fairy tale. The earth is not quite good enough for him, I fear.
+some fairy tale. The earth is not ==> the Seaboard
+
+Page 250 (https://archive.org/details/nostromotaleofse00conruoft/page/n250/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 251 (https://archive.org/details/nostromotaleofse00conruoft/page/n251/mode/1up):
+I have heard you assert that this poor bandit was the living, breathing example of cruelty, injustice, stupidity, and oppression, that ruin men’s souls as well as their fortunes in this country.
+living, ==> living and
+
+Page 256 (https://archive.org/details/nostromotaleofse00conruoft/page/n256/mode/1up):
+Gould-- “No two stones could come together anywhere without the Gobernador hearing the click, senora.”
+senora. ==> señora.
+
+Page 256 (https://archive.org/details/nostromotaleofse00conruoft/page/n256/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corrédor
+
+Page 256 (https://archive.org/details/nostromotaleofse00conruoft/page/n256/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corrédor
+
+Page 261 (https://archive.org/details/nostromotaleofse00conruoft/page/n261/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 262 (https://archive.org/details/nostromotaleofse00conruoft/page/n262/mode/1up):
+He said quite moodily, ‘And how much do I get for that, senor?’ Then it dawned upon me that perhaps this man’s vanity has been satiated by the adulation of the common people and the confidence of his superiors!
+senor?’ ==> señor?’
+
+Page 262 (https://archive.org/details/nostromotaleofse00conruoft/page/n262/mode/1up):
+In a gap chopped out for the rails of the harbour branch line Nostromo appeared, mounted on his silver-grey mare.
+silver-grey ==> silver-gray
+
+Page 263 (https://archive.org/details/nostromotaleofse00conruoft/page/n263/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores ==> Señores
+
+Page 267 (https://archive.org/details/nostromotaleofse00conruoft/page/n267/mode/1up):
+” At her feet the hens made off in all directions, with immense strides; if there were any engineers from up the line staying in Sulaco, a young English face or two would appear at the billiard-room occupying one end of the house; but at the other end, in the cafe, Luis, the mulatto, took good care not to show himself.
+cafe, ==> café,
+
+Page 268 (https://archive.org/details/nostromotaleofse00conruoft/page/n268/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 268 (https://archive.org/details/nostromotaleofse00conruoft/page/n268/mode/1up):
+” He turned again to his pocket-book, glanced back through the pages, and again started his pencil.
+pocket-book, ==> note-book,
+
+Page 271 (https://archive.org/details/nostromotaleofse00conruoft/page/n271/mode/1up):
+“I walked up to the table blindly, as though I had been drunk.
+blindly, ==> blinaly,
+
+Page 272 (https://archive.org/details/nostromotaleofse00conruoft/page/n272/mode/1up):
+They all sat still, with their noses over the sheet of paper each had before him, God only knows why.
+nly knows ==> the Seaboard
+
+Page 273 (https://archive.org/details/nostromotaleofse00conruoft/page/n273/mode/1up):
+The petition, like everything else, had found its way into Don Jose’s hands.
+Jose’s ==> José’s
+
+Page 275 (https://archive.org/details/nostromotaleofse00conruoft/page/n275/mode/1up):
+She struck her breast with her open hands. “I know him.
+hands. ==> hand.
+
+Page 277 (https://archive.org/details/nostromotaleofse00conruoft/page/n277/mode/1up):
+Rows of plants in pots, ranged on the balustrade between the pilasters of the arches, screened the corredor with their leaves and flowers from the quadrangle below, whose paved space is the true hearthstone of a South American house, where the quiet hours of domestic life are marked by the shifting of light and shadow on the flagstones.
+corredor ==> corridor
+
+Page 281 (https://archive.org/details/nostromotaleofse00conruoft/page/n281/mode/1up):
+Therefore, instead of looking for something to eat, or trying to snatch an hour or so of sleep, Decoud was filling the pages of a large pocket-book with a letter to his sister.
+pocket-book ==> note-book
+
+Page 283 (https://archive.org/details/nostromotaleofse00conruoft/page/n283/mode/1up):
+He could not praise enough dear Carlos’s tact and courage.
+Carlos’ ==> Carlos's
+
+Page 284 (https://archive.org/details/nostromotaleofse00conruoft/page/n284/mode/1up):
+Si, senor.’ He does not seem to make any difference between speaking and thinking.
+senor.’ ==> señor.'
+
+Page 285 (https://archive.org/details/nostromotaleofse00conruoft/page/n285/mode/1up):
+It had been promised to him, he affirmed, straightening his bent back martially, “many years ago, for my valour in the wars with the wild Indios when a young man, senor.”
+senor. ==> señor.
+
+Page 285 (https://archive.org/details/nostromotaleofse00conruoft/page/n285/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 286 (https://archive.org/details/nostromotaleofse00conruoft/page/n286/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 286 (https://archive.org/details/nostromotaleofse00conruoft/page/n286/mode/1up):
+She saw in them a comedy of naive pretences, but hardly anything genuine except her own appalled indignation.
+naive ==> naïve
+
+Page 287 (https://archive.org/details/nostromotaleofse00conruoft/page/n287/mode/1up):
+Therefore, instead of looking for something to eat, or trying to snatch an hour or so of sleep, Decoud was filling the pages of a large pocket-book with a letter to his sister.
+pocket-book ==> note-book
+
+Page 287 (https://archive.org/details/nostromotaleofse00conruoft/page/n287/mode/1up):
+” At her feet the hens made off in all directions, with immense strides; if there were any engineers from up the line staying in Sulaco, a young English face or two would appear at the billiard-room occupying one end of the house; but at the other end, in the cafe, Luis, the mulatto, took good care not to show himself.
+cafe, ==> café,
+
+Page 288 (https://archive.org/details/nostromotaleofse00conruoft/page/n288/mode/1up):
+Gould-- “No two stones could come together anywhere without the Gobernador hearing the click, senora.
+senora ==> señora
+
+Page 288 (https://archive.org/details/nostromotaleofse00conruoft/page/n288/mode/1up):
+She had told him not to wake up Don Martin yet; but when they sent for the children he had come into the cafe.
+cafe. ==> café.
+
+Page 289 (https://archive.org/details/nostromotaleofse00conruoft/page/n289/mode/1up):
+“And then, senora,” he continued, baring his curly iron-grey head to Mrs.
+senora,” ==> señora,”
+
+Page 289 (https://archive.org/details/nostromotaleofse00conruoft/page/n289/mode/1up):
+“Is she really dying, senor doctor?”
+senor doctor?” ==> Señor Doctor?”
+
+Page 290 (https://archive.org/details/nostromotaleofse00conruoft/page/n290/mode/1up):
+His hair had turned grey, his hairless, seamed face was of a brick-dust colour; the large check pattern of his flannel shirt and his old stained Panama hat were an established defiance to the conventionalities of Sulaco.
+check ==> checked
+
+Page 291 (https://archive.org/details/nostromotaleofse00conruoft/page/n291/mode/1up):
+Now it was his only reading, and in order not to be deprived of it (the print was small) he had consented to accept the present of a pair of silver-mounted spectacles from Senora Emilia Gould, the wife of the Englishman who managed the silver mine in the mountains three leagues from the town.
+Senora ==> Señora
+
+Page 293 (https://archive.org/details/nostromotaleofse00conruoft/page/n293/mode/1up):
+It was only when it dawned upon me that the purloiner of the treasure need not necessarily be a confirmed rogue, that he could be even a man of character, an actor and possibly a victim in the changing scenes of a revolution, it was only then that I had the first vision of a twilight country which was to become the province of Sulaco, with its high shadowy Sierra and its misty Campo for mute witnesses of events flowing from the passions of men short-sighted in good and evil.
+become ==> became
+
+Page 294 (https://archive.org/details/nostromotaleofse00conruoft/page/n294/mode/1up):
+Now it was his only reading, and in order not to be deprived of it (the print was small) he had consented to accept the present of a pair of silver-mounted spectacles from Senora Emilia Gould, the wife of the Englishman who managed the silver mine in the mountains three leagues from the town.
+Senora ==> Señora
+
+Page 295 (https://archive.org/details/nostromotaleofse00conruoft/page/n295/mode/1up):
+Standing above her, Nostromo did not see the distorted features of her face, distorted by a paroxysm of pain and anger. Only she began to tremble all over.
+nger. Only she began to ==> Nostromo: A Tale of the Seaboard
+
+Page 295 (https://archive.org/details/nostromotaleofse00conruoft/page/n295/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 296 (https://archive.org/details/nostromotaleofse00conruoft/page/n296/mode/1up):
+He descended the stairs backwards, with the usual sense of having been somehow baffled by this woman’s disparagement of this reputation he had obtained and desired to keep.
+backwards, ==> backward,
+
+Page 298 (https://archive.org/details/nostromotaleofse00conruoft/page/n298/mode/1up):
+“It is as if I were taking up a curse upon me, senor doctor. A man with a treasure on this coast will have every knife raised against him in every place upon the shore.
+senor doctor. ==> Señor Doctor.
+
+Page 298 (https://archive.org/details/nostromotaleofse00conruoft/page/n298/mode/1up):
+I shall float along with a spell upon my life till I meet somewhere the north-bound steamer of the Company, and then indeed they will talk about the Capataz of the Sulaco Cargadores from one end of America to another.”
+another.” ==> the other."
+
+Page 298 (https://archive.org/details/nostromotaleofse00conruoft/page/n298/mode/1up):
+“Look here, senor--do you know the nature of my undertaking?
+senor--do ==> señor—do
+
+Page 298 (https://archive.org/details/nostromotaleofse00conruoft/page/n298/mode/1up):
+“Is she really dying, senor doctor?”
+senor doctor? ==> Señor Doctor?
+
+Page 299 (https://archive.org/details/nostromotaleofse00conruoft/page/n299/mode/1up):
+At the head of the wharf vague figures with rifles leapt to the head of his horse; others closed upon him--cargadores of the company posted by Captain Mitchell on the watch.
+leapt ==> leaped
+
+Page 303 (https://archive.org/details/nostromotaleofse00conruoft/page/n303/mode/1up):
+And if we miss her by some mischance, we must keep away from the land till we grow weak, and perhaps mad, and die, and drift dead, until one or another of the steamers of the Compania comes upon the boat with the two dead men who have saved the treasure.
+Compania ==> Compañia
+
+Page 303 (https://archive.org/details/nostromotaleofse00conruoft/page/n303/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 306 (https://archive.org/details/nostromotaleofse00conruoft/page/n306/mode/1up):
+The petition, like everything else, had found its way into Don Jose’s hands.
+Jose’s ==> José's
+
+Page 308 (https://archive.org/details/nostromotaleofse00conruoft/page/n308/mode/1up):
+At last, blowing the smoke of my cigar into the air through his nostrils, he said, ‘Senor, it would be perhaps better for you if I rode behind your party.
+Senor, ==> Señor,
+
+Page 308 (https://archive.org/details/nostromotaleofse00conruoft/page/n308/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 308 (https://archive.org/details/nostromotaleofse00conruoft/page/n308/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 308 (https://archive.org/details/nostromotaleofse00conruoft/page/n308/mode/1up):
+At last, blowing the smoke of my cigar into the air through his nostrils, he said, ‘Senor, it would be perhaps better for you if I rode behind your party.
+Senor, ==> Señor,
+
+Page 309 (https://archive.org/details/nostromotaleofse00conruoft/page/n309/mode/1up):
+It showed fragmentarily the stout ribs and planking in the hollow, empty part of the lighter.
+fragmentarily ==> fragmentally
+
+Page 311 (https://archive.org/details/nostromotaleofse00conruoft/page/n311/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 311 (https://archive.org/details/nostromotaleofse00conruoft/page/n311/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 316 (https://archive.org/details/nostromotaleofse00conruoft/page/n316/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 317 (https://archive.org/details/nostromotaleofse00conruoft/page/n317/mode/1up):
+It was direct, uncomplicated, naive, and effectual.
+naive, ==> naïve,
+
+Page 319 (https://archive.org/details/nostromotaleofse00conruoft/page/n319/mode/1up):
+One loud blast of the whistle that hung from his neck provoked instantly a great shrilling of responding whistles, mingled with the barking of dogs, that would calm down slowly at last, away up at the head of the gorge; and in the stillness two serenos, on guard by the bridge, would appear walking noiselessly towards him.
+noise ==> the Seaboard
+
+Page 320 (https://archive.org/details/nostromotaleofse00conruoft/page/n320/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 320 (https://archive.org/details/nostromotaleofse00conruoft/page/n320/mode/1up):
+His name was Bonifacio, and Don Jose, crossing the street about five o’clock to call on Dona Emilia, always acknowledged his humble salute by some movement of hand or head.
+Jose, ==> José,
+
+Page 323 (https://archive.org/details/nostromotaleofse00conruoft/page/n323/mode/1up):
+Having, however, collected a small band of outlaws, he showed some talent as guerilla chief and had been rewarded at the pacification by the post of Military Commandant of the capital.
+Commandant ==> Comandante
+
+Page 323 (https://archive.org/details/nostromotaleofse00conruoft/page/n323/mode/1up):
+From the heavy family coaches full of stately senoras and black-eyed senoritas rolling solemnly in the shaded alley white hands were waved towards her with animation in a flutter of greetings.
+senoritas ==> señoritas
+
+Page 323 (https://archive.org/details/nostromotaleofse00conruoft/page/n323/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 323 (https://archive.org/details/nostromotaleofse00conruoft/page/n323/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 325 (https://archive.org/details/nostromotaleofse00conruoft/page/n325/mode/1up):
+His object was to get down to Barrios, in Cayta, as the Capataz knew very well; and he, too, meant, in his own way, to put into that attempt all the desperation of which he was capable.
+o put into that attempt all ==> Nostromo: A Tale of
+
+Page 326 (https://archive.org/details/nostromotaleofse00conruoft/page/n326/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 326 (https://archive.org/details/nostromotaleofse00conruoft/page/n326/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 328 (https://archive.org/details/nostromotaleofse00conruoft/page/n328/mode/1up):
+He hinted to the universal shopkeeper at the excellent terms he was on with the emancipated senorita, who was like a sister to the Englishwoman.
+senorita, ==> señorita,
+
+Page 330 (https://archive.org/details/nostromotaleofse00conruoft/page/n330/mode/1up):
+Suddenly one day all the letters from Sulaco by the overland courier were carried off by a file of soldiers from the post office to the Commandancia, without disguise, concealment, or apology.
+Commandancia, ==> comandancia,
+
+Page 330 (https://archive.org/details/nostromotaleofse00conruoft/page/n330/mode/1up):
+Suddenly one day all the letters from Sulaco by the overland courier were carried off by a file of soldiers from the post office to the Commandancia, without disguise, concealment, or apology.
+Commandancia, ==> comandancia,
+
+Page 334 (https://archive.org/details/nostromotaleofse00conruoft/page/n334/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 335 (https://archive.org/details/nostromotaleofse00conruoft/page/n335/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 336 (https://archive.org/details/nostromotaleofse00conruoft/page/n336/mode/1up):
+“Senor,” he said, “we must catch the steamer at sea.
+“Senor, ==> "Señor,
+
+Page 337 (https://archive.org/details/nostromotaleofse00conruoft/page/n337/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 337 (https://archive.org/details/nostromotaleofse00conruoft/page/n337/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 338 (https://archive.org/details/nostromotaleofse00conruoft/page/n338/mode/1up):
+His tale had taken the heart out of Sotillo’s Staff, though they all repeated round their chief, “Impossible!
+Sotillo’s Staff, ==> Sotilio's staff,
+
+Page 338 (https://archive.org/details/nostromotaleofse00conruoft/page/n338/mode/1up):
+“I could smell some treachery, some diableria a league off.
+diableria ==> diablerie,
+
+Page 340 (https://archive.org/details/nostromotaleofse00conruoft/page/n340/mode/1up):
+He felt the partial failure of this desperate affair entrusted to the great reputation he had known how to make for himself.
+affair entrusted ==> affair, intrusted
+
+Page 340 (https://archive.org/details/nostromotaleofse00conruoft/page/n340/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 341 (https://archive.org/details/nostromotaleofse00conruoft/page/n341/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 341 (https://archive.org/details/nostromotaleofse00conruoft/page/n341/mode/1up):
+At last, blowing the smoke of my cigar into the air through his nostrils, he said, ‘Senor, it would be perhaps better for you if I rode behind your party.
+Senor, ==> Señor,
+
+Page 344 (https://archive.org/details/nostromotaleofse00conruoft/page/n344/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 344 (https://archive.org/details/nostromotaleofse00conruoft/page/n344/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 344 (https://archive.org/details/nostromotaleofse00conruoft/page/n344/mode/1up):
+It had been promised to him, he affirmed, straightening his bent back martially, “many years ago, for my valour in the wars with the wild Indios when a young man, senor.”
+senor. ==> señor.
+
+Page 344 (https://archive.org/details/nostromotaleofse00conruoft/page/n344/mode/1up):
+” But generally, as I’ve said before, my sojourn on the Continent of Latin America, famed for its hospitality, lasted for about two years.
+general ==> genuine
+
+Page 345 (https://archive.org/details/nostromotaleofse00conruoft/page/n345/mode/1up):
+Use the words glorious and successful when you speak to the senorita. Your own mission is accomplished gloriously and successfully.
+senorita. ==> señorita.
+
+Page 345 (https://archive.org/details/nostromotaleofse00conruoft/page/n345/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 345 (https://archive.org/details/nostromotaleofse00conruoft/page/n345/mode/1up):
+It had been promised to him, he affirmed, straightening his bent back martially, “many years ago, for my valour in the wars with the wild Indios when a young man, senor.”
+senor. ==> señor!
+
+Page 346 (https://archive.org/details/nostromotaleofse00conruoft/page/n346/mode/1up):
+It had been promised to him, he affirmed, straightening his bent back martially, “many years ago, for my valour in the wars with the wild Indios when a young man, senor.”
+senor. ==> señor.
+
+Page 349 (https://archive.org/details/nostromotaleofse00conruoft/page/n349/mode/1up):
+, in his impartial and eloquent “History of Fifty Years of Misrule.
+in his ==> he was
+
+Page 349 (https://archive.org/details/nostromotaleofse00conruoft/page/n349/mode/1up):
+When he had felt her settle he sprang far away with a mighty splash.
+he had felt her settle ==> the inlet far settle,
+
+Page 349 (https://archive.org/details/nostromotaleofse00conruoft/page/n349/mode/1up):
+The Dictator, by his weak compliance with the demands of the European powers--for the settlement of long outstanding money claims--had showed himself unfit to rule.
+showed him ==> stood out
+
+Page 352 (https://archive.org/details/nostromotaleofse00conruoft/page/n352/mode/1up):
+Amongst them the white head of Higuerota rises majestically upon the blue.
+Amongst ==> Among
+
+Page 353 (https://archive.org/details/nostromotaleofse00conruoft/page/n353/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+d’ltalia ==> d’Italia
+
+Page 358 (https://archive.org/details/nostromotaleofse00conruoft/page/n358/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+d’ltalia ==> d'Italia
+
+Page 359 (https://archive.org/details/nostromotaleofse00conruoft/page/n359/mode/1up):
+And he defers to her because he trusts her perhaps, but I fancy rather as if he wished to make up for some subtle wrong, for that sentimental unfaithfulness which surrenders her happiness, her life, to the seduction of an idea.
+faithfulness ==> the Seaboard
+
+Page 361 (https://archive.org/details/nostromotaleofse00conruoft/page/n361/mode/1up):
+To feel that prosperity always at the mercy of unintelligent greed had grown irksome to him.
+ays at ==> Nostromo: A Tale of the Seaboard
+
+Page 368 (https://archive.org/details/nostromotaleofse00conruoft/page/n368/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 368 (https://archive.org/details/nostromotaleofse00conruoft/page/n368/mode/1up):
+He knows, for instance, that Gamacho, the Deputy from Javira, has been nothing else but a ‘tramposo’ of the commonest sort, a petty pedlar of the Campo, till he managed to get enough goods on credit from Anzani to open a little store in the wilds, and got himself elected by the drunken mozos that hang about the Estancias and the poorest sort of rancheros who were in his debt.
+pedlar ==> peddler
+
+Page 368 (https://archive.org/details/nostromotaleofse00conruoft/page/n368/mode/1up):
+He knows, for instance, that Gamacho, the Deputy from Javira, has been nothing else but a ‘tramposo’ of the commonest sort, a petty pedlar of the Campo, till he managed to get enough goods on credit from Anzani to open a little store in the wilds, and got himself elected by the drunken mozos that hang about the Estancias and the poorest sort of rancheros who were in his debt.
+pedlar ==> peddler
+
+Page 371 (https://archive.org/details/nostromotaleofse00conruoft/page/n371/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 373 (https://archive.org/details/nostromotaleofse00conruoft/page/n373/mode/1up):
+The mosquitoes bit like fury.
+mosquitoes ==> mosquitos
+
+Page 373 (https://archive.org/details/nostromotaleofse00conruoft/page/n373/mode/1up):
+The mosquitoes bit like fury.
+mosquitoes ==> mosquitos
+
+Page 374 (https://archive.org/details/nostromotaleofse00conruoft/page/n374/mode/1up):
+The Italian drivers saluted him from the foot-plate with raised hand, while the negro brakesmen sat carelessly on the brakes, looking straight forward, with the rims of their big hats flapping in the wind.
+forward, ==> forward and
+
+Page 379 (https://archive.org/details/nostromotaleofse00conruoft/page/n379/mode/1up):
+There his conduct as soldier was exemplary, till, watching his chance, he killed his colonel, and managed to get clear away.
+watching ==> waiting
+
+Page 381 (https://archive.org/details/nostromotaleofse00conruoft/page/n381/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 382 (https://archive.org/details/nostromotaleofse00conruoft/page/n382/mode/1up):
+The older major was moved to declare-- “Si, mi colonel. They are all traitors.
+colonel. ==> coronel.
+
+Page 382 (https://archive.org/details/nostromotaleofse00conruoft/page/n382/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 382 (https://archive.org/details/nostromotaleofse00conruoft/page/n382/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 391 (https://archive.org/details/nostromotaleofse00conruoft/page/n391/mode/1up):
+Tome Administration, ==> Tomé administration,
+
+Page 393 (https://archive.org/details/nostromotaleofse00conruoft/page/n393/mode/1up):
+“What on earth made you say that to this watch-stealing scoundrel?
+this watch-stealing ==> that watchstealing
+
+Page 394 (https://archive.org/details/nostromotaleofse00conruoft/page/n394/mode/1up):
+That confounded pick-pocket was quite capable of believing you.”
+believing you.” ==> the Seaboard
+
+Page 396 (https://archive.org/details/nostromotaleofse00conruoft/page/n396/mode/1up):
+” Ultimately the sailor, disgusted with the sordid meanness of that impenitent thief, deserted from the schooner.
+disgust ==> distrust
+
+Page 398 (https://archive.org/details/nostromotaleofse00conruoft/page/n398/mode/1up):
+At the end furthest from the grating he would be lost altogether in the darkness.
+furthest ==> farthest
+
+Page 398 (https://archive.org/details/nostromotaleofse00conruoft/page/n398/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 399 (https://archive.org/details/nostromotaleofse00conruoft/page/n399/mode/1up):
+But as Captain Mitchell was turning away, without as much as a nod or a glance, he hastened to say-- “You may go and wait downstairs for the senor doctor, whom I am going to liberate, too.
+senor doctor, ==> Señor Doctor,
+
+Page 399 (https://archive.org/details/nostromotaleofse00conruoft/page/n399/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 400 (https://archive.org/details/nostromotaleofse00conruoft/page/n400/mode/1up):
+“It is as if I were taking up a curse upon me, senor doctor. A man with a treasure on this coast will have every knife raised against him in every place upon the shore.
+senor doctor. ==> Señor Doctor?
+
+Page 402 (https://archive.org/details/nostromotaleofse00conruoft/page/n402/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores ==> Señores
+
+Page 402 (https://archive.org/details/nostromotaleofse00conruoft/page/n402/mode/1up):
+” Father Corbelan’s deep voice resounded all over the room, making all the heads turn on the shoulders.
+Corbelan’s ==> Corbelàn's
+
+Page 402 (https://archive.org/details/nostromotaleofse00conruoft/page/n402/mode/1up):
+The guerrillero brother of the general--the Pedrito of popular speech--had a reputation of his own.
+drito of popular speech--had ==> speech, had
+
+Page 403 (https://archive.org/details/nostromotaleofse00conruoft/page/n403/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 403 (https://archive.org/details/nostromotaleofse00conruoft/page/n403/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 403 (https://archive.org/details/nostromotaleofse00conruoft/page/n403/mode/1up):
+To put Montero in a cage is my work; and when that insignificant piece of business is done, then, as Don Jose wishes us, we shall grow rich, one and all, like so many Englishmen, because it is money that saves a country, and--” But a young officer in a very new uniform, hurrying up from the direction of the jetty, interrupted his interpretation of Senor Avellanos’s ideals.
+Avellanos’s ==> Avellanos
+
+Page 404 (https://archive.org/details/nostromotaleofse00conruoft/page/n404/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 406 (https://archive.org/details/nostromotaleofse00conruoft/page/n406/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelan ==> Corbelàn
+
+Page 406 (https://archive.org/details/nostromotaleofse00conruoft/page/n406/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores ==> Señores
+
+Page 406 (https://archive.org/details/nostromotaleofse00conruoft/page/n406/mode/1up):
+All the lofty rooms on three sides of the quadrangle opened into each other and into the corredor, with its wrought-iron railings and a border of flowers, whence, like the lady of the mediaeval castle, she could witness from above all the departures and arrivals of the Casa, to which the sonorous arched gateway lent an air of stately importance.
+corredor, ==> corridor,
+
+Page 407 (https://archive.org/details/nostromotaleofse00conruoft/page/n407/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 407 (https://archive.org/details/nostromotaleofse00conruoft/page/n407/mode/1up):
+To put Montero in a cage is my work; and when that insignificant piece of business is done, then, as Don Jose wishes us, we shall grow rich, one and all, like so many Englishmen, because it is money that saves a country, and--” But a young officer in a very new uniform, hurrying up from the direction of the jetty, interrupted his interpretation of Senor Avellanos’s ideals.
+Avellanos’s ==> Avellanos
+
+Page 409 (https://archive.org/details/nostromotaleofse00conruoft/page/n409/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor,” ==> señor,”
+
+Page 411 (https://archive.org/details/nostromotaleofse00conruoft/page/n411/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 416 (https://archive.org/details/nostromotaleofse00conruoft/page/n416/mode/1up):
+A sleepy mozo coming out of the bakery door took hold of the horse’s bridle; the practicante endeavoured to conceal his guitar hastily; the girls, unabashed, stepped back smiling; and Charles Gould, on his way to the staircase, glanced into a dark corner of the patio at another group, a mortally wounded Cargador with a woman kneeling by his side; she mumbled prayers rapidly, trying at the same time to force a piece of orange between the stiffening lips of the dying man.
+endeavoured ==> endeavored
+
+Page 416 (https://archive.org/details/nostromotaleofse00conruoft/page/n416/mode/1up):
+His part, his inclination, and his policy were united in one endeavour to keep unchecked the flow of treasure he had started single-handed from the re-opened scar in the flank of the mountain.
+endeavour ==> endeavor
+
+Page 417 (https://archive.org/details/nostromotaleofse00conruoft/page/n417/mode/1up):
+All the lofty rooms on three sides of the quadrangle opened into each other and into the corredor, with its wrought-iron railings and a border of flowers, whence, like the lady of the mediaeval castle, she could witness from above all the departures and arrivals of the Casa, to which the sonorous arched gateway lent an air of stately importance.
+corredor, ==> corridor,
+
+Page 419 (https://archive.org/details/nostromotaleofse00conruoft/page/n419/mode/1up):
+All the lofty rooms on three sides of the quadrangle opened into each other and into the corredor, with its wrought-iron railings and a border of flowers, whence, like the lady of the mediaeval castle, she could witness from above all the departures and arrivals of the Casa, to which the sonorous arched gateway lent an air of stately importance.
+corredor, ==> corridor,
+
+Page 419 (https://archive.org/details/nostromotaleofse00conruoft/page/n419/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 420 (https://archive.org/details/nostromotaleofse00conruoft/page/n420/mode/1up):
+“If you will listen to an old officer of Paez, senores,” was the exordium of all his speeches in the Aristocratic Club of Sulaco, where he was admitted on account of his past services to the extinct cause of Federation.
+senores, ==> señores,
+
+Page 422 (https://archive.org/details/nostromotaleofse00conruoft/page/n422/mode/1up):
+The fair girl had cried herself to sleep, but the dark one--the bigger--had not closed her eyes yet.
+one--the bigger--had ==> one, the biggest, had
+
+Page 422 (https://archive.org/details/nostromotaleofse00conruoft/page/n422/mode/1up):
+“And then, senora,” he continued, baring his curly iron-grey head to Mrs.
+senora, ==> señora,
+
+Page 424 (https://archive.org/details/nostromotaleofse00conruoft/page/n424/mode/1up):
+The courtyards of the castle resounded with the clanking of leg-irons, sounds of blows, yells of pain; and the commission of high officers laboured feverishly, concealing their distress and apprehensions from each other, and especially from their secretary, Father Beron, an army chaplain, at that time very much in the confidence of the Citizen-Saviour. That priest was a big round-shouldered man, with an unclean-looking, overgrown tonsure on the top of his flat head, of a dingy, yellow complexion, softly fat, with greasy stains all down the front of his lieutenant’s uniform, and a small cross embroidered in white cotton on his left breast.
+Citizen-Saviour. ==> Citizen-Savior.
+
+Page 424 (https://archive.org/details/nostromotaleofse00conruoft/page/n424/mode/1up):
+She was given the head of the tables, where masters and dependants sat in a simple and patriarchal state.
+pendant ==> pendent
+
+Page 429 (https://archive.org/details/nostromotaleofse00conruoft/page/n429/mode/1up):
+ts or reasonable arguments; but ==> arguments. But
+
+Page 429 (https://archive.org/details/nostromotaleofse00conruoft/page/n429/mode/1up):
+Monygham’s view of what it behoved him to do was severe; it was an ideal view, in so much that it was the imaginative exaggeration of a correct feeling.
+behoved ==> behooved
+
+Page 430 (https://archive.org/details/nostromotaleofse00conruoft/page/n430/mode/1up):
+The sun, which looks late upon Sulaco, issuing in all the fulness of its power high up on the sky from behind the dazzling snow-edge of Higuerota, had precipitated the delicate, smooth, pearly greyness of light, in which the town lies steeped during the early hours, into sharp-cut masses of black shade and spaces of hot, blinding glare.
+greyness ==> grayness
+
+Page 430 (https://archive.org/details/nostromotaleofse00conruoft/page/n430/mode/1up):
+To put Montero in a cage is my work; and when that insignificant piece of business is done, then, as Don Jose wishes us, we shall grow rich, one and all, like so many Englishmen, because it is money that saves a country, and--” But a young officer in a very new uniform, hurrying up from the direction of the jetty, interrupted his interpretation of Senor Avellanos’s ideals.
+Avellanos’s ==> Avellanos
+
+Page 430 (https://archive.org/details/nostromotaleofse00conruoft/page/n430/mode/1up):
+She lingered, approaching her face to the clusters of flowers here and there as if to give time to her thoughts to catch up with her slow footsteps along the straight vista of the corredor.
+corredor. ==> corridor.
+
+Page 431 (https://archive.org/details/nostromotaleofse00conruoft/page/n431/mode/1up):
+Charles Gould made no pretence of the sort; with his elbows raised squarely, he twisted both ends of his flaming moustaches--they were so long that his hands were quite away from his face.
+moustaches--they ==> mustaches—they
+
+Page 431 (https://archive.org/details/nostromotaleofse00conruoft/page/n431/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 438 (https://archive.org/details/nostromotaleofse00conruoft/page/n438/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 438 (https://archive.org/details/nostromotaleofse00conruoft/page/n438/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores ==> Señores
+
+Page 439 (https://archive.org/details/nostromotaleofse00conruoft/page/n439/mode/1up):
+Emaciated greybeards rode by the side of lean dark youths, marked by all the hardships of campaigning, with strips of raw beef twined round the crowns of their hats, and huge iron spurs fastened to their naked heels.
+greybeards ==> graybeards
+
+Page 439 (https://archive.org/details/nostromotaleofse00conruoft/page/n439/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 439 (https://archive.org/details/nostromotaleofse00conruoft/page/n439/mode/1up):
+ight sleeves of their ==> the Seaboard
+
+Page 439 (https://archive.org/details/nostromotaleofse00conruoft/page/n439/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 443 (https://archive.org/details/nostromotaleofse00conruoft/page/n443/mode/1up):
+” Then, turning to the small knot of silent Europeans looking on within earshot, he raised his voice protectingly-- “Senores, have no apprehension.
+Senores ==> Señores
+
+Page 444 (https://archive.org/details/nostromotaleofse00conruoft/page/n444/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 444 (https://archive.org/details/nostromotaleofse00conruoft/page/n444/mode/1up):
+Afterwards the greater part of the citizens remained fascinated by the orator’s action alone, his tip-toeing, the arms flung above his head with the fists clenched, a hand laid flat upon the heart, the silver gleam of rolling eyes, the sweeping, pointing, embracing gestures, a hand laid familiarly on Gamacho’s shoulder; a hand waved formally towards the little black-coated person of Senor Fuentes, advocate and politician and a true friend of the people.
+clenched, ==> clinched;
+
+Page 445 (https://archive.org/details/nostromotaleofse00conruoft/page/n445/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 445 (https://archive.org/details/nostromotaleofse00conruoft/page/n445/mode/1up):
+” A dull roar greeted Senor Gamacho, ex-pedlar of the Campo, Commandante of the National Guards.
+ex-pedlar ==> ex-peddler
+
+Page 446 (https://archive.org/details/nostromotaleofse00conruoft/page/n446/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 448 (https://archive.org/details/nostromotaleofse00conruoft/page/n448/mode/1up):
+rtical sun ==> vertical sun,
+
+Page 450 (https://archive.org/details/nostromotaleofse00conruoft/page/n450/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 450 (https://archive.org/details/nostromotaleofse00conruoft/page/n450/mode/1up):
+Gould’s water-colour sketch; she had made it hastily one day from a cleared patch in the bushes, sitting in the shade of a roof of straw erected for her on three rough poles under Don Pepe’s direction.
+Pepe’s ==> Pépé’s
+
+Page 450 (https://archive.org/details/nostromotaleofse00conruoft/page/n450/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 451 (https://archive.org/details/nostromotaleofse00conruoft/page/n451/mode/1up):
+He had cooked for him in Lombardy through the whole campaign; on the march to Rome he had lassoed his beef in the Campagna after the American manner; he had been wounded in the defence of the Roman Republic; he was one of the four fugitives who, with the general, carried out of the woods the inanimate body of the general’s wife into the farmhouse where she died, exhausted by the hardships of that terrible retreat.
+Roman ==> Romàn
+
+Page 451 (https://archive.org/details/nostromotaleofse00conruoft/page/n451/mode/1up):
+A young Indian girl with long hair, big eyes, and small hands and feet, carried out a wooden chair, while a thin old woman, crabbed and vigilant, watched her all the time from the verandah.
+verandah. ==> veranda.
+
+Page 453 (https://archive.org/details/nostromotaleofse00conruoft/page/n453/mode/1up):
+He listened to the excited vapourings of the mozo without misgivings, without surprise, without any active sentiment whatever.
+vapourings ==> vaporings
+
+Page 453 (https://archive.org/details/nostromotaleofse00conruoft/page/n453/mode/1up):
+He had cooked for him in Lombardy through the whole campaign; on the march to Rome he had lassoed his beef in the Campagna after the American manner; he had been wounded in the defence of the Roman Republic; he was one of the four fugitives who, with the general, carried out of the woods the inanimate body of the general’s wife into the farmhouse where she died, exhausted by the hardships of that terrible retreat.
+Roman ==> Romàn
+
+Page 454 (https://archive.org/details/nostromotaleofse00conruoft/page/n454/mode/1up):
+Father Roman, dried-up, small, alert, wrinkled, with big round eyes, a sharp chin, and a great snuff-taker, was an old campaigner, too; he had shriven many simple souls on the battlefields of the Republic, kneeling by the dying on hillsides, in the long grass, in the gloom of the forests, to hear the last confession with the smell of gunpowder smoke in his nostrils, the rattle of muskets, the hum and spatter of bullets in his ears.
+Roman, ==> Romàn,
+
+Page 454 (https://archive.org/details/nostromotaleofse00conruoft/page/n454/mode/1up):
+He had cooked for him in Lombardy through the whole campaign; on the march to Rome he had lassoed his beef in the Campagna after the American manner; he had been wounded in the defence of the Roman Republic; he was one of the four fugitives who, with the general, carried out of the woods the inanimate body of the general’s wife into the farmhouse where she died, exhausted by the hardships of that terrible retreat.
+Roman ==> Romàn
+
+Page 454 (https://archive.org/details/nostromotaleofse00conruoft/page/n454/mode/1up):
+Father Roman’s clear-sightedness was served by an uninformed intelligence; but his heart, preserving its tenderness amongst scenes of carnage, spoliation, and violence, abhorred these calamities the more as his association with the victims was closer.
+Roman’s ==> Romàn's
+
+Page 454 (https://archive.org/details/nostromotaleofse00conruoft/page/n454/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 455 (https://archive.org/details/nostromotaleofse00conruoft/page/n455/mode/1up):
+He had cooked for him in Lombardy through the whole campaign; on the march to Rome he had lassoed his beef in the Campagna after the American manner; he had been wounded in the defence of the Roman Republic; he was one of the four fugitives who, with the general, carried out of the woods the inanimate body of the general’s wife into the farmhouse where she died, exhausted by the hardships of that terrible retreat.
+Roman ==> Romàn
+
+Page 455 (https://archive.org/details/nostromotaleofse00conruoft/page/n455/mode/1up):
+Gould-- “No two stones could come together anywhere without the Gobernador hearing the click, senora.
+senora ==> señora
+
+Page 459 (https://archive.org/details/nostromotaleofse00conruoft/page/n459/mode/1up):
+Their very countesses and princesses had kissed the general’s hands in London, it was said. He could well believe it; for the nation was noble, and the man was a saint.
+said. ==> staid.
+
+Page 462 (https://archive.org/details/nostromotaleofse00conruoft/page/n462/mode/1up):
+Sulaco--Eh?--or marquis . . .” He ==> Sulaco, eh?—or marHe
+
+Page 466 (https://archive.org/details/nostromotaleofse00conruoft/page/n466/mode/1up):
+Under providence we owed our preservation to my Capataz de Cargadores, as they called him in the town, a man who, when I discovered his value, sir, was just the bos’n of an Italian ship, a big Genoese ship, one of the few European ships that ever came to Sulaco with a general cargo before the building of the National Central.
+Capataz de Cargadores ==> capataz of cargadores
+
+Page 466 (https://archive.org/details/nostromotaleofse00conruoft/page/n466/mode/1up):
+n either case they ==> the Seaboard
+
+Page 468 (https://archive.org/details/nostromotaleofse00conruoft/page/n468/mode/1up):
+A long tongue of land, straight as a wall, with the grass-grown ruins of the fort making a sort of rounded green mound, plainly visible from the inner shore, closed its circuit; while beyond the Placid Gulf repeated those splendours of colouring on a greater scale and with a more sombre magnificence.
+while beyond ==> and beyond,
+
+Page 468 (https://archive.org/details/nostromotaleofse00conruoft/page/n468/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 470 (https://archive.org/details/nostromotaleofse00conruoft/page/n470/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 473 (https://archive.org/details/nostromotaleofse00conruoft/page/n473/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 477 (https://archive.org/details/nostromotaleofse00conruoft/page/n477/mode/1up):
+He remembered these sights not without some filial emotion, though he had been habitually and severely beaten as a boy on one of these feluccas by a short-necked, shaven Genoese, with a deliberate and distrustful manner, who (he firmly believed) had cheated him out of his orphan’s inheritance.
+he had been habitually and ==> the Seaboard
+
+Page 478 (https://archive.org/details/nostromotaleofse00conruoft/page/n478/mode/1up):
+Nostromo can do this and that--work all day and ride all night--behold! he found himself a marked Ribierist for any sort of vengeance Gamacho, for instance, would choose to take, now the Montero party, had, after all, mastered the town.
+all night--behold! ==> about at night—behold!
+
+Page 479 (https://archive.org/details/nostromotaleofse00conruoft/page/n479/mode/1up):
+As if in answer to this thought, half of remorse and half of hope, with a soft flutter and oblique flight, a big owl, whose appalling cry: “Ya-acabo!
+flight, ==> flïght,
+
+Page 480 (https://archive.org/details/nostromotaleofse00conruoft/page/n480/mode/1up):
+Its deeper meaning was hidden from their simple intelligence. Moreover, they expended no store of thought on the doctor.
+intelligence. ==> unintelligence.
+
+Page 481 (https://archive.org/details/nostromotaleofse00conruoft/page/n481/mode/1up):
+Under providence we owed our preservation to my Capataz de Cargadores, as they called him in the town, a man who, when I discovered his value, sir, was just the bos’n of an Italian ship, a big Genoese ship, one of the few European ships that ever came to Sulaco with a general cargo before the building of the National Central.
+Capataz de Cargadores, ==> capataz of cargadores,
+
+Page 482 (https://archive.org/details/nostromotaleofse00conruoft/page/n482/mode/1up):
+The only inhabitant was a lonely, silent, apathetic Indian in charge of the palmarias, who brought sometimes a load of cocoanuts to the town for sale.
+palmarias, ==> palmaries,
+
+Page 485 (https://archive.org/details/nostromotaleofse00conruoft/page/n485/mode/1up):
+I have no doubt of that because there could hardly have been two exploits of that peculiar kind in the same part of the world and both connected with a South American revolution.
+could ==> would
+
+Page 489 (https://archive.org/details/nostromotaleofse00conruoft/page/n489/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 489 (https://archive.org/details/nostromotaleofse00conruoft/page/n489/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 491 (https://archive.org/details/nostromotaleofse00conruoft/page/n491/mode/1up):
+Under providence we owed our preservation to my Capataz de Cargadores, as they called him in the town, a man who, when I discovered his value, sir, was just the bos’n of an Italian ship, a big Genoese ship, one of the few European ships that ever came to Sulaco with a general cargo before the building of the National Central.
+Capataz de Cargadores, ==> capataz of the cargadores,
+
+Page 498 (https://archive.org/details/nostromotaleofse00conruoft/page/n498/mode/1up):
+” “I believe you, Capataz,” said the doctor, drily.
+drily. ==> dryly.
+
+Page 498 (https://archive.org/details/nostromotaleofse00conruoft/page/n498/mode/1up):
+en raised his voice. “That, senor, would ==> Nostromo: A Tale of the Seaboard
+
+Page 499 (https://archive.org/details/nostromotaleofse00conruoft/page/n499/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor,” ==> señor,”
+
+Page 500 (https://archive.org/details/nostromotaleofse00conruoft/page/n500/mode/1up):
+And, of course, in the news the Decouds received regularly from Costaguana, the name of their friends, the Avellanos, cropped up frequently--the arrest and the abominable treatment of the ex-Minister, the dangers and hardships endured by the family, its withdrawal in poverty to Sulaco, the death of the mother.
+arrest ==> arrrest
+
+Page 501 (https://archive.org/details/nostromotaleofse00conruoft/page/n501/mode/1up):
+“You are not the only one here who can look an ugly death in the face.
+gly death in ==> Nostromo: A Tale of
+
+Page 501 (https://archive.org/details/nostromotaleofse00conruoft/page/n501/mode/1up):
+Afterwards, with advancing wisdom, he managed to clear the plain truth of the business from the fantastic intrusions of the Old Man of the Sea, vampires, and ghouls, which had lent to his father’s correspondence the flavour of a gruesome Arabian Nights tale.
+gruesome ==> grewsome
+
+Page 505 (https://archive.org/details/nostromotaleofse00conruoft/page/n505/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 505 (https://archive.org/details/nostromotaleofse00conruoft/page/n505/mode/1up):
+Dismounting at the great door he greeted the silent bystanders with cheery impudence, and begged to be taken up at once to the “muy valliente” colonel.
+valliente” ==> valiente”
+
+Page 505 (https://archive.org/details/nostromotaleofse00conruoft/page/n505/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 506 (https://archive.org/details/nostromotaleofse00conruoft/page/n506/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 506 (https://archive.org/details/nostromotaleofse00conruoft/page/n506/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches, ==> mustaches,
+
+Page 506 (https://archive.org/details/nostromotaleofse00conruoft/page/n506/mode/1up):
+It came pathetically feeble from under a pile of ponchos, which buried his elegant person right up to the black moustaches, uncurled, pendant, in sign of bodily prostration and mental incapacity.
+pendant, ==> pendent,
+
+Page 507 (https://archive.org/details/nostromotaleofse00conruoft/page/n507/mode/1up):
+The brave Esmeralda Regiment held the harbour, held--And closing his eyes, he rolled his aching head like a half-delirious invalid under the inquisitive stare of the envoy, who was obliged to bend down over the hammock in order to catch the painful and broken accents.
+harbour, held--And ==> harbor, held— And
+
+Page 508 (https://archive.org/details/nostromotaleofse00conruoft/page/n508/mode/1up):
+In return Giorgio would give a slight sideways jerk of the head, without unfolding his arms.
+sideways ==> sideway
+
+Page 508 (https://archive.org/details/nostromotaleofse00conruoft/page/n508/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 509 (https://archive.org/details/nostromotaleofse00conruoft/page/n509/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor,” ==> señor,"
+
+Page 510 (https://archive.org/details/nostromotaleofse00conruoft/page/n510/mode/1up):
+But man is a desperately conservative creature, and the extravagant novelty of this outrage upon his purse distressed his sensibilities.
+sensibilit ==> sensibility.
+
+Page 512 (https://archive.org/details/nostromotaleofse00conruoft/page/n512/mode/1up):
+Everywhere there were long shadows lying on the hills, on the roads, on the enclosed fields of olive trees; the shadows of poplars, of wide chestnuts, of farm buildings, of stone walls; and in mid-air the sound of a bell, thin and alert, was like the throbbing pulse of the sunset glow.
+buildings, ==> building,
+
+Page 513 (https://archive.org/details/nostromotaleofse00conruoft/page/n513/mode/1up):
+“Speak--thief--scoundrel--picaro--or--” Sotillo had seized the riding-whip, and stood with his arm lifted up.
+riding-whip, ==> horsewhip,
+
+Page 513 (https://archive.org/details/nostromotaleofse00conruoft/page/n513/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 513 (https://archive.org/details/nostromotaleofse00conruoft/page/n513/mode/1up):
+She saw the man under the silent, sad-eyed beast of burden.
+silent, ==> slient,
+
+Page 514 (https://archive.org/details/nostromotaleofse00conruoft/page/n514/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 515 (https://archive.org/details/nostromotaleofse00conruoft/page/n515/mode/1up):
+It was too late; his officers had rushed in tumultuously, in a great clatter of scabbards, clamouring, with astonishment and wonder.
+clamouring, ==> clamoring
+
+Page 515 (https://archive.org/details/nostromotaleofse00conruoft/page/n515/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 515 (https://archive.org/details/nostromotaleofse00conruoft/page/n515/mode/1up):
+” And another, from the back row of faces, timid and pressing, cried out-- “Why did you kill him, mi colonel?”
+colonel?” ==> coronel?”
+
+Page 515 (https://archive.org/details/nostromotaleofse00conruoft/page/n515/mode/1up):
+he had confessed everything, this fractious Jew, this bribon.
+fractious ==> factious
+
+Page 517 (https://archive.org/details/nostromotaleofse00conruoft/page/n517/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 517 (https://archive.org/details/nostromotaleofse00conruoft/page/n517/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 517 (https://archive.org/details/nostromotaleofse00conruoft/page/n517/mode/1up):
+“It is as if I were taking up a curse upon me, senor doctor. A man with a treasure on this coast will have every knife raised against him in every place upon the shore.
+senor doctor. ==> Señor Doctor.
+
+Page 518 (https://archive.org/details/nostromotaleofse00conruoft/page/n518/mode/1up):
+At this supremely critical point of Sulaco’s fortunes it was borne upon him at last that this man was really indispensable, more indispensable than ever the infatuation of Captain Mitchell, his proud discoverer, could conceive; far beyond what Decoud’s best dry raillery about “my illustrious friend, the unique Capataz de Cargadores,” had ever intended. The fellow was unique.
+intended. ==> invented.
+
+Page 519 (https://archive.org/details/nostromotaleofse00conruoft/page/n519/mode/1up):
+Moreover, they expended no store of thought on the doctor. He was old, ugly, learned--and a little “loco”--mad, if not a bit of a sorcerer, as the common people suspected him of being.
+the doctor. ==> him.
+
+Page 519 (https://archive.org/details/nostromotaleofse00conruoft/page/n519/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 519 (https://archive.org/details/nostromotaleofse00conruoft/page/n519/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 520 (https://archive.org/details/nostromotaleofse00conruoft/page/n520/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 521 (https://archive.org/details/nostromotaleofse00conruoft/page/n521/mode/1up):
+“It is not in my power to get the treasure back for you to give up to Sotillo, or Pedrito, or Gamacho.
+t is not in my power to get ==> Nostromo: A Tale of
+
+Page 521 (https://archive.org/details/nostromotaleofse00conruoft/page/n521/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 521 (https://archive.org/details/nostromotaleofse00conruoft/page/n521/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 523 (https://archive.org/details/nostromotaleofse00conruoft/page/n523/mode/1up):
+Sometimes a low-toned woman cried through the window-hole softly, “He’s coming directly, senor,” and the horseman waited silent on a motionless horse.
+senor, ==> señor,
+
+Page 523 (https://archive.org/details/nostromotaleofse00conruoft/page/n523/mode/1up):
+“What did you say, senor?”
+senor?” ==> señor?"
+
+Page 524 (https://archive.org/details/nostromotaleofse00conruoft/page/n524/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 524 (https://archive.org/details/nostromotaleofse00conruoft/page/n524/mode/1up):
+He could not praise enough dear Carlos’s tact and courage.
+Carlos’ ==> Carlos's
+
+Page 525 (https://archive.org/details/nostromotaleofse00conruoft/page/n525/mode/1up):
+Do you think that such a treasure can be buried without leaving traces of the work--eh! senor doctor? Why! you would not gain half a day more before having your throat cut by Sotillo.
+work--eh! senor doctor? Why! ==> work—eh, Señor Doctor? Why,
+
+Page 525 (https://archive.org/details/nostromotaleofse00conruoft/page/n525/mode/1up):
+It had been promised to him, he affirmed, straightening his bent back martially, “many years ago, for my valour in the wars with the wild Indios when a young man, senor.”
+senor. ==> señor.
+
+Page 526 (https://archive.org/details/nostromotaleofse00conruoft/page/n526/mode/1up):
+” Then giving up the empty cup into his young friend’s hand, extended with a smile, he continued to expatiate upon the patriotic nature of the San Tome mine for the simple pleasure of talking fluently, it seemed, while his reclining body jerked backwards and forwards in a rocking-chair of the sort exported from the United States.
+backwards ==> backward
+
+Page 526 (https://archive.org/details/nostromotaleofse00conruoft/page/n526/mode/1up):
+” Then giving up the empty cup into his young friend’s hand, extended with a smile, he continued to expatiate upon the patriotic nature of the San Tome mine for the simple pleasure of talking fluently, it seemed, while his reclining body jerked backwards and forwards in a rocking-chair of the sort exported from the United States.
+forwards ==> forward,
+
+Page 526 (https://archive.org/details/nostromotaleofse00conruoft/page/n526/mode/1up):
+Let him set his fools to drag backwards and forwards and crossways while he sits and watches till his eyes drop out of his head.
+crossways ==> crosswise
+
+Page 527 (https://archive.org/details/nostromotaleofse00conruoft/page/n527/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 527 (https://archive.org/details/nostromotaleofse00conruoft/page/n527/mode/1up):
+His arm, extended downwards, was about her waist.
+downwards ==> downward
+
+Page 528 (https://archive.org/details/nostromotaleofse00conruoft/page/n528/mode/1up):
+” Already Nostromo was walking slowly, his head dropping, as if checked in his pace by the weariness of irresolution.
+dropping, ==> drooping,
+
+Page 528 (https://archive.org/details/nostromotaleofse00conruoft/page/n528/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 528 (https://archive.org/details/nostromotaleofse00conruoft/page/n528/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+d’ltalia ==> d'Italia
+
+Page 529 (https://archive.org/details/nostromotaleofse00conruoft/page/n529/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 530 (https://archive.org/details/nostromotaleofse00conruoft/page/n530/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 534 (https://archive.org/details/nostromotaleofse00conruoft/page/n534/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 537 (https://archive.org/details/nostromotaleofse00conruoft/page/n537/mode/1up):
+Capataz. Ol ==> capataz. Old
+
+Page 537 (https://archive.org/details/nostromotaleofse00conruoft/page/n537/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 537 (https://archive.org/details/nostromotaleofse00conruoft/page/n537/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 538 (https://archive.org/details/nostromotaleofse00conruoft/page/n538/mode/1up):
+“And then, senora,” he continued, baring his curly iron-grey head to Mrs.
+senora, ==> señora,
+
+Page 538 (https://archive.org/details/nostromotaleofse00conruoft/page/n538/mode/1up):
+” At her feet the hens made off in all directions, with immense strides; if there were any engineers from up the line staying in Sulaco, a young English face or two would appear at the billiard-room occupying one end of the house; but at the other end, in the cafe, Luis, the mulatto, took good care not to show himself.
+cafe, ==> café,
+
+Page 543 (https://archive.org/details/nostromotaleofse00conruoft/page/n543/mode/1up):
+This is the Harbour Gate. Picturesque, is it not?
+Harbour Gate. ==> harbor gate.
+
+Page 544 (https://archive.org/details/nostromotaleofse00conruoft/page/n544/mode/1up):
+It was even for that specific crime that the deputy Gamacho, commanding the Nationals, a bloodthirsty and savage brute, was executed publicly by garrotte upon the sentence of a court-martial ordered by Barrios.
+garrotte ==> garrote
+
+Page 546 (https://archive.org/details/nostromotaleofse00conruoft/page/n546/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 547 (https://archive.org/details/nostromotaleofse00conruoft/page/n547/mode/1up):
+We get the bean from a famous cafeteria in the foot-hills, whose owner sends three sacks every year as a present to his fellow members in remembrance of the fight against Gamacho’s Nationals, carried on from these very windows by the caballeros.
+cafeteria ==> caféteria
+
+Page 547 (https://archive.org/details/nostromotaleofse00conruoft/page/n547/mode/1up):
+His features were recognized by several deserters from the Dictatorial army amongst the rascally mob already engaged in smashing the windows of the Intendencia.
+windows ==> window
+
+Page 547 (https://archive.org/details/nostromotaleofse00conruoft/page/n547/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 548 (https://archive.org/details/nostromotaleofse00conruoft/page/n548/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 548 (https://archive.org/details/nostromotaleofse00conruoft/page/n548/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan. Don Jose Avellanos depended very much upon the devotion of his beloved Antonia.
+Corbelan. ==> Corbelàn.
+
+Page 551 (https://archive.org/details/nostromotaleofse00conruoft/page/n551/mode/1up):
+But on mail-boat days he was down at the Harbour Office at an early hour, with his own gig, manned by a smart crew in white and blue, ready to dash off and board the ship directly she showed her bows between the harbour heads.
+Harbour Office ==> harbor office
+
+Page 551 (https://archive.org/details/nostromotaleofse00conruoft/page/n551/mode/1up):
+The cafe window of the Albergo d’ltalia Una was full of sunburnt, whiskered faces of railway men.
+d’ltalia ==> d’Italia
+
+Page 553 (https://archive.org/details/nostromotaleofse00conruoft/page/n553/mode/1up):
+A fortnight or more later, when Barrios, declared Generalissimo, was gone in pursuit of Pedrito away south, when the Provisional Junta, with Don Juste Lopez at its head, had promulgated the new Constitution, and our Don Carlos Gould was packing up his trunks bound on a mission to San Francisco and Washington (the United States, sir, were the first great power to recognize the Occidental Republic)--a fortnight later, I say, when we were beginning to feel that our heads were safe on our shoulders, if I may express myself so, a prominent man, a large shipper by our line, came to see me on business, and, says he, the first thing: ‘I say, Captain Mitchell, is that fellow’ (meaning Nostromo) ‘still the Capataz of your Cargadores or not?
+Generalissimo, ==> generalisimo,
+
+Page 557 (https://archive.org/details/nostromotaleofse00conruoft/page/n557/mode/1up):
+It seems that he wandered about in and out of the town, and on two nights turned up to sleep in the baracoons of the railway people.
+baracoons ==> barracoons
+
+Page 557 (https://archive.org/details/nostromotaleofse00conruoft/page/n557/mode/1up):
+’ “‘Senor,’ says he, looking at me in a slow, inquisitive manner, ‘would it surprise you to hear that I am too tired to work just yet?
+“‘Senor,’ ==> “‘Señor,’
+
+Page 558 (https://archive.org/details/nostromotaleofse00conruoft/page/n558/mode/1up):
+In the general dismay there were families hopeful enough to fly upon the road towards Los Hatos, which was left open by the withdrawal of the armed rabble under Senores Fuentes and Gamacho, to Rincon, with their enthusiastic welcome for Pedro Montero.
+Hatos, ==> Matos,
+
+Page 558 (https://archive.org/details/nostromotaleofse00conruoft/page/n558/mode/1up):
+” And the coxswain’s voice at the door, announcing that the gig was ready, closed the cycle.
+coxswain’s ==> cockswain's
+
+Page 559 (https://archive.org/details/nostromotaleofse00conruoft/page/n559/mode/1up):
+Every minute of time was momentous with the lives and futures of a whole town.
+futures ==> future
+
+Page 563 (https://archive.org/details/nostromotaleofse00conruoft/page/n563/mode/1up):
+Old Viola, at the door, moved his arm upwards as if referring all his quick, fleeting thoughts to the picture of his old chief on the wall.
+upwards ==> upward
+
+Page 564 (https://archive.org/details/nostromotaleofse00conruoft/page/n564/mode/1up):
+But Nostromo’s half-smile of approval changed into a scornful curl of the lip by the sight of the spade itself flung there in full view, as if in utter carelessness or sudden panic, giving away the whole thing.
+ut Nostromo’s ==> But Nostromo's
+
+Page 567 (https://archive.org/details/nostromotaleofse00conruoft/page/n567/mode/1up):
+If anything could induce me to revisit Sulaco (I should hate to see all these changes) it would be Antonia.
+these ==> those
+
+Page 568 (https://archive.org/details/nostromotaleofse00conruoft/page/n568/mode/1up):
+It is for the reader to say how far they are deserving of interest in their actions and in the secret purposes of their hearts revealed in the bitter necessities of the time.
+bitter ==> biter
+
+Page 568 (https://archive.org/details/nostromotaleofse00conruoft/page/n568/mode/1up):
+But at the same time he felt no remorse. What should he regret?
+remorse. ==> renorse.
+
+Page 568 (https://archive.org/details/nostromotaleofse00conruoft/page/n568/mode/1up):
+Nothing to speak of; but as I looked them over, the curious confirmation of the few casual words heard in my early youth evoked the memories of that distant time when everything was so fresh, so surprising, so venturesome, so interesting; bits of strange coasts under the stars, shadows of hills in the sunshine, men’s passions in the dusk, gossip half-forgotten, faces grown dim.
+passions ==> pasions
+
+Page 568 (https://archive.org/details/nostromotaleofse00conruoft/page/n568/mode/1up):
+He had heard this very sound in his imagination on that far-off evening when his wife and himself, after a tortuous ride through a strip of forest, had reined in their horses near the stream, and had gazed for the first time upon the jungle-grown solitude of the gorge.
+solitude ==> soliude
+
+Page 570 (https://archive.org/details/nostromotaleofse00conruoft/page/n570/mode/1up):
+It was on the third day of his solitude that he had dragged the dinghy near the water with an idea of rowing away somewhere, but had desisted partly at the whisper of lingering hope that Nostromo would return, partly from conviction of utter uselessness of all effort.
+his solitude that he had dragged ==> the Seaboard Iragged
+
+Page 571 (https://archive.org/details/nostromotaleofse00conruoft/page/n571/mode/1up):
+They looked at it fixedly, while his hand, feeling about his waist, unbuttoned the flap of the leather case, drew the revolver, cocked it, brought it forward pointing at his breast, pulled the trigger, and, with convulsive force, sent the still-smoking weapon hurtling through the air.
+hurtling ==> hurling
+
+Page 574 (https://archive.org/details/nostromotaleofse00conruoft/page/n574/mode/1up):
+Monygham had grown older, with his head steel-grey and the unchanged expression of his face, living on the inexhaustible treasure of his devotion drawn upon in the secret of his heart like a store of unlawful wealth.
+steel-grey ==> steel-gray
+
+Page 575 (https://archive.org/details/nostromotaleofse00conruoft/page/n575/mode/1up):
+” The candle, half-consumed and burning dimly with a long wick, lighted up from below his inclined face, whose expression affected by the drawn-in cicatrices in the cheeks, had something vaguely unnatural, an exaggerated remorseful bitterness.
+drawn-in ==> drawn-up
+
+Page 578 (https://archive.org/details/nostromotaleofse00conruoft/page/n578/mode/1up):
+dear friend?” “I ==> old friend?" "I
+
+Page 579 (https://archive.org/details/nostromotaleofse00conruoft/page/n579/mode/1up):
+Father Corbelan, whom Decoud had seen from the balcony turning into the gateway of the Casa Gould, had addressed no one since coming in.
+Corbelan, ==> Corbelàn,
+
+Page 580 (https://archive.org/details/nostromotaleofse00conruoft/page/n580/mode/1up):
+As to pride, it was well known that all the Corbelans were proud, and her mother was a Corbelan.
+Corbelans ==> Corbelàns
+
+Page 581 (https://archive.org/details/nostromotaleofse00conruoft/page/n581/mode/1up):
+There Father Roman said Mass every day before a sombre altar-piece representing the Resurrection, the grey slab of the tombstone balanced on one corner, a figure soaring upwards, long-limbed and livid, in an oval of pallid light, and a helmeted brown legionary smitten down, right across the bituminous foreground.
+upwards, ==> upward,
+
+Page 582 (https://archive.org/details/nostromotaleofse00conruoft/page/n582/mode/1up):
+One more figure of those stirring times I would like to mention: and that is Antonia Avellanos--the “beautiful Antonia.
+those ==> these
+
+Page 583 (https://archive.org/details/nostromotaleofse00conruoft/page/n583/mode/1up):
+Some harbours of the earth are made difficult of access by the treachery of sunken rocks and the tempests of their shores.
+harbour ==> the harbor
+
+Page 584 (https://archive.org/details/nostromotaleofse00conruoft/page/n584/mode/1up):
+Gould; and under the shade of the big trees her little, even teeth gleamed in a youthful smile of gentle malice. “People don’t know how really good you are.
+gentle malice. “People don’t ==> the Seaboard "People don't
+
+Page 585 (https://archive.org/details/nostromotaleofse00conruoft/page/n585/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 585 (https://archive.org/details/nostromotaleofse00conruoft/page/n585/mode/1up):
+I dare say she would make eyes at anybody.” Dr. Monygham said nothing of this to Mrs.
+anybody.” Dr. Monygham said nothing ==> Nostromo: A Tale
+
+Page 589 (https://archive.org/details/nostromotaleofse00conruoft/page/n589/mode/1up):
+Everybody of note in Sulaco had been invited--the one or two foreign merchants, all the representatives of the old Spanish families then in town, the great owners of estates on the plain, grave, courteous, simple men, caballeros of pure descent, with small hands and feet, conservative, hospitable, and kind.
+state ==> stare
+
+Page 590 (https://archive.org/details/nostromotaleofse00conruoft/page/n590/mode/1up):
+His two girls, the eldest fourteen, and the other two years younger, crouched on the sanded floor, on each side of the Signora Teresa, with their heads on their mother’s lap, both scared, but each in her own way, the dark-haired Linda indignant and angry, the fair Giselle, the younger, bewildered and resigned.
+Giselle, ==> the girl,
+
+Page 591 (https://archive.org/details/nostromotaleofse00conruoft/page/n591/mode/1up):
+Stooping carefully behind an ornamental clump of bushes, he put down with precaution a small child he had been carrying on his shoulder--his own and Leonarda’s last born.
+shoulder--his ==> shoulders—his
+
+Page 594 (https://archive.org/details/nostromotaleofse00conruoft/page/n594/mode/1up):
+Incorrigible, the last of the Corbelans, the last of the Avellanos, the doctor had said; but she saw clearly the San Tome mine possessing, consuming, burning up the life of the last of the Costaguana Goulds; mastering the energetic spirit of the son as it had mastered the lamentable weakness of the father.
+Corbelans, ==> Corbelàns,
+
+Page 595 (https://archive.org/details/nostromotaleofse00conruoft/page/n595/mode/1up):
+Their souls cannot tear themselves away from their bodies mounting guard over the discovered treasure. They are now rich and hungry and thirsty--a strange theory of tenacious gringo ghosts suffering in their starved and parched flesh of defiant heretics, where a Christian would have renounced and been released.
+treasure. ==> treasure; as
+
+Page 597 (https://archive.org/details/nostromotaleofse00conruoft/page/n597/mode/1up):
+At this unexpected, undreamt-of, startling sight, he thought himself lost irretrievably.
+undreamt-of, ==> undreamed-of,
+
+Page 599 (https://archive.org/details/nostromotaleofse00conruoft/page/n599/mode/1up):
+And if we miss her by some mischance, we must keep away from the land till we grow weak, and perhaps mad, and die, and drift dead, until one or another of the steamers of the Compania comes upon the boat with the two dead men who have saved the treasure.
+Compania ==> Compañia
+
+Page 600 (https://archive.org/details/nostromotaleofse00conruoft/page/n600/mode/1up):
+The orphaned children, growing up and well schooled, calling him uncle, clamoured for his blessing.
+clamoured ==> clamored
+
+Page 602 (https://archive.org/details/nostromotaleofse00conruoft/page/n602/mode/1up):
+Charles, very quiet and twisting his long moustaches, would decline to discuss them at all.
+moustaches ==> mustaches
+
+Page 603 (https://archive.org/details/nostromotaleofse00conruoft/page/n603/mode/1up):
+” Directly his schooner was anchored opposite the New Custom House, with its sham air of a Greek temple, flatroofed, with a colonnade, Captain Fidanza went pulling his small boat out of the harbour, bound for the Great Isabel, openly in the light of a declining day, before all men’s eyes, with a sense of having mastered the fates.
+nchored opposite the New Custom House, ==> new custom-house,
+
+Page 603 (https://archive.org/details/nostromotaleofse00conruoft/page/n603/mode/1up):
+More dangerous to the wielder, too, this weapon of wealth, double-edged with the cupidity and misery of mankind, steeped in all the vices of self-indulgence as in a concoction of poisonous roots, tainting the very cause for which it is drawn, always ready to turn awkwardly in the hand.
+elder, ==> eldest,
+
+Page 605 (https://archive.org/details/nostromotaleofse00conruoft/page/n605/mode/1up):
+The heroic Garibaldino sat on the same bench bowing his hoary head, his old soul dwelling alone with its memories, tender and violent, terrible and dreary--solitary on the earth full of men.
+dreary--solitary ==> dreary— all alone
+
+Page 607 (https://archive.org/details/nostromotaleofse00conruoft/page/n607/mode/1up):
+The old man knows where to find a bottle of wine, too.”
+wine, too.” ==> the Seaboard
+
+Page 607 (https://archive.org/details/nostromotaleofse00conruoft/page/n607/mode/1up):
+The old man knows where to find a bottle of wine, too.
+find a bottle ==> Nostromo: A Tale
+
+Page 613 (https://archive.org/details/nostromotaleofse00conruoft/page/n613/mode/1up):
+She saw in them a comedy of naive pretences, but hardly anything genuine except her own appalled indignation.
+naive ==> naïve
+
+Page 614 (https://archive.org/details/nostromotaleofse00conruoft/page/n614/mode/1up):
+you!” These ==> you!" Those
+
+Page 626 (https://archive.org/details/nostromotaleofse00conruoft/page/n626/mode/1up):
+“I am going to cling to mine to the end, Antonia,” he answered, through clenched teeth, then bowed very low, a little distantly.
+clenched ==> clinched
+
+Page 629 (https://archive.org/details/nostromotaleofse00conruoft/page/n629/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 630 (https://archive.org/details/nostromotaleofse00conruoft/page/n630/mode/1up):
+First of all the thing is perfectly credible: Italians were swarming into the Occidental Province at the time, as anybody who will read further can see; and secondly, there was no one who could stand so well by the side of Giorgio Viola the Garibaldino, the Idealist of the old, humanitarian revolutions.
+further ==> farther
+
+Page 630 (https://archive.org/details/nostromotaleofse00conruoft/page/n630/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 631 (https://archive.org/details/nostromotaleofse00conruoft/page/n631/mode/1up):
+As to the mozo, a Sulaco man--his wife paid for some masses, and the poor four-footed beast, being without sin, had been probably permitted to die; but the two gringos, spectral and alive, are believed to be dwelling to this day amongst the rocks, under the fatal spell of their success.
+amongst ==> among
+
+Page 634 (https://archive.org/details/nostromotaleofse00conruoft/page/n634/mode/1up):
+” “Senora,” cried Don Pepe, with enthusiasm, “it is true!
+Senora, ==> Señora,
+
+Page 634 (https://archive.org/details/nostromotaleofse00conruoft/page/n634/mode/1up):
+An airy soul, senora! Bright and warm, like sunshine--soon clouded, and soon serene.
+senora! ==> señora!
+
+Page 635 (https://archive.org/details/nostromotaleofse00conruoft/page/n635/mode/1up):
+” “Senora,” cried Don Pepe, with enthusiasm, “it is true!
+Senora, ==> Señora,
+
+Page 636 (https://archive.org/details/nostromotaleofse00conruoft/page/n636/mode/1up):
+The town of Sulaco itself--tops of walls, a great cupola, gleams of white miradors in a vast grove of orange trees--lies between the mountains and the plain, at some little distance from its harbour and out of the direct line of sight from the sea.
+ance from ==> Nostromo: A Tale of the Seaboard
+
+Page 637 (https://archive.org/details/nostromotaleofse00conruoft/page/n637/mode/1up):
+” “Our excellent Senor Mitchell” for the business and official world of Sulaco; “Fussy Joe” for the commanders of the Company’s ships, Captain Joseph Mitchell prided himself on his profound knowledge of men and things in the country--cosas de Costaguana.
+Senor ==> Señor
+
+Page 637 (https://archive.org/details/nostromotaleofse00conruoft/page/n637/mode/1up):
+” “Senora,” cried Don Pepe, with enthusiasm, “it is true!
+“Senora, ==> “Señora,
+
+Page 637 (https://archive.org/details/nostromotaleofse00conruoft/page/n637/mode/1up):
+“And then, senora,” he continued, baring his curly iron-grey head to Mrs.
+senora, ==> señora,
+
+Page 638 (https://archive.org/details/nostromotaleofse00conruoft/page/n638/mode/1up):
+Under providence we owed our preservation to my Capataz de Cargadores, as they called him in the town, a man who, when I discovered his value, sir, was just the bos’n of an Italian ship, a big Genoese ship, one of the few European ships that ever came to Sulaco with a general cargo before the building of the National Central.
+Capataz de Cargadores ==> capataz of the cargadores
+
+Page 639 (https://archive.org/details/nostromotaleofse00conruoft/page/n639/mode/1up):
+Their souls cannot tear themselves away from their bodies mounting guard over the discovered treasure.
+discovered ==> dicovered
+
+Page 642 (https://archive.org/details/nostromotaleofse00conruoft/page/n642/mode/1up):
+undying passion ==> love and grief
+
+---
+
+EDITION VARIANTS (not for submission — informational only)
+
+The following differences appear to be between editions rather than errors in either version.
+
+Page 24 (https://archive.org/details/nostromotaleofse00conruoft/page/n24/mode/1up):
+PG:    favour
+Scan:  favor
+
+Page 30 (https://archive.org/details/nostromotaleofse00conruoft/page/n30/mode/1up):
+PG:    house;
+Scan:  house:
+
+Page 60 (https://archive.org/details/nostromotaleofse00conruoft/page/n60/mode/1up):
+PG:    colour;
+Scan:  color;
+
+Page 67 (https://archive.org/details/nostromotaleofse00conruoft/page/n67/mode/1up):
+PG:    primrose-colour;
+Scan:  primrose-color;
+
+Page 92 (https://archive.org/details/nostromotaleofse00conruoft/page/n92/mode/1up):
+PG:    pursued:
+Scan:  pursued;
+
+Page 93 (https://archive.org/details/nostromotaleofse00conruoft/page/n93/mode/1up):
+PG:    grief:
+Scan:  grief;
+
+Page 113 (https://archive.org/details/nostromotaleofse00conruoft/page/n113/mode/1up):
+PG:    behaviour?
+Scan:  behavior?
+
+Page 145 (https://archive.org/details/nostromotaleofse00conruoft/page/n145/mode/1up):
+PG:    favour
+Scan:  favor
+
+Page 162 (https://archive.org/details/nostromotaleofse00conruoft/page/n162/mode/1up):
+PG:    byword amongst
+Scan:  by-word among
+
+Page 219 (https://archive.org/details/nostromotaleofse00conruoft/page/n219/mode/1up):
+PG:    favour
+Scan:  favor
+
+Page 221 (https://archive.org/details/nostromotaleofse00conruoft/page/n221/mode/1up):
+PG:    dissolve:
+Scan:  dissolve;
+
+Page 242 (https://archive.org/details/nostromotaleofse00conruoft/page/n242/mode/1up):
+PG:    water-colour
+Scan:  water-color
+
+Page 243 (https://archive.org/details/nostromotaleofse00conruoft/page/n243/mode/1up):
+PG:    water-colour
+Scan:  water-color
+
+Page 341 (https://archive.org/details/nostromotaleofse00conruoft/page/n341/mode/1up):
+PG:    Caballeros amongst
+Scan:  caballeros among
+
+Page 422 (https://archive.org/details/nostromotaleofse00conruoft/page/n422/mode/1up):
+PG:    haphazard amongst
+Scan:  hap-hazard among
+
+Page 464 (https://archive.org/details/nostromotaleofse00conruoft/page/n464/mode/1up):
+PG:    water-colour
+Scan:  water-color
+
+Page 565 (https://archive.org/details/nostromotaleofse00conruoft/page/n565/mode/1up):
+PG:    smartly:
+Scan:  smartly;
+
+Page 578 (https://archive.org/details/nostromotaleofse00conruoft/page/n578/mode/1up):
+PG:    colour,
+Scan:  color,
+
+Page 631 (https://archive.org/details/nostromotaleofse00conruoft/page/n631/mode/1up):
+PG:    her:
+Scan:  her;
+
+These errata were found using Gerrata (https://github.com/travis42/gerrata) and refined by a human reviewer (me).
+Please reach out if you would like to discuss Gerrata or this report.
