@@ -20,6 +20,7 @@ from gerrata.fetcher.scans import ScanFetcher, ScanData
 from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
 from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker
+from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report, gaps_to_candidate_errors
 from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.programmatic import ProgrammaticVerifier
 from gerrata.reporter.generator import ReportGenerator
@@ -583,6 +584,31 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print(f"  Raw candidates: {len(candidates)}")
         save_intermediate(intermed_dir, "04_candidates_raw", candidates)
 
+    # Step 5a: Detect coverage gaps (scan text missing from PG)
+    if resume_from not in ("pre-verify", "pre-report"):
+        console.print(f"  [bold blue]Detecting coverage gaps...[/bold blue]")
+        all_gaps = detect_scan_gaps(
+            pg_text=parsed.body_text,
+            alignments=alignments,
+            scan_pages=scan_pages,
+        )
+        if all_gaps:
+            # Save all gaps to JSON for full analysis
+            gap_json_path = intermed_dir / "05_gaps.json"
+            with open(gap_json_path, "w") as f:
+                json.dump([g.to_dict() for g in all_gaps], f, indent=2)
+            console.print(f"  All gaps (saved to {gap_json_path.name}): {len(all_gaps)}")
+
+            # Filter for report: only high-confidence, egregious gaps
+            report_gaps = filter_for_report(all_gaps)
+            if report_gaps:
+                console.print(f"  High-confidence gaps for report: {len(report_gaps)}")
+                candidates.extend(gaps_to_candidate_errors(report_gaps))
+            else:
+                console.print(f"  No high-confidence gaps for report")
+        else:
+            console.print(f"  No coverage gaps detected")
+
     # Step 6: False positive filter + additional filtering + line numbers
     if resume_from not in ("pre-verify", "pre-report"):
         # Step 6: False positive filter
@@ -802,6 +828,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         scan_id=scan_id,
         scan_pages=scan_pages,
         body_text=parsed.body_text,
+        alignments=alignments,
     )
     json_path, email_path = generator.save_reports(report, args.output)
     generator.print_summary(report)

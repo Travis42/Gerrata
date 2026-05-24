@@ -56,13 +56,15 @@ class ReportGenerator:
 
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
                  pg_file_path: Optional[Path] = None, scan_id: Optional[str] = None,
-                 scan_pages: Optional[list] = None, body_text: str = ""):
+                 scan_pages: Optional[list] = None, body_text: str = "",
+                 alignments: Optional[list] = None):
         self.console = console or Console()
         self.pg_parsed_text = pg_parsed_text
         self.pg_file_path = Path(pg_file_path) if pg_file_path else None
         self.scan_id = scan_id
         self.scan_pages = scan_pages or []
         self.body_text = body_text
+        self.alignments = alignments or []
 
     def _extract_sentence(self, text: str, offset: int, length: int) -> str:
         """Extract the sentence containing the given offset.
@@ -998,6 +1000,49 @@ class ReportGenerator:
                 lines.append(f"PG:    {pg_text}")
                 lines.append(f"Scan:  {scan_text}")
                 lines.append("")
+
+        # Coverage gap analysis — missing content detection
+        # Note: gaps are already computed in the CLI and included as
+        # CandidateError(MISSING_CONTENT) in the report. The section below
+        # uses the raw CoverageGap data for richer display.
+        if self.alignments and self.scan_pages and self.body_text:
+            try:
+                from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report
+                all_gaps = detect_scan_gaps(
+                    pg_text=self.body_text,
+                    alignments=self.alignments,
+                    scan_pages=self.scan_pages,
+                )
+                report_gaps = filter_for_report(all_gaps)
+                if report_gaps:
+                    lines.append("---")
+                    lines.append("")
+                    lines.append("MISSING CONTENT")
+                    lines.append("")
+                    lines.append(
+                        f"The following {len(report_gaps)} scan pages contain text that has "
+                        f"no corresponding passage in the PG text (verified via fuzzy search)."
+                    )
+                    lines.append("")
+                    for g in report_gaps:
+                        page = self._get_ia_leaf_number(g.page)
+                        wc = g.word_count
+                        conf = g.confidence.upper()
+                        if g.strategy == "partial":
+                            desc = f"page coverage {g.coverage_ratio:.0%}"
+                        else:
+                            desc = "no alignment"
+                        if self.scan_id:
+                            leaf_num = self._get_ia_leaf_number(g.page)
+                            scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                            lines.append(f"Page {page} ({scan_url}) — ~{wc} words, {desc} [{conf}]:")
+                        else:
+                            lines.append(f"Page {page} — ~{wc} words, {desc} [{conf}]:")
+                        preview = g.scan_text_preview[:150].strip()
+                        lines.append(preview)
+                        lines.append("")
+            except Exception:
+                pass  # Don't let gap detection failure break report generation
 
         # Footer
         lines.append("These errata were found using Gerrata (https://github.com/travis42/gerrata) and refined by a human reviewer (me).")
