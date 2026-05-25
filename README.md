@@ -259,14 +259,41 @@ Scores above 0.8 are considered high-confidence. The errata email includes items
 
 In addition to finding transcription errors, Gerrata detects **coverage gaps** — scan pages that contain text with no corresponding passage in the PG text. These may indicate paragraphs or sentences that were omitted during transcription.
 
-Two strategies are used:
+Three strategies are used:
 
 1. **Uncovered pages** — Scan pages with text but no alignment at all (the aligner couldn't match them)
 2. **Partial coverage** — Within aligned pages, portions of scan text that don't correspond to any PG passage
+3. **Content holes** — Within successfully aligned passages, words that the scan has but PG completely lacks (e.g., a sentence fragment deleted during transcription)
 
-Each gap is **verified against the full PG text** using fuzzy matching. If the gap text is found elsewhere in PG (just misaligned), it's filtered out. Only gaps that genuinely don't appear in PG are reported.
+### Content Hole Detection
 
-Gaps are included in the errata email under a `MISSING CONTENT` section with page links, word counts, and confidence levels.
+Content holes are the hardest type of omission to find because the aligner *did* match the passage — it just didn't notice that a chunk of words is missing from the middle. The algorithm works by running `SequenceMatcher` between the aligned PG text and scan text, then looking for one-sided gaps where the scan has words between two matched blocks but PG has nothing.
+
+**Filtering heuristics** to reduce false positives:
+- **Anchor length** (≥4 words): Both match blocks flanking the gap must be long enough. Short anchors indicate alignment noise, not real gaps.
+- **Alignment confidence** (≥0.65): Pages where the aligner reported low confidence are skipped entirely — messy alignments produce more noise than signal.
+- **PG verification**: The missing words are checked against the full PG text to avoid false positives from cross-page splits.
+- **Sentence boundary check**: Gaps that cross sentence boundaries (suggesting paragraph boundaries, not omissions) are filtered out.
+
+Each gap is verified against the full PG text using fuzzy matching. Only gaps that genuinely don't appear in PG are reported.
+
+### Gap Report Script
+
+After running the pipeline, generate a standalone gap detection report:
+
+```bash
+python3 scripts/gap_report.py \
+  --scan-id 2015.148755.Nostromo \
+  --pg-file cache/2021-0.txt \
+  -o reports/gap-detection-nostromo.md
+```
+
+This reads the cached pipeline intermediates (`03_alignments.json`, `03_scan_pages.json`) and produces a markdown report with:
+- Summary statistics (total gaps, by strategy, by confidence)
+- Content holes with missing words, PG context, and verification status
+- High-confidence structural gaps needing review
+
+Works with any completed pipeline run — just point it at the cache directory.
 
 ## Filing an Errata Report with Project Gutenberg
 
