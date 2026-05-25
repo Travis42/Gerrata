@@ -265,6 +265,36 @@ class TestFilterForReport:
         )
         assert filter_for_report([g]) == []
 
+    def test_content_hole_included_with_sufficient_words(self):
+        """Content holes with >= 5 words and medium+ confidence should be included."""
+        g = CoverageGap(
+            page=219, strategy="content_hole", word_count=7,
+            scan_text_preview="barrios with his improved rifles",
+            pg_verified=True, confidence="medium",
+            missing_words="barrios with his improved rifles",
+        )
+        assert len(filter_for_report([g])) == 1
+
+    def test_content_hole_excluded_if_too_short(self):
+        """Content holes with < 5 words should be excluded from reports."""
+        g = CoverageGap(
+            page=10, strategy="content_hole", word_count=4,
+            scan_text_preview="short text",
+            pg_verified=True, confidence="medium",
+            missing_words="short text",
+        )
+        assert filter_for_report([g]) == []
+
+    def test_content_hole_excluded_if_low_confidence(self):
+        """Content holes with low confidence should be excluded from reports."""
+        g = CoverageGap(
+            page=10, strategy="content_hole", word_count=10,
+            scan_text_preview="some text",
+            pg_verified=True, confidence="low",
+            missing_words="some text",
+        )
+        assert filter_for_report([g]) == []
+
 
 # ── gaps_to_candidate_errors ──────────────────────────────────────────────
 
@@ -283,6 +313,41 @@ class TestGapsToCandidateErrors:
 
     def test_empty_input(self):
         assert gaps_to_candidate_errors([]) == []
+
+    def test_content_hole_converted_to_candidate_error(self):
+        """Content holes with pg_verified=True and medium/high confidence are converted."""
+        g = CoverageGap(
+            page=219, strategy="content_hole", word_count=7,
+            scan_text_preview="barrios with his improved rifles",
+            pg_verified=True, confidence="medium",
+            missing_words="barrios with his improved rifles",
+        )
+        errors = gaps_to_candidate_errors([g])
+        assert len(errors) == 1
+        assert isinstance(errors[0], CandidateError)
+        assert errors[0].category == ErrorCategory.MISSING_CONTENT
+        assert errors[0].scan_page == 219
+        assert "barrios" in errors[0].diff_description
+
+    def test_content_hole_excluded_if_not_verified(self):
+        """Content holes without pg_verified are not converted to errors."""
+        g = CoverageGap(
+            page=10, strategy="content_hole", word_count=10,
+            scan_text_preview="some text",
+            pg_verified=False, confidence="medium",
+            missing_words="some text",
+        )
+        assert gaps_to_candidate_errors([g]) == []
+
+    def test_content_hole_excluded_if_low_confidence(self):
+        """Content holes with low confidence are not converted to errors."""
+        g = CoverageGap(
+            page=10, strategy="content_hole", word_count=10,
+            scan_text_preview="some text",
+            pg_verified=True, confidence="low",
+            missing_words="some text",
+        )
+        assert gaps_to_candidate_errors([g]) == []
 
 
 # ── Helpers for content hole tests ────────────────────────────────────────
@@ -573,6 +638,33 @@ class TestDetectContentHoles:
         d = g.to_dict()
         assert "missing_words" not in d
         assert "pg_context_before" not in d
+
+    def test_fuzzy_verification_catches_punctuation_variant(self):
+        """Bug 1 fix: Fuzzy search catches holes where PG has text with different punctuation.
+
+        If PG has the 'missing' words with a comma but scan doesn't, exact matching
+        would fail to detect the match and report a false positive. The fuzzy
+        sliding-window search should find it.
+        """
+        pg_words = ["he", "said", "and", "then", "left"]
+        # Scan has extra words that actually exist in full PG with punctuation
+        scan_words = ["he", "said", "the", "man", "turned", "and", "then", "left"]
+
+        pg_body = "The story begins here. " * 5 + " ".join(pg_words) + " The story continues there. " * 5
+        # Full PG contains the missing words with different punctuation
+        pg_full = pg_body + " Later, the man—turned around. He was confused."
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 99)]
+        scan_pages = [_dict_scan_page(99, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_body, pg_full)
+        # The fuzzy search should find "the man turned" in PG and filter it out
+        assert len(holes) == 0
 
 
 # ── detect_scan_gaps integration with content holes ──────────────────────

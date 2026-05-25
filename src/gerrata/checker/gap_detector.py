@@ -392,10 +392,25 @@ def detect_content_holes(
             )
             missing_phrase = " ".join(scan_gap)
 
-            # 5. Verify against full PG text
-            verified = _verify_content_hole(scan_gap, pg_full_text)
-            if not verified:
-                continue
+            # 5. Verify against full PG text using fuzzy search
+            # Use a fast exact-match check first (handles common case where
+            # words exist elsewhere with same punctuation). Falls back to
+            # sliding-window fuzzy search for punctuation-variant matches.
+            pg_lower = pg_full_text.lower()
+            phrase_lower = missing_phrase.lower()
+
+            # Fast path: exact substring match in PG
+            found_in_pg = phrase_lower in pg_lower
+            pg_match_ratio = 1.0 if found_in_pg else 0.0
+
+            # Slow path: fuzzy search for punctuation variants
+            if not found_in_pg and len(scan_gap) >= 5:
+                found_in_pg, pg_match_ratio = _gap_text_exists_in_pg(
+                    missing_phrase, pg_full_text
+                )
+
+            if found_in_pg:
+                continue  # Text exists in PG — alignment failure, not real hole
 
             # Compute confidence
             if len(scan_gap) >= 8:
@@ -420,7 +435,7 @@ def detect_content_holes(
                 scan_text_preview=missing_phrase[:500],
                 coverage_ratio=0.0,
                 pg_verified=True,
-                pg_match_ratio=0.0,
+                pg_match_ratio=pg_match_ratio,
                 non_content=False,
                 confidence=confidence,
                 missing_words=missing_phrase,
@@ -647,6 +662,7 @@ def filter_for_report(gaps: list[CoverageGap]) -> list[CoverageGap]:
         and (
             (g.strategy == "uncovered" and g.word_count >= REPORT_MIN_WORDS_UNCOVERED)
             or (g.strategy == "partial" and g.word_count >= REPORT_MIN_WORDS_PARTIAL)
+            or (g.strategy == "content_hole" and g.word_count >= 5)
         )
     ]
 
@@ -659,7 +675,14 @@ def gaps_to_candidate_errors(gaps: list[CoverageGap]) -> list[CandidateError]:
     """
     errors: list[CandidateError] = []
     for g in gaps:
-        if g.strategy == "uncovered":
+        if g.strategy == "content_hole":
+            if not g.pg_verified or g.confidence not in ("high", "medium"):
+                continue
+            desc = (
+                f"Scan page {g.page} has {g.word_count} words missing from PG "
+                f'within an aligned passage: "{g.missing_words[:100]}"'
+            )
+        elif g.strategy == "uncovered":
             desc = (
                 f"Scan page {g.page} has ~{g.word_count} words with no PG alignment "
                 f"and no match in PG text — likely missing from PG"
