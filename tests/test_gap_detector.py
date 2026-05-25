@@ -6,9 +6,13 @@ from difflib import SequenceMatcher
 from gerrata.checker.gap_detector import (
     CoverageGap,
     _gap_text_exists_in_pg,
+    _has_sentence_boundary,
     _is_non_content,
     _normalize,
     _strip_page_header,
+    _tokenize_words,
+    _verify_content_hole,
+    detect_content_holes,
     detect_scan_gaps,
     filter_for_report,
     gaps_to_candidate_errors,
@@ -279,3 +283,340 @@ class TestGapsToCandidateErrors:
 
     def test_empty_input(self):
         assert gaps_to_candidate_errors([]) == []
+
+
+# ── Helpers for content hole tests ────────────────────────────────────────
+
+def _dict_alignment(pg_start: int, pg_end: int, scan_page: int):
+    """Create an alignment as a dict (like cached JSON data)."""
+    return {
+        "pg_start": pg_start, "pg_end": pg_end,
+        "scan_page": scan_page, "confidence": 0.9,
+        "method": "llm_vision",
+    }
+
+
+def _dict_scan_page(page_num: int, ocr: str = "", vt: str = ""):
+    """Create a scan page as a dict (like cached JSON data)."""
+    return {
+        "page_num": page_num,
+        "ocr_text": ocr,
+        "vision_text": vt,
+    }
+
+
+# ── _tokenize_words ──────────────────────────────────────────────────────
+
+class TestTokenizeWords:
+    def test_basic(self):
+        assert _tokenize_words("Hello, world!") == ["hello", "world"]
+
+    def test_with_apostrophes(self):
+        assert _tokenize_words("don't stop") == ["don't", "stop"]
+
+    def test_numbers(self):
+        assert _tokenize_words("page 219") == ["page", "219"]
+
+    def test_empty(self):
+        assert _tokenize_words("") == []
+
+
+# ── _has_sentence_boundary ───────────────────────────────────────────────
+
+class TestHasSentenceBoundary:
+    def test_period(self):
+        assert _has_sentence_boundary(["done.", "the"])
+
+    def test_question_mark(self):
+        assert _has_sentence_boundary(["asked?", "the"])
+
+    def test_exclamation(self):
+        assert _has_sentence_boundary(["gone!", "then"])
+
+    def test_no_boundary(self):
+        assert not _has_sentence_boundary(["had", "something"])
+
+
+# ── _verify_content_hole ──────────────────────────────────────────────────
+
+class TestVerifyContentHole:
+    def test_truly_missing(self):
+        assert _verify_content_hole(["barrios", "with", "rifles"], "some other text")
+
+    def test_present_elsewhere(self):
+        assert not _verify_content_hole(["walked", "to", "the"], "he walked to the door")
+
+    def test_empty(self):
+        assert _verify_content_hole([], "some text")
+        assert _verify_content_hole(["word"], "")
+
+
+# ── detect_content_holes ──────────────────────────────────────────────────
+
+class TestDetectContentHoles:
+    """Tests for content hole detection (Spec test cases 1-6)."""
+
+    def _build_pg_text(self, pg_words: list[str]) -> str:
+        """Create PG text containing the given words at a known offset."""
+        prefix = "The story begins here. " * 5
+        body = " ".join(pg_words)
+        suffix = " The story continues there. " * 5
+        return prefix + body + suffix
+
+    def test_1_basic_content_hole(self):
+        """Spec test 1: The Nostromo example — 7 missing words in middle."""
+        pg_words = ["and", "yet", "if", "we", "had", "could", "have", "been", "done"]
+        scan_words = ["and", "yet", "if", "we", "had", "barrios", "with", "his",
+                      "improved", "rifles", "here", "something", "could", "have",
+                      "been", "done"]
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        # Alignment covering the PG chunk
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 219)]
+        scan_pages = [_dict_scan_page(219, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 1
+        h = holes[0]
+        assert h.strategy == "content_hole"
+        assert h.page == 219
+        assert h.word_count == 7
+        assert "barrios" in h.missing_words
+        assert "if" in h.pg_context_before or "had" in h.pg_context_before
+        assert "could" in h.pg_context_after
+
+    def test_2_no_hole_edition_variant(self):
+        """Spec test 2: Rearranged words — not a content hole."""
+        pg_words = ["he", "walked", "slowly", "down", "the", "street"]
+        scan_words = ["he", "walked", "down", "the", "street", "slowly"]
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 5)]
+        scan_pages = [_dict_scan_page(5, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 0
+
+    def test_3_no_hole_sentence_boundary(self):
+        """Spec test 3: Gap crosses a sentence boundary — not a content hole."""
+        # PG has a period between "sentence" and "the"
+        pg_words = ["end", "of", "sentence", "the", "next", "paragraph", "starts"]
+        scan_words = ["end", "of", "sentence", "he", "said", "the",
+                      "next", "paragraph", "starts"]
+
+        # Build PG text with actual sentence boundary
+        pg_text = "The story begins here. " * 5 + "end of sentence. the next paragraph starts" + " The story continues there. " * 5
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len("end of sentence. the next paragraph starts")
+
+        alignments = [_dict_alignment(pg_start, pg_end, 10)]
+        scan_pages = [_dict_scan_page(10, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 0
+
+    def test_4_no_hole_both_sides_have_gaps(self):
+        """Spec test 4: Both PG and scan have unmatched words — edition variant."""
+        pg_words = ["he", "spoke", "to", "her", "and", "she", "listened"]
+        scan_words = ["he", "addressed", "the", "woman", "who", "listened", "attentively"]
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 15)]
+        scan_pages = [_dict_scan_page(15, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 0
+
+    def test_5_small_gap_filtered(self):
+        """Spec test 5: Gap is 3 words (< 4 threshold) — filtered out."""
+        pg_words = ["she", "said", "and", "then", "left"]
+        scan_words = ["she", "said", "with", "a", "sigh", "and", "then", "left"]
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 20)]
+        scan_pages = [_dict_scan_page(20, vt=scan_text)]
+
+        # Default min_words=4 should filter this out
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 0
+
+        # With min_words=3, it should be found
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text, min_words=3)
+        assert len(holes) == 1
+        assert holes[0].word_count == 3
+
+    def test_6_large_content_hole_high_confidence(self):
+        """Spec test 6: >20 missing words — should get HIGH confidence."""
+        pg_words = ["the", "meeting", "began", "and", "then", "concluded"]
+        # Insert 25 words in the scan
+        missing = ["he", "stood", "up", "and", "addressed", "the", "crowd",
+                   "with", "great", "passion", "speaking", "for", "nearly",
+                   "an", "hour", "about", "the", "future", "of", "the",
+                   "republic", "and", "its", "people"]
+        scan_words = pg_words[:2] + missing + pg_words[2:]
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 30)]
+        scan_pages = [_dict_scan_page(30, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 1
+        assert holes[0].word_count == len(missing)
+        assert holes[0].confidence == "high"
+
+    def test_verify_filters_false_positive(self):
+        """Hole words exist elsewhere in full PG text — should be filtered."""
+        pg_words = ["he", "spoke", "and", "then", "left"]
+        scan_words = ["he", "spoke", "barrios", "with", "rifles", "and", "then", "left"]
+
+        pg_body = self._build_pg_text(pg_words)
+        # Full PG text contains "barrios with rifles" somewhere else
+        pg_full = pg_body + " In another chapter, barrios with rifles appeared."
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 40)]
+        scan_pages = [_dict_scan_page(40, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_body, pg_full)
+        assert len(holes) == 0  # Filtered because words exist elsewhere
+
+    def test_empty_inputs(self):
+        assert detect_content_holes([], [], "pg", "full") == []
+        assert detect_content_holes(
+            [_dict_alignment(0, 10, 1)], [], "pg text", "full"
+        ) == []
+
+    def test_multiple_holes_same_page(self):
+        """Multiple content holes on the same page."""
+        pg_words = ["first", "part", "middle", "part", "last", "part"]
+        scan_words = (["first", "part"] +
+                      ["hole", "one", "alpha", "beta"] +
+                      ["middle", "part"] +
+                      ["hole", "two", "gamma", "delta"] +
+                      ["last", "part"])
+
+        pg_text = self._build_pg_text(pg_words)
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        alignments = [_dict_alignment(pg_start, pg_end, 50)]
+        scan_pages = [_dict_scan_page(50, vt=scan_text)]
+
+        holes = detect_content_holes(alignments, scan_pages, pg_text, pg_text)
+        assert len(holes) == 2
+        assert all(h.strategy == "content_hole" for h in holes)
+
+    def test_coverage_gap_backward_compat(self):
+        """New CoverageGap fields have defaults — existing code unaffected."""
+        g = CoverageGap(page=1, strategy="uncovered", word_count=10, scan_text_preview="text")
+        assert g.missing_words == ""
+        assert g.pg_context_before == ""
+        assert g.pg_context_after == ""
+
+    def test_coverage_gap_to_dict_includes_content_hole_fields(self):
+        """to_dict includes new fields for content_hole strategy."""
+        g = CoverageGap(
+            page=219, strategy="content_hole", word_count=7,
+            scan_text_preview="barrios with rifles",
+            missing_words="barrios with rifles",
+            pg_context_before="if we had",
+            pg_context_after="could have been done",
+        )
+        d = g.to_dict()
+        assert "missing_words" in d
+        assert d["missing_words"] == "barrios with rifles"
+        assert d["pg_context_before"] == "if we had"
+
+    def test_coverage_gap_to_dict_excludes_fields_for_other_strategies(self):
+        """to_dict excludes content hole fields for uncovered/partial."""
+        g = CoverageGap(page=1, strategy="uncovered", word_count=10, scan_text_preview="text")
+        d = g.to_dict()
+        assert "missing_words" not in d
+        assert "pg_context_before" not in d
+
+
+# ── detect_scan_gaps integration with content holes ──────────────────────
+
+class TestDetectScanGapsContentHoles:
+    def test_content_holes_included_in_scan_gaps(self):
+        """detect_scan_gaps should include content holes when pg_full_text provided."""
+        pg_words = ["and", "yet", "if", "we", "had", "could", "have", "been", "done"]
+        scan_words = ["and", "yet", "if", "we", "had", "barrios", "with", "his",
+                      "improved", "rifles", "here", "something", "could", "have",
+                      "been", "done"]
+
+        pg_text = "The story begins here. " * 5 + " ".join(pg_words) + " The story continues there. " * 5
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        pages = [FakeScanPage(219, vt=scan_text)]
+        alignments = [_alignment(pg_start, pg_end, 219)]
+
+        gaps = detect_scan_gaps(pg_text, alignments, pages, pg_full_text=pg_text)
+        content_holes = [g for g in gaps if g.strategy == "content_hole"]
+        assert len(content_holes) == 1
+        assert "barrios" in content_holes[0].missing_words
+
+    def test_content_holes_skipped_when_verification_disabled(self):
+        """Content holes should not run when skip_pg_verification is True."""
+        pg_words = ["and", "yet", "if", "we", "had", "could", "have", "been", "done"]
+        scan_words = ["and", "yet", "if", "we", "had", "barrios", "with", "his",
+                      "improved", "rifles", "here", "something", "could", "have",
+                      "been", "done"]
+
+        pg_text = "The story begins here. " * 5 + " ".join(pg_words) + " The story continues there. " * 5
+        scan_text = " ".join(scan_words)
+
+        prefix = "The story begins here. " * 5
+        pg_start = len(prefix)
+        pg_end = pg_start + len(" ".join(pg_words))
+
+        pages = [FakeScanPage(219, vt=scan_text)]
+        alignments = [_alignment(pg_start, pg_end, 219)]
+
+        gaps = detect_scan_gaps(pg_text, alignments, pages, skip_pg_verification=True)
+        content_holes = [g for g in gaps if g.strategy == "content_hole"]
+        assert len(content_holes) == 0

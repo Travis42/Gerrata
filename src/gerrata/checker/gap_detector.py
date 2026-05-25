@@ -6,12 +6,15 @@ that region, and the diff checker never sees it. This module detects those gaps
 by checking which scan page text is not covered by any alignment, then verifies
 each gap against the full PG text to avoid false positives from alignment failures.
 
-Two strategies:
+Three strategies:
 1. **Uncovered pages**: Scan pages with text but no alignment at all.
 2. **Partial coverage**: Within aligned pages, portions of scan text that don't
    match any PG passage.
+3. **Content holes**: Within aligned passages, words present in scan but
+   completely missing from PG — partial deletions the aligner missed because
+   surrounding words still matched.
 
-Both strategies include a **PG text verification step**: before reporting a gap,
+All strategies include a **PG text verification step**: before reporting a gap,
 the gap text is fuzzy-searched against the full PG body. If a strong match is
 found, the gap is an alignment failure, not real missing content, and is
 filtered out rather than discarded — it's included in the JSON data with a
@@ -51,7 +54,7 @@ class CoverageGap:
     """A coverage gap with full metadata for JSON reporting."""
 
     page: int
-    strategy: str  # "uncovered" or "partial"
+    strategy: str  # "uncovered", "partial", or "content_hole"
     word_count: int
     scan_text_preview: str
     coverage_ratio: float = 0.0  # 0.0 for uncovered, actual ratio for partial
@@ -59,9 +62,13 @@ class CoverageGap:
     pg_match_ratio: float = 0.0  # Best similarity ratio found in PG
     non_content: bool = False  # True if filtered as paratext/artifact
     confidence: str = "low"  # "high", "medium", or "low"
+    # Content hole fields:
+    missing_words: str = ""  # The exact words missing from PG (content_hole strategy)
+    pg_context_before: str = ""  # PG text immediately before the hole
+    pg_context_after: str = ""  # PG text immediately after the hole
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "page": self.page,
             "strategy": self.strategy,
             "word_count": self.word_count,
@@ -72,6 +79,11 @@ class CoverageGap:
             "non_content": self.non_content,
             "confidence": self.confidence,
         }
+        if self.strategy == "content_hole":
+            d["missing_words"] = self.missing_words
+            d["pg_context_before"] = self.pg_context_before
+            d["pg_context_after"] = self.pg_context_after
+        return d
 
 
 def _page_text(scan_page) -> str:
@@ -225,6 +237,201 @@ def _gap_text_exists_in_pg(gap_text: str, pg_text: str) -> tuple[bool, float]:
     return best_ratio >= PG_FUZZY_MATCH_THRESHOLD, best_ratio
 
 
+def _tokenize_words(text: str) -> list[str]:
+    """Tokenize text into lowercase words, stripping punctuation."""
+    return re.findall(r"[a-z0-9]+(?:'[a-z]+)?", text.lower())
+
+
+def _has_sentence_boundary(words: list[str]) -> bool:
+    """Check if any word ends with a sentence-ending punctuation marker.
+
+    Looks at the original form (with punctuation) in the word list.
+    Since we tokenize to lowercase stripped words, we check for periods
+    in context by looking at the original text.
+    """
+    for w in words:
+        for ending in (".", '."', '!"', '?"', '."', '?"', "?", "!"):
+            if w.endswith(ending):
+                return True
+    return False
+
+
+def _verify_content_hole(missing_words: list[str], full_pg_text: str) -> bool:
+    """Check if the missing words are genuinely absent from PG.
+
+    Prevents false positives where the aligner split a paragraph across
+    pages and the words appear in the next alignment.
+    """
+    if not missing_words or not full_pg_text:
+        return True
+
+    phrase = " ".join(missing_words).lower()
+    pg_lower = full_pg_text.lower()
+    return phrase not in pg_lower
+
+
+def detect_content_holes(
+    alignments: list,
+    scan_pages: list,
+    pg_text: str,
+    pg_full_text: str,
+    min_words: int = 4,
+) -> list[CoverageGap]:
+    """Detect content holes within aligned passages.
+
+    A content hole is a one-sided gap where the scan has words between
+    two matched blocks that PG completely lacks — indicating a partial
+    deletion within an aligned passage.
+
+    Args:
+        alignments: List of alignment dicts/objects with pg_start, pg_end, scan_page.
+        scan_pages: List of scan page dicts/objects with page_num and text fields.
+        pg_text: PG body text (between START/END markers).
+        pg_full_text: Full PG text (for verification — includes header/footer).
+        min_words: Minimum missing words to report.
+
+    Returns:
+        List of CoverageGap objects with strategy="content_hole".
+    """
+    if not alignments or not scan_pages:
+        return []
+
+    # Build lookup: page_num -> scan page text
+    page_texts: dict[int, str] = {}
+    for sp in scan_pages:
+        pnum = getattr(sp, "page_num", sp.get("page_num") if isinstance(sp, dict) else None)
+        if pnum is None:
+            continue
+        text = getattr(sp, "vision_text", "") or getattr(sp, "ocr_text", "") or ""
+        if isinstance(sp, dict):
+            text = sp.get("vision_text", "") or sp.get("ocr_text", "") or ""
+        page_texts[pnum] = text
+
+    # Group alignments by scan page
+    page_alignments: dict[int, list] = {}
+    for a in alignments:
+        if isinstance(a, dict):
+            pnum = a.get("scan_page")
+        else:
+            pnum = getattr(a, "scan_page", None)
+        if pnum is None:
+            continue
+        page_alignments.setdefault(pnum, []).append(a)
+
+    all_holes: list[CoverageGap] = []
+
+    for pnum, aligns in page_alignments.items():
+        scan_text = page_texts.get(pnum, "")
+        if not scan_text:
+            continue
+
+        # Get PG range for this page's alignments
+        def _get_pg_start(a):
+            return a["pg_start"] if isinstance(a, dict) else getattr(a, "pg_start")
+
+        def _get_pg_end(a):
+            return a["pg_end"] if isinstance(a, dict) else getattr(a, "pg_end")
+
+        pg_starts = [_get_pg_start(a) for a in aligns]
+        pg_ends = [_get_pg_end(a) for a in aligns]
+        pg_start = min(pg_starts)
+        pg_end = max(pg_ends)
+
+        pg_chunk = pg_text[pg_start:pg_end]
+        if not pg_chunk.strip():
+            continue
+
+        pg_words = _tokenize_words(pg_chunk)
+        scan_words = _tokenize_words(scan_text)
+
+        if len(pg_words) < 4 or len(scan_words) < 4:
+            continue
+
+        # Use SequenceMatcher to find matching blocks
+        sm = SequenceMatcher(None, pg_words, scan_words, autojunk=False)
+        matches = sm.get_matching_blocks()
+
+        # Walk adjacent match pairs to find one-sided gaps
+        for i in range(len(matches) - 1):
+            m1 = matches[i]
+            m2 = matches[i + 1]
+
+            # Skip zero-size sentinel match
+            if m1.size == 0:
+                continue
+
+            pg_gap_start = m1.a + m1.size
+            pg_gap_end = m2.a
+            scan_gap_start = m1.b + m1.size
+            scan_gap_end = m2.b
+
+            scan_gap = scan_words[scan_gap_start:scan_gap_end]
+            pg_gap = pg_words[pg_gap_start:pg_gap_end]
+
+            # Content hole criteria:
+            # 1. Scan has significant text in the gap
+            # 2. PG has little or no text in the gap (≤1 word)
+            if len(scan_gap) < min_words or len(pg_gap) > 1:
+                continue
+
+            # 3. No sentence boundary in PG context before the gap
+            pg_before_context = pg_words[max(0, pg_gap_start - 5):pg_gap_start]
+            # Use original text to check for sentence boundaries
+            pg_before_raw = re.findall(
+                r"\S+", pg_chunk
+            )
+            # Map from tokenized index to raw words (approximate)
+            raw_pg_before = pg_before_raw[max(0, pg_gap_start - 5):pg_gap_start]
+            if _has_sentence_boundary(raw_pg_before):
+                continue
+
+            # 4. Build context
+            pg_before = " ".join(pg_words[max(0, pg_gap_start - 3):pg_gap_start])
+            pg_after = " ".join(
+                pg_words[pg_gap_end:min(len(pg_words), pg_gap_end + 3)]
+            )
+            missing_phrase = " ".join(scan_gap)
+
+            # 5. Verify against full PG text
+            verified = _verify_content_hole(scan_gap, pg_full_text)
+            if not verified:
+                continue
+
+            # Compute confidence
+            if len(scan_gap) >= 8:
+                confidence = "high"
+            elif len(scan_gap) >= 4:
+                confidence = "medium"
+            else:
+                confidence = "low"
+
+            # Check if missing words are all common stop words
+            stop_words = {"the", "a", "an", "and", "or", "but", "in", "on", "at",
+                          "to", "of", "for", "with", "is", "was", "are", "were",
+                          "be", "been", "have", "has", "had", "it", "its", "he",
+                          "she", "they", "we", "i", "you", "this", "that", "as"}
+            if all(w in stop_words for w in scan_gap):
+                confidence = "low"
+
+            gap = CoverageGap(
+                page=pnum,
+                strategy="content_hole",
+                word_count=len(scan_gap),
+                scan_text_preview=missing_phrase[:500],
+                coverage_ratio=0.0,
+                pg_verified=True,
+                pg_match_ratio=0.0,
+                non_content=False,
+                confidence=confidence,
+                missing_words=missing_phrase,
+                pg_context_before=pg_before,
+                pg_context_after=pg_after,
+            )
+            all_holes.append(gap)
+
+    return all_holes
+
+
 def _compute_confidence(gap: CoverageGap) -> str:
     """Assign confidence level to a gap.
 
@@ -256,6 +463,7 @@ def detect_scan_gaps(
     scan_pages: list,
     min_gap_words: int | None = None,
     skip_pg_verification: bool = False,
+    pg_full_text: str | None = None,
 ) -> list[CoverageGap]:
     """Find scan page text that has no corresponding PG alignment.
 
@@ -268,6 +476,7 @@ def detect_scan_gaps(
         scan_pages: List of ScanPage objects (or any with page_num, vision_text, ocr_text).
         min_gap_words: Minimum word count to detect (default: 5).
         skip_pg_verification: If True, skip PG text verification (for testing/debugging).
+        pg_full_text: Full PG text (for content hole verification). Falls back to pg_text.
 
     Returns:
         List of CoverageGap objects for every detected gap.
@@ -405,6 +614,18 @@ def detect_scan_gaps(
             )
             gap.confidence = _compute_confidence(gap)
             gaps.append(gap)
+
+    # --- Strategy 3: Content holes within aligned passages ---
+    if alignments and not skip_pg_verification:
+        full_text = pg_full_text if pg_full_text is not None else pg_text
+        content_holes = detect_content_holes(
+            alignments=alignments,
+            scan_pages=scan_pages,
+            pg_text=pg_text,
+            pg_full_text=full_text,
+            min_words=min_gap_words,
+        )
+        gaps.extend(content_holes)
 
     return gaps
 
