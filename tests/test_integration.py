@@ -12,7 +12,7 @@ import pytest
 
 from gerrata.models import ErrorCategory, Verdict, AlignmentMethod
 from gerrata.fetcher.pg import PGFetcher
-from gerrata.fetcher.scans import ScanFetcher
+from gerrata.fetcher.scans import ScanFetcher, ScanPage
 from gerrata.aligner.coarse import CoarseAligner
 from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber, PageTranscription
 from gerrata.checker.text_diff import TextDiffChecker
@@ -23,6 +23,33 @@ from gerrata.reporter.generator import ReportGenerator
 FIXTURES = Path(__file__).parent / "fixtures" / "pg43"
 PG_FILE = FIXTURES / "43-h.htm"
 OCR_FILE = FIXTURES / "scans" / "ocr_text.txt"
+
+
+def _load_scan_pages_from_ocr(ocr_file: Path, identifier: str) -> list[ScanPage]:
+    """Load OCR text from file and create ScanPage objects.
+
+    This replaces the old prepare_scan() which relied on legacy OCR downloads.
+    The main pipeline uses vision transcription, but tests need fixture data.
+    """
+    ocr_text = ocr_file.read_text(encoding="utf-8", errors="replace")
+    # Split on page markers if present
+    import re
+    page_marker_pattern = re.compile(r"^Page\s+(\d+)\s*$", re.MULTILINE)
+    matches = list(page_marker_pattern.finditer(ocr_text))
+
+    pages = []
+    if len(matches) >= 3:
+        for i, match in enumerate(matches):
+            page_num = int(match.group(1)) - 1
+            start = match.end()
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(ocr_text)
+            page_text = ocr_text[start:end].strip()
+            if page_text:
+                pages.append(ScanPage(page_num=page_num, ocr_text=page_text))
+    else:
+        pages.append(ScanPage(page_num=0, ocr_text=ocr_text.strip()))
+
+    return pages
 
 
 class TestIntegrationPipeline:
@@ -40,19 +67,12 @@ class TestIntegrationPipeline:
         assert len(parsed.body_text) > 10000
         assert len(parsed.paragraphs) > 50
 
-        # Step 2: Load scan OCR
-        scan_fetcher = ScanFetcher()
-        import asyncio
-        scan_data = asyncio.run(scan_fetcher.prepare_scan(
-            identifier="06-stevenson-jekyll-hyde",
-            ocr_file=OCR_FILE,
-        ))
+        # Step 2: Load scan pages from fixture OCR text
+        scan_pages = _load_scan_pages_from_ocr(OCR_FILE, "06-stevenson-jekyll-hyde")
+        assert len(scan_pages) >= 1
 
-        assert scan_data.identifier == "06-stevenson-jekyll-hyde"
-        assert len(scan_data.pages) >= 1
-
-        # Combine scan OCR
-        scan_full_text = "\n\n".join(p.ocr_text for p in scan_data.pages if p.ocr_text)
+        # Combine scan text
+        scan_full_text = "\n\n".join(p.ocr_text for p in scan_pages if p.ocr_text)
         assert len(scan_full_text) > 5000
 
         # Step 3: Align
@@ -61,7 +81,7 @@ class TestIntegrationPipeline:
             pg_text=parsed.body_text,
             pg_paragraphs=parsed.paragraphs,
             scan_ocr_text=scan_full_text,
-            scan_pages=scan_data.pages,
+            scan_pages=scan_pages,
         )
 
         assert isinstance(alignments, list)
@@ -74,7 +94,7 @@ class TestIntegrationPipeline:
         candidates = checker.check_all_alignments(
             pg_text=parsed.body_text,
             alignments=alignments,
-            scan_pages=scan_data.pages,
+            scan_pages=scan_pages,
         )
 
         assert isinstance(candidates, list)
@@ -91,9 +111,9 @@ class TestIntegrationPipeline:
         errors = [Error(candidate=c) for c in candidates]
         report = Report(
             metadata=parsed.metadata,
-            scan_source=scan_data.source_url,
+            scan_source="https://archive.org/details/06-stevenson-jekyll-hyde",
             pages_checked=len(set(a.scan_page for a in alignments)) if alignments else 0,
-            total_pages=scan_data.total_pages or len(scan_data.pages),
+            total_pages=len(scan_pages),
             alignment_confidence=coverage,
             edition_match_confidence=0.5,  # PG #43 is different edition
             edition_notes="PG #43 and IA scan 06-stevenson-jekyll-hyde are different editions",

@@ -1,109 +1,16 @@
-"""Tests for scan fetcher."""
+"""Tests for scan fetcher (JP2 image download and extraction only)."""
 
 from pathlib import Path
 from unittest.mock import patch, AsyncMock, MagicMock
 
 import pytest
 
-from gerrata.fetcher.scans import ScanFetcher, ScanData, ScanPage
-
-
-FIXTURES = Path(__file__).parent / "fixtures" / "pg43"
-OCR_FILE = FIXTURES / "scans" / "ocr_text.txt"
+from gerrata.fetcher.scans import ScanFetcher, ScanPage
 
 
 @pytest.fixture
 def fetcher():
     return ScanFetcher()
-
-
-@pytest.fixture
-def ocr_text():
-    return OCR_FILE.read_text(encoding="utf-8", errors="replace")
-
-
-class TestScanFetcher:
-    def test_load_local_ocr_text(self, fetcher):
-        text = fetcher.load_local_ocr_text(OCR_FILE)
-        assert len(text) > 10000
-        assert "Jekyll" in text or "JEKYLL" in text
-
-    def test_split_ocr_into_pages_with_markers(self, fetcher):
-        """Test splitting when page markers exist."""
-        text = "Some intro text.\n\nPage 5\n\nPage five text here.\n\nPage 6\n\nPage six text here.\n\nPage 7\n\nPage seven text.\n\nPage 8\n\nMore text."
-        pages = fetcher.split_ocr_into_pages(text)
-        assert len(pages) == 4  # Pages 5, 6, 7, 8
-
-    def test_split_ocr_into_pages_no_markers(self, fetcher, ocr_text):
-        """When no page markers, falls back to single chunk."""
-        pages = fetcher.split_ocr_into_pages(ocr_text)
-        assert len(pages) == 1  # Only one "Page 88" marker, falls back
-
-    def test_split_with_known_pages(self, fetcher, ocr_text):
-        """Split evenly when given known page count."""
-        pages = fetcher.split_ocr_into_pages(ocr_text, known_pages=10)
-        assert len(pages) == 10
-        for p in pages:
-            assert len(p.ocr_text) > 0
-
-    def test_split_pages_have_content(self, fetcher, ocr_text):
-        pages = fetcher.split_ocr_into_pages(ocr_text, known_pages=20)
-        non_empty = [p for p in pages if len(p.ocr_text.strip()) > 10]
-        assert len(non_empty) >= 15  # Most chunks should have text
-
-    def test_prepare_scan_from_file(self, fetcher):
-        """Test prepare_scan with local OCR file."""
-        import asyncio
-        scan_coro = fetcher.prepare_scan(
-            identifier="06-stevenson-jekyll-hyde",
-            ocr_file=OCR_FILE,
-            known_pages=20,
-        )
-        scan_data = asyncio.run(scan_coro)
-        assert isinstance(scan_data, ScanData)
-        assert scan_data.identifier == "06-stevenson-jekyll-hyde"
-        assert len(scan_data.pages) >= 10
-        assert "archive.org" in scan_data.source_url
-
-    def test_prepare_scan_from_text(self, fetcher, ocr_text):
-        """Test prepare_scan with pre-loaded OCR text."""
-        import asyncio
-        scan_coro = fetcher.prepare_scan(
-            identifier="test-id",
-            ocr_text=ocr_text,
-            known_pages=5,
-        )
-        scan_data = asyncio.run(scan_coro)
-        assert scan_data.identifier == "test-id"
-        assert len(scan_data.pages) >= 3
-
-    def test_no_page_markers(self, fetcher):
-        text = "This is a block of text with no page markers."
-        pages = fetcher.split_ocr_into_pages(text)
-        assert len(pages) == 1
-        assert pages[0].page_num == 0
-        assert "block of text" in pages[0].ocr_text
-
-    def test_page_image_url_construction(self, fetcher):
-        """Test that JP2 URL pattern substitution works."""
-        pattern = "https://archive.org/download/test-id/test-id_jp2/test-id_NNNN.jp2"
-        url = pattern.replace("NNNN", "0042")
-        assert url.endswith("test-id_0042.jp2")
-        assert "0042" in url
-
-
-class TestScanData:
-    def test_from_prepare(self):
-        data = ScanData(
-            identifier="test",
-            pages=[
-                ScanPage(page_num=0, ocr_text="Page 0 text"),
-                ScanPage(page_num=1, ocr_text="Page 1 text"),
-            ],
-            total_pages=2,
-        )
-        assert data.total_pages == 2
-        assert data.pages[0].ocr_text == "Page 0 text"
 
 
 class TestJP2ZipDownload:
@@ -122,8 +29,6 @@ class TestJP2ZipDownload:
             zf.writestr("test.jp2", b"fake-jp2-data")
 
         # Test with an already-existing zip (download_jp2_zip returns cached)
-        # For actual download test, we test the cached path since mocking
-        # the internal httpx import is complex
         result = await fetcher.download_jp2_zip(scan_id, dest=tmp_path)
 
         assert result.exists()

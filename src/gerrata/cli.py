@@ -16,7 +16,7 @@ from rich.logging import RichHandler
 
 from gerrata.models import Error, Report, PGMetadata
 from gerrata.fetcher.pg import PGFetcher, PGParsedText
-from gerrata.fetcher.scans import ScanFetcher, ScanData
+from gerrata.fetcher.scans import ScanFetcher
 from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
 from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker

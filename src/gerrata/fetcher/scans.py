@@ -1,10 +1,10 @@
 """Download and manage source page scans from Internet Archive.
 
 Handles:
-- Downloading IA OCR text
 - Downloading JP2 zip archives and extracting page images
 - Converting JP2 to PNG for LLM vision processing
-- Splitting OCR text into per-page segments
+
+Text is produced by LLM vision transcription, not legacy OCR.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 import re
 import zipfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # Browser-like user agent to avoid IA anti-bot blocking
 _BROWSER_UA = (
@@ -32,18 +32,6 @@ class ScanPage:
     ocr_text: str = ""  # OCR text for this page
     vision_text: str = ""  # Vision model transcription of this page
     image_path: Path | None = None  # Path to downloaded/converted image
-
-
-@dataclass
-class ScanData:
-    """Complete scan data for a book."""
-
-    identifier: str  # IA identifier
-    ocr_text: str = ""  # Full OCR text
-    pages: list[ScanPage] = field(default_factory=list)
-    total_pages: int = 0
-    page_image_url_pattern: str = ""  # URL pattern with NNNN placeholder
-    source_url: str = ""
 
 
 class ScanFetcher:
@@ -85,57 +73,6 @@ class ScanFetcher:
         except Exception as e:
             logger.debug(f"Metadata lookup failed for {identifier}: {e}")
         return None
-
-    async def fetch_ocr_text(self, identifier: str) -> str:
-        """Download OCR text from Internet Archive.
-
-        Tries multiple OCR file patterns (DjVu XML, DjVu text, ABBYY XML).
-        Falls back to direct server access via metadata API if /download/ fails.
-        """
-        import httpx
-
-        # Common OCR text file patterns on IA
-        ocr_patterns = [
-            f"{identifier}_djvu.txt",  # DjVu OCR text (most common)
-            f"{identifier}_djvu.xml",  # DjVu XML
-            f"{identifier}_abbyy.xml",  # ABBYY XML
-            f"{identifier}_abbyy.txt",  # ABBYY text
-        ]
-
-        # Get direct server URL as fallback
-        direct_base = await self._get_direct_server(identifier)
-        if direct_base:
-            logger.info(f"Resolved direct server: {direct_base}")
-
-        async with httpx.AsyncClient(follow_redirects=True, timeout=120, headers={"user-agent": _BROWSER_UA}) as client:
-            for pattern in ocr_patterns:
-                download_url = f"{self.DOWNLOAD_BASE.format(identifier=identifier)}{pattern}"
-                try:
-                    resp = await client.get(download_url)
-                    if resp.status_code == 200:
-                        content = resp.text
-                        if len(content) > 100:  # Sanity check
-                            logger.info(f"Downloaded OCR text: {download_url}")
-                            return content
-                except httpx.HTTPError as e:
-                    logger.debug(f"Failed to fetch {download_url}: {e}")
-
-            # Fallback: try direct server URL (bypasses /download/ endpoint)
-            if direct_base:
-                logger.info(f"Standard /download/ failed, trying direct server: {direct_base}")
-                for pattern in ocr_patterns:
-                    direct_url = f"{direct_base}/{pattern}"
-                    try:
-                        resp = await client.get(direct_url)
-                        if resp.status_code == 200 and len(resp.text) > 100:
-                            logger.info(f"Downloaded OCR text via direct server: {direct_url}")
-                            return resp.text
-                        elif resp.status_code != 200:
-                            logger.debug(f"Direct server returned {resp.status_code} for {direct_url}")
-                    except httpx.HTTPError as e:
-                        logger.debug(f"Direct server failed for {direct_url}: {e}")
-
-        raise FileNotFoundError(f"No OCR text found for identifier '{identifier}'")
 
     async def download_page_image(
         self,
@@ -446,89 +383,3 @@ class ScanFetcher:
         if not pngs:
             pngs = sorted(pages_dir.glob("page_*.png"))
         return pngs
-
-    def load_local_ocr_text(self, path: Path | str) -> str:
-        """Load OCR text from a local file."""
-        path = Path(path)
-        return path.read_text(encoding="utf-8", errors="replace")
-
-    def split_ocr_into_pages(self, ocr_text: str, known_pages: int = 0) -> list[ScanPage]:
-        """Split full OCR text into per-page segments.
-
-        Internet Archive OCR text may contain page number markers
-        like 'Page 5' or 'Page 88' on their own lines. If found, we
-        split on these. Otherwise, if a known page count is given,
-        we split evenly. If neither, return the entire text as one page.
-        """
-        # Try to find page markers
-        page_marker_pattern = re.compile(r"^Page\s+(\d+)\s*$", re.MULTILINE)
-        matches = list(page_marker_pattern.finditer(ocr_text))
-
-        pages: list[ScanPage] = []
-
-        if len(matches) >= 3:
-            # Enough page markers to split on
-            for i, match in enumerate(matches):
-                page_num = int(match.group(1)) - 1  # Convert to 0-indexed
-                start = match.end()
-
-                # Find end (start of next page marker)
-                if i + 1 < len(matches):
-                    end = matches[i + 1].start()
-                else:
-                    end = len(ocr_text)
-
-                page_text = ocr_text[start:end].strip()
-                if page_text:
-                    pages.append(ScanPage(page_num=page_num, ocr_text=page_text))
-        elif known_pages > 0:
-            # Split evenly into known_pages chunks
-            total_len = len(ocr_text)
-            chunk_size = total_len // known_pages
-            for i in range(known_pages):
-                start = i * chunk_size
-                end = (i + 1) * chunk_size if i < known_pages - 1 else total_len
-                page_text = ocr_text[start:end].strip()
-                if page_text:
-                    pages.append(ScanPage(page_num=i, ocr_text=page_text))
-        else:
-            # No page markers, no known count — treat entire text as one page
-            pages.append(ScanPage(page_num=0, ocr_text=ocr_text.strip()))
-
-        return pages
-
-    async def prepare_scan(
-        self,
-        identifier: str,
-        ocr_text: str | None = None,
-        ocr_file: Path | str | None = None,
-        jp2_pattern: str = "",
-        known_pages: int = 0,
-    ) -> ScanData:
-        """Prepare complete scan data.
-
-        Args:
-            identifier: IA identifier.
-            ocr_text: Pre-loaded OCR text (skip download).
-            ocr_file: Local OCR text file to load.
-            jp2_pattern: URL pattern for JP2 page images.
-            known_pages: Known total page count (for splitting without markers).
-
-        Returns:
-            ScanData with pages split from OCR text.
-        """
-        if ocr_file:
-            ocr_text = self.load_local_ocr_text(ocr_file)
-        elif ocr_text is None:
-            ocr_text = await self.fetch_ocr_text(identifier)
-
-        pages = self.split_ocr_into_pages(ocr_text, known_pages=known_pages)
-
-        return ScanData(
-            identifier=identifier,
-            ocr_text=ocr_text,
-            pages=pages,
-            total_pages=len(pages),
-            page_image_url_pattern=jp2_pattern,
-            source_url=f"https://archive.org/details/{identifier}",
-        )
