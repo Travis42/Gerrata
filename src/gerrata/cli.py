@@ -980,15 +980,26 @@ async def run_verify_edition(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
-    parser = build_parser()
-    args = parser.parse_args(argv)
+    # If the first arg is a subcommand, parse only the subparser.
+    # This avoids the top-level optional pg_id conflicting with subparser
+    # positional args of the same name.
+    if argv is None:
+        argv = sys.argv[1:]
 
-    # Handle verify-edition subcommand
-    if args.command == "verify-edition":
-        if args.pg_id is None:
-            parser.error("pg_id is required for verify-edition")
+    if argv and argv[0] == "verify-edition":
+        # Parse with the verify-edition subparser directly
+        parser = build_parser()
+        for action in parser._subparsers._actions:
+            if hasattr(action, 'choices') and action.choices and 'verify-edition' in action.choices:
+                args = action.choices['verify-edition'].parse_args(argv[1:])
+                setup_logging(args.verbose)
+                return asyncio.run(run_verify_edition(args))
+        # Fallback: parse normally (shouldn't reach here)
+        args = parser.parse_args(argv)
         setup_logging(args.verbose)
         return asyncio.run(run_verify_edition(args))
+
+    args = parser.parse_args(argv)
 
     # Default: main pipeline
     if args.pg_id is None:

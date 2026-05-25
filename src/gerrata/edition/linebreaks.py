@@ -104,9 +104,9 @@ class LineBreakFingerprinter:
         raw_body = raw_pg_text[start:end]
 
         # Get line lengths (skip blank lines)
-        line_lengths = [len(line) for line in raw_body.splitlines() if line.strip()]
+        all_line_lengths = [len(line) for line in raw_body.splitlines() if line.strip()]
 
-        if not line_lengths:
+        if not all_line_lengths:
             return LineBreakDetection(
                 preserved=False,
                 confidence=0.0,
@@ -114,37 +114,52 @@ class LineBreakFingerprinter:
                 rationale="No non-blank lines found in PG body text",
             )
 
+        # Focus on lines that are long enough to be body text (>40 chars).
+        # Short lines (headings, chapter titles, dialogue fragments) dilute
+        # the signal. Real typeset body text is consistently near the column
+        # width; short lines are formatting artifacts.
+        body_line_lengths = [l for l in all_line_lengths if l > 40]
+
+        if not body_line_lengths:
+            return LineBreakDetection(
+                preserved=False,
+                confidence=0.0,
+                column_width=None,
+                rationale="No long lines found (all lines ≤40 chars) — likely reflowed or poetry",
+            )
+
+        # Use up to 2000 lines for a reliable sample
+        line_lengths = body_line_lengths[:2000]
+
         # Compute histogram of line lengths
         counter = Counter(line_lengths)
         top3_lengths = counter.most_common(3)
-        top3_count = sum(count for _, count in top3_lengths)
-        top3_lengths_sorted = sorted([length for length, _ in top3_lengths])
+        modal_length = counter.most_common(1)[0][0]
 
-        # Check if top 3 lengths are within ±3 chars of each other
-        if len(top3_lengths_sorted) >= 2:
-            spread = top3_lengths_sorted[-1] - top3_lengths_sorted[0]
-            within_range = spread <= 3
+        # Check concentration within ±5 of the modal length.
+        # Real typesetting has a tight cluster around the column width.
+        # Using a range rather than just top-3 individual lengths because
+        # typesetting varies by ±3-5 chars depending on character widths
+        # (e.g., 'm' vs 'i').
+        near_modal = sum(
+            count for length, count in counter.items()
+            if abs(length - modal_length) <= 5
+        )
+        concentration = near_modal / len(line_lengths) if line_lengths else 0
+
+        # Check spread of top 3 individual lengths
+        top3_sorted = sorted([length for length, _ in top3_lengths])
+        if len(top3_sorted) >= 2:
+            spread = top3_sorted[-1] - top3_sorted[0]
+            within_range = spread <= 5  # Widened from 3
         else:
             within_range = True
+            spread = 0
 
-        # Check if top 3 account for >60% of non-blank lines
-        total_non_blank = len(line_lengths)
-        concentration = top3_count / total_non_blank if total_non_blank else 0
-
-        preserved = concentration > 0.6 and within_range
+        preserved = concentration > 0.50 and within_range
 
         if preserved:
-            # Modal line length is the most common one
-            modal_length = counter.most_common(1)[0][0]
             confidence = min(1.0, concentration)
-
-            # Additional check: count lines near the modal width
-            near_modal = sum(
-                1 for l in line_lengths
-                if modal_length - 3 <= l <= modal_length + 3
-            )
-            near_modal_ratio = near_modal / total_non_blank
-            confidence = min(1.0, near_modal_ratio)
 
             return LineBreakDetection(
                 preserved=True,
@@ -154,7 +169,7 @@ class LineBreakFingerprinter:
                 rationale=(
                     f"Column width: {modal_length} chars, "
                     f"concentration: {concentration:.0%}, "
-                    f"spread: {spread if len(top3_lengths_sorted) >= 2 else 0}"
+                    f"spread: {spread}"
                 ),
             )
         else:
@@ -165,7 +180,7 @@ class LineBreakFingerprinter:
                 line_lengths=line_lengths[:200],
                 rationale=(
                     f"Reflowed text: concentration={concentration:.0%}, "
-                    f"spread={spread if len(top3_lengths_sorted) >= 2 else 0}"
+                    f"spread={spread if len(top3_sorted) >= 2 else 0}"
                 ),
             )
 
@@ -235,7 +250,7 @@ class LineBreakFingerprinter:
         metadata_url = f"https://archive.org/metadata/{scan_id}"
 
         try:
-            async with httpx.AsyncClient(timeout=30) as client:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
                 resp = await client.get(metadata_url)
                 resp.raise_for_status()
                 data = resp.json()
@@ -274,7 +289,7 @@ class LineBreakFingerprinter:
         """Fetch and parse ABBYY OCR XML from IA."""
         url = f"https://archive.org/download/{scan_id}/{filename}"
         try:
-            async with httpx.AsyncClient(timeout=60) as client:
+            async with httpx.AsyncClient(timeout=60, follow_redirects=True) as client:
                 resp = await client.get(url)
                 resp.raise_for_status()
                 gz_data = resp.content
@@ -334,7 +349,7 @@ class LineBreakFingerprinter:
         """Fetch DJVU OCR text from IA."""
         url = f"https://archive.org/download/{scan_id}/{filename}"
         try:
-            async with httpx.AsyncClient(timeout=60) as client:
+            async with httpx.AsyncClient(timeout=60, follow_redirects=True) as client:
                 resp = await client.get(url)
                 resp.raise_for_status()
                 text = resp.text

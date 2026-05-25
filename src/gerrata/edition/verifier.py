@@ -131,6 +131,31 @@ class EditionVerifier:
         parsed = self.pg_fetcher.parse_file(pg_path)
         raw_text = pg_path.read_text(encoding="utf-8", errors="replace")
 
+        # For line-break detection, we need the original PG text file that
+        # preserves line breaks (typically the -0.txt version). The default
+        # download may be a reflowed UTF-8 version without CRLF.
+        # Try to download the -0.txt version separately.
+        raw_original_text = raw_text
+        has_crlf = "\r\n" in raw_text[:50000]
+        if not has_crlf and not pg_file:
+            try:
+                import httpx
+                original_url = f"https://www.gutenberg.org/files/{pg_id}/{pg_id}-0.txt"
+                original_path = self.cache_dir / f"{pg_id}-0.txt"
+                if not original_path.exists():
+                    async with httpx.AsyncClient(timeout=60, follow_redirects=True) as client:
+                        resp = await client.get(original_url)
+                        if resp.status_code == 200:
+                            original_path.write_bytes(resp.content)
+                            logger.info(f"Downloaded original PG text: {original_path}")
+                            raw_original_text = resp.content.decode("utf-8", errors="replace")
+                        else:
+                            logger.debug(f"Original PG text not available: {original_url} (status {resp.status_code})")
+                else:
+                    raw_original_text = original_path.read_text(encoding="utf-8", errors="replace")
+            except Exception as e:
+                logger.debug(f"Could not download original PG text: {e}")
+
         # Extract PG metadata for the result
         result.pg_metadata = {
             "title": parsed.metadata.title,
@@ -162,7 +187,7 @@ class EditionVerifier:
 
         # Run Approach B: Line-break fingerprinting
         if approaches in ("linebreaks", "both"):
-            result.approach_b = await self._run_approach_b(raw_text, scan_id)
+            result.approach_b = await self._run_approach_b(raw_original_text, scan_id)
 
         # Compute overall result
         result.overall = self._compute_overall(result)
