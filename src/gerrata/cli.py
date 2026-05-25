@@ -679,6 +679,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             pg_text=parsed.body_text,
             alignments=alignments,
             scan_pages=scan_pages,
+            pg_full_text=parsed.full_text,
         )
         if all_gaps:
             # Save all gaps to JSON for full analysis
@@ -917,6 +918,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         scan_pages=scan_pages,
         body_text=parsed.body_text,
         alignments=alignments,
+        pg_full_text=parsed.full_text,
     )
     json_path, email_path = generator.save_reports(report, args.output)
     generator.print_summary(report)
