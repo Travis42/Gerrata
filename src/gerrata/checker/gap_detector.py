@@ -532,7 +532,9 @@ def detect_scan_gaps(
     # Build set of covered pages
     covered_pages: set[int] = set()
     for alignment in alignments:
-        covered_pages.add(alignment.scan_page)
+        sp_val = alignment.scan_page if hasattr(alignment, "scan_page") else alignment.get("scan_page")
+        if sp_val is not None:
+            covered_pages.add(sp_val)
 
     gaps: list[CoverageGap] = []
 
@@ -591,12 +593,15 @@ def detect_scan_gaps(
         if page_wc < min_gap_words:
             continue
 
-        page_alignments = [a for a in alignments if a.scan_page == pnum]
+        page_alignments = [a for a in alignments if (a.scan_page if hasattr(a, "scan_page") else a.get("scan_page")) == pnum]
         if not page_alignments:
             continue
 
-        pg_start = min(a.pg_start for a in page_alignments)
-        pg_end = max(a.pg_end for a in page_alignments)
+        def _a_pg_start(a): return a.pg_start if hasattr(a, "pg_start") else a["pg_start"]
+        def _a_pg_end(a): return a.pg_end if hasattr(a, "pg_end") else a["pg_end"]
+
+        pg_start = min(_a_pg_start(a) for a in page_alignments)
+        pg_end = max(_a_pg_end(a) for a in page_alignments)
         total_pg_wc = len(pg_text[pg_start:pg_end].split())
 
         coverage_ratio = total_pg_wc / page_wc if page_wc > 0 else 1.0
