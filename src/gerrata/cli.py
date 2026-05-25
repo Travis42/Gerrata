@@ -72,15 +72,84 @@ def setup_logging(verbose: bool = False) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build CLI argument parser."""
+    """Build CLI argument parser with subcommands."""
     parser = argparse.ArgumentParser(
         prog="gerrata",
         description="Automated post-publication quality audit for Project Gutenberg texts",
     )
-    parser.add_argument(
+    subparsers = parser.add_subparsers(dest="command", help="Subcommand to run")
+
+    # ── verify-edition subcommand ──────────────────────────────────────
+    ve_parser = subparsers.add_parser(
+        "verify-edition",
+        help="Verify whether an IA scan matches the PG source edition",
+    )
+    ve_parser.add_argument(
         "pg_id",
         type=int,
         help="Project Gutenberg ebook ID",
+    )
+    ve_parser.add_argument(
+        "scan_id",
+        type=str,
+        help="Internet Archive identifier for the scan",
+    )
+    ve_parser.add_argument(
+        "--approach",
+        type=str,
+        choices=["metadata", "linebreaks", "both"],
+        default="both",
+        help="Which approach(es) to use (default: both)",
+    )
+    ve_parser.add_argument(
+        "--output", "-o",
+        type=str,
+        default="./reports",
+        help="Output directory for results (default: ./reports)",
+    )
+    ve_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose output",
+    )
+    ve_parser.add_argument(
+        "--pg-file",
+        type=str,
+        default="",
+        help="Local path to PG text file (skip download)",
+    )
+    ve_parser.add_argument(
+        "--vision-url",
+        type=str,
+        default="",
+        help="Vision model API URL (for line-break approach Strategy 2)",
+    )
+    ve_parser.add_argument(
+        "--vision-key",
+        type=str,
+        default=os.environ.get("OPENROUTER_API_KEY", ""),
+        help="Vision model API key (default: OPENROUTER_API_KEY env var)",
+    )
+    ve_parser.add_argument(
+        "--vision-model",
+        type=str,
+        default="gemini-3.1-flash-lite",
+        help="Vision model name (default: gemini-3.1-flash-lite)",
+    )
+    ve_parser.add_argument(
+        "--cache-dir",
+        type=str,
+        default="",
+        help="Cache directory for downloads",
+    )
+
+    # ── default pipeline (no subcommand) ──────────────────────────────
+    parser.add_argument(
+        "pg_id",
+        type=int,
+        nargs="?",
+        default=None,
+        help="Project Gutenberg ebook ID (for the main pipeline)",
     )
     parser.add_argument(
         "--scan-id",
@@ -878,10 +947,53 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     return report
 
 
+async def run_verify_edition(args: argparse.Namespace) -> int:
+    """Run the verify-edition subcommand."""
+    from gerrata.edition.verifier import EditionVerifier
+
+    verifier = EditionVerifier(
+        cache_dir=Path(args.cache_dir) if args.cache_dir else Path("./cache"),
+        verbose=args.verbose,
+    )
+
+    result = await verifier.verify(
+        pg_id=args.pg_id,
+        scan_id=args.scan_id,
+        approaches=args.approach,
+        pg_file=args.pg_file or None,
+        vision_url=args.vision_url or None,
+        vision_key=args.vision_key or None,
+        vision_model=args.vision_model or None,
+    )
+
+    # Print console output
+    console_text = EditionVerifier.format_console(result)
+    print(console_text)
+    print()
+
+    # Save JSON report
+    result.save(args.output, args.pg_id)
+    print(f"JSON report saved to {Path(args.output) / f'{args.pg_id}_edition_verification.json'}")
+
+    return EditionVerifier.exit_code(result.overall.get("result", "unable_to_determine"))
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    # Handle verify-edition subcommand
+    if args.command == "verify-edition":
+        if args.pg_id is None:
+            parser.error("pg_id is required for verify-edition")
+        setup_logging(args.verbose)
+        return asyncio.run(run_verify_edition(args))
+
+    # Default: main pipeline
+    if args.pg_id is None:
+        parser.print_help()
+        return 2
 
     setup_logging(args.verbose)
     logger = logging.getLogger(__name__)
