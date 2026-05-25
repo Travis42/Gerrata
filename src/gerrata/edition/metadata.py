@@ -291,9 +291,18 @@ class MetadataMatcher:
             details["first_edition_match"] = False
 
         # Determine result
+        has_substantive_data = (
+            details.get("publisher_match") is not None
+            or details.get("year_match") is not None
+        )
+
         if not any(v is True for k, v in details.items() if k.endswith("_match") and v is not None):
             result = "unable_to_determine"
             rationale = "No edition metadata in PG header"
+        elif not has_substantive_data:
+            # Only title matches, no publisher/year data — can't determine
+            result = "unable_to_determine"
+            rationale = f"Only title matched (score {score}/100), no publisher/year data in PG header"
         elif score >= 70:
             result = "match"
             rationale = f"High confidence match (score {score}/100)"

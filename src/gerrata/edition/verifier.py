@@ -320,12 +320,20 @@ class EditionVerifier:
             if a_result == "match" and b_result == "match":
                 overall_result = "match"
                 confidence = max(0.8, (a_score / 100.0 + b_confidence) / 2)
-            elif a_result == "mismatch" or b_result == "mismatch":
+            elif a_result == "mismatch" and b_result == "mismatch":
                 overall_result = "mismatch"
                 confidence = max(0.6, max(a_score / 100.0, b_confidence))
             elif a_result == "unable_to_determine" and b_result == "unable_to_determine":
                 overall_result = "unable_to_determine"
                 confidence = 0.0
+            elif b_result in ("match", "mismatch") and a_result == "unable_to_determine":
+                # Approach B has a signal, A has no data — trust B
+                overall_result = b_result
+                confidence = b_confidence
+            elif a_result in ("match", "mismatch") and b_result == "unable_to_determine":
+                # Approach A has a signal, B has no data — trust A
+                overall_result = a_result
+                confidence = a_score / 100.0
             else:
                 # One says something, the other can't tell
                 if a_result == "match":

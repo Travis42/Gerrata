@@ -484,14 +484,22 @@ class LineBreakFingerprinter:
             seq_score = 0.0
 
         # Weighted confidence score
+        # Column width is the strongest structural signal: different editions
+        # have different column widths. Line-ending words overlap even across
+        # different editions (same book text), so weight them lower.
         overall_confidence = (
-            col_score * 0.30 +
-            ending_score * 0.50 +
+            col_score * 0.50 +
+            ending_score * 0.30 +
             seq_score * 0.20
         )
 
-        # Determine result
-        if overall_confidence >= 0.6:
+        # Column width veto: large column width difference (>5 chars) is
+        # near-definitive evidence of different typesetting/edition.
+        # This overrides the weighted score.
+        if col_delta > 5:
+            result = "mismatch"
+            overall_confidence = min(overall_confidence, 0.4)
+        elif overall_confidence >= 0.6:
             result = "match"
         elif overall_confidence >= 0.3:
             result = "possible"
