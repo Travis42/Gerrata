@@ -14,10 +14,11 @@
 4. **Diff** aligned passages to find candidate errors
 5. **Filter** false positives using rule-based heuristics (alignment artifacts, typography variants, US/UK spelling, modernization, hyphenation, cutoff fragments)
 6. **Verify** remaining candidates with programmatic confidence scoring (context match, edit distance, alignment quality, diff characteristics)
-7. **Report** produces two files:
+7. **Gap analysis** detects scan pages with text that has no corresponding passage in the PG text — verified via fuzzy search to avoid false positives from alignment failures
+8. **Report** produces two files:
    - `errata_email.txt` — ready to send to PG, with only confirmed errors in arrow format
    - `review_needed.txt` — items that need human judgment before submitting
-8. **Substantive errata report** (optional) — sends the full report to an LLM for intelligent classification, separating meaning-changing errors from noise (diacritics, spelling variants, OCR errors, pipeline artifacts)
+9. **Substantive errata report** (optional) — sends the full report to an LLM for intelligent classification, separating meaning-changing errors from noise (diacritics, spelling variants, OCR errors, pipeline artifacts)
 
 ## Quick Start
 
@@ -253,6 +254,19 @@ Gerrata uses deterministic confidence scoring instead of LLM verification. Each 
 4. **Diff characteristics** — word lengths, single-vs-multi-word diffs
 
 Scores above 0.8 are considered high-confidence. The errata email includes items with confidence ≥ 0.4 (lowered threshold catches more candidates; the review file shows lower-confidence items for manual inspection).
+
+## Gap Analysis (Missing Content)
+
+In addition to finding transcription errors, Gerrata detects **coverage gaps** — scan pages that contain text with no corresponding passage in the PG text. These may indicate paragraphs or sentences that were omitted during transcription.
+
+Two strategies are used:
+
+1. **Uncovered pages** — Scan pages with text but no alignment at all (the aligner couldn't match them)
+2. **Partial coverage** — Within aligned pages, portions of scan text that don't correspond to any PG passage
+
+Each gap is **verified against the full PG text** using fuzzy matching. If the gap text is found elsewhere in PG (just misaligned), it's filtered out. Only gaps that genuinely don't appear in PG are reported.
+
+Gaps are included in the errata email under a `MISSING CONTENT` section with page links, word counts, and confidence levels.
 
 ## Filing an Errata Report with Project Gutenberg
 
