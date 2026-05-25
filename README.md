@@ -17,6 +17,7 @@
 7. **Report** produces two files:
    - `errata_email.txt` — ready to send to PG, with only confirmed errors in arrow format
    - `review_needed.txt` — items that need human judgment before submitting
+8. **Substantive errata report** (optional) — sends the full report to an LLM for intelligent classification, separating meaning-changing errors from noise (diacritics, spelling variants, OCR errors, pipeline artifacts)
 
 ## Quick Start
 
@@ -32,6 +33,13 @@ export OPENROUTER_API_KEY="your-api-key-here"
 gerrata 43 \
   --scan-id "06-stevenson-jekyll-hyde" \
   --vision-key "$OPENROUTER_API_KEY" \
+  -o reports
+
+# With substantive errata analysis (LLM-curated report)
+gerrata 43 \
+  --scan-id "06-stevenson-jekyll-hyde" \
+  --vision-key "$OPENROUTER_API_KEY" \
+  --substantive-report \
   -o reports
 ```
 
@@ -116,6 +124,37 @@ After a pipeline run, the output directory contains:
 | `gutenberg{ID}-*_errata.json` | Machine-readable JSON with all error data |
 | `gutenberg{ID}-*_errata_email.txt` | Submit-ready errata report in PG's preferred format |
 | `gutenberg{ID}-*_review_needed.txt` | Items needing human review before submission |
+| `gutenberg{ID}-*_substantive_errata.md` | LLM-curated report: only meaning-changing errors with false positives documented |
+
+### substantive_errata.md (optional)
+
+When `--substantive-report` is enabled, the pipeline sends the full errata report to an LLM for intelligent classification. This produces a curated markdown document that separates genuine errors from noise:
+
+**What gets excluded (with explanations):**
+- Diacritic-only changes (Senor→Señor, etc.)
+- Spelling variants (corredor→corridor, among→amongst)
+- Scan OCR errors where PG is correct
+- Repeated detections of the same pattern
+- Pipeline alignment artifacts
+- British/American spelling differences
+
+**What gets included as substantive:**
+- Wrong words that change meaning (e.g., "Gefe" for "Jefe")
+- Clear PG typos (e.g., "superintendendence")
+- Typesetting errors (l/I confusion, rn/m confusion)
+- Missing or extra words
+
+Every entry includes a clickable Internet Archive scan page link for verification.
+
+```bash
+gerrata 43 \
+  --scan-id "06-stevenson-jekyll-hyde" \
+  --vision-key "$OPENROUTER_API_KEY" \
+  --substantive-report \
+  -o reports
+```
+
+The substantive analysis uses a separate model call (default: `google/glm-5.1` via OpenRouter). It reuses the same `OPENROUTER_API_KEY` env var, but you can override it with `--substantive-key` if needed.
 
 ### errata_email.txt
 
@@ -356,6 +395,9 @@ The default is OpenRouter with Gemini 3.1 Flash Lite, but this is not a hard dep
 | `--strict` | off | Use strict filtering (keep more candidates) |
 | `--resume-from` | — | Resume from an intermediate save point |
 | `--output`, `-o` | `./reports` | Output directory for reports |
+| `--substantive-report` | off | Generate substantive errata report via LLM analysis |
+| `--substantive-model` | `google/glm-5.1` | Model for substantive errata analysis |
+| `--substantive-key` | `$OPENROUTER_API_KEY` | API key for substantive analysis (separate from vision key) |
 | `--verbose`, `-v` | off | Enable verbose logging |
 
 ## Development
