@@ -515,8 +515,10 @@ class TestDetectContentHoles:
 
     def test_5_small_gap_filtered(self):
         """Spec test 5: Gap is 3 words (< 4 threshold) — filtered out."""
-        pg_words = ["she", "said", "and", "then", "left"]
-        scan_words = ["she", "said", "with", "a", "sigh", "and", "then", "left"]
+        pg_words = (["the", "old", "man", "she", "said", "and", "then", "left",
+                     "the", "room", "quietly"])
+        scan_words = (["the", "old", "man", "she", "said", "with", "a", "sigh",
+                       "and", "then", "left", "the", "room", "quietly"])
 
         pg_text = self._build_pg_text(pg_words)
         scan_text = " ".join(scan_words)
@@ -539,13 +541,15 @@ class TestDetectContentHoles:
 
     def test_6_large_content_hole_high_confidence(self):
         """Spec test 6: >20 missing words — should get HIGH confidence."""
-        pg_words = ["the", "meeting", "began", "and", "then", "concluded"]
+        pg_words = (["the", "long", "meeting", "finally", "began",
+                     "and", "then", "concluded", "with", "a", "nod",
+                     "from", "the", "chairman"])
         # Insert 25 words in the scan
         missing = ["he", "stood", "up", "and", "addressed", "the", "crowd",
                    "with", "great", "passion", "speaking", "for", "nearly",
                    "an", "hour", "about", "the", "future", "of", "the",
                    "republic", "and", "its", "people"]
-        scan_words = pg_words[:2] + missing + pg_words[2:]
+        scan_words = pg_words[:4] + missing + pg_words[4:]
 
         pg_text = self._build_pg_text(pg_words)
         scan_text = " ".join(scan_words)
@@ -590,12 +594,15 @@ class TestDetectContentHoles:
 
     def test_multiple_holes_same_page(self):
         """Multiple content holes on the same page."""
-        pg_words = ["first", "part", "middle", "part", "last", "part"]
-        scan_words = (["first", "part"] +
+        # Use long enough word sequences to produce ≥4-word anchors
+        pg_words = (["the", "day", "was", "bright", "and", "warm", "first", "part"] +
+                    ["middle", "part", "the", "evening", "came", "slowly", "down"] +
+                    ["last", "part", "they", "walked", "home"])
+        scan_words = (["the", "day", "was", "bright", "and", "warm", "first", "part"] +
                       ["hole", "one", "alpha", "beta"] +
-                      ["middle", "part"] +
+                      ["middle", "part", "the", "evening", "came", "slowly", "down"] +
                       ["hole", "two", "gamma", "delta"] +
-                      ["last", "part"])
+                      ["last", "part", "they", "walked", "home"])
 
         pg_text = self._build_pg_text(pg_words)
         scan_text = " ".join(scan_words)

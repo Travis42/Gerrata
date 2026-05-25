@@ -276,6 +276,8 @@ def detect_content_holes(
     pg_text: str,
     pg_full_text: str,
     min_words: int = 4,
+    min_anchor_words: int = 4,
+    min_alignment_confidence: float = 0.65,
 ) -> list[CoverageGap]:
     """Detect content holes within aligned passages.
 
@@ -283,12 +285,22 @@ def detect_content_holes(
     two matched blocks that PG completely lacks — indicating a partial
     deletion within an aligned passage.
 
+    Filtering heuristics to reduce false positives:
+    - min_anchor_words: Both the match block before and after the gap must
+      be at least this many words. Short anchors indicate noisy alignment
+      where the apparent "gap" is likely an alignment artifact.
+    - min_alignment_confidence: Skip pages where the aligner's confidence
+      is below this threshold. Low-confidence alignments are generally messy,
+      and any holes found are likely artifacts of the misalignment.
+
     Args:
-        alignments: List of alignment dicts/objects with pg_start, pg_end, scan_page.
+        alignments: List of alignment dicts/objects with pg_start, pg_end, scan_page, confidence.
         scan_pages: List of scan page dicts/objects with page_num and text fields.
         pg_text: PG body text (between START/END markers).
         pg_full_text: Full PG text (for verification — includes header/footer).
         min_words: Minimum missing words to report.
+        min_anchor_words: Minimum words in both adjacent match blocks.
+        min_alignment_confidence: Minimum alignment confidence to consider a page.
 
     Returns:
         List of CoverageGap objects with strategy="content_hole".
@@ -307,20 +319,29 @@ def detect_content_holes(
             text = sp.get("vision_text", "") or sp.get("ocr_text", "") or ""
         page_texts[pnum] = text
 
-    # Group alignments by scan page
+    # Group alignments by scan page, also track max confidence per page
     page_alignments: dict[int, list] = {}
+    page_confidence: dict[int, float] = {}
     for a in alignments:
         if isinstance(a, dict):
             pnum = a.get("scan_page")
+            conf = a.get("confidence", 0.0)
         else:
             pnum = getattr(a, "scan_page", None)
+            conf = getattr(a, "confidence", 0.0)
         if pnum is None:
             continue
         page_alignments.setdefault(pnum, []).append(a)
+        page_confidence[pnum] = max(page_confidence.get(pnum, 0.0), conf)
 
     all_holes: list[CoverageGap] = []
 
     for pnum, aligns in page_alignments.items():
+        # Skip pages with low alignment confidence — these are generally
+        # messy alignments where any holes found are likely artifacts
+        if page_confidence.get(pnum, 0.0) < min_alignment_confidence:
+            continue
+
         scan_text = page_texts.get(pnum, "")
         if not scan_text:
             continue
@@ -358,6 +379,12 @@ def detect_content_holes(
 
             # Skip zero-size sentinel match
             if m1.size == 0:
+                continue
+
+            # Filter #1: Both anchor blocks must be long enough.
+            # Short anchors indicate noisy alignment where the apparent
+            # "gap" is likely an artifact, not a real content hole.
+            if m1.size < min_anchor_words or m2.size < min_anchor_words:
                 continue
 
             pg_gap_start = m1.a + m1.size
