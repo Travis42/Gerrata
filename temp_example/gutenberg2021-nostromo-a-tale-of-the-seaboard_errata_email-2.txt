@@ -3,7 +3,7 @@ File: 2021.txt,
 I verified the following changes against the Internet Archive scan:
 https://archive.org/details/nostromotaleofse00conruoft
 NOTE: Page numbers are 'of the scan' not 'of the book.'
-
+ 
 
 Page 17 (https://archive.org/details/nostromotaleofse00conruoft/page/n17/mode/1up):
 The dawn breaks high behind the towering and serrated wall of the Cordillera, a clear-cut vision of dark peaks rearing their steep slopes on a lofty pedestal of forest rising from the very edge of the shore.

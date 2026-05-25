@@ -24,6 +24,7 @@ from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report, ga
 from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.programmatic import ProgrammaticVerifier
 from gerrata.reporter.generator import ReportGenerator
+from gerrata.reporter.substantive import SubstantiveErrataGenerator
 
 
 
@@ -171,6 +172,24 @@ def build_parser() -> argparse.ArgumentParser:
         default="",
         help="Resume pipeline from an intermediate save point. "
              "Requires cached results in the scan ID cache directory.",
+    )
+    parser.add_argument(
+        "--substantive-report",
+        action="store_true",
+        default=False,
+        help="Generate substantive errata report via LLM analysis (runs after report generation)",
+    )
+    parser.add_argument(
+        "--substantive-model",
+        type=str,
+        default="google/glm-5.1",
+        help="Model for substantive errata analysis (default: google/glm-5.1)",
+    )
+    parser.add_argument(
+        "--substantive-key",
+        type=str,
+        default="",
+        help="API key for substantive analysis (default: OPENROUTER_API_KEY env var)",
     )
     parser.add_argument(
         "--concurrency",
@@ -836,6 +855,25 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print(f"[bold green]Reports saved:[/bold green]")
     console.print(f"  JSON: {json_path}")
     console.print(f"  Errata Email: {email_path}")
+
+    # Step: Substantive errata report (LLM analysis)
+    if args.substantive_report:
+        console.print(f"[bold blue]Step {step_num + 4}:[/bold blue] Generating substantive errata report...")
+        substantive_gen = SubstantiveErrataGenerator(
+            api_key=args.substantive_key or os.environ.get("OPENROUTER_API_KEY", ""),
+            model=args.substantive_model,
+            scan_id=scan_id,
+        )
+        substantive_path = await substantive_gen.generate(
+            report=report,
+            email_content=email_path.read_text(),
+            json_content=json_path.read_text(),
+            output_path=email_path,
+        )
+        if substantive_path:
+            console.print(f"  [bold green]Substantive report:[/bold green] {substantive_path}")
+        else:
+            console.print(f"  [yellow]Substantive report skipped[/yellow] (no API key or call failed)")
 
     return report
 
