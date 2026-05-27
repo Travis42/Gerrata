@@ -1053,7 +1053,7 @@ class ReportGenerator:
                         )
                         lines.append("")
                         for g in structural_gaps:
-                        page = self._get_ia_leaf_number(g.page)
+                            page = self._get_ia_leaf_number(g.page)
                         wc = g.word_count
                         conf = g.confidence.upper()
                         if g.strategy == "partial":
