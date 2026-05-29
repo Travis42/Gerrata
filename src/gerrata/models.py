@@ -2,6 +2,7 @@
 
 All core dataclasses used throughout the pipeline:
 Alignment, Error, Report, and supporting types.
+Plus edition comparison models (Phase 1).
 """
 
 from __future__ import annotations
@@ -280,6 +281,183 @@ class Report:
                 "intentional_changes": len(self.intentional_changes),
             },
             "errors": [e.to_dict() for e in filtered_errors],
+        }
+
+    def to_json(self, indent: int = 2) -> str:
+        return json.dumps(self.to_dict(), indent=indent)
+
+
+# ── Edition Comparison Models (Phase 1) ──────────────────────────────
+
+
+class VariantCategory(str, Enum):
+    """Categories of textual variants between two editions."""
+
+    TEXTUAL_VARIANT = "textual_variant"
+    PUNCTUATION_VARIANT = "punctuation_variant"
+    SPELLING_CHANGE = "spelling_change"
+    NORMALIZATION = "normalization"
+    MISSING_CONTENT = "missing_content"
+    ADDED_CONTENT = "added_content"
+    FORMATTING_VARIANT = "formatting_variant"
+    LINEBREAK_VARIANT = "linebreak_variant"
+
+
+class VariantSignificance(str, Enum):
+    """Significance level of a textual variant."""
+
+    MAJOR = "major"
+    MODERATE = "moderate"
+    MINOR = "minor"
+    TRIVIAL = "trivial"
+
+
+@dataclass
+class TextualVariant:
+    """A single textual variant between two editions."""
+
+    edition_a_text: str
+    edition_b_text: str
+    edition_a_offset: int
+    edition_b_offset: int
+    edition_a_page: int
+    edition_b_page: int
+    category: VariantCategory = VariantCategory.TEXTUAL_VARIANT
+    significance: VariantSignificance = VariantSignificance.MINOR
+    confidence: float = 0.0
+    context: str = ""
+    chapter_title: str = ""
+
+    def to_dict(self) -> dict:
+        return {
+            "category": self.category.value,
+            "significance": self.significance.value,
+            "confidence": self.confidence,
+            "edition_a": {
+                "text": self.edition_a_text,
+                "page": self.edition_a_page,
+                "offset": self.edition_a_offset,
+            },
+            "edition_b": {
+                "text": self.edition_b_text,
+                "page": self.edition_b_page,
+                "offset": self.edition_b_offset,
+            },
+            "context": self.context,
+            "chapter_title": self.chapter_title,
+        }
+
+
+@dataclass
+class EditionAlignment:
+    """Maps a region of edition A text to a corresponding region in edition B."""
+
+    edition_a_start: int
+    edition_a_end: int
+    edition_b_start: int
+    edition_b_end: int
+    edition_a_pages: list[int] = field(default_factory=list)
+    edition_b_pages: list[int] = field(default_factory=list)
+    confidence: float = 0.0
+
+    def to_dict(self) -> dict:
+        return {
+            "edition_a": {
+                "start": self.edition_a_start,
+                "end": self.edition_a_end,
+                "pages": self.edition_a_pages,
+            },
+            "edition_b": {
+                "start": self.edition_b_start,
+                "end": self.edition_b_end,
+                "pages": self.edition_b_pages,
+            },
+            "confidence": self.confidence,
+        }
+
+
+@dataclass
+class EditionInfo:
+    """Metadata about one edition being compared."""
+
+    source: str  # e.g. "scan:2021.148755.Nostromo" or "text:/path/to/file.txt"
+    label: str = ""
+    title: str = ""
+    author: str = ""
+    publisher: str = ""
+    year: str = ""
+    total_chars: int = 0
+    total_pages: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "source": self.source,
+            "label": self.label,
+            "title": self.title,
+            "author": self.author,
+            "publisher": self.publisher,
+            "year": self.year,
+            "total_chars": self.total_chars,
+            "total_pages": self.total_pages,
+        }
+
+
+@dataclass
+class ComparisonReport:
+    """Complete edition comparison report."""
+
+    edition_a: EditionInfo = field(default_factory=EditionInfo)
+    edition_b: EditionInfo = field(default_factory=EditionInfo)
+    alignments: list[EditionAlignment] = field(default_factory=list)
+    variants: list[TextualVariant] = field(default_factory=list)
+    date: str = ""
+    output_dir: str = ""
+
+    @property
+    def total_variants(self) -> int:
+        return len(self.variants)
+
+    @property
+    def by_category(self) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for v in self.variants:
+            counts[v.category.value] = counts.get(v.category.value, 0) + 1
+        return counts
+
+    @property
+    def by_significance(self) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for v in self.variants:
+            counts[v.significance.value] = counts.get(v.significance.value, 0) + 1
+        return counts
+
+    @property
+    def alignment_summary(self) -> dict:
+        if not self.alignments:
+            return {"pages_matched": 0, "coverage_pct": 0, "avg_confidence": 0.0}
+        matched = len(self.alignments)
+        avg_conf = sum(a.confidence for a in self.alignments) / matched if matched else 0.0
+        total_a_chars = self.edition_a.total_chars or 1
+        covered = sum(a.edition_a_end - a.edition_a_start for a in self.alignments)
+        coverage = min(100, int(covered / total_a_chars * 100))
+        return {
+            "pages_matched": matched,
+            "coverage_pct": coverage,
+            "avg_confidence": round(avg_conf, 3),
+        }
+
+    def to_dict(self) -> dict:
+        return {
+            "edition_a": self.edition_a.to_dict(),
+            "edition_b": self.edition_b.to_dict(),
+            "alignment": self.alignment_summary,
+            "summary": {
+                "total_variants": self.total_variants,
+                "by_category": self.by_category,
+                "by_significance": self.by_significance,
+            },
+            "variants": [v.to_dict() for v in self.variants],
+            "date": self.date,
         }
 
     def to_json(self, indent: int = 2) -> str:

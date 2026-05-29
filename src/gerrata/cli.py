@@ -143,6 +143,103 @@ def build_parser() -> argparse.ArgumentParser:
         help="Cache directory for downloads",
     )
 
+    # ── compare-editions subcommand ──────────────────────────────────
+    ce_parser = subparsers.add_parser(
+        "compare-editions",
+        help="Compare two scanned/text editions and produce a collation report",
+    )
+    ce_parser.add_argument(
+        "--edition-a",
+        type=str,
+        required=True,
+        help="First edition source: scan:<id_or_zip>, text:<file>, pages:<dir>, transcribed:<json>",
+    )
+    ce_parser.add_argument(
+        "--edition-b",
+        type=str,
+        required=True,
+        help="Second edition source: scan:<id_or_zip>, text:<file>, pages:<dir>, transcribed:<json>",
+    )
+    ce_parser.add_argument(
+        "--edition-a-label",
+        type=str,
+        default="",
+        help="Label for Edition A (e.g., '1st Edition (1904)')",
+    )
+    ce_parser.add_argument(
+        "--edition-b-label",
+        type=str,
+        default="",
+        help="Label for Edition B (e.g., '2nd Edition (1918)')",
+    )
+    ce_parser.add_argument(
+        "--output", "-o",
+        type=str,
+        default="./reports",
+        help="Output directory for reports (default: ./reports)",
+    )
+    ce_parser.add_argument(
+        "--significance",
+        type=str,
+        choices=["all", "major", "moderate", "minor"],
+        default="all",
+        help="Minimum significance level to include in report (default: all)",
+    )
+    ce_parser.add_argument(
+        "--formats",
+        type=str,
+        default="json,markdown",
+        help="Comma-separated report formats: json,markdown (default: json,markdown)",
+    )
+    ce_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose output",
+    )
+    ce_parser.add_argument(
+        "--vision-url",
+        type=str,
+        default="",
+        help="Vision model API URL for transcription",
+    )
+    ce_parser.add_argument(
+        "--vision-key",
+        type=str,
+        default=os.environ.get("OPENROUTER_API_KEY", ""),
+        help="Vision model API key (default: OPENROUTER_API_KEY env var)",
+    )
+    ce_parser.add_argument(
+        "--vision-model",
+        type=str,
+        default="gemini-3.1-flash-lite",
+        help="Vision model name for transcription (default: gemini-3.1-flash-lite)",
+    )
+    ce_parser.add_argument(
+        "--cache-dir",
+        type=str,
+        default="",
+        help="Cache directory for downloads",
+    )
+    ce_parser.add_argument(
+        "--page-range",
+        type=str,
+        default="",
+        help="Page range for scan sources, e.g. '48-100'",
+    )
+    ce_parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=10,
+        help="Number of concurrent API calls (default: 10)",
+    )
+    ce_parser.add_argument(
+        "--resume-from",
+        type=str,
+        choices=["transcriptions", "alignments", "variants", "pre-report"],
+        default="",
+        help="Resume from intermediate stage",
+    )
+
     # ── default pipeline (no subcommand) ──────────────────────────────
     # NOTE: pg_id is NOT added as a top-level positional because argparse
     # would try to match it against the 'verify-edition' subcommand and
@@ -946,6 +1043,447 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     return report
 
 
+def _parse_edition_source(source_str: str) -> tuple[str, str]:
+    """Parse an edition source string like 'scan:identifier' into (type, identifier).
+
+    Supported types: scan, text, pages, transcribed
+    """
+    if ":" not in source_str:
+        raise ValueError(
+            f"Invalid edition source format: '{source_str}'. "
+            f"Expected '<type>:<identifier>' where type is "
+            f"scan, text, pages, or transcribed."
+        )
+    source_type, identifier = source_str.split(":", 1)
+    if source_type not in ("scan", "text", "pages", "transcribed"):
+        raise ValueError(
+            f"Unknown edition source type: '{source_type}'. "
+            f"Must be one of: scan, text, pages, transcribed"
+        )
+    return source_type, identifier
+
+
+def _load_text_file(path: str) -> str:
+    """Load a text file and return its contents."""
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"Text file not found: {path}")
+    return p.read_text(encoding="utf-8", errors="replace")
+
+
+def _load_transcriptions_json(path: str) -> list:
+    """Load a transcriptions JSON file."""
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"Transcriptions file not found: {path}")
+    with open(p) as f:
+        data = json.load(f)
+    from gerrata.aligner.vision_aligner import PageTranscription
+    results = []
+    if isinstance(data, list):
+        for t in data:
+            results.append(PageTranscription(
+                page_num=t.get("page_num", t.get("page", 0)),
+                image_path=Path(t["image_path"]) if t.get("image_path") else None,
+                transcription=t.get("transcription", t.get("text", "")),
+                transcription_cleaned=t.get("transcription_cleaned"),
+                success=t.get("success", True),
+                error=t.get("error"),
+            ))
+    elif isinstance(data, dict) and "pages" in data:
+        for filename, entry in data["pages"].items():
+            results.append(PageTranscription(
+                page_num=int("".join(filter(str.isdigit, filename)) or 0),
+                image_path=Path(entry.get("image_path", "")) if entry.get("image_path") else None,
+                transcription=entry.get("text", entry.get("transcription", "")),
+                transcription_cleaned=None,
+                success=bool(entry.get("text", entry.get("transcription", ""))),
+                error=None,
+            ))
+    return results
+
+
+async def _resolve_edition_source(
+    source_type: str,
+    identifier: str,
+    cache_dir: Path,
+    vision_url: str = "",
+    vision_key: str = "",
+    vision_model: str = "gemini-3.1-flash-lite",
+    page_range_str: str = "",
+    concurrency: int = 10,
+    resume_dir: Path | None = None,
+    resume_stage: str = "",
+) -> tuple[str, list]:
+    """Resolve an edition source to (full_text, transcriptions).
+
+    Returns:
+        Tuple of (full_text, list_of_PageTranscription).
+    """
+    page_range = parse_page_range(page_range_str) if page_range_str else None
+
+    if source_type == "text":
+        text = _load_text_file(identifier)
+        from gerrata.aligner.cross_aligner import _split_text_to_pages
+        transcriptions = _split_text_to_pages(text)
+        return text, transcriptions
+
+    elif source_type == "transcribed":
+        transcriptions = _load_transcriptions_json(identifier)
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
+        full_text = _build_synthetic_text(transcriptions)
+        return full_text, transcriptions
+
+    elif source_type == "pages":
+        pages_dir = Path(identifier)
+        if not pages_dir.exists():
+            raise FileNotFoundError(f"Pages directory not found: {identifier}")
+        scan_fetcher = ScanFetcher(cache_dir=cache_dir)
+        page_images = scan_fetcher.get_cached_pages(pages_dir)
+        if not page_images:
+            raise ValueError(f"No page images found in {identifier}")
+
+        transcriber = VisionTranscriber(
+            api_url=vision_url or "https://openrouter.ai/api/v1/chat/completions",
+            api_key=vision_key or None,
+            models=[vision_model] if vision_model else None,
+            ocr_engine="vision",
+            concurrency=concurrency,
+        )
+        transcriptions = await transcriber.transcribe_pages(page_images)
+        successful = [t for t in transcriptions if t.success]
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
+        full_text = _build_synthetic_text(successful)
+        return full_text, successful
+
+    elif source_type == "scan":
+        scan_fetcher = ScanFetcher(cache_dir=cache_dir)
+        zip_path = Path(identifier)
+        if zip_path.exists() and identifier.endswith(".zip"):
+            # Local zip file
+            extract_dir = zip_path.parent / "pages"
+            page_images = scan_fetcher.extract_jp2_zip(
+                zip_path, dest=extract_dir, page_range=page_range
+            )
+        else:
+            # IA identifier — download
+            if resume_dir and resume_stage in ("transcriptions", "alignments", "variants", "pre-report"):
+                cached = load_intermediate(resume_dir, "02_transcriptions")
+                if cached:
+                    from gerrata.aligner.vision_aligner import PageTranscription
+                    successful = [PageTranscription(
+                        page_num=t["page_num"],
+                        image_path=Path(t["image_path"]) if t.get("image_path") else None,
+                        transcription=t["transcription"],
+                        transcription_cleaned=t.get("transcription_cleaned"),
+                        success=t["success"],
+                        error=t.get("error"),
+                    ) for t in cached]
+                    from gerrata.aligner.cross_aligner import _build_synthetic_text
+                    return _build_synthetic_text(successful), successful
+
+            zip_path = await scan_fetcher.download_jp2_zip(
+                identifier=identifier,
+                dest=cache_dir,
+            )
+            extract_dir = cache_dir / "pages"
+            page_images = scan_fetcher.extract_jp2_zip(
+                zip_path, dest=extract_dir, page_range=page_range
+            )
+
+        if not page_images:
+            raise ValueError("No page images extracted from scan source")
+
+        transcriber = VisionTranscriber(
+            api_url=vision_url or "https://openrouter.ai/api/v1/chat/completions",
+            api_key=vision_key or None,
+            models=[vision_model] if vision_model else None,
+            ocr_engine="vision",
+            concurrency=concurrency,
+        )
+        transcriptions = await transcriber.transcribe_pages(page_images)
+        successful = [t for t in transcriptions if t.success]
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
+        full_text = _build_synthetic_text(successful)
+        return full_text, successful
+
+    else:
+        raise ValueError(f"Unknown source type: {source_type}")
+
+
+async def run_compare_editions(args: argparse.Namespace) -> int:
+    """Run the compare-editions subcommand."""
+    from datetime import datetime, timezone
+    from rich.console import Console
+
+    console = Console()
+    cache_dir = Path(args.cache_dir) if args.cache_dir else Path("./cache")
+
+    # Parse edition sources
+    a_type, a_id = _parse_edition_source(args.edition_a)
+    b_type, b_id = _parse_edition_source(args.edition_b)
+
+    console.print(f"[bold]Edition A:[/bold] {a_type}:{a_id}")
+    console.print(f"[bold]Edition B:[/bold] {b_type}:{b_id}")
+    console.print()
+
+    # Create a cache dir for this comparison
+    import hashlib
+    cache_key = hashlib.md5(f"{args.edition_a}||{args.edition_b}".encode()).hexdigest()[:12]
+    compare_cache = cache_dir / f"compare_{cache_key}"
+    resume_stage = args.resume_from
+
+    # ── Step 1: Resolve/transcribe edition sources ─────────────────
+    if resume_stage not in ("alignments", "variants", "pre-report"):
+        console.print("[bold blue]Step 1:[/bold blue] Resolving edition sources...")
+
+        text_a, trans_a = await _resolve_edition_source(
+            source_type=a_type,
+            identifier=a_id,
+            cache_dir=cache_dir,
+            vision_url=args.vision_url,
+            vision_key=args.vision_key,
+            vision_model=args.vision_model,
+            concurrency=args.concurrency,
+            resume_dir=compare_cache,
+            resume_stage=resume_stage,
+        )
+        console.print(f"  Edition A: {len(text_a):,} chars, {len(trans_a)} pages")
+
+        text_b, trans_b = await _resolve_edition_source(
+            source_type=b_type,
+            identifier=b_id,
+            cache_dir=cache_dir,
+            vision_url=args.vision_url,
+            vision_key=args.vision_key,
+            vision_model=args.vision_model,
+            concurrency=args.concurrency,
+            resume_dir=compare_cache / "b" if compare_cache else None,
+            resume_stage=resume_stage,
+        )
+        console.print(f"  Edition B: {len(text_b):,} chars, {len(trans_b)} pages")
+
+        save_intermediate(compare_cache, "01_sources", {
+            "a_type": a_type, "a_id": a_id,
+            "b_type": b_type, "b_id": b_id,
+            "text_a_len": len(text_a), "text_b_len": len(text_b),
+            "trans_a_count": len(trans_a), "trans_b_count": len(trans_b),
+        })
+        save_intermediate(compare_cache, "02_transcriptions", [
+            {
+                "page_num": t.page_num,
+                "image_path": str(t.image_path) if t.image_path else None,
+                "transcription": t.transcription,
+                "transcription_cleaned": t.transcription_cleaned,
+                "success": t.success,
+                "error": t.error,
+            } for t in trans_a
+        ])
+    else:
+        console.print("[bold blue]Step 1:[/bold blue] Resolving edition sources...")
+        cached = load_intermediate(compare_cache, "01_sources")
+        if not cached:
+            raise ValueError(f"--resume-from={resume_stage} but 01_sources.json not found")
+
+        # Reload transcriptions for A
+        cached_trans = load_intermediate(compare_cache, "02_transcriptions")
+        from gerrata.aligner.vision_aligner import PageTranscription
+        trans_a = [PageTranscription(
+            page_num=t["page_num"],
+            image_path=Path(t["image_path"]) if t.get("image_path") else None,
+            transcription=t["transcription"],
+            transcription_cleaned=t.get("transcription_cleaned"),
+            success=t["success"],
+            error=t.get("error"),
+        ) for t in cached_trans]
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
+        text_a = _build_synthetic_text(trans_a)
+
+        # Reload transcriptions for B
+        cached_trans_b = load_intermediate(compare_cache / "b", "02_transcriptions") if (compare_cache / "b").exists() else None
+        if cached_trans_b:
+            trans_b = [PageTranscription(
+                page_num=t["page_num"],
+                image_path=Path(t["image_path"]) if t.get("image_path") else None,
+                transcription=t["transcription"],
+                transcription_cleaned=t.get("transcription_cleaned"),
+                success=t["success"],
+                error=t.get("error"),
+            ) for t in cached_trans_b]
+        else:
+            # Re-resolve B (text/transcribed sources are cheap)
+            text_b, trans_b = await _resolve_edition_source(
+                source_type=b_type,
+                identifier=b_id,
+                cache_dir=cache_dir,
+                vision_url=args.vision_url,
+                vision_key=args.vision_key,
+                vision_model=args.vision_model,
+                concurrency=args.concurrency,
+            )
+        text_b = _build_synthetic_text(trans_b) if 'text_b' not in dir() else text_b
+
+        console.print(f"  Edition A: {len(text_a):,} chars, {len(trans_a)} pages [cached]")
+        console.print(f"  Edition B: {len(text_b):,} chars, {len(trans_b)} pages")
+
+    # ── Step 2: Cross-align editions ──────────────────────────────
+    if resume_stage not in ("variants", "pre-report"):
+        console.print("[bold blue]Step 2:[/bold blue] Cross-aligning editions...")
+        from gerrata.aligner.cross_aligner import align_editions
+        from gerrata.models import EditionAlignment
+
+        edition_alignments = align_editions(
+            transcriptions_a=trans_a,
+            transcriptions_b=trans_b,
+            text_a=text_a,
+            text_b=text_b,
+        )
+        console.print(f"  Aligned: {len(edition_alignments)} regions")
+
+        save_intermediate(compare_cache, "03_alignments", [
+            a.to_dict() for a in edition_alignments
+        ])
+    else:
+        console.print("[bold blue]Step 2:[/bold blue] Cross-aligning editions...")
+        cached = load_intermediate(compare_cache, "03_alignments")
+        if not cached:
+            raise ValueError(f"--resume-from={resume_stage} but 03_alignments.json not found")
+        from gerrata.models import EditionAlignment
+        edition_alignments = [
+            EditionAlignment(
+                edition_a_start=a["edition_a"]["start"],
+                edition_a_end=a["edition_a"]["end"],
+                edition_b_start=a["edition_b"]["start"],
+                edition_b_end=a["edition_b"]["end"],
+                edition_a_pages=a["edition_a"]["pages"],
+                edition_b_pages=a["edition_b"]["pages"],
+                confidence=a["confidence"],
+            ) for a in cached
+        ]
+        console.print(f"  Aligned: {len(edition_alignments)} regions [cached]")
+
+    # ── Step 3: Diff aligned regions ─────────────────────────────
+    if resume_stage != "pre-report":
+        console.print("[bold blue]Step 3:[/bold blue] Diffing aligned regions...")
+
+        # Use TextDiffChecker on each aligned pair
+        checker = TextDiffChecker()
+        all_candidates: list = []
+
+        for ed_align in edition_alignments:
+            a_passage = text_a[ed_align.edition_a_start:ed_align.edition_a_end]
+            b_passage = text_b[ed_align.edition_b_start:ed_align.edition_b_end]
+
+            if not a_passage.strip() or not b_passage.strip():
+                continue
+
+            # Use the diff checker to compare the passages
+            errors = checker.check_aligned_passage(
+                pg_text=a_passage,
+                scan_text=b_passage,
+                pg_offset=ed_align.edition_a_start,
+                scan_page=ed_align.edition_b_pages[0] if ed_align.edition_b_pages else 0,
+            )
+            all_candidates.extend(errors)
+
+        console.print(f"  Raw diffs: {len(all_candidates)}")
+
+        # ── Step 4: Classify variants ─────────────────────────────
+        console.print("[bold blue]Step 4:[/bold blue] Classifying variants...")
+        from gerrata.checker.variant_classifier import VariantClassifier
+
+        classifier = VariantClassifier()
+        variants = classifier.classify_batch(all_candidates)
+
+        # Enrich variants with B page info from edition alignments
+        for v in variants:
+            for ed_align in edition_alignments:
+                if ed_align.edition_a_start <= v.edition_a_offset < ed_align.edition_a_end:
+                    if ed_align.edition_b_pages:
+                        v.edition_b_page = ed_align.edition_b_pages[0]
+                    break
+
+        console.print(f"  Classified: {len(variants)} variants")
+        console.print(f"    Major: {sum(1 for v in variants if v.significance.value == 'major')}")
+        console.print(f"    Moderate: {sum(1 for v in variants if v.significance.value == 'moderate')}")
+        console.print(f"    Minor: {sum(1 for v in variants if v.significance.value == 'minor')}")
+        console.print(f"    Trivial: {sum(1 for v in variants if v.significance.value == 'trivial')}")
+
+        save_intermediate(compare_cache, "04_variants", [
+            v.to_dict() for v in variants
+        ])
+    else:
+        console.print("[bold blue]Step 3-4:[/bold blue] Diffs and classification...")
+        cached = load_intermediate(compare_cache, "04_variants")
+        if not cached:
+            raise ValueError("--resume-from=pre-report but 04_variants.json not found")
+        from gerrata.models import TextualVariant, VariantCategory, VariantSignificance
+        variants = [
+            TextualVariant(
+                edition_a_text=v["edition_a"]["text"],
+                edition_b_text=v["edition_b"]["text"],
+                edition_a_offset=v["edition_a"]["offset"],
+                edition_b_offset=v["edition_b"]["offset"],
+                edition_a_page=v["edition_a"]["page"],
+                edition_b_page=v["edition_b"]["page"],
+                category=VariantCategory(v["category"]),
+                significance=VariantSignificance(v["significance"]),
+                confidence=v["confidence"],
+                context=v.get("context", ""),
+                chapter_title=v.get("chapter_title", ""),
+            ) for v in cached
+        ]
+        console.print(f"  Loaded {len(variants)} variants [cached]")
+
+    # ── Step 5: Generate reports ──────────────────────────────────
+    console.print("[bold blue]Step 5:[/bold blue] Generating reports...")
+
+    from gerrata.models import (
+        ComparisonReport,
+        EditionInfo,
+    )
+    from gerrata.reporter.comparison_reporter import ComparisonReporter
+
+    report = ComparisonReport(
+        edition_a=EditionInfo(
+            source=args.edition_a,
+            label=args.edition_a_label,
+            total_chars=len(text_a),
+            total_pages=len(trans_a),
+        ),
+        edition_b=EditionInfo(
+            source=args.edition_b,
+            label=args.edition_b_label,
+            total_chars=len(text_b),
+            total_pages=len(trans_b),
+        ),
+        alignments=edition_alignments,
+        variants=variants,
+        date=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        output_dir=str(args.output),
+    )
+
+    formats = [f.strip() for f in args.formats.split(",")]
+    reporter = ComparisonReporter(significance_filter=args.significance)
+    output_paths = reporter.generate(report, Path(args.output), formats=formats)
+
+    for fmt, path in output_paths.items():
+        console.print(f"  [bold green]{fmt.upper()}:[/bold green] {path}")
+
+    # Print summary
+    console.print()
+    console.print(f"[bold]Comparison complete:[/bold]")
+    alignment = report.alignment_summary
+    console.print(f"  Alignment: {alignment['pages_matched']} regions, {alignment['coverage_pct']}% coverage")
+    console.print(f"  Total variants: {report.total_variants}")
+    console.print(f"  Major: {report.by_significance.get('major', 0)}")
+    console.print(f"  Moderate: {report.by_significance.get('moderate', 0)}")
+    console.print(f"  Minor: {report.by_significance.get('minor', 0)}")
+    console.print(f"  Trivial: {report.by_significance.get('trivial', 0)}")
+
+    return 0
+
+
 async def run_verify_edition(args: argparse.Namespace) -> int:
     """Run the verify-edition subcommand."""
     from gerrata.edition.verifier import EditionVerifier
@@ -985,6 +1523,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
 
     # Handle subcommands vs default pipeline
+    if argv and argv[0] == "compare-editions":
+        for action in parser._subparsers._actions:
+            if hasattr(action, 'choices') and action.choices and 'compare-editions' in action.choices:
+                args = action.choices['compare-editions'].parse_args(argv[1:])
+                setup_logging(args.verbose)
+                return asyncio.run(run_compare_editions(args))
+        args = parser.parse_args(argv)
+        setup_logging(args.verbose)
+        return asyncio.run(run_compare_editions(args))
+
     if argv and argv[0] == "verify-edition":
         for action in parser._subparsers._actions:
             if hasattr(action, 'choices') and action.choices and 'verify-edition' in action.choices:
