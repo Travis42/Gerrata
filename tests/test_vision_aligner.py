@@ -94,7 +94,7 @@ class TestVisionTranscriber:
 
     def test_default_models(self):
         t = VisionTranscriber()
-        assert "google/gemma-4-31b-it" in t.models
+        assert "google/gemini-3.1-flash-lite" in t.models
 
     def test_custom_models(self):
         t = VisionTranscriber(models=["custom-model"])

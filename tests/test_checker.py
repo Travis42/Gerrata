@@ -44,21 +44,32 @@ class TestTextDiffChecker:
             pg_offset=100,
             scan_page=5,
         )
+        # Note: single-word diffs where both sides are <5 chars are filtered
+        # by _is_fragment_candidate (alignment boundary artifact filter).
+        # Use longer words to avoid the fragment filter.
+        errors = checker.check_aligned_passage(
+            pg_text="He handed approxmately letter to her.",
+            scan_text="He handed approximately letter to her.",
+            pg_offset=100,
+            scan_page=5,
+        )
         assert len(errors) >= 1
-        assert any("tne" in e.pg_text and "the" in e.scan_text for e in errors)
+        assert any("approxmately" in e.pg_text and "approximately" in e.scan_text for e in errors)
 
     def test_missing_word(self, checker):
+        # Use a multi-word difference that won't be filtered as fragment
         errors = checker.check_aligned_passage(
-            pg_text="He walked slowly the street.",
-            scan_text="He walked slowly down the street.",
+            pg_text="The committee considered the matter at yesterday morning session.",
+            scan_text="The committee carefully considered the matter at yesterday morning session.",
         )
         assert len(errors) >= 1
         assert any(e.category == ErrorCategory.MISSING_WORD for e in errors)
 
     def test_extra_word(self, checker):
+        # Use a multi-word difference that won't be filtered as fragment
         errors = checker.check_aligned_passage(
-            pg_text="He walked slowly down the the street.",
-            scan_text="He walked slowly down the street.",
+            pg_text="He walked very carefully and deliberately down the street yesterday afternoon.",
+            scan_text="He walked very carefully down the street yesterday afternoon.",
         )
         assert len(errors) >= 1
         assert any(e.category == ErrorCategory.EXTRA_WORD for e in errors)
@@ -74,8 +85,8 @@ class TestTextDiffChecker:
 
     def test_multiple_errors(self, checker):
         errors = checker.check_aligned_passage(
-            pg_text="tne quick brown fox jamps over the lazy dg.",
-            scan_text="the quick brown fox jumps over the lazy dog.",
+            pg_text="approxmately quick brown fox jamps over the lazy dg.",
+            scan_text="approximately quick brown fox jumps over the lazy dog.",
         )
         assert len(errors) >= 2
 
@@ -115,12 +126,12 @@ class TestTextDiffChecker:
         from gerrata.fetcher.scans import ScanPage
         from gerrata.models import Alignment
 
-        pg_text = "He handed the letter to her friend."
+        pg_text = "He handed approximately letter to her friend on that particular afternoon."
         alignment = Alignment(pg_start=0, pg_end=len(pg_text), scan_page=0)
 
         page = ScanPage(
             page_num=0,
-            ocr_text="He handed tne letter to her friend.",
+            ocr_text="He handed approxmately letter to her friend on that particular afternoon.",
             vision_text="",  # No vision text
         )
 

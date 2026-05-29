@@ -144,13 +144,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # ── default pipeline (no subcommand) ──────────────────────────────
-    parser.add_argument(
-        "pg_id",
-        type=int,
-        nargs="?",
-        default=None,
-        help="Project Gutenberg ebook ID (for the main pipeline)",
-    )
+    # NOTE: pg_id is NOT added as a top-level positional because argparse
+    # would try to match it against the 'verify-edition' subcommand and
+    # error out. Instead, we inject it into the namespace in main() when
+    # no subcommand is detected.
     parser.add_argument(
         "--scan-id",
         type=str,
@@ -982,31 +979,36 @@ async def run_verify_edition(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
-    # If the first arg is a subcommand, parse only the subparser.
-    # This avoids the top-level optional pg_id conflicting with subparser
-    # positional args of the same name.
     if argv is None:
         argv = sys.argv[1:]
 
+    parser = build_parser()
+
+    # Handle subcommands vs default pipeline
     if argv and argv[0] == "verify-edition":
-        # Parse with the verify-edition subparser directly
-        parser = build_parser()
         for action in parser._subparsers._actions:
             if hasattr(action, 'choices') and action.choices and 'verify-edition' in action.choices:
                 args = action.choices['verify-edition'].parse_args(argv[1:])
                 setup_logging(args.verbose)
                 return asyncio.run(run_verify_edition(args))
-        # Fallback: parse normally (shouldn't reach here)
         args = parser.parse_args(argv)
         setup_logging(args.verbose)
         return asyncio.run(run_verify_edition(args))
 
-    args = parser.parse_args(argv)
-
-    # Default: main pipeline
-    if args.pg_id is None:
+    # Default pipeline: pg_id must be the first argument (a number)
+    if not argv:
         parser.print_help()
         return 2
+
+    try:
+        pg_id = int(argv[0])
+    except ValueError:
+        parser.print_help()
+        return 2
+
+    # Parse remaining args with the top-level parser (skip the pg_id)
+    args = parser.parse_args(argv[1:])
+    args.pg_id = pg_id
 
     setup_logging(args.verbose)
     logger = logging.getLogger(__name__)

@@ -2,16 +2,21 @@
 
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+# batch_runner module was removed; skip all tests in this file
+pytestmark = pytest.mark.skip(reason="batch_runner module has been removed")
 
-from batch_runner import load_queue, check_disk, cleanup_old_caches, check_pipeline_output
+try:
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+    from batch_runner import load_queue, check_disk, cleanup_old_caches, check_pipeline_output
+except ImportError:
+    pass
 
 
 @pytest.fixture

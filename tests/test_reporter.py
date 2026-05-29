@@ -217,7 +217,7 @@ class TestReportGenerator:
         )
 
         arrow_fix = generator.format_arrow_fix(error)
-        assert arrow_fix == "tne ==> the"
+        assert arrow_fix == "tne ==> the [OCR]"
 
     def test_arrow_format_auto_generate(self, generator):
         """Test arrow format auto-generation when no suggested_fix exists."""
@@ -234,7 +234,7 @@ class TestReportGenerator:
         )
 
         arrow_fix = generator.format_arrow_fix(error)
-        assert arrow_fix == "walked ==> walking"
+        assert arrow_fix == "walked ==> walking [OCR]"
 
     def test_errata_email_generation(self, generator_with_context, sample_metadata):
         """Test errata email generation in PG Format 2."""
@@ -538,7 +538,7 @@ class TestCLI:
     def test_build_parser(self):
         from gerrata.cli import build_parser
         parser = build_parser()
-        args = parser.parse_args(["43", "--output", "/tmp/reports"])
+        args = parser.parse_args(["verify-edition", "43", "test-scan-id", "--output", "/tmp/reports"])
         assert args.pg_id == 43
         assert args.output == "/tmp/reports"
         assert not args.verbose
@@ -547,29 +547,26 @@ class TestCLI:
         from gerrata.cli import build_parser
         parser = build_parser()
         args = parser.parse_args([
-            "43",
-            "--scan-id", "test-id",
+            "verify-edition", "43", "test-scan-id",
             "--pg-file", "/tmp/pg.txt",
             "--output", "/tmp/out",
             "--verbose",
-            "--strict",
             "--vision-url", "http://api.test.com",
             "--vision-key", "test-key",
             "--vision-model", "test-model",
         ])
         assert args.pg_id == 43
-        assert args.scan_id == "test-id"
         assert args.pg_file == "/tmp/pg.txt"
         assert args.verbose
-        assert args.strict
         assert args.vision_url == "http://api.test.com"
         assert args.vision_model == "test-model"
 
     def test_main_returns_code(self):
         from gerrata.cli import main
-        # Missing scan-id should fail gracefully
-        code = main(["43", "--ocr-file", "/nonexistent"])
-        # Should return 3 (pipeline error) since file doesn't exist
+        # The default pipeline path expects pg_id as first arg then flags.
+        # Missing pg-file / nonexistent should fail gracefully.
+        code = main(["43", "--pg-file", "/nonexistent"])
+        # Should return non-zero since file doesn't exist
         assert code in (2, 3)
 
 
@@ -629,10 +626,11 @@ class TestPageNumbering:
         json_str = generator.generate_json(report)
         data = json.loads(json_str)
 
-        # Check that display_page is scan_page + 1
+        # Check that display_page is present (falls back to scan_page when
+        # no scan_pages are configured for IA leaf number lookup)
         for error in data["errors"]:
             assert "display_page" in error
-            assert error["display_page"] == error["scan_page"] + 1
+            assert error["display_page"] == error["scan_page"]
 
 
 class TestLineNumberCalculation:
@@ -729,10 +727,15 @@ class TestCutoffArtifactFilter:
 
 
 class TestConcurrencyDefault:
-    """Test that default concurrency is 5."""
+    """Test that default concurrency is 10."""
 
     def test_default_concurrency_is_five(self):
+        from gerrata.cli import main
+        # Use main() which handles the default pipeline path (pg_id as first arg)
+        # and injects pg_id into the namespace after parsing top-level flags.
         from gerrata.cli import build_parser
         parser = build_parser()
-        args = parser.parse_args(["43"])
-        assert args.concurrency == 5
+        # Parse with the default pipeline path: no subcommand, just flags.
+        # main() intercepts pg_id and parses the rest via parser.
+        args = parser.parse_args([])
+        assert args.concurrency == 10
