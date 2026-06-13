@@ -369,6 +369,32 @@ python3 scripts/batch_process.py --start 10
 
 Each book runs the full pipeline, generates reports, and cleans up disk space afterward. Completed books are tracked in `cache/completed.json`.
 
+## Poetry Formatting (Experimental)
+
+For poetry books, Gerrata can optionally extract per-line indentation data alongside transcription. When enabled, the vision model is prompted to return both the text and an indent level for each line in a compact JSON format.
+
+```bash
+gerrata 313 \
+  --scan-id childrennightab01robigoog \
+  --poetry-formatting \
+  --vision-key "$OPENROUTER_API_KEY" \
+  -o reports
+```
+
+This produces a `poetry-formatting.json` file in the report output directory, containing poem titles, stanza structures, and indent levels (0–3) for each line. The data can be used by downstream tools (e.g., Impression Editions) to apply hanging indentation in EPUBs.
+
+**How it works:** The transcription prompt is replaced with a combined prompt that asks for `["text", indent]` arrays inside a JSON structure. The pipeline parses the JSON response, reconstructs clean plain text for the normal errata flow, and separately saves the indent metadata. A fallback chain (full JSON → partial JSON salvage → raw text) handles truncated or malformed responses.
+
+**Current quality status:** This feature is experimental. The vision model detects indent variation on some pages but not others. In testing on *The Children of the Night* (PG #313, 140 pages):
+
+- 123/140 pages returned valid JSON responses
+- ~30% of pages had meaningful indent variation detected
+- When indent IS detected, the relative pattern (e.g., alternating 0/1) is often correct, but absolute values may be shifted (e.g., 1/2 instead of 0/1)
+- Many pages with genuine indentation are reported as all-zeros — the model misses ~1em differences that are visually subtle
+- Some pages show hallucinated indentation where the scan is flush-left
+
+The feature captures partial signal — enough to improve formatting for some poems — but should not be relied upon for accurate indent reproduction. Accuracy is expected to improve as vision models improve, since the extraction prompt and parsing infrastructure require no changes.
+
 ## Requirements
 
 - Python 3.10+
