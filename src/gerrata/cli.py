@@ -360,6 +360,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=10,
         help="Number of concurrent API calls (default: 10)",
     )
+    parser.add_argument(
+        "--poetry-formatting",
+        action="store_true",
+        default=False,
+        help="Extract per-line indentation data alongside transcription (for poetry books)",
+    )
     return parser
 
 
@@ -530,6 +536,22 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 error=t.get("error"),
             ) for t in cached]
             transcriptions = successful
+
+            # If poetry formatting mode, clean JSON from transcriptions on resume
+            if getattr(args, 'poetry_formatting', False):
+                from gerrata.poetry.extractor import parse_poetry_response
+                from gerrata.aligner.vision_aligner import strip_paratext
+                for t in successful:
+                    # Try to parse poetry JSON from either field
+                    raw = t.transcription or ""
+                    text, poetry_page = parse_poetry_response(raw, t.page_num, str(t.image_path) if t.image_path else "")
+                    if poetry_page.stanzas:
+                        t.transcription = text
+                        t.transcription_cleaned = strip_paratext(text)
+                    elif t.transcription_cleaned and ("poem_title" in t.transcription_cleaned or '"stanzas"' in t.transcription_cleaned):
+                        # transcription is already clean but cleaned still has JSON
+                        t.transcription_cleaned = strip_paratext(t.transcription)
+
             console.print(f"  [dim]Resumed {len(successful)} transcriptions from 02_transcriptions[/dim]")
         else:
             console.print("[bold blue]Step 2:[/bold blue] Getting page images...")
@@ -600,10 +622,20 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 if completed_pages:
                     console.print(f"  [dim]Auto-resume: {len(completed_pages)}/{len(page_images)} pages already transcribed[/dim]")
 
+            # Select prompt: poetry formatting or standard transcription
+            from gerrata.aligner.vision_aligner import TRANSCRIPTION_PROMPT
+            if getattr(args, 'poetry_formatting', False):
+                from gerrata.poetry.extractor import POETRY_FORMATTING_PROMPT
+                active_prompt = POETRY_FORMATTING_PROMPT
+                console.print("  [dim]Poetry formatting mode: using combined JSON prompt[/dim]")
+            else:
+                active_prompt = TRANSCRIPTION_PROMPT
+
             transcriber = VisionTranscriber(
             api_url=args.vision_url,
             api_key=args.vision_key or None,
             models=models,
+            prompt=active_prompt,
             ocr_engine="vision",  # Use GLM vision model (best accuracy for old book pages)
             concurrency=args.concurrency,
             cache_file=f"cache/{scan_id}_transcriptions.json",
@@ -615,6 +647,41 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             successful = [t for t in transcriptions if t.success]
             console.print(f"  Transcribed {len(successful)}/{len(transcriptions)} pages")
             save_intermediate(intermed_dir, "02_transcriptions", successful)
+
+            # If poetry formatting mode, extract and save formatting data
+            if getattr(args, 'poetry_formatting', False):
+                from gerrata.poetry.extractor import parse_poetry_response, pages_to_json
+                poetry_pages = []
+                from gerrata.aligner.vision_aligner import strip_paratext
+                for t in successful:
+                    text, poetry_page = parse_poetry_response(
+                        t.transcription, t.page_num, str(t.image_path)
+                    )
+                    # Update transcription with clean text (reconstructed from JSON)
+                    if poetry_page.stanzas:
+                        t.transcription = text
+                        t.transcription_cleaned = strip_paratext(text)
+                        poetry_pages.append(poetry_page)
+
+                if poetry_pages:
+                    pf_json = pages_to_json(
+                        poetry_pages,
+                        pg_id=args.pg_id,
+                        scan_source=scan_id,
+                        total_pages=len(page_images),
+                    )
+                    pf_dir = Path(args.output) / scan_id
+                    pf_dir.mkdir(parents=True, exist_ok=True)
+                    pf_path = pf_dir / "poetry-formatting.json"
+                    pf_path.write_text(json.dumps(pf_json, indent=2), encoding="utf-8")
+                    # Re-save transcriptions with cleaned text
+                    save_intermediate(intermed_dir, "02_transcriptions", successful)
+
+                    n_poems = len(pf_json["summary"]["poems_found"])
+                    n_pages = pf_json["summary"]["poetry_pages"]
+                    console.print(f"  [green]Poetry formatting: {n_poems} poems across {n_pages} pages → {pf_path}[/green]")
+                else:
+                    console.print("  [yellow]Poetry formatting: no valid stanza data extracted[/yellow]")
 
             if not successful:
                 console.print("[red]All transcriptions failed. Aborting pipeline.[/red]")
