@@ -54,6 +54,11 @@ from gerrata.fetcher.pg import PGParsedText
 class ReportGenerator:
     """Generate quality audit reports from Report objects."""
 
+    @staticmethod
+    def _strip_html(text: str) -> str:
+        """Remove HTML tags from text for clean report output."""
+        return re.sub(r"<[^>]+>", "", text)
+
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
                  pg_file_path: Optional[Path] = None, scan_id: Optional[str] = None,
                  scan_pages: Optional[list] = None, body_text: str = "",
@@ -446,7 +451,7 @@ class ReportGenerator:
             lines.append("")
             for err in report.edition_variants:
                 lines.append(f"- **Page {self._get_ia_leaf_number(err.candidate.scan_page)}:** "
-                           f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\"")
+                           f"PG has \"{self._strip_html(err.candidate.pg_text)}\" vs scan \"{self._strip_html(err.candidate.scan_text)}\"")
                 if err.reasoning:
                     lines.append(f"  - {err.reasoning}")
             lines.append("")
@@ -483,8 +488,8 @@ class ReportGenerator:
 
                 if location_parts:
                     lines.append(f"- {'; '.join(location_parts)}")
-                lines.append(f"- **PG text:** \"{err.candidate.pg_text}\"")
-                lines.append(f"- **Scan text:** \"{err.candidate.scan_text}\"")
+                lines.append(f"- **PG text:** \"{self._strip_html(err.candidate.pg_text)}\"")
+                lines.append(f"- **Scan text:** \"{self._strip_html(err.candidate.scan_text)}\"")
                 lines.append(f"- **Type:** `{err.category.value}`")
                 lines.append(f"- **Severity:** {err.severity.value}")
                 if err.reasoning:
@@ -515,7 +520,7 @@ class ReportGenerator:
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
                 lines.append(f"{i}. **Page {self._get_ia_leaf_number(err.candidate.scan_page)}{location_str}:** "
-                           f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
+                           f"PG has \"{self._strip_html(err.candidate.pg_text)}\" vs scan \"{self._strip_html(err.candidate.scan_text)}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
 
@@ -533,7 +538,7 @@ class ReportGenerator:
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
                 lines.append(f"{i}. **Page {self._get_ia_leaf_number(err.candidate.scan_page)}{location_str}:** "
-                           f"PG has \"{err.candidate.pg_text}\" vs scan \"{err.candidate.scan_text}\" "
+                           f"PG has \"{self._strip_html(err.candidate.pg_text)}\" vs scan \"{self._strip_html(err.candidate.scan_text)}\" "
                            f"(confidence: {err.confidence:.0%})")
             lines.append("")
 
@@ -576,8 +581,8 @@ class ReportGenerator:
                 location_str = f" ({', '.join(location_parts)})" if location_parts else ""
 
                 lines.append(f"{i}. **{prefix}**{location_str}")
-                lines.append(f"   - PG text: \"{err.candidate.pg_text}\"")
-                lines.append(f"   - Scan text: \"{err.candidate.scan_text}\"")
+                lines.append(f"   - PG text: \"{self._strip_html(err.candidate.pg_text)}\"")
+                lines.append(f"   - Scan text: \"{self._strip_html(err.candidate.scan_text)}\"")
                 lines.append(f"   - Confidence: {err.confidence:.0%}")
                 if err.reasoning:
                     lines.append(f"   - Reasoning: {err.reasoning}")
@@ -689,8 +694,8 @@ class ReportGenerator:
 
             # Generate entry
             lines.append(f"{prefix} {location}")
-            lines.append(f"    PG text: {err.candidate.pg_text}")
-            lines.append(f"    Scan text: {err.candidate.scan_text}")
+            lines.append(f"    PG text: {self._strip_html(err.candidate.pg_text)}")
+            lines.append(f"    Scan text: {self._strip_html(err.candidate.scan_text)}")
             lines.append(f"    Verdict: {err.verdict.value} ({err.confidence:.0%})")
             if err.reasoning:
                 lines.append(f"    Reasoning: {err.reasoning}")
@@ -932,8 +937,8 @@ class ReportGenerator:
         lines.append("")
 
         for err in deduplicated:
-            pg_text = err.candidate.pg_text.strip()
-            scan_text = err.candidate.scan_text.strip()
+            pg_text = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
+            scan_text = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
             page = self._get_ia_leaf_number(err.candidate.scan_page)  # 1-indexed
 
             # Get context sentence containing the error
@@ -987,8 +992,8 @@ class ReportGenerator:
             )
             lines.append("")
             for err in edition_variants:
-                pg_text = err.candidate.pg_text.strip()
-                scan_text = err.candidate.scan_text.strip()
+                pg_text = self._strip_html(err.candidate.pg_text).strip()
+                scan_text = self._strip_html(err.candidate.scan_text).strip()
                 page = self._get_ia_leaf_number(err.candidate.scan_page)
 
                 if self.scan_id:
@@ -1172,8 +1177,8 @@ class ReportGenerator:
                     f"[{severity_style}]{err.severity.value}[/{severity_style}]",
                     f"{err.confidence:.0%}",
                     str(err.candidate.scan_page),
-                    err.candidate.pg_text[:30],
-                    err.candidate.scan_text[:30],
+                    self._strip_html(err.candidate.pg_text)[:30],
+                    self._strip_html(err.candidate.scan_text)[:30],
                     err.category.value,
                 )
 
