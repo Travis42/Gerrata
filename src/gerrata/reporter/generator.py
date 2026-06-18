@@ -930,6 +930,12 @@ class ReportGenerator:
 
         lines.append("")
 
+        # Global replacements template (operator fills in systematic fixes)
+        lines.append("Global Replacements {")
+        lines.append("A ==> B")
+        lines.append("}")
+        lines.append("")
+
         if not deduplicated:
             lines.append("I found no errors requiring correction.")
             return "\n".join(lines)
