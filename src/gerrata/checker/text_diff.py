@@ -239,6 +239,16 @@ class TextDiffChecker:
         if pg_stripped == scan_segment:
             return None
 
+        # Skip diffs that are only PG HTML tag differences
+        # (e.g., PG has "word</i>." scan has "word.")
+        pg_no_html = re.sub(r"</?[ib]>", "", pg_segment)
+        if pg_no_html == scan_segment:
+            return None
+
+        # Skip case-only differences after stripping HTML
+        if pg_no_html.lower() == scan_segment.lower():
+            return None
+
         # Skip diffs that are only footnote marker style differences
         pg_footnotes = re.sub(r"\[\d+\]", "FOOTNOTE", pg_segment)
         scan_footnotes = re.sub(r"[¹²³⁴⁵⁶⁷⁸⁹⁰]+", "FOOTNOTE", scan_segment)
