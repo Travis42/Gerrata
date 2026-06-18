@@ -234,16 +234,14 @@ class TextDiffChecker:
         scan_page: int,
     ) -> CandidateError | None:
         """Classify a diff operation into an error category."""
-        # Strip PG markup, normalize quotes/whitespace, then compare.
+        # Strip PG markup and normalize, then compare.
         # If the text content is identical, the diff is a false positive.
         def _clean(s: str) -> str:
             s = re.sub(r"_([^_]+)_", r"\1", s)       # _word_ → word
-            s = re.sub(r"</?[ib]>", "", s)             # strip HTML tags
+            s = re.sub(r"<[^>]+>", "", s)              # strip anything in < >
             s = s.replace('\u201c', '"').replace('\u201d', '"')   # smart double quotes
             s = s.replace('\u2018', "'").replace('\u2019', "'")   # smart single quotes
             s = re.sub(r'\s+', ' ', s).strip()
-            s = re.sub(r'^[^a-zA-Z0-9]+', '', s)     # strip leading punctuation/quotes
-            s = re.sub(r'[^a-zA-Z0-9]+$', '', s)     # strip trailing punctuation/quotes
             return s
         pg_clean = _clean(pg_segment)
         scan_clean = _clean(scan_segment)
