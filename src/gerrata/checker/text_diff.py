@@ -234,40 +234,23 @@ class TextDiffChecker:
         scan_page: int,
     ) -> CandidateError | None:
         """Classify a diff operation into an error category."""
-        # Skip diffs that are only PG italics markup differences
-        pg_stripped = re.sub(r"_([^_]+)_", r"\1", pg_segment)
-        if pg_stripped == scan_segment:
+        # Strip PG markup, normalize quotes/whitespace, then compare.
+        # If the text content is identical, the diff is a false positive.
+        def _clean(s: str) -> str:
+            s = re.sub(r"_([^_]+)_", r"\1", s)       # _word_ → word
+            s = re.sub(r"</?[ib]>", "", s)             # strip HTML tags
+            s = s.replace('\u201c', '"').replace('\u201d', '"')   # smart double quotes
+            s = s.replace('\u2018', "'").replace('\u2019', "'")   # smart single quotes
+            s = re.sub(r'\s+', ' ', s).strip()
+            s = re.sub(r'^[^a-zA-Z0-9]+', '', s)     # strip leading punctuation/quotes
+            s = re.sub(r'[^a-zA-Z0-9]+$', '', s)     # strip trailing punctuation/quotes
+            return s
+        pg_clean = _clean(pg_segment)
+        scan_clean = _clean(scan_segment)
+        if pg_clean == scan_clean:
             return None
-
-        # Skip diffs that are only PG HTML tag differences
-        # (e.g., PG has "word</i>." scan has "word.")
-        pg_no_html = re.sub(r"</?[ib]>", "", pg_segment)
-        if pg_no_html == scan_segment:
+        if pg_clean.lower() == scan_clean.lower():
             return None
-
-        # Skip case-only differences after stripping HTML
-        if pg_no_html.lower() == scan_segment.lower():
-            return None
-
-        # Skip diffs that are only markup + punctuation/quote/whitespace
-        # when PG segment contains HTML tags (the markup is the cause of the diff)
-        has_html = bool(re.search(r'</?[ib]>', pg_segment))
-        if has_html:
-            def _normalize_markup_punct(s: str) -> str:
-                """Strip HTML tags, normalize quotes, collapse whitespace."""
-                s = re.sub(r"</?[ib]>", "", s)
-                s = s.replace('\u201c', '"').replace('\u201d', '"')  # smart double quotes
-                s = s.replace('\u2018', "'").replace('\u2019', "'")  # smart single quotes
-                s = re.sub(r'\s+', ' ', s).strip()
-                return s
-            pg_norm = _normalize_markup_punct(pg_segment).lower()
-            scan_norm = _normalize_markup_punct(scan_segment).lower()
-            if pg_norm == scan_norm:
-                return None
-            # Skip if normalized forms differ by only 1 char (space/punct artifact)
-            if abs(len(pg_norm) - len(scan_norm)) <= 1:
-                if self._edit_distance(pg_norm, scan_norm) <= 1:
-                    return None
 
         # Skip diffs that are only footnote marker style differences
         pg_footnotes = re.sub(r"\[\d+\]", "FOOTNOTE", pg_segment)
