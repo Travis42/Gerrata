@@ -811,14 +811,24 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "06_verified_errors")
         if not cached:
             raise ValueError("--resume-from=pre-report but 06_verified_errors.json not found")
-        from gerrata.models import Error, ErrorCategory, ErrorSeverity
+        from gerrata.models import Error, ErrorCategory, ErrorSeverity, CandidateError, Verdict
         verified_errors = []
         for e in cached:
             e_copy = dict(e)
+            # Deserialize nested candidate dict into CandidateError
+            if "candidate" in e_copy and isinstance(e_copy["candidate"], dict):
+                c = dict(e_copy["candidate"])
+                if "category" in c and isinstance(c["category"], str):
+                    c["category"] = ErrorCategory(c["category"])
+                if "severity" in c and isinstance(c["severity"], str):
+                    c["severity"] = ErrorSeverity(c["severity"])
+                e_copy["candidate"] = CandidateError(**c)
             if "category" in e_copy and isinstance(e_copy["category"], str):
                 e_copy["category"] = ErrorCategory(e_copy["category"])
             if "severity" in e_copy and isinstance(e_copy["severity"], str):
                 e_copy["severity"] = ErrorSeverity(e_copy["severity"])
+            if "verdict" in e_copy and isinstance(e_copy["verdict"], str):
+                e_copy["verdict"] = Verdict(e_copy["verdict"])
             verified_errors.append(Error(**e_copy))
         console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
         console.print(f"  [dim]Skipped — resumed {len(verified_errors)} verified errors from 06_verified_errors[/dim]")
