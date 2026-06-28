@@ -22,6 +22,7 @@ from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
 from gerrata.aligner.global_anchor import GlobalAnchorAligner
 from gerrata.checker.text_diff import TextDiffChecker
 from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report, gaps_to_candidate_errors
+from gerrata.checker.global_replacements import GlobalReplacementDetector
 from gerrata.checker.rules import FalsePositiveFilter
 from gerrata.verifier.programmatic import ProgrammaticVerifier
 from gerrata.reporter.generator import ReportGenerator
@@ -1101,6 +1102,27 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print(f"  Low confidence (<0.5): {low}")
         console.print(f"  Total verified: {len(verified_errors)}")
 
+    # Step: Detect global replacements
+    console.print(f"[bold blue]Step {step_num + 3}a:[/bold blue] Detecting global replacements...")
+    detector = GlobalReplacementDetector()
+    # Convert Error objects to dicts for the detector
+    verified_dicts = [e.to_dict() if hasattr(e, 'to_dict') else e for e in verified_errors]
+    global_replacements = detector.detect(verified_dicts, parsed.body_text)
+    if global_replacements:
+        total_occ = sum(gr.occurrences_in_pg for gr in global_replacements)
+        console.print(f"  Found {len(global_replacements)} global replacements ({total_occ} total occurrences in PG text)")
+        for gr in global_replacements:
+            console.print(f"    {gr.pg_text} ==> {gr.scan_text} ({gr.occurrences_in_pg}x in text, {gr.caught_by_errata} caught)")
+    else:
+        console.print(f"  No global replacements found")
+    save_intermediate(intermed_dir, "07_global_replacements", [
+        {"pg_text": gr.pg_text, "scan_text": gr.scan_text,
+         "occurrences_in_pg": gr.occurrences_in_pg,
+         "caught_by_errata": gr.caught_by_errata,
+         "examples": gr.examples}
+        for gr in global_replacements
+    ])
+
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")
 
@@ -1128,6 +1150,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         body_text=parsed.body_text,
         alignments=alignments,
         pg_full_text=parsed.full_text,
+        global_replacements=global_replacements,
     )
     json_path, email_path = generator.save_reports(report, args.output)
     generator.print_summary(report)

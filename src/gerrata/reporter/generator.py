@@ -61,45 +61,15 @@ class ReportGenerator:
 
     @staticmethod
     def _trim_shared_edges(pg_text: str, scan_text: str) -> tuple[str, str]:
-        """Trim common leading/trailing punctuation from both texts.
-
-        When the diff algorithm extracts phrases, surrounding punctuation
-        (commas, semicolons, periods, quotes) gets included even though
-        the actual difference is the word itself. This strips characters
-        that are identical on both sides so the arrow fix shows only the
-        real change.
-
-        Only trims punctuation — never alphanumeric characters — and
-        only when both texts share the same edge character.
-        """
-        import re as _re
-        # Characters that are safe to trim when shared on both sides
-        edge_chars = set("'\";:,.!?()[]*-— ")
-
-        pg = pg_text
-        scan = scan_text
-
-        # Trim common leading characters
-        while pg and scan and pg[0] == scan[0] and pg[0] in edge_chars:
-            pg = pg[1:]
-            scan = scan[1:]
-
-        # Trim common trailing characters
-        while pg and scan and pg[-1] == scan[-1] and pg[-1] in edge_chars:
-            pg = pg[:-1]
-            scan = scan[:-1]
-
-        # Don't return empty strings — if everything got trimmed,
-        # fall back to originals
-        if not pg or not scan:
-            return pg_text, scan_text
-
-        return pg, scan
+        """Trim common leading/trailing punctuation from both texts."""
+        from gerrata.text_utils import trim_shared_edges
+        return trim_shared_edges(pg_text, scan_text)
 
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
                  pg_file_path: Optional[Path] = None, scan_id: Optional[str] = None,
                  scan_pages: Optional[list] = None, body_text: str = "",
-                 alignments: Optional[list] = None, pg_full_text: str = ""):
+                 alignments: Optional[list] = None, pg_full_text: str = "",
+                 global_replacements: Optional[list] = None):
         self.console = console or Console()
         self.pg_parsed_text = pg_parsed_text
         self.pg_file_path = Path(pg_file_path) if pg_file_path else None
@@ -108,6 +78,7 @@ class ReportGenerator:
         self.body_text = body_text
         self.alignments = alignments or []
         self.pg_full_text = pg_full_text or body_text
+        self.global_replacements = global_replacements or []
 
     def _extract_sentence(self, text: str, offset: int, length: int) -> str:
         """Extract the sentence containing the given offset.
@@ -244,7 +215,7 @@ class ReportGenerator:
         # Decode HTML entities (common ones)
         line = line.replace('&ldquo;', '"').replace('&rdquo;', '"')
         line = line.replace('&lsquo;', "'").replace('&rsquo;', "'")
-        line = line.replace('&mdash;', '—').replace('&ndash;', '–')
+        line = line.replace('&mdash;', '-').replace('&ndash;', '-')
         # Handle &amp; last to avoid double-decoding
         line = line.replace('&amp;', '&')
         # Normalize whitespace
@@ -397,7 +368,7 @@ class ReportGenerator:
             # No LLM verification (confidence=0.0), we don't know which text is correct
             pg_text = error.candidate.pg_text.strip()
             scan_text = error.candidate.scan_text.strip()
-            return f"{pg_text} (possible error — comparison text: {scan_text})"
+            return f"{pg_text} (possible error - comparison text: {scan_text})"
 
     def enrich_errors_with_context(self, report: Report) -> None:
         """Add line numbers and chapter context to all errors in the report.
@@ -515,7 +486,7 @@ class ReportGenerator:
             )
             lines.append("")
             for i, err in enumerate(submit_ready, 1):
-                lines.append(f"### Error {i} — {err.category.value} (confidence: {err.confidence:.0%})")
+                lines.append(f"### Error {i} - {err.category.value} (confidence: {err.confidence:.0%})")
                 lines.append(f"")
                 location_parts = []
                 if err.pg_file_line > 0:
@@ -690,7 +661,7 @@ class ReportGenerator:
         # Summary count
         total_review = len(review_items)
         if total_review == 0:
-            lines.append("0 items need review — errata_email.txt is ready to submit.")
+            lines.append("0 items need review - errata_email.txt is ready to submit.")
             return "\n".join(lines)
 
         lines.append(f"{total_review} items need your decision before submission")
@@ -705,17 +676,17 @@ class ReportGenerator:
                 action_needed = "Check scan and decide if PG punctuation is wrong"
             elif err.verdict == Verdict.EDITION_VARIANT:
                 prefix = "[E]"
-                action_needed = "Classified as edition variant — likely NOT an error"
+                action_needed = "Classified as edition variant - likely NOT an error"
             elif err.verdict == Verdict.INTENTIONAL_MODERNIZATION:
                 prefix = "[M]"
-                action_needed = "Classified as intentional modernization — likely NOT an error"
+                action_needed = "Classified as intentional modernization - likely NOT an error"
             elif err.verdict == Verdict.PG_CORRECT:
                 # PG correct items are intentional changes (not errors)
                 prefix = "[M]"
-                action_needed = "Classified as intentional change — likely NOT an error"
+                action_needed = "Classified as intentional change - likely NOT an error"
             elif err.verdict == Verdict.SCAN_CORRECT and err.confidence < 0.8:
                 prefix = "[~]"
-                action_needed = "Low confidence — verify before submitting"
+                action_needed = "Low confidence - verify before submitting"
             else:
                 # Skip any other items
                 continue
@@ -830,7 +801,7 @@ class ReportGenerator:
         When the PG and scan windows are offset by a few words, the diff checker
         produces diffs where one side is a word fragment that appears as a
         substring of the other side's full word. E.g. "oment" vs "the moment",
-        "airs," vs "the stairs,". These are never real errata — they're just
+        "airs," vs "the stairs,". These are never real errata - they're just
         alignment window misalignment.
         """
         s, p = scan_text.strip(), pg_text.strip()
@@ -863,7 +834,7 @@ class ReportGenerator:
         return len(longer) - len(shorter) > 20
 
     def _is_alignment_artifact_text(self, pg_text: str, scan_text: str) -> bool:
-        """True if the two texts share no meaningful words — likely a misalignment."""
+        """True if the two texts share no meaningful words - likely a misalignment."""
         import re
         s = scan_text.strip()
         p = pg_text.strip()
@@ -969,11 +940,29 @@ class ReportGenerator:
 
         lines.append("")
 
-        # Global replacements template (operator fills in systematic fixes)
+        # Global replacements (detected deterministically)
         lines.append("Global Replacements {")
-        lines.append("A ==> B")
+        if self.global_replacements:
+            for gr in self.global_replacements:
+                lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
+            total = sum(gr.occurrences_in_pg for gr in self.global_replacements)
+            lines.append(f"({total} total occurrences in text)")
+        else:
+            lines.append("(none found)")
         lines.append("}")
         lines.append("")
+
+        # Filter out individual errors that are instances of global replacements
+        if self.global_replacements:
+            from gerrata.checker.global_replacements import GlobalReplacementDetector
+            detector = GlobalReplacementDetector()
+            deduplicated = [
+                err for err in deduplicated
+                if not detector.is_global_instance(
+                    {"candidate": {"pg_text": err.candidate.pg_text, "scan_text": err.candidate.scan_text}},
+                    self.global_replacements,
+                )
+            ]
 
         if not deduplicated:
             lines.append("I found no errors requiring correction.")
@@ -1030,7 +1019,7 @@ class ReportGenerator:
         if edition_variants:
             lines.append("---")
             lines.append("")
-            lines.append("EDITION VARIANTS (not for submission — informational only)")
+            lines.append("EDITION VARIANTS (not for submission - informational only)")
             lines.append("")
             lines.append(
                 "The following differences appear to be between editions "
@@ -1053,7 +1042,7 @@ class ReportGenerator:
                 lines.append(f"Scan:  {scan_text}")
                 lines.append("")
 
-        # Coverage gap analysis — missing content detection
+        # Coverage gap analysis - missing content detection
         # Note: gaps are already computed in the CLI and included as
         # CandidateError(MISSING_CONTENT) in the report. The section below
         # uses the raw CoverageGap data for richer display.
@@ -1088,9 +1077,9 @@ class ReportGenerator:
                             if self.scan_id:
                                 leaf_num = self._get_ia_leaf_number(g.page)
                                 scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                                lines.append(f"Page {page} ({scan_url}) — {g.word_count} words [{conf}]:")
+                                lines.append(f"Page {page} ({scan_url}) - {g.word_count} words [{conf}]:")
                             else:
-                                lines.append(f"Page {page} — {g.word_count} words [{conf}]:")
+                                lines.append(f"Page {page} - {g.word_count} words [{conf}]:")
                             if g.missing_words:
                                 lines.append(f'  Missing: "{g.missing_words}"')
                             if g.pg_context_before and g.pg_context_after:
@@ -1114,9 +1103,9 @@ class ReportGenerator:
                         if self.scan_id:
                             leaf_num = self._get_ia_leaf_number(g.page)
                             scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                            lines.append(f"Page {page} ({scan_url}) — ~{wc} words, {desc} [{conf}]:")
+                            lines.append(f"Page {page} ({scan_url}) - ~{wc} words, {desc} [{conf}]:")
                         else:
-                            lines.append(f"Page {page} — ~{wc} words, {desc} [{conf}]:")
+                            lines.append(f"Page {page} - ~{wc} words, {desc} [{conf}]:")
                         preview = g.scan_text_preview[:150].strip()
                         lines.append(preview)
                         lines.append("")
