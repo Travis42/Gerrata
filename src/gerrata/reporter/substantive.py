@@ -121,7 +121,7 @@ class SubstantiveErrataGenerator:
         self,
         api_url: str = "https://openrouter.ai/api/v1/chat/completions",
         api_key: str = "",
-        model: str = "google/glm-5.1",
+        model: str = "z-ai/glm-5.1",
         scan_id: str = "",
     ):
         self.api_url = api_url
