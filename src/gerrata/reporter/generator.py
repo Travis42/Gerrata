@@ -59,6 +59,43 @@ class ReportGenerator:
         """Remove HTML tags from text for clean report output."""
         return re.sub(r"<[^>]+>", "", text)
 
+    @staticmethod
+    def _trim_shared_edges(pg_text: str, scan_text: str) -> tuple[str, str]:
+        """Trim common leading/trailing punctuation from both texts.
+
+        When the diff algorithm extracts phrases, surrounding punctuation
+        (commas, semicolons, periods, quotes) gets included even though
+        the actual difference is the word itself. This strips characters
+        that are identical on both sides so the arrow fix shows only the
+        real change.
+
+        Only trims punctuation — never alphanumeric characters — and
+        only when both texts share the same edge character.
+        """
+        import re as _re
+        # Characters that are safe to trim when shared on both sides
+        edge_chars = set("'\";:,.!?()[]*-— ")
+
+        pg = pg_text
+        scan = scan_text
+
+        # Trim common leading characters
+        while pg and scan and pg[0] == scan[0] and pg[0] in edge_chars:
+            pg = pg[1:]
+            scan = scan[1:]
+
+        # Trim common trailing characters
+        while pg and scan and pg[-1] == scan[-1] and pg[-1] in edge_chars:
+            pg = pg[:-1]
+            scan = scan[:-1]
+
+        # Don't return empty strings — if everything got trimmed,
+        # fall back to originals
+        if not pg or not scan:
+            return pg_text, scan_text
+
+        return pg, scan
+
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
                  pg_file_path: Optional[Path] = None, scan_id: Optional[str] = None,
                  scan_pages: Optional[list] = None, body_text: str = "",
@@ -346,14 +383,16 @@ class ReportGenerator:
             pg_text = error.candidate.pg_text.strip()
             display_text = error.image_evidence.strip() or error.candidate.scan_text.strip()
             source_label = "image" if error.image_evidence.strip() else "OCR"
-            return f"{pg_text} ==> {display_text} [{source_label}]"
+            pg_trimmed, display_trimmed = self._trim_shared_edges(pg_text, display_text)
+            return f"{pg_trimmed} ==> {display_trimmed} [{source_label}]"
 
         # For other cases with confidence, prefer image_evidence
         if error.confidence > 0.0:
             pg_text = error.candidate.pg_text.strip()
             display_text = error.image_evidence.strip() or error.candidate.scan_text.strip()
             source_label = "image" if error.image_evidence.strip() else "OCR"
-            return f"{pg_text} ==> {display_text} [{source_label}]"
+            pg_trimmed, display_trimmed = self._trim_shared_edges(pg_text, display_text)
+            return f"{pg_trimmed} ==> {display_trimmed} [{source_label}]"
         else:
             # No LLM verification (confidence=0.0), we don't know which text is correct
             pg_text = error.candidate.pg_text.strip()
@@ -976,7 +1015,8 @@ class ReportGenerator:
 
             if context:
                 lines.append(context)
-            lines.append(f"{pg_text} ==> {scan_text}")
+            pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_text, scan_text)
+            lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
 
             lines.append("")
 
