@@ -772,6 +772,125 @@ class TestQuotedFragmentFilter:
         ) == True
 
 
+class TestFootnoteMarkerVariantFilter:
+    """Test the footnote marker variant detection."""
+
+    def is_footnote_marker_variant(self, scan_text: str, pg_text: str) -> bool:
+        import re
+        pg_has_ref = bool(re.search(r'\(\d+\)', pg_text))
+        scan_has_marker = bool(re.search(r'[*†‡]', scan_text))
+        scan_has_ref = bool(re.search(r'\(\d+\)', scan_text))
+        pg_has_marker = bool(re.search(r'[*†‡]', pg_text))
+        return (pg_has_ref and scan_has_marker) or (scan_has_ref and pg_has_marker)
+
+    def test_pg_numbered_ref_vs_scan_asterisk(self):
+        """PG uses (1), scan uses *."""
+        assert self.is_footnote_marker_variant("Viking*", "Viking (1)") == True
+
+    def test_pg_numbered_ref_with_punctuation(self):
+        """PG ref with trailing punctuation, scan with marker."""
+        assert self.is_footnote_marker_variant("places,*", "places, (1)") == True
+
+    def test_pg_ref_vs_scan_dagger(self):
+        """PG uses (4), scan uses †."""
+        assert self.is_footnote_marker_variant("Volsung,†", "Volsung, (4)") == True
+
+    def test_pg_ref_with_period_vs_scan_asterisk(self):
+        """PG ref after period, scan asterisk."""
+        assert self.is_footnote_marker_variant("own.*", "own. (8)") == True
+
+    def test_reversed_direction(self):
+        """Scan has numbered ref, PG has marker."""
+        assert self.is_footnote_marker_variant("Viking (1)", "Viking*") == True
+
+    def test_real_error_not_filtered(self):
+        """Actual text difference should not trigger."""
+        assert self.is_footnote_marker_variant("real eror", "real error") == False
+
+    def test_no_markers(self):
+        """Plain text with no footnote markers on either side."""
+        assert self.is_footnote_marker_variant("hello", "world") == False
+
+    def test_minimal_case(self):
+        """Minimal: just the marker and ref."""
+        assert self.is_footnote_marker_variant("*", "(1)") == True
+
+    def test_double_dagger(self):
+        """Scan uses ‡ (double dagger)."""
+        assert self.is_footnote_marker_variant("word‡", "word (5)") == True
+
+    def test_multi_digit_ref(self):
+        """PG ref with multi-digit number."""
+        assert self.is_footnote_marker_variant("word*", "word (13)") == True
+
+
+
+
+class TestPunctuationVariantFilter:
+    """Test the punctuation variant detection."""
+
+    def is_punctuation_variant(self, scan_text: str, pg_text: str) -> bool:
+        import re
+        pg = pg_text.strip()
+        scan = scan_text.strip()
+        if len(pg) > 60 or len(scan) > 60:
+            return False
+        pg_core = re.sub(r'[;:]', '', re.sub(r'\s+([;:,.!?])', r'\1', pg.lower())).strip()
+        scan_core = re.sub(r'[;:]', '', re.sub(r'\s+([;:,.!?])', r'\1', scan.lower())).strip()
+        return pg_core == scan_core and pg.lower().strip() != scan.lower().strip()
+
+    def test_semicolon_to_colon(self):
+        """Semicolon in PG, colon in scan."""
+        assert self.is_punctuation_variant("whatsoever:", "whatsoever;") == True
+
+    def test_colon_to_semicolon(self):
+        """Colon in PG, semicolon in scan."""
+        assert self.is_punctuation_variant("battle;", "battle:") == True
+
+    def test_semicolon_with_space_before(self):
+        """Semicolon swap plus space before punctuation."""
+        assert self.is_punctuation_variant("battle :", "battle;") == True
+
+    def test_both_swap_and_spacing(self):
+        """Semicolon→colon AND space before."""
+        assert self.is_punctuation_variant("Sigurd :", "Sigurd;") == True
+
+    def test_sleepest_variant(self):
+        """Another semicolon→colon with spacing."""
+        assert self.is_punctuation_variant("sleepest :", "sleepest;") == True
+
+    def test_identical_text_not_filtered(self):
+        """Identical text should not trigger."""
+        assert self.is_punctuation_variant("hello;", "hello;") == False
+
+    def test_real_word_error_not_filtered(self):
+        """Actual word difference should not trigger."""
+        assert self.is_punctuation_variant("real eror", "real error") == False
+
+    def test_different_words_not_filtered(self):
+        """Different words with same punctuation should not trigger."""
+        assert self.is_punctuation_variant("different;", "word;") == False
+
+    def test_long_text_not_filtered(self):
+        """Text over 60 chars should not trigger."""
+        long_text = "a" * 61
+        assert self.is_punctuation_variant(long_text + ":", long_text + ";") == False
+
+    def test_exactly_60_chars(self):
+        """Text at exactly 60 char boundary should still be checked."""
+        base = "a" * 58
+        assert self.is_punctuation_variant(base + ":", base + ";") == True
+
+    def test_space_before_comma(self):
+        """Space before comma variant."""
+        assert self.is_punctuation_variant("word ,", "word,") == True
+
+    def test_space_before_period(self):
+        """Space before period variant."""
+        assert self.is_punctuation_variant("word .", "word.") == True
+
+
+
 class TestFilterIntegration:
     """Test integration of all filters with candidate errors."""
 

@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any, Optional
@@ -973,12 +974,32 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 return False
             return True
 
+        def is_footnote_marker_variant(scan_text: str, pg_text: str) -> bool:
+            """Detect PG numbered footnote refs (N) vs scan asterisk/dagger markers."""
+            pg_has_ref = bool(re.search(r'\(\d+\)', pg_text))
+            scan_has_marker = bool(re.search(r'[*†‡]', scan_text))
+            scan_has_ref = bool(re.search(r'\(\d+\)', scan_text))
+            pg_has_marker = bool(re.search(r'[*†‡]', pg_text))
+            return (pg_has_ref and scan_has_marker) or (scan_has_ref and pg_has_marker)
+
+        def is_punctuation_variant(scan_text: str, pg_text: str) -> bool:
+            """Detect semicolon↔colon swaps and spacing-before-punctuation diffs."""
+            pg = pg_text.strip()
+            scan = scan_text.strip()
+            if len(pg) > 60 or len(scan) > 60:
+                return False
+            pg_core = re.sub(r'[;:]', '', re.sub(r'\s+([;:,.!\?])', r'\1', pg.lower())).strip()
+            scan_core = re.sub(r'[;:]', '', re.sub(r'\s+([;:,.!\?])', r'\1', scan.lower())).strip()
+            return pg_core == scan_core and pg.lower().strip() != scan.lower().strip()
+
         FILTERS = [
             ("Long mismatches", is_long_mismatch),
             ("HTML artifacts", is_html_artifact),
             ("ALL CAPS headers", lambda s, p: is_all_caps_header(s)),
             ("Suffix fragments", is_suffix_fragment),
             ("Quoted fragments", is_quoted_fragment),
+            ("Footnote marker variants", is_footnote_marker_variant),
+            ("Punctuation variants", is_punctuation_variant),
         ]
 
         filtered_candidates = []
