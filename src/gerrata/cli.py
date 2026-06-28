@@ -346,8 +346,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--substantive-model",
         type=str,
-        default="google/glm-5.1",
-        help="Model for substantive errata analysis (default: google/glm-5.1)",
+        default="z-ai/glm-5.1",
+        help="Model for substantive errata analysis (default: z-ai/glm-5.1)",
     )
     parser.add_argument(
         "--substantive-key",
