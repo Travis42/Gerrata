@@ -238,7 +238,12 @@ Produce a substantive errata report following the classification rules above."""
             # but better than crashing)
             return json_content
 
-        errors = data.get("errors", [])
+        # Handle both bare list and dict with "errors" key
+        if isinstance(data, list):
+            errors = data
+            data = {"errors": errors}
+        else:
+            errors = data.get("errors", [])
         if not errors:
             return json_content
 
