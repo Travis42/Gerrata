@@ -716,25 +716,37 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
         console.print(f"  [dim]Resumed {len(alignments)} alignments from 03_alignments (coverage {alignment_confidence:.0%})[/dim]")
 
-        # Validate and correct cached alignments
-        vision_aligner = VisionAligner()
-        alignments, validation = vision_aligner.validate_and_correct(
-            alignments=alignments,
-            transcriptions=transcriptions,
-            pg_text=parsed.body_text,
-        )
-        console.print(f"  Validation: {validation.verdict}")
-        if validation.verdict == "drift_corrected":
-            console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
-            console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
-        elif validation.verdict == "corrected":
-            console.print(f"  Offset corrected: {validation.offset_mean:+.0f} chars (σ={validation.offset_stddev:.0f})")
-        elif validation.verdict == "failed":
-            console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
+        # Check if validation was already applied in a previous run.
+        # Re-running validate_and_correct on already-corrected alignments
+        # causes a different verdict (slope≈0, looks like scatter) which
+        # triggers page-dropping — corrupting the cached alignments.
+        cached_validation = load_intermediate(intermed_dir, "03_validation")
+        if cached_validation and cached_validation.get("applied", False):
+            console.print(f"  [dim]Validation already applied (verdict: {cached_validation.get('verdict', '?')}), skipping re-validation[/dim]")
+        else:
+            vision_aligner = VisionAligner()
+            alignments, validation = vision_aligner.validate_and_correct(
+                alignments=alignments,
+                transcriptions=transcriptions,
+                pg_text=parsed.body_text,
+            )
+            console.print(f"  Validation: {validation.verdict}")
+            if validation.verdict == "drift_corrected":
+                console.print(f"  Drift corrected: {validation.drift_slope:.1f} chars/page")
+                console.print(f"  Residual σ: {validation.residual_stddev:.0f} (from {validation.offset_stddev:.0f})")
+            elif validation.verdict == "corrected":
+                console.print(f"  Offset corrected: {validation.offset_mean:+.0f} chars (σ={validation.offset_stddev:.0f})")
+            elif validation.verdict == "failed":
+                console.print(f"  [yellow]Alignment validation failed — offset too inconsistent (σ={validation.offset_stddev:.0f})[/yellow]")
 
-        # Save corrected alignments back to cache
-        save_intermediate(intermed_dir, "03_alignments", [a.to_dict() for a in alignments])
-        save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
+            # Save corrected alignments and validation marker
+            save_intermediate(intermed_dir, "03_alignments", [a.to_dict() for a in alignments])
+            save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
+            save_intermediate(intermed_dir, "03_validation", {
+                "applied": True,
+                "verdict": validation.verdict,
+                "dropped": validation.dropped,
+            })
     elif successful:
         # Align transcriptions to PG text using global word-sequence matching
         console.print("[bold blue]Step 4:[/bold blue] Aligning transcriptions to PG text...")
@@ -790,6 +802,11 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
         save_intermediate(intermed_dir, "03_alignments", alignments)
         save_intermediate(intermed_dir, "03_scan_pages", scan_pages)
+        save_intermediate(intermed_dir, "03_validation", {
+            "applied": True,
+            "verdict": validation.verdict,
+            "dropped": validation.dropped,
+        })
 
     # Step 5: Text diff
     step_num = 5
