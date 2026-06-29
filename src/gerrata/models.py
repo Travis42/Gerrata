@@ -214,6 +214,7 @@ class Report:
     date: str = ""
     pages_checked: int = 0
     total_pages: int = 0
+    skipped_pages: int = 0  # Pages skipped by page classification (illustrations/blanks)
     alignment_confidence: float = 0.0  # Text coverage: chars covered / total chars
     avg_page_confidence: float = 0.0  # Per-page confidence: average of per-page match scores
     edition_match_confidence: float = 0.0  # How confident we are editions match

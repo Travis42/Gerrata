@@ -356,20 +356,25 @@ ia configure
 
 ```bash
 # Download all files for an item
-ia download <scan-id>
+ia download <scan-id> --destdir cache/
 
 # Download a specific file (e.g., the JP2 zip Gerrata needs)
-ia download <scan-id> <scan-id>_jp2.zip
+ia download <scan-id> <scan-id>_jp2.zip --destdir cache/
 
 # Dry-run to see what's available
 ia download <scan-id> --dry-run
 ```
 
+**⚠️ Important:** Always use `--destdir cache/` to save files to the cache directory. Without it, the `ia` CLI creates a subdirectory in your current working directory.
+
 **Use with Gerrata:**
 
 ```bash
-# Download the JP2 zip, then point Gerrata at it
-ia download volsungasagastor00spariala volsungasagastor00spariala_jp2.zip
+# Option 1: Download with --destdir (recommended)
+ia download volsungasagastor00spariala volsungasagastor00spariala_jp2.zip --destdir cache/
+
+# Option 2: Use the helper script (runs from any directory)
+bash scripts/ia_download.sh volsungasagastor00spariala volsungasagastor00spariala_jp2.zip
 
 gerrata 1152 \
   --jp2-zip volsungasagastor00spariala_jp2.zip \

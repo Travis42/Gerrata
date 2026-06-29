@@ -368,6 +368,30 @@ def build_parser() -> argparse.ArgumentParser:
         default=False,
         help="Extract per-line indentation data alongside transcription (for poetry books)",
     )
+    parser.add_argument(
+        "--skip-page-classification",
+        action="store_true",
+        default=False,
+        help="Skip pre-transcription page classification (process all pages)",
+    )
+    parser.add_argument(
+        "--min-dark-density",
+        type=float,
+        default=0.03,
+        help="Minimum dark pixel density to classify a page as text (default: 0.03)",
+    )
+    parser.add_argument(
+        "--min-grid-coverage",
+        type=float,
+        default=0.25,
+        help="Minimum grid cell coverage to classify a page as text (default: 0.25)",
+    )
+    parser.add_argument(
+        "--grid-size",
+        type=int,
+        default=10,
+        help="Grid resolution for page text detection (default: 10)",
+    )
     return parser
 
 
@@ -604,6 +628,38 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             if not page_images:
                 console.print("[red]No page images found. Cannot proceed in vision mode.[/red]")
                 raise ValueError("No page images available")
+
+            # Step 2a: Classify pages (text vs. illustration/blank)
+            skipped_page_count = 0
+            if not args.skip_page_classification:
+                console.print("[bold blue]Step 2a:[/bold blue] Classifying pages (text vs. illustration)...")
+                from gerrata.page_classifier import classify_pages, filter_text_pages
+                classifications = classify_pages(
+                    page_images,
+                    min_dark_density=args.min_dark_density,
+                    min_grid_coverage=args.min_grid_coverage,
+                    grid_size=args.grid_size,
+                )
+                skipped_page_count = sum(1 for c in classifications if not c.has_text)
+                text_only_pages = filter_text_pages(page_images, classifications)
+                if skipped_page_count > 0:
+                    console.print(f"  Classified {len(text_only_pages)} text pages, {skipped_page_count} non-text (skipped)")
+                else:
+                    console.print(f"  All {len(page_images)} pages classified as text-bearing")
+                save_intermediate(intermed_dir, "01b_page_classifications", [
+                    {"page_num": c.page_num, "has_text": c.has_text,
+                     "dark_density": round(c.dark_density, 4),
+                     "grid_coverage": round(c.grid_coverage, 4),
+                     "reason": c.reason}
+                    for c in classifications
+                ])
+                page_images = text_only_pages
+
+                if not page_images:
+                    console.print("[red]No text-bearing pages found after classification. Aborting.[/red]")
+                    return
+            else:
+                console.print("  [dim]Page classification skipped (--skip-page-classification)[/dim]")
 
             # Step 3: Transcribe pages with vision model
             console.print("[bold blue]Step 3:[/bold blue] Transcribing pages with vision model...")
@@ -1135,6 +1191,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         date=args.pg_id,
         pages_checked=len(set(a.scan_page for a in alignments)),
         total_pages=len(scan_pages) if scan_pages else 0,
+        skipped_pages=skipped_page_count if 'skipped_page_count' in dir() else 0,
         alignment_confidence=alignment_confidence if 'alignment_confidence' in dir() else 0.0,
         avg_page_confidence=avg_page_conf,
         errors=verified_errors,

@@ -1174,6 +1174,8 @@ class ReportGenerator:
         table.add_column("Metric", style="bold")
         table.add_column("Value")
         table.add_row("Pages checked", f"{report.pages_checked} / {report.total_pages}")
+        if report.skipped_pages > 0:
+            table.add_row("Pages skipped", f"{report.skipped_pages} (illustrations/blanks)")
         table.add_row("Pages aligned", f"{len(report.alignments)}")
         table.add_row("Per-page confidence", f"{report.avg_page_confidence:.2f}")
         table.add_row("Text coverage", f"{report.alignment_confidence:.0%}")
