@@ -26,3 +26,12 @@ cache/
 .DS_Store
 Thumbs.db
 PROCESSING_A_BOOK.md
+
+# Scan artifacts (should be in cache/ but prevent root-level too)
+*_jp2.zip
+*_transcriptions.json
+*.txt
+!requirements*.txt
+!test*.txt
+**/pages/*.png
+**/pages/*.jpg
