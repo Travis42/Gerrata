@@ -1160,7 +1160,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print(f"  Errata Email: {email_path}")
 
     # Step: Substantive errata report (LLM analysis)
-    if args.substantive_report:
+    # DISABLED: Code preserved but not executed. Re-enable by removing the disabled=False check.
+    if args.substantive_report and False:  # disabled=False to re-enable
         console.print(f"[bold blue]Step {step_num + 4}:[/bold blue] Generating substantive errata report...")
         substantive_gen = SubstantiveErrataGenerator(
             api_key=args.substantive_key or os.environ.get("OPENROUTER_API_KEY", ""),

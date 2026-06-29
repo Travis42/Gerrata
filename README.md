@@ -334,6 +334,51 @@ site:archive.org "Robert Louis Stevenson" "Jekyll" "pdf" OR "jp2"
 
 The `--scan-id` argument is the IA identifier (the part after `/details/` in the URL).
 
+### Downloading Scans with the `ia` CLI (Recommended)
+
+Archive.org uses Cloudflare and may block downloads from datacenter IPs (e.g., Hetzner, AWS, DigitalOcean). The **Internet Archive CLI** (`ia`) authenticates via the API layer, bypassing Cloudflare restrictions entirely.
+
+**Install:**
+
+```bash
+pip install internetarchive
+```
+
+**Configure with your archive.org account:**
+
+```bash
+ia configure
+# Prompts for email and password
+# Saves credentials to ~/.ia
+```
+
+**Download files:**
+
+```bash
+# Download all files for an item
+ia download <scan-id>
+
+# Download a specific file (e.g., the JP2 zip Gerrata needs)
+ia download <scan-id> <scan-id>_jp2.zip
+
+# Dry-run to see what's available
+ia download <scan-id> --dry-run
+```
+
+**Use with Gerrata:**
+
+```bash
+# Download the JP2 zip, then point Gerrata at it
+ia download volsungasagastor00spariala volsungasagastor00spariala_jp2.zip
+
+gerrata 1152 \
+  --jp2-zip volsungasagastor00spariala_jp2.zip \
+  --vision-key "$OPENROUTER_API_KEY" \
+  -o reports
+```
+
+This is the most reliable download method from server environments. Direct `curl`/`wget` against `archive.org/download/` may work for some files but can fail silently (HTML error pages instead of the file) or be blocked entirely.
+
 ### Source Scan for Testing
 
 The test fixture uses IA identifier `06-stevenson-jekyll-hyde`:
