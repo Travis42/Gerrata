@@ -952,25 +952,102 @@ class ReportGenerator:
         lines.append("}")
         lines.append("")
 
-        # Filter out individual errors that are instances of global replacements
+        # Separate individual errors into those that are instances of
+        # global replacements (shown grouped) vs. unique errors
+        global_instances: list = []
+        unique_errors: list = []
         if self.global_replacements:
             from gerrata.checker.global_replacements import GlobalReplacementDetector
             detector = GlobalReplacementDetector()
-            deduplicated = [
-                err for err in deduplicated
-                if not detector.is_global_instance(
+            for err in deduplicated:
+                if detector.is_global_instance(
                     {"candidate": {"pg_text": err.candidate.pg_text, "scan_text": err.candidate.scan_text}},
                     self.global_replacements,
-                )
-            ]
+                ):
+                    global_instances.append(err)
+                else:
+                    unique_errors.append(err)
+        else:
+            unique_errors = list(deduplicated)
 
-        if not deduplicated:
+        # Group global replacement instances by their pg_word→scan_word pair
+        # so the reviewer can see all caught examples together and decide
+        if global_instances:
+            lines.append("GLOBAL REPLACEMENT INSTANCES (individual pages for visual confirmation)")
+            lines.append("")
+            lines.append(
+                "These are individual page-level occurrences of words also listed"
+            )
+            lines.append(
+                "above as global replacements. Review each before deciding whether"
+            )
+            lines.append(
+                "to apply as a global find/replace or reject."
+            )
+            lines.append("")
+
+            # Build a lookup: (pg_text, scan_text) → list of errors
+            from gerrata.checker.global_replacements import normalize_possessive
+            grouped: dict[tuple[str, str], list] = {}
+            for err in global_instances:
+                pg_word = err.candidate.pg_text.strip()
+                scan_word = err.candidate.scan_text.strip()
+                # Normalize to match against global replacement keys
+                pg_norm = normalize_possessive(pg_word)
+                scan_norm = normalize_possessive(scan_word)
+                # Find matching global replacement entry
+                for gr in self.global_replacements:
+                    if normalize_possessive(gr.pg_text) == pg_norm and normalize_possessive(gr.scan_text) == scan_norm:
+                        key = (gr.pg_text, gr.scan_text)
+                        grouped.setdefault(key, []).append(err)
+                        break
+                else:
+                    # Didn't match a specific GR entry — use raw values
+                    key = (pg_word, scan_word)
+                    grouped.setdefault(key, []).append(err)
+
+            for (pg_word, scan_word), errs in sorted(grouped.items(), key=lambda x: -len(x[1])):
+                # Find occurrence count from global replacements
+                occ = ""
+                for gr in self.global_replacements:
+                    if normalize_possessive(gr.pg_text) == normalize_possessive(pg_word) and normalize_possessive(gr.scan_text) == normalize_possessive(scan_word):
+                        occ = f" ({gr.occurrences_in_pg}x in PG text, {len(errs)} caught)"
+                        break
+                lines.append(f"  {pg_word} → {scan_word}{occ}")
+                lines.append("")
+                for err in errs:
+                    pg_t = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
+                    scan_t = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+                    if self.scan_id:
+                        leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                        scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                        lines.append(f"  Page {page} ({scan_url}):")
+                    else:
+                        lines.append(f"  Page {page}:")
+                    # PG file line context
+                    if err.pg_file_line > 0:
+                        line_context = self.get_line_context(err.pg_file_line)
+                        if line_context:
+                            for lc_line in line_context.split("\n"):
+                                lines.append(f"    {lc_line}")
+                    pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
+                    lines.append(f"    {pg_trimmed} ==> {scan_trimmed}")
+                    lines.append("")
+            lines.append("---")
+            lines.append("")
+
+        if not unique_errors and not global_instances:
             lines.append("I found no errors requiring correction.")
+            return "\n".join(lines)
+
+        if not unique_errors:
+            lines.append("(No additional unique errors beyond global replacements above.)")
             return "\n".join(lines)
 
         lines.append("")
 
-        for err in deduplicated:
+        for err in unique_errors:
             pg_text = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
             scan_text = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
             page = self._get_ia_leaf_number(err.candidate.scan_page)  # 1-indexed
