@@ -943,7 +943,7 @@ class ReportGenerator:
         # Global replacements (detected deterministically)
         lines.append("Global Replacements {")
         if self.global_replacements:
-            for gr in self.global_replacements:
+            for gr in sorted(self.global_replacements, key=lambda g: g.pg_text.lower()):
                 lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
             total = sum(gr.occurrences_in_pg for gr in self.global_replacements)
             lines.append(f"({total} total occurrences in text)")
