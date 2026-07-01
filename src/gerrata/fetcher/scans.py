@@ -342,9 +342,12 @@ class ScanFetcher:
                     continue
 
                 # Extract JP2 from zip to temp, then convert with OpenCV
+                # Process one page at a time and free memory aggressively
+                # to avoid OOM on large scans (348+ pages, 177MB zip)
                 jp2_data = zf.read(jp2_name)
                 jp2_temp = dest / f"_temp_{page_num}.jp2"
                 jp2_temp.write_bytes(jp2_data)
+                del jp2_data  # free compressed bytes immediately
 
                 try:
                     img = cv2.imread(str(jp2_temp), cv2.IMREAD_ANYCOLOR)
@@ -352,6 +355,7 @@ class ScanFetcher:
                         logger.warning(f"Failed to read {jp2_name}")
                         continue
                     cv2.imwrite(str(png_path), img)
+                    del img  # free decompressed numpy array
                     png_files.append(png_path)
                     logger.debug(f"Extracted page {page_num}: {png_path.name}")
                 except Exception as e:
@@ -359,6 +363,11 @@ class ScanFetcher:
                     png_path.unlink(missing_ok=True)
                 finally:
                     jp2_temp.unlink(missing_ok=True)
+
+                # Periodically force GC to reclaim numpy/image buffers
+                if page_num % 50 == 0:
+                    import gc
+                    gc.collect()
 
         png_files.sort(key=lambda p: p.name)
         logger.info(f"Extracted {len(png_files)} pages from JP2 zip")
