@@ -73,6 +73,45 @@ gerrata 43 \
   -o reports
 ```
 
+## Multi-Volume Works
+
+Some books were published in multiple volumes, each scanned separately on Internet Archive. To process a multi-volume work, extract all volumes into a single pages directory with sequential numbering, then use `--pages-dir`.
+
+**Use the helper script:**
+
+```bash
+# Download and extract both volumes into cache/1150_pages/
+python3 scripts/combine_volumes.py 1150 \
+    ninebooksofdanis01saxouoft \
+    ninebooksofdanis02saxo_202107
+
+# Run the pipeline pointing at the combined pages
+gerrata 1150 \
+  --pg-file cache/1150.txt \
+  --pages-dir cache/1150_pages \
+  --vision-key "$OPENROUTER_API_KEY" \
+  -o reports
+```
+
+**Manual approach (if combine_volumes.py has trouble finding zips):**
+
+```bash
+# 1. Download each volume's JP2 zip
+ia download <scan-id-vol1> <scan-id-vol1>_jp2.zip --destdir cache/
+ia download <scan-id-vol2> <scan-id-vol2>_jp2.zip --destdir cache/
+
+# 2. Extract both into a single pages directory with sequential numbering
+# (combine_volumes.py handles this — run it after downloading)
+python3 scripts/combine_volumes.py <pg-id> <scan-id-vol1> <scan-id-vol2>
+
+# 3. Run gerrata with --pages-dir
+gerrata <pg-id> --pages-dir cache/<pg-id>_pages ...
+```
+
+The aligner matches pages to PG text by content, not page number — so pages from different scan volumes are placed correctly as long as the PG text contains the full work.
+
+**Note:** IA sometimes saves JP2 zips with a different filename than the scan ID (e.g., `ninebooksofdanis02saxo_jp2.zip` for scan `ninebooksofdanis02saxo_202107`). Check `ia download <scan-id> --dry-run` to find the exact filename.
+
 ## Page Range
 
 To process a subset of pages (useful for testing or large books):
