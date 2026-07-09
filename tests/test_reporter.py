@@ -609,6 +609,14 @@ class TestSentenceExtraction:
         sentence = generator._extract_sentence(text, 100, 5)  # Out of bounds
         assert sentence == ""
 
+    def test_extract_sentence_strips_underscores(self):
+        """Underscores (PG italic/formatting markers) are stripped from context."""
+        generator = ReportGenerator()
+        text = "He was an _officier superieur_ in the army. It was clear."
+        sentence = generator._extract_sentence(text, 10, 18)  # around "officier"
+        assert "_" not in sentence
+        assert "officier superieur" in sentence
+
 
 class TestPageNumbering:
     """Test that page numbers are displayed as 1-indexed in human-readable outputs."""

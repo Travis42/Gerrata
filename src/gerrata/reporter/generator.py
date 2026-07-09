@@ -127,6 +127,8 @@ class ReportGenerator:
         sentence = text[start:end].strip()
         # Replace multiple whitespace with single space
         sentence = ' '.join(sentence.split())
+        # Strip underscores (PG italic/formatting markers)
+        sentence = sentence.replace('_', '')
         return sentence
 
     def _get_ia_leaf_number(self, scan_page: int) -> int:
