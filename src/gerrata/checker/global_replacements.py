@@ -1,10 +1,47 @@
 """Detect recurring find/replace patterns in verified errors."""
 
 import re
+import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
 
 from gerrata.text_utils import trim_shared_edges, normalize_possessive
+
+
+def is_diacritic_or_ligature_change(pg_word: str, scan_word: str) -> bool:
+    """Check if the only difference between two words is diacritics or ligatures.
+
+    When a PG transcriber systematically strips accents, tildes, umlauts,
+    or expands ligatures (æ→ae, œ→oe), every occurrence in PG will be wrong
+    in the same way. These replacements should be treated as global even
+    if caught only once, because the mechanism is systematic.
+
+    Examples:
+        mediaeval → mediæval  (ligature)
+        regime → régime        (accent)
+        Compania → Compañia    (tilde)
+        Tome → Tomé            (accent)
+    """
+    # Keep only alphabetic characters for comparison
+    f = ''.join(c for c in pg_word if c.isalpha())
+    r = ''.join(c for c in scan_word if c.isalpha())
+
+    if not f or not r:
+        return False
+
+    # Decompose unicode into base + combining characters
+    f_decomp = unicodedata.normalize('NFD', f)
+    r_decomp = unicodedata.normalize('NFD', r)
+
+    # Strip combining characters (accents, tildes, umlauts, etc.)
+    f_base = ''.join(c for c in f_decomp if not unicodedata.combining(c))
+    r_base = ''.join(c for c in r_decomp if not unicodedata.combining(c))
+
+    # Expand ligatures to their component letters
+    f_exp = f_base.replace('æ', 'ae').replace('Æ', 'AE').replace('œ', 'oe').replace('Œ', 'OE')
+    r_exp = r_base.replace('æ', 'ae').replace('Æ', 'AE').replace('œ', 'oe').replace('Œ', 'OE')
+
+    return f_exp.lower() == r_exp.lower()
 
 
 @dataclass
@@ -121,8 +158,14 @@ class GlobalReplacementDetector:
             caught = len(instances)
             pages = list({p for _, _, p in instances})
 
-            # Qualify if the word appears 2+ times in PG text
-            if count >= 2:
+            # Qualify if the word appears 2+ times in PG text.
+            # Exception: diacritic/ligature-only changes qualify with 1+ occurrence,
+            # because transcribers apply orthographic decisions systematically
+                       # (every instance of the word will have the same diacritic stripped).
+            is_diacritic = is_diacritic_or_ligature_change(pg_word, scan_word)
+            threshold = 1 if is_diacritic else 2
+
+            if count >= threshold:
                 results.append(GlobalReplacement(
                     pg_text=pg_word,
                     scan_text=scan_word,

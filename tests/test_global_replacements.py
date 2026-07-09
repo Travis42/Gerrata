@@ -165,12 +165,17 @@ class TestGlobalReplacementDetection:
         assert len(results) == 0  # length difference too large
 
     def test_case_sensitive_counting(self):
-        """Counting is case-sensitive — 'aesir' doesn't match 'Aesir'."""
-        errors = [self.make_error("Aesir", "Æsir", page=10)]
-        pg_text = "aesir aesir Aesir aesir"
+        """Counting is case-sensitive — 'aesir' doesn't match 'Aesir'.
+
+        Note: Aesir → Æsir is a diacritic change, so it now qualifies with
+        1 occurrence under the diacritic heuristic. We use a non-diacritic
+        pair to test case-sensitive counting in isolation.
+        """
+        errors = [self.make_error("Swoard", "sword", page=10)]
+        pg_text = "swoard swoard Swoard swoard"
         detector = GlobalReplacementDetector()
         results = detector.detect(errors, pg_text)
-        assert len(results) == 0  # Only 1 case-sensitive occurrence of "Aesir"
+        assert len(results) == 0  # Only 1 case-sensitive occurrence of "Swoard"
 
     def test_word_boundary_matching(self):
         """Word-boundary matching — 'Bor' doesn't match inside 'Borrow'."""
@@ -179,6 +184,110 @@ class TestGlobalReplacementDetection:
         detector = GlobalReplacementDetector()
         results = detector.detect(errors, pg_text)
         assert len(results) == 0  # No standalone "Bor" matches
+
+
+class TestDiacriticLigatureHeuristic:
+    """Test that diacritic/ligature-only changes qualify with 1+ occurrence."""
+
+    def make_error(self, pg_text, scan_text, page=1, confidence=0.5):
+        return {
+            "candidate": {
+                "pg_text": pg_text,
+                "scan_text": scan_text,
+                "scan_page": page,
+            },
+            "confidence": confidence,
+        }
+
+    def test_diacritic_single_occurrence_qualifies(self):
+        """mediaeval → mediæval with only 1 erratum and 2 PG occurrences qualifies."""
+        errors = [self.make_error("mediaeval", "mediæval", page=77)]
+        pg_text = "The mediaeval houses stood tall. The mediaeval castle loomed."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].pg_text == "mediaeval"
+        assert results[0].scan_text == "mediæval"
+
+    def test_diacritic_one_pg_occurrence_qualifies(self):
+        """regime → régime qualifies even with only 1 occurrence in PG text."""
+        errors = [self.make_error("regime", "régime", page=50)]
+        pg_text = "The regime was harsh and unjust."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].pg_text == "regime"
+
+    def test_accent_addition_qualifies(self):
+        """Tome → Tomé qualifies with 1 erratum even though PG has it many times."""
+        errors = [self.make_error("Tome", "Tomé", page=118)]
+        pg_text = "San Tome silver mine. San Tome was rich. San Tome mine."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].occurrences_in_pg == 3
+
+    def test_tilde_addition_qualifies(self):
+        """Compania → Compañia (tilde) qualifies with single erratum."""
+        errors = [self.make_error("Compania", "Compañia", page=200)]
+        pg_text = "The Compania was powerful. The Compania ruled."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].pg_text == "Compania"
+
+    def test_ligature_expansion_qualifies(self):
+        """mediaeval → mediæval (ligature, not accent) qualifies with 1 erratum."""
+        errors = [self.make_error("mediaeval", "mediæval", page=77)]
+        pg_text = "The mediaeval period. The mediaeval art."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+
+    def test_non_diacritic_single_does_not_qualify(self):
+        """swoard → sword (letter change, not diacritic) still needs 2+ occurrences."""
+        errors = [self.make_error("swoard", "sword", page=46)]
+        pg_text = "The swoard Gram is replaced by Balmung."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 0  # Only 1 occurrence, non-diacritic change
+
+    def test_non_diacritic_two_occurrences_qualifies(self):
+        """swoard → sword still qualifies normally with 2+ occurrences."""
+        errors = [
+            self.make_error("swoard", "sword", page=46),
+            self.make_error("swoard", "sword", page=100),
+        ]
+        pg_text = "The swoard Gram. The swoard Balmung."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].pg_text == "swoard"
+
+    def test_caeligis_not_diacritic_change(self):
+        """Caesar → Cæsar is a ligature change and qualifies with 1 erratum."""
+        errors = [self.make_error("Caesar", "Cæsar", page=5)]
+        pg_text = "Caesar crossed the Rubicon. Caesar was ambitious."
+        detector = GlobalReplacementDetector()
+        results = detector.detect(errors, pg_text)
+        assert len(results) == 1
+        assert results[0].pg_text == "Caesar"
+        assert results[0].scan_text == "Cæsar"
+
+    def test_different_words_not_diacritic(self):
+        """affectation → affection are different words, not a diacritic change."""
+        from gerrata.checker.global_replacements import is_diacritic_or_ligature_change
+        assert not is_diacritic_or_ligature_change("affectation", "affection")
+
+    def test_breath_breadth_not_diacritic(self):
+        """breath → breadth is a letter change, not a diacritic change."""
+        from gerrata.checker.global_replacements import is_diacritic_or_ligature_change
+        assert not is_diacritic_or_ligature_change("breath", "breadth")
+
+    def test_jingle_jungle_not_diacritic(self):
+        """jingle → jungle is a letter change, not a diacritic change."""
+        from gerrata.checker.global_replacements import is_diacritic_or_ligature_change
+        assert not is_diacritic_or_ligature_change("jingle", "jungle")
 
 
 class TestIsGlobalInstance:
