@@ -297,8 +297,9 @@ class TextDiffChecker:
             curr_start = getattr(curr, 'pg_start', 0)
             pg_gap = curr_start - prev_end
             
-            # Adjacent if pages are within 2 and PG gap is small (within 500 chars)
-            if page_gap <= 2 and -100 < pg_gap < 1500:
+            # Adjacent if pages are consecutive and PG gap is small
+            # Keep segments small — large segments make page attribution harder
+            if page_gap <= 1 and -50 < pg_gap < 500:
                 current_group.append(curr)
             else:
                 segments.append(current_group)
@@ -322,7 +323,7 @@ class TextDiffChecker:
                 continue
 
             # Stitch scan pages in this segment
-            scan_concat, page_map = stitch_scan_pages(segment_scan_pages)
+            scan_concat, page_map = stitch_scan_pages(segment_scan_pages, normalizer=normalize_for_diff)
             if not scan_concat or len(scan_concat) < 20:
                 continue
 
@@ -409,8 +410,8 @@ class TextDiffChecker:
     ) -> list[CandidateError]:
         """Diff a gap in stitched mode, attributing errors to correct pages.
 
-        For each error, looks up the actual page from token_pages based
-        on the scan token position.
+        Diffs at the token level directly so we know each error's position
+        in the scan token stream, enabling correct page lookup via token_pages.
         """
         pg_len = len(gap_pg)
         scan_len = len(gap_scan)
@@ -418,9 +419,9 @@ class TextDiffChecker:
         if pg_len == 0 and scan_len == 0:
             return []
 
-        def _page_for_scan_idx(idx):
+        def _page_for_scan_idx(local_idx):
             """Get page number for a scan token index within this gap."""
-            global_idx = scan_token_offset + idx
+            global_idx = scan_token_offset + local_idx
             if 0 <= global_idx < len(token_pages):
                 p = token_pages[global_idx]
                 if p is not None and p >= 0:
@@ -466,11 +467,11 @@ class TextDiffChecker:
         if ratio < 0.3 and max_len > 8:
             return []
 
-        # Diff this gap
+        # Diff this gap using the existing check_aligned_passage for proper
+        # classification and filtering, then remap page numbers
         pg_seg = " ".join(gap_pg)
         scan_seg = " ".join(gap_scan)
 
-        # First get errors with default page
         errors = self.check_aligned_passage(
             pg_text=pg_seg,
             scan_text=scan_seg,
@@ -478,22 +479,29 @@ class TextDiffChecker:
             scan_page=default_page,
         )
 
-        # Now fix page attribution by re-running the SequenceMatcher
-        # to map each error's scan position back to a page
-        if errors:
-            sm2 = SequenceMatcher(None, tokenize(pg_seg), tokenize(scan_seg), autojunk=False)
-            for opcode, i1, i2, j1, j2 in sm2.get_opcodes():
-                if opcode == 'equal':
-                    continue
-                # For each error in this opcode range, update its page
-                for e in errors:
-                    # Approximate: use the scan text to find position
-                    scan_words = tokenize(scan_seg)
-                    try:
-                        pos_in_scan = scan_words.index(e.scan_text.split()[0] if e.scan_text else '', j1)
-                        e.scan_page = _page_for_scan_idx(pos_in_scan)
-                    except (ValueError, IndexError):
-                        pass  # Keep default
+        # Remap page attribution: build index from scan text tokens to
+        # position in gap, then look up page via token_pages
+        scan_gap_tokens = tokenize(scan_seg)
+
+        # Build a position lookup: for each token in scan_seg, what's its index?
+        token_positions: dict[str, list[int]] = {}
+        for idx, tok in enumerate(scan_gap_tokens):
+            token_positions.setdefault(tok, []).append(idx)
+        # Track which positions we've consumed to handle repeats
+        consumed: dict[str, int] = {}
+
+        for e in errors:
+            # Try to find this error's scan text in the gap tokens
+            if e.scan_text:
+                e_scan_tokens = tokenize(e.scan_text)
+                if e_scan_tokens:
+                    first_tok = e_scan_tokens[0]
+                    positions = token_positions.get(first_tok, [])
+                    consumed_count = consumed.get(first_tok, 0)
+                    if consumed_count < len(positions):
+                        local_idx = positions[consumed_count]
+                        consumed[first_tok] = consumed_count + 1
+                        e.scan_page = _page_for_scan_idx(local_idx)
 
         return errors
 

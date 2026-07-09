@@ -55,15 +55,26 @@ class PageMap:
         return self.lookup(char_offset)
 
 
-def stitch_scan_pages(scan_pages: list) -> tuple[str, PageMap]:
+def stitch_scan_pages(
+    scan_pages: list,
+    normalizer=None,
+) -> tuple[str, PageMap]:
     """Concatenate scan page transcriptions into continuous text.
     
     Joins page texts with a single space separator. Strips leading/trailing
     whitespace from each page. Skips empty pages.
     
+    If a normalizer function is provided, it is applied to each page's text
+    before concatenation. This ensures the page map offsets align with the
+    normalized text that tokens are derived from. This is critical for
+    correct page attribution — if the text is normalized after stitching,
+    character offsets shift and the page map breaks.
+    
     Args:
         scan_pages: List of ScanPage objects (or dicts) with page_num and
             vision_text/ocr_text fields.
+        normalizer: Optional function str -> str to normalize each page
+            (e.g., normalize_for_diff from text_diff module).
     
     Returns:
         Tuple of (concatenated_text, page_map).
@@ -87,11 +98,13 @@ def stitch_scan_pages(scan_pages: list) -> tuple[str, PageMap]:
         if not text:
             continue
         
+        if normalizer:
+            text = normalizer(text)
+        
         start = current_offset
         parts.append(text)
         current_offset += len(text)
         
-        # Add separator space
         page_map.add(start, current_offset, page_num)
         current_offset += 1  # for the space separator
     
@@ -107,7 +120,9 @@ def build_token_page_map(tokens: list[str], concatenated_text: str, page_map: Pa
     
     Args:
         tokens: List of tokens (words).
-        concatenated_text: The original concatenated text (before tokenization).
+        concatenated_text: The concatenated text (should be the SAME text
+            that tokens were derived from — use the normalizer parameter
+            in stitch_scan_pages for correct alignment).
         page_map: The PageMap for the concatenated text.
     
     Returns:
