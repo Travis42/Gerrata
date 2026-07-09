@@ -1,0 +1,32 @@
+{
+  "description": "Saxo PG#1150 vol 1 \u2014 baseline before recursive alignment",
+  "note": "Score 1 (original pipeline) and Score 2 (current code with normalize_for_matching + underscore fixes) are identical for this book because Saxo body text contains no underscore formatting.",
+  "scores": {
+    "score_1_original_pipeline": {
+      "total": 1293,
+      "pages_with_errors": 540,
+      "avg_per_page": 2.4,
+      "median_per_page": 2,
+      "max_per_page": 14,
+      "categories": {
+        "extra_word": 459,
+        "wrong_word": 377,
+        "ocr_scanno": 212,
+        "missing_word": 245
+      }
+    },
+    "score_2_current_fixes": {
+      "total": 1293,
+      "pages_with_errors": 540,
+      "avg_per_page": 2.4,
+      "median_per_page": 2,
+      "max_per_page": 14,
+      "categories": {
+        "extra_word": 459,
+        "wrong_word": 377,
+        "ocr_scanno": 212,
+        "missing_word": 245
+      }
+    }
+  }
+}

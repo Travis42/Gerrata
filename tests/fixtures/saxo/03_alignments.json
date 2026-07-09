@@ -1,0 +1,4434 @@
+[
+  {
+    "pg_start": 1304,
+    "pg_end": 2832,
+    "scan_page": 31,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0043.png",
+    "confidence": 0.5763440860215053,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 2843,
+    "pg_end": 4450,
+    "scan_page": 32,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0044.png",
+    "confidence": 0.6129597197898424,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 4450,
+    "pg_end": 6225,
+    "scan_page": 33,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0045.png",
+    "confidence": 0.6161290322580645,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 6225,
+    "pg_end": 8168,
+    "scan_page": 34,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0046.png",
+    "confidence": 0.6547085201793722,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 8356,
+    "pg_end": 10182,
+    "scan_page": 35,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0047.png",
+    "confidence": 0.767515923566879,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 10429,
+    "pg_end": 12165,
+    "scan_page": 36,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0048.png",
+    "confidence": 0.8826291079812206,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 12222,
+    "pg_end": 14075,
+    "scan_page": 37,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0049.png",
+    "confidence": 0.9116719242902208,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 14377,
+    "pg_end": 16344,
+    "scan_page": 38,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0050.png",
+    "confidence": 0.8439306358381503,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 16344,
+    "pg_end": 18017,
+    "scan_page": 39,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0051.png",
+    "confidence": 0.8903436988543372,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 18017,
+    "pg_end": 19636,
+    "scan_page": 40,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0052.png",
+    "confidence": 0.9560439560439561,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 20077,
+    "pg_end": 21172,
+    "scan_page": 41,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0053.png",
+    "confidence": 0.5738636363636364,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 21564,
+    "pg_end": 23263,
+    "scan_page": 42,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0054.png",
+    "confidence": 0.9833333333333333,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 23263,
+    "pg_end": 24836,
+    "scan_page": 43,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0055.png",
+    "confidence": 0.8632619439868204,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 24836,
+    "pg_end": 26428,
+    "scan_page": 44,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0056.png",
+    "confidence": 0.7348484848484849,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 26916,
+    "pg_end": 27537,
+    "scan_page": 45,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0057.png",
+    "confidence": 0.8583333333333333,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 28058,
+    "pg_end": 29778,
+    "scan_page": 46,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0058.png",
+    "confidence": 0.5770392749244713,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 29778,
+    "pg_end": 31599,
+    "scan_page": 47,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0059.png",
+    "confidence": 0.526829268292683,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 31973,
+    "pg_end": 33727,
+    "scan_page": 48,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0060.png",
+    "confidence": 0.7724137931034483,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 33890,
+    "pg_end": 35324,
+    "scan_page": 49,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0061.png",
+    "confidence": 0.7718120805369127,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 35324,
+    "pg_end": 36840,
+    "scan_page": 50,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0062.png",
+    "confidence": 0.6,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 37438,
+    "pg_end": 39303,
+    "scan_page": 51,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0063.png",
+    "confidence": 0.8445839874411303,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 39952,
+    "pg_end": 41043,
+    "scan_page": 52,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0064.png",
+    "confidence": 0.801762114537445,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 41137,
+    "pg_end": 41503,
+    "scan_page": 53,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0065.png",
+    "confidence": 0.676923076923077,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 42428,
+    "pg_end": 44379,
+    "scan_page": 54,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0066.png",
+    "confidence": 0.7122861586314152,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 46678,
+    "pg_end": 47440,
+    "scan_page": 56,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0068.png",
+    "confidence": 0.7910447761194029,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 48276,
+    "pg_end": 49451,
+    "scan_page": 57,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0069.png",
+    "confidence": 0.8457446808510638,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 49756,
+    "pg_end": 51405,
+    "scan_page": 58,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0070.png",
+    "confidence": 0.7649122807017544,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 51454,
+    "pg_end": 52997,
+    "scan_page": 59,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0071.png",
+    "confidence": 0.7573770491803279,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 53143,
+    "pg_end": 54678,
+    "scan_page": 60,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0072.png",
+    "confidence": 0.6900369003690037,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 54678,
+    "pg_end": 55811,
+    "scan_page": 61,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0073.png",
+    "confidence": 0.7875243664717348,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 55970,
+    "pg_end": 56429,
+    "scan_page": 62,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0074.png",
+    "confidence": 0.8607594936708861,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 57912,
+    "pg_end": 59017,
+    "scan_page": 63,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0075.png",
+    "confidence": 0.6858638743455497,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 59214,
+    "pg_end": 60836,
+    "scan_page": 64,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0076.png",
+    "confidence": 0.8327645051194539,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 61019,
+    "pg_end": 62552,
+    "scan_page": 65,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0077.png",
+    "confidence": 0.8644939965694682,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 62652,
+    "pg_end": 64133,
+    "scan_page": 66,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0078.png",
+    "confidence": 0.7605177993527508,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 64489,
+    "pg_end": 65258,
+    "scan_page": 67,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0079.png",
+    "confidence": 0.9393939393939394,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 66038,
+    "pg_end": 67679,
+    "scan_page": 68,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0080.png",
+    "confidence": 0.8178807947019867,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 67812,
+    "pg_end": 69187,
+    "scan_page": 69,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0081.png",
+    "confidence": 0.7160493827160493,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 69189,
+    "pg_end": 70817,
+    "scan_page": 70,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0082.png",
+    "confidence": 0.5714285714285714,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 70846,
+    "pg_end": 72662,
+    "scan_page": 71,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0083.png",
+    "confidence": 0.5568,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 73262,
+    "pg_end": 74080,
+    "scan_page": 72,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0084.png",
+    "confidence": 0.7773851590106007,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 74381,
+    "pg_end": 76004,
+    "scan_page": 73,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0085.png",
+    "confidence": 0.5872756933115824,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 76034,
+    "pg_end": 77978,
+    "scan_page": 74,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0086.png",
+    "confidence": 0.6098265895953757,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 78228,
+    "pg_end": 80189,
+    "scan_page": 75,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0087.png",
+    "confidence": 0.7811158798283262,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 80255,
+    "pg_end": 82073,
+    "scan_page": 76,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0088.png",
+    "confidence": 0.8683812405446294,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 82665,
+    "pg_end": 84484,
+    "scan_page": 78,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0091.png",
+    "confidence": 0.7701674277016742,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 84599,
+    "pg_end": 86030,
+    "scan_page": 79,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0092.png",
+    "confidence": 0.626746506986028,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 86030,
+    "pg_end": 87539,
+    "scan_page": 80,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0093.png",
+    "confidence": 0.8993288590604027,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 87552,
+    "pg_end": 88986,
+    "scan_page": 81,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0094.png",
+    "confidence": 0.9025270758122743,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 89140,
+    "pg_end": 90075,
+    "scan_page": 82,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0095.png",
+    "confidence": 0.9230769230769231,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 90524,
+    "pg_end": 91898,
+    "scan_page": 83,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0096.png",
+    "confidence": 0.6114864864864865,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 91915,
+    "pg_end": 93384,
+    "scan_page": 84,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0097.png",
+    "confidence": 0.5884476534296029,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 93692,
+    "pg_end": 95295,
+    "scan_page": 85,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0098.png",
+    "confidence": 0.672,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 95612,
+    "pg_end": 96531,
+    "scan_page": 86,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0099.png",
+    "confidence": 0.6451612903225806,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 97313,
+    "pg_end": 98321,
+    "scan_page": 87,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0100.png",
+    "confidence": 0.5875706214689266,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 99209,
+    "pg_end": 100492,
+    "scan_page": 88,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0101.png",
+    "confidence": 0.6994535519125683,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 102586,
+    "pg_end": 104321,
+    "scan_page": 90,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0103.png",
+    "confidence": 0.7889908256880734,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 104321,
+    "pg_end": 106133,
+    "scan_page": 91,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0104.png",
+    "confidence": 0.7449139280125195,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 106536,
+    "pg_end": 108249,
+    "scan_page": 92,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0105.png",
+    "confidence": 0.9074074074074074,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 108308,
+    "pg_end": 110193,
+    "scan_page": 93,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0106.png",
+    "confidence": 0.9120715350223547,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 110328,
+    "pg_end": 112048,
+    "scan_page": 94,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0107.png",
+    "confidence": 0.9015025041736227,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 112217,
+    "pg_end": 114016,
+    "scan_page": 95,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0108.png",
+    "confidence": 0.8529886914378029,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 114272,
+    "pg_end": 115514,
+    "scan_page": 96,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0109.png",
+    "confidence": 0.77734375,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 115545,
+    "pg_end": 116270,
+    "scan_page": 97,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0110.png",
+    "confidence": 0.8309859154929577,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 116838,
+    "pg_end": 118210,
+    "scan_page": 98,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0111.png",
+    "confidence": 0.7180385288966725,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 118273,
+    "pg_end": 119982,
+    "scan_page": 99,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0112.png",
+    "confidence": 0.6596701649175413,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 119982,
+    "pg_end": 121892,
+    "scan_page": 100,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0113.png",
+    "confidence": 0.6359583952451708,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 121892,
+    "pg_end": 123831,
+    "scan_page": 101,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0114.png",
+    "confidence": 0.6505295007564297,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 124028,
+    "pg_end": 126001,
+    "scan_page": 102,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0115.png",
+    "confidence": 0.8251121076233184,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 128230,
+    "pg_end": 129447,
+    "scan_page": 104,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0117.png",
+    "confidence": 0.6586538461538461,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 129615,
+    "pg_end": 130997,
+    "scan_page": 105,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0118.png",
+    "confidence": 0.6604477611940298,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 130997,
+    "pg_end": 132373,
+    "scan_page": 106,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0119.png",
+    "confidence": 0.8239700374531835,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 132644,
+    "pg_end": 134243,
+    "scan_page": 107,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0120.png",
+    "confidence": 0.75177304964539,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 134243,
+    "pg_end": 135771,
+    "scan_page": 108,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0121.png",
+    "confidence": 0.7865961199294532,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 135823,
+    "pg_end": 137373,
+    "scan_page": 109,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0122.png",
+    "confidence": 0.8231173380035026,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 137373,
+    "pg_end": 138822,
+    "scan_page": 110,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0123.png",
+    "confidence": 0.9057971014492754,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 138822,
+    "pg_end": 140318,
+    "scan_page": 111,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0124.png",
+    "confidence": 0.9384885764499121,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 140318,
+    "pg_end": 141878,
+    "scan_page": 112,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0125.png",
+    "confidence": 0.9040139616055847,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 141894,
+    "pg_end": 143430,
+    "scan_page": 113,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0126.png",
+    "confidence": 0.8441330998248686,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 143430,
+    "pg_end": 144926,
+    "scan_page": 114,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0127.png",
+    "confidence": 0.7508417508417509,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 144926,
+    "pg_end": 146419,
+    "scan_page": 115,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0128.png",
+    "confidence": 0.6218181818181818,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 146419,
+    "pg_end": 148038,
+    "scan_page": 116,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0129.png",
+    "confidence": 0.6496598639455783,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 148587,
+    "pg_end": 149933,
+    "scan_page": 117,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0131.png",
+    "confidence": 0.6369426751592356,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 150290,
+    "pg_end": 151539,
+    "scan_page": 118,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0132.png",
+    "confidence": 0.8273244781783681,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 151612,
+    "pg_end": 153002,
+    "scan_page": 119,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0133.png",
+    "confidence": 0.6678700361010831,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 153002,
+    "pg_end": 154562,
+    "scan_page": 120,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0134.png",
+    "confidence": 0.570446735395189,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 154999,
+    "pg_end": 156259,
+    "scan_page": 121,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0135.png",
+    "confidence": 0.7947598253275109,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 156602,
+    "pg_end": 158110,
+    "scan_page": 122,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0136.png",
+    "confidence": 0.8369565217391305,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 158495,
+    "pg_end": 159500,
+    "scan_page": 123,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0137.png",
+    "confidence": 0.7978436657681941,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 159830,
+    "pg_end": 161416,
+    "scan_page": 124,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0138.png",
+    "confidence": 0.9642248722316865,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 161416,
+    "pg_end": 162997,
+    "scan_page": 125,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0139.png",
+    "confidence": 0.95,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 163046,
+    "pg_end": 164611,
+    "scan_page": 126,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0140.png",
+    "confidence": 0.9308600337268128,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 164611,
+    "pg_end": 166005,
+    "scan_page": 127,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0141.png",
+    "confidence": 0.9383177570093458,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 166005,
+    "pg_end": 167521,
+    "scan_page": 128,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0142.png",
+    "confidence": 0.8913043478260869,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 167664,
+    "pg_end": 169039,
+    "scan_page": 129,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0143.png",
+    "confidence": 0.91796875,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 169086,
+    "pg_end": 170584,
+    "scan_page": 130,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0144.png",
+    "confidence": 0.8897196261682243,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 170727,
+    "pg_end": 171968,
+    "scan_page": 131,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0145.png",
+    "confidence": 0.8675623800383877,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 172019,
+    "pg_end": 173518,
+    "scan_page": 132,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0146.png",
+    "confidence": 0.7986230636833046,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 173622,
+    "pg_end": 175085,
+    "scan_page": 133,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0147.png",
+    "confidence": 0.7971274685816876,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 175254,
+    "pg_end": 176503,
+    "scan_page": 134,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0148.png",
+    "confidence": 0.7504835589941973,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 176540,
+    "pg_end": 177989,
+    "scan_page": 135,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0149.png",
+    "confidence": 0.6208112874779541,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 177989,
+    "pg_end": 179650,
+    "scan_page": 136,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0150.png",
+    "confidence": 0.5838926174496645,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 179727,
+    "pg_end": 181407,
+    "scan_page": 137,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0151.png",
+    "confidence": 0.6666666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 181407,
+    "pg_end": 183037,
+    "scan_page": 138,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0152.png",
+    "confidence": 0.7145187601957586,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 183037,
+    "pg_end": 184669,
+    "scan_page": 139,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0153.png",
+    "confidence": 0.7181208053691275,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 184669,
+    "pg_end": 186352,
+    "scan_page": 140,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0154.png",
+    "confidence": 0.7772194304857621,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 186563,
+    "pg_end": 187994,
+    "scan_page": 141,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0155.png",
+    "confidence": 0.8687258687258688,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 188022,
+    "pg_end": 189539,
+    "scan_page": 142,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0156.png",
+    "confidence": 0.8378870673952641,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 189539,
+    "pg_end": 191123,
+    "scan_page": 143,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0157.png",
+    "confidence": 0.8170940170940171,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 191123,
+    "pg_end": 192795,
+    "scan_page": 144,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0158.png",
+    "confidence": 0.8283828382838284,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 192837,
+    "pg_end": 194507,
+    "scan_page": 145,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0159.png",
+    "confidence": 0.8855218855218855,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 194507,
+    "pg_end": 196186,
+    "scan_page": 146,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0160.png",
+    "confidence": 0.9290322580645162,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 196302,
+    "pg_end": 197664,
+    "scan_page": 147,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0161.png",
+    "confidence": 0.9175627240143369,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 198043,
+    "pg_end": 198543,
+    "scan_page": 148,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0162.png",
+    "confidence": 0.5921787709497207,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 199026,
+    "pg_end": 200590,
+    "scan_page": 149,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0163.png",
+    "confidence": 0.7142857142857143,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 200803,
+    "pg_end": 202038,
+    "scan_page": 150,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0164.png",
+    "confidence": 0.6888454011741683,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 202061,
+    "pg_end": 203532,
+    "scan_page": 151,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0165.png",
+    "confidence": 0.5916515426497277,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 203532,
+    "pg_end": 205239,
+    "scan_page": 152,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0166.png",
+    "confidence": 0.6129541864139021,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 205479,
+    "pg_end": 207155,
+    "scan_page": 153,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0167.png",
+    "confidence": 0.7763157894736842,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 207735,
+    "pg_end": 208267,
+    "scan_page": 154,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0169.png",
+    "confidence": 0.6818181818181818,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 208764,
+    "pg_end": 210361,
+    "scan_page": 155,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0170.png",
+    "confidence": 0.7346938775510204,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 210517,
+    "pg_end": 212022,
+    "scan_page": 156,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0171.png",
+    "confidence": 0.7938671209540034,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 212040,
+    "pg_end": 213637,
+    "scan_page": 157,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0172.png",
+    "confidence": 0.7655986509274874,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 213833,
+    "pg_end": 215096,
+    "scan_page": 158,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0173.png",
+    "confidence": 0.73046875,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 215148,
+    "pg_end": 216596,
+    "scan_page": 159,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0174.png",
+    "confidence": 0.624561403508772,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 216596,
+    "pg_end": 218189,
+    "scan_page": 160,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0175.png",
+    "confidence": 0.5665529010238908,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 218189,
+    "pg_end": 219811,
+    "scan_page": 161,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0176.png",
+    "confidence": 0.5628318584070796,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 219811,
+    "pg_end": 221390,
+    "scan_page": 162,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0177.png",
+    "confidence": 0.5699300699300699,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 221644,
+    "pg_end": 222711,
+    "scan_page": 163,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0178.png",
+    "confidence": 0.6174863387978142,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 223165,
+    "pg_end": 224821,
+    "scan_page": 164,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0179.png",
+    "confidence": 0.7073170731707317,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 224821,
+    "pg_end": 226462,
+    "scan_page": 165,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0180.png",
+    "confidence": 0.7469879518072289,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 226655,
+    "pg_end": 227910,
+    "scan_page": 166,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0181.png",
+    "confidence": 0.7376425855513308,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 228390,
+    "pg_end": 228672,
+    "scan_page": 167,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0182.png",
+    "confidence": 0.7551020408163265,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 229492,
+    "pg_end": 231131,
+    "scan_page": 168,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0183.png",
+    "confidence": 0.6482758620689655,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 231131,
+    "pg_end": 232742,
+    "scan_page": 169,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0184.png",
+    "confidence": 0.6698412698412698,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 232742,
+    "pg_end": 234408,
+    "scan_page": 170,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0185.png",
+    "confidence": 0.6699346405228758,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 234553,
+    "pg_end": 236241,
+    "scan_page": 171,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0186.png",
+    "confidence": 0.8040201005025126,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 236454,
+    "pg_end": 238095,
+    "scan_page": 172,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0187.png",
+    "confidence": 0.9713375796178344,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 238095,
+    "pg_end": 239713,
+    "scan_page": 173,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0188.png",
+    "confidence": 0.9808027923211169,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 239839,
+    "pg_end": 241546,
+    "scan_page": 174,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0189.png",
+    "confidence": 0.9046052631578947,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 241801,
+    "pg_end": 243339,
+    "scan_page": 175,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0190.png",
+    "confidence": 0.7079037800687286,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 243349,
+    "pg_end": 244697,
+    "scan_page": 176,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0191.png",
+    "confidence": 0.7388781431334622,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 244982,
+    "pg_end": 246541,
+    "scan_page": 177,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0192.png",
+    "confidence": 0.7285714285714285,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 246541,
+    "pg_end": 247927,
+    "scan_page": 178,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0193.png",
+    "confidence": 0.6857142857142857,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 248147,
+    "pg_end": 249690,
+    "scan_page": 179,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0194.png",
+    "confidence": 0.7568493150684932,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 249739,
+    "pg_end": 250989,
+    "scan_page": 180,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0195.png",
+    "confidence": 0.8500948766603416,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 251140,
+    "pg_end": 252568,
+    "scan_page": 181,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0196.png",
+    "confidence": 0.9068100358422939,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 252568,
+    "pg_end": 253973,
+    "scan_page": 182,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0197.png",
+    "confidence": 0.9523809523809523,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 254374,
+    "pg_end": 255307,
+    "scan_page": 183,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0198.png",
+    "confidence": 0.8111455108359134,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 255671,
+    "pg_end": 257155,
+    "scan_page": 184,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0199.png",
+    "confidence": 0.8353140916808149,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 257155,
+    "pg_end": 258625,
+    "scan_page": 185,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0200.png",
+    "confidence": 0.7071428571428572,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 259102,
+    "pg_end": 259634,
+    "scan_page": 186,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0201.png",
+    "confidence": 0.93,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 260548,
+    "pg_end": 262078,
+    "scan_page": 187,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0202.png",
+    "confidence": 0.8380281690140845,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 262195,
+    "pg_end": 263484,
+    "scan_page": 188,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0203.png",
+    "confidence": 0.761384335154827,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 263512,
+    "pg_end": 265028,
+    "scan_page": 189,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0204.png",
+    "confidence": 0.6528497409326425,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 265106,
+    "pg_end": 266635,
+    "scan_page": 190,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0205.png",
+    "confidence": 0.6420168067226891,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 266698,
+    "pg_end": 268131,
+    "scan_page": 191,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0206.png",
+    "confidence": 0.5735849056603773,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 268144,
+    "pg_end": 269717,
+    "scan_page": 192,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0207.png",
+    "confidence": 0.564625850340136,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 270071,
+    "pg_end": 271832,
+    "scan_page": 193,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0208.png",
+    "confidence": 0.8315301391035549,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 272125,
+    "pg_end": 273599,
+    "scan_page": 194,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0209.png",
+    "confidence": 0.9139579349904398,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 273599,
+    "pg_end": 275177,
+    "scan_page": 195,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0210.png",
+    "confidence": 0.9114754098360656,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 275252,
+    "pg_end": 276887,
+    "scan_page": 196,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0211.png",
+    "confidence": 0.9536423841059603,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 276946,
+    "pg_end": 278645,
+    "scan_page": 197,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0212.png",
+    "confidence": 0.9117647058823529,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 278671,
+    "pg_end": 280308,
+    "scan_page": 198,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0213.png",
+    "confidence": 0.8466453674121406,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 280308,
+    "pg_end": 281877,
+    "scan_page": 199,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0214.png",
+    "confidence": 0.8288590604026845,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 281877,
+    "pg_end": 283308,
+    "scan_page": 200,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0215.png",
+    "confidence": 0.8352059925093633,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 283308,
+    "pg_end": 284360,
+    "scan_page": 202,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0217.png",
+    "confidence": 0.8873239436619719,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 284493,
+    "pg_end": 284997,
+    "scan_page": 203,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0218.png",
+    "confidence": 0.7845303867403315,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 286017,
+    "pg_end": 287352,
+    "scan_page": 204,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0219.png",
+    "confidence": 0.8706739526411658,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 287352,
+    "pg_end": 288679,
+    "scan_page": 205,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0220.png",
+    "confidence": 0.7259528130671506,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 288679,
+    "pg_end": 290292,
+    "scan_page": 206,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0221.png",
+    "confidence": 0.6426116838487973,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 290556,
+    "pg_end": 292003,
+    "scan_page": 207,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0222.png",
+    "confidence": 0.7572463768115942,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 292007,
+    "pg_end": 293457,
+    "scan_page": 208,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0223.png",
+    "confidence": 0.6750448833034112,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 293543,
+    "pg_end": 294816,
+    "scan_page": 209,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0224.png",
+    "confidence": 0.6208425720620843,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 296144,
+    "pg_end": 297661,
+    "scan_page": 211,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0227.png",
+    "confidence": 0.7044247787610619,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 297661,
+    "pg_end": 298718,
+    "scan_page": 212,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0228.png",
+    "confidence": 0.7620967741935484,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 298846,
+    "pg_end": 299334,
+    "scan_page": 213,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0229.png",
+    "confidence": 0.8361581920903954,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 300130,
+    "pg_end": 301382,
+    "scan_page": 214,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0230.png",
+    "confidence": 0.7335907335907336,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 301395,
+    "pg_end": 302887,
+    "scan_page": 215,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0231.png",
+    "confidence": 0.6173285198555957,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 303046,
+    "pg_end": 304488,
+    "scan_page": 216,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0232.png",
+    "confidence": 0.6226086956521739,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 304941,
+    "pg_end": 305457,
+    "scan_page": 217,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0233.png",
+    "confidence": 0.6413043478260869,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 306034,
+    "pg_end": 307683,
+    "scan_page": 218,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0234.png",
+    "confidence": 0.6128500823723229,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 307683,
+    "pg_end": 309321,
+    "scan_page": 219,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0235.png",
+    "confidence": 0.6146179401993356,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 309321,
+    "pg_end": 311007,
+    "scan_page": 220,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0236.png",
+    "confidence": 0.6537216828478964,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 311024,
+    "pg_end": 312789,
+    "scan_page": 221,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0237.png",
+    "confidence": 0.7264150943396226,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 312940,
+    "pg_end": 314409,
+    "scan_page": 222,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0238.png",
+    "confidence": 0.7605118829981719,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 314893,
+    "pg_end": 315413,
+    "scan_page": 223,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0239.png",
+    "confidence": 0.8282828282828283,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 315924,
+    "pg_end": 317502,
+    "scan_page": 224,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0240.png",
+    "confidence": 0.6756756756756757,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 317552,
+    "pg_end": 319275,
+    "scan_page": 225,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0241.png",
+    "confidence": 0.7961165048543689,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 319424,
+    "pg_end": 320917,
+    "scan_page": 226,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0242.png",
+    "confidence": 0.8442211055276382,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 320917,
+    "pg_end": 322491,
+    "scan_page": 227,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0243.png",
+    "confidence": 0.7639344262295082,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 322566,
+    "pg_end": 324089,
+    "scan_page": 228,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0244.png",
+    "confidence": 0.760797342192691,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 324282,
+    "pg_end": 325574,
+    "scan_page": 229,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0245.png",
+    "confidence": 0.7142857142857143,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 325605,
+    "pg_end": 327133,
+    "scan_page": 230,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0246.png",
+    "confidence": 0.6,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 327137,
+    "pg_end": 328860,
+    "scan_page": 231,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0247.png",
+    "confidence": 0.6379585326953748,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 328881,
+    "pg_end": 330579,
+    "scan_page": 232,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0248.png",
+    "confidence": 0.6740858505564388,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 330597,
+    "pg_end": 332178,
+    "scan_page": 233,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0249.png",
+    "confidence": 0.7118055555555556,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 332187,
+    "pg_end": 333693,
+    "scan_page": 234,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0250.png",
+    "confidence": 0.6924428822495606,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 333693,
+    "pg_end": 335312,
+    "scan_page": 235,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0251.png",
+    "confidence": 0.6323024054982818,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 335426,
+    "pg_end": 337064,
+    "scan_page": 236,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0252.png",
+    "confidence": 0.7318718381112985,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 337087,
+    "pg_end": 338745,
+    "scan_page": 237,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0253.png",
+    "confidence": 0.7834710743801653,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 338745,
+    "pg_end": 340417,
+    "scan_page": 238,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0254.png",
+    "confidence": 0.8156606851549756,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 340443,
+    "pg_end": 342157,
+    "scan_page": 239,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0255.png",
+    "confidence": 0.8910256410256411,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 342329,
+    "pg_end": 344020,
+    "scan_page": 240,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0256.png",
+    "confidence": 0.964516129032258,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 344020,
+    "pg_end": 345576,
+    "scan_page": 241,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0257.png",
+    "confidence": 0.956369982547993,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 345576,
+    "pg_end": 347105,
+    "scan_page": 242,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0258.png",
+    "confidence": 0.9577464788732394,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 347187,
+    "pg_end": 348623,
+    "scan_page": 243,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0259.png",
+    "confidence": 0.9659318637274549,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 348953,
+    "pg_end": 350680,
+    "scan_page": 244,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0260.png",
+    "confidence": 0.8888888888888888,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 350685,
+    "pg_end": 352396,
+    "scan_page": 245,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0261.png",
+    "confidence": 0.8470588235294118,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 352396,
+    "pg_end": 353982,
+    "scan_page": 246,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0262.png",
+    "confidence": 0.8547008547008547,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 354124,
+    "pg_end": 355330,
+    "scan_page": 247,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0263.png",
+    "confidence": 0.6948356807511737,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 355619,
+    "pg_end": 356721,
+    "scan_page": 249,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0265.png",
+    "confidence": 0.6683804627249358,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 356829,
+    "pg_end": 358093,
+    "scan_page": 250,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0266.png",
+    "confidence": 0.8598848368522073,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 358093,
+    "pg_end": 359310,
+    "scan_page": 251,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0267.png",
+    "confidence": 0.7827715355805244,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 359310,
+    "pg_end": 360769,
+    "scan_page": 252,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0268.png",
+    "confidence": 0.6230636833046471,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 360791,
+    "pg_end": 362482,
+    "scan_page": 253,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0269.png",
+    "confidence": 0.6305418719211823,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 362614,
+    "pg_end": 364097,
+    "scan_page": 254,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0270.png",
+    "confidence": 0.6910420475319927,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 364097,
+    "pg_end": 365676,
+    "scan_page": 255,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0271.png",
+    "confidence": 0.6254416961130742,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 365676,
+    "pg_end": 367360,
+    "scan_page": 256,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0272.png",
+    "confidence": 0.6514657980456026,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 367360,
+    "pg_end": 369060,
+    "scan_page": 257,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0273.png",
+    "confidence": 0.6611842105263158,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 369153,
+    "pg_end": 370683,
+    "scan_page": 258,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0274.png",
+    "confidence": 0.6931034482758621,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 370719,
+    "pg_end": 372388,
+    "scan_page": 259,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0275.png",
+    "confidence": 0.6916802610114192,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 372412,
+    "pg_end": 374158,
+    "scan_page": 260,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0276.png",
+    "confidence": 0.753125,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 375154,
+    "pg_end": 376773,
+    "scan_page": 262,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0279.png",
+    "confidence": 0.6327868852459017,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 376773,
+    "pg_end": 378261,
+    "scan_page": 263,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0280.png",
+    "confidence": 0.6678635547576302,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 378272,
+    "pg_end": 379766,
+    "scan_page": 264,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0281.png",
+    "confidence": 0.7605633802816901,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 379858,
+    "pg_end": 381547,
+    "scan_page": 265,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0282.png",
+    "confidence": 0.7406199021207178,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 381547,
+    "pg_end": 383111,
+    "scan_page": 266,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0283.png",
+    "confidence": 0.7431506849315068,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 383111,
+    "pg_end": 384536,
+    "scan_page": 267,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0284.png",
+    "confidence": 0.7870036101083032,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 384536,
+    "pg_end": 385895,
+    "scan_page": 268,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0285.png",
+    "confidence": 0.9097472924187726,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 385895,
+    "pg_end": 387366,
+    "scan_page": 269,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0286.png",
+    "confidence": 0.9166666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 387538,
+    "pg_end": 388841,
+    "scan_page": 270,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0287.png",
+    "confidence": 0.8336520076481836,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 388916,
+    "pg_end": 390357,
+    "scan_page": 271,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0288.png",
+    "confidence": 0.7223230490018149,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 390357,
+    "pg_end": 391945,
+    "scan_page": 272,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0289.png",
+    "confidence": 0.6610169491525424,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 391945,
+    "pg_end": 393666,
+    "scan_page": 273,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0290.png",
+    "confidence": 0.6570048309178744,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 393666,
+    "pg_end": 395408,
+    "scan_page": 274,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0291.png",
+    "confidence": 0.6957878315132605,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 395548,
+    "pg_end": 397061,
+    "scan_page": 275,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0292.png",
+    "confidence": 0.7892074198988196,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 397082,
+    "pg_end": 398661,
+    "scan_page": 276,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0293.png",
+    "confidence": 0.7576243980738363,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 398977,
+    "pg_end": 399948,
+    "scan_page": 277,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0294.png",
+    "confidence": 0.8672086720867209,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 400551,
+    "pg_end": 402056,
+    "scan_page": 278,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0295.png",
+    "confidence": 0.8104575163398693,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 402109,
+    "pg_end": 403748,
+    "scan_page": 279,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0296.png",
+    "confidence": 0.7919254658385093,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 403854,
+    "pg_end": 405307,
+    "scan_page": 280,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0297.png",
+    "confidence": 0.7978142076502732,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 405330,
+    "pg_end": 406949,
+    "scan_page": 281,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0298.png",
+    "confidence": 0.7855973813420621,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 407088,
+    "pg_end": 408759,
+    "scan_page": 282,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0299.png",
+    "confidence": 0.87248322147651,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 408878,
+    "pg_end": 410286,
+    "scan_page": 283,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0300.png",
+    "confidence": 0.9355432780847146,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 410329,
+    "pg_end": 411885,
+    "scan_page": 284,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0301.png",
+    "confidence": 0.9321739130434783,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 412063,
+    "pg_end": 413806,
+    "scan_page": 285,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0302.png",
+    "confidence": 0.8793388429752066,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 414102,
+    "pg_end": 415755,
+    "scan_page": 286,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0303.png",
+    "confidence": 0.6554621848739496,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 415865,
+    "pg_end": 417223,
+    "scan_page": 287,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0305.png",
+    "confidence": 0.746938775510204,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 417368,
+    "pg_end": 419034,
+    "scan_page": 288,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0306.png",
+    "confidence": 0.6530612244897959,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 419034,
+    "pg_end": 420660,
+    "scan_page": 289,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0307.png",
+    "confidence": 0.6479338842975206,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 420703,
+    "pg_end": 422188,
+    "scan_page": 290,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0308.png",
+    "confidence": 0.6234234234234234,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 422324,
+    "pg_end": 423998,
+    "scan_page": 291,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0309.png",
+    "confidence": 0.6273885350318471,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 423998,
+    "pg_end": 425608,
+    "scan_page": 292,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0310.png",
+    "confidence": 0.631404958677686,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 425608,
+    "pg_end": 426747,
+    "scan_page": 293,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0311.png",
+    "confidence": 0.758893280632411,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 426792,
+    "pg_end": 427348,
+    "scan_page": 294,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0312.png",
+    "confidence": 0.7252747252747253,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 427774,
+    "pg_end": 429358,
+    "scan_page": 295,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0313.png",
+    "confidence": 0.6354515050167224,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 429967,
+    "pg_end": 430765,
+    "scan_page": 296,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0314.png",
+    "confidence": 0.9513888888888888,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 431508,
+    "pg_end": 431997,
+    "scan_page": 297,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0315.png",
+    "confidence": 0.8268156424581006,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 432500,
+    "pg_end": 434127,
+    "scan_page": 298,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0316.png",
+    "confidence": 0.586709886547812,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 435056,
+    "pg_end": 436777,
+    "scan_page": 299,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0317.png",
+    "confidence": 0.8072487644151565,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 437011,
+    "pg_end": 438540,
+    "scan_page": 300,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0318.png",
+    "confidence": 0.637478108581436,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 438584,
+    "pg_end": 439849,
+    "scan_page": 301,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0319.png",
+    "confidence": 0.7338403041825095,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 439999,
+    "pg_end": 441496,
+    "scan_page": 302,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0320.png",
+    "confidence": 0.8116438356164384,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 441800,
+    "pg_end": 443452,
+    "scan_page": 303,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0321.png",
+    "confidence": 0.6752411575562701,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 443452,
+    "pg_end": 444961,
+    "scan_page": 304,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0322.png",
+    "confidence": 0.6619718309859155,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 444993,
+    "pg_end": 446350,
+    "scan_page": 305,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0323.png",
+    "confidence": 0.701688555347092,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 446491,
+    "pg_end": 448067,
+    "scan_page": 306,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0324.png",
+    "confidence": 0.6666666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 448067,
+    "pg_end": 449267,
+    "scan_page": 307,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0325.png",
+    "confidence": 0.7954971857410882,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 449351,
+    "pg_end": 450072,
+    "scan_page": 308,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0326.png",
+    "confidence": 0.7384615384615385,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 450554,
+    "pg_end": 451995,
+    "scan_page": 309,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0327.png",
+    "confidence": 0.7795414462081128,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 452112,
+    "pg_end": 453398,
+    "scan_page": 310,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0328.png",
+    "confidence": 0.7964601769911505,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 453652,
+    "pg_end": 454927,
+    "scan_page": 311,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0329.png",
+    "confidence": 0.9746835443037974,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 454927,
+    "pg_end": 456249,
+    "scan_page": 312,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0330.png",
+    "confidence": 0.8986615678776291,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 456506,
+    "pg_end": 457436,
+    "scan_page": 313,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0331.png",
+    "confidence": 0.9002849002849003,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 457588,
+    "pg_end": 458930,
+    "scan_page": 314,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0332.png",
+    "confidence": 0.6061705989110708,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 458930,
+    "pg_end": 460345,
+    "scan_page": 315,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0333.png",
+    "confidence": 0.5058823529411764,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 460345,
+    "pg_end": 461858,
+    "scan_page": 316,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0334.png",
+    "confidence": 0.5820642978003384,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 461909,
+    "pg_end": 463512,
+    "scan_page": 317,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0335.png",
+    "confidence": 0.626970227670753,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 463587,
+    "pg_end": 465230,
+    "scan_page": 318,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0336.png",
+    "confidence": 0.7207792207792207,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 465653,
+    "pg_end": 466309,
+    "scan_page": 319,
+    "scan_image_path": "cache/ninebooksofdanis01saxouoft/pages/ninebooksofdanis01saxouoft_0337.png",
+    "confidence": 0.8012618296529969,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 466309,
+    "pg_end": 467227,
+    "scan_page": 330,
+    "scan_image_path": "cache/1150_pages/page_0366.png",
+    "confidence": 0.625,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 467227,
+    "pg_end": 468712,
+    "scan_page": 331,
+    "scan_image_path": "cache/1150_pages/page_0367.png",
+    "confidence": 0.6329113924050633,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 468794,
+    "pg_end": 470317,
+    "scan_page": 332,
+    "scan_image_path": "cache/1150_pages/page_0368.png",
+    "confidence": 0.5564648117839607,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 470335,
+    "pg_end": 471930,
+    "scan_page": 333,
+    "scan_image_path": "cache/1150_pages/page_0369.png",
+    "confidence": 0.5183946488294314,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 471930,
+    "pg_end": 473619,
+    "scan_page": 334,
+    "scan_image_path": "cache/1150_pages/page_0370.png",
+    "confidence": 0.5612903225806452,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 473657,
+    "pg_end": 475364,
+    "scan_page": 335,
+    "scan_image_path": "cache/1150_pages/page_0371.png",
+    "confidence": 0.6346153846153846,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 475364,
+    "pg_end": 477063,
+    "scan_page": 336,
+    "scan_image_path": "cache/1150_pages/page_0372.png",
+    "confidence": 0.6655405405405406,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 477167,
+    "pg_end": 478631,
+    "scan_page": 337,
+    "scan_image_path": "cache/1150_pages/page_0373.png",
+    "confidence": 0.6910299003322259,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 478631,
+    "pg_end": 480159,
+    "scan_page": 338,
+    "scan_image_path": "cache/1150_pages/page_0374.png",
+    "confidence": 0.5945072697899838,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 480159,
+    "pg_end": 481776,
+    "scan_page": 339,
+    "scan_image_path": "cache/1150_pages/page_0375.png",
+    "confidence": 0.5733113673805601,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 482318,
+    "pg_end": 482833,
+    "scan_page": 340,
+    "scan_image_path": "cache/1150_pages/page_0376.png",
+    "confidence": 0.7719298245614035,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 483664,
+    "pg_end": 485421,
+    "scan_page": 341,
+    "scan_image_path": "cache/1150_pages/page_0377.png",
+    "confidence": 0.8139183055975794,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 485503,
+    "pg_end": 487230,
+    "scan_page": 342,
+    "scan_image_path": "cache/1150_pages/page_0378.png",
+    "confidence": 0.9045226130653267,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 487577,
+    "pg_end": 489292,
+    "scan_page": 343,
+    "scan_image_path": "cache/1150_pages/page_0379.png",
+    "confidence": 0.8118195956454122,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 489484,
+    "pg_end": 490611,
+    "scan_page": 344,
+    "scan_image_path": "cache/1150_pages/page_0380.png",
+    "confidence": 0.7660455486542443,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 490670,
+    "pg_end": 491093,
+    "scan_page": 345,
+    "scan_image_path": "cache/1150_pages/page_0381.png",
+    "confidence": 0.7870967741935484,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 491772,
+    "pg_end": 493458,
+    "scan_page": 346,
+    "scan_image_path": "cache/1150_pages/page_0382.png",
+    "confidence": 0.7524752475247525,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 493644,
+    "pg_end": 494929,
+    "scan_page": 347,
+    "scan_image_path": "cache/1150_pages/page_0383.png",
+    "confidence": 0.7286821705426356,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 494953,
+    "pg_end": 496482,
+    "scan_page": 348,
+    "scan_image_path": "cache/1150_pages/page_0384.png",
+    "confidence": 0.6313993174061433,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 496633,
+    "pg_end": 498141,
+    "scan_page": 349,
+    "scan_image_path": "cache/1150_pages/page_0385.png",
+    "confidence": 0.6733001658374793,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 498169,
+    "pg_end": 499786,
+    "scan_page": 350,
+    "scan_image_path": "cache/1150_pages/page_0386.png",
+    "confidence": 0.654424040066778,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 499854,
+    "pg_end": 501388,
+    "scan_page": 351,
+    "scan_image_path": "cache/1150_pages/page_0387.png",
+    "confidence": 0.6617100371747212,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 501490,
+    "pg_end": 503189,
+    "scan_page": 352,
+    "scan_image_path": "cache/1150_pages/page_0388.png",
+    "confidence": 0.8132911392405063,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 503318,
+    "pg_end": 504787,
+    "scan_page": 353,
+    "scan_image_path": "cache/1150_pages/page_0389.png",
+    "confidence": 0.88,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 504841,
+    "pg_end": 506496,
+    "scan_page": 354,
+    "scan_image_path": "cache/1150_pages/page_0390.png",
+    "confidence": 0.8885245901639345,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 506740,
+    "pg_end": 508453,
+    "scan_page": 355,
+    "scan_image_path": "cache/1150_pages/page_0391.png",
+    "confidence": 0.9087893864013267,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 508622,
+    "pg_end": 510380,
+    "scan_page": 356,
+    "scan_image_path": "cache/1150_pages/page_0392.png",
+    "confidence": 0.7594108019639935,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 510496,
+    "pg_end": 511589,
+    "scan_page": 357,
+    "scan_image_path": "cache/1150_pages/page_0393.png",
+    "confidence": 0.7421383647798742,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 511595,
+    "pg_end": 512117,
+    "scan_page": 358,
+    "scan_image_path": "cache/1150_pages/page_0394.png",
+    "confidence": 0.7593582887700535,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 512630,
+    "pg_end": 514258,
+    "scan_page": 359,
+    "scan_image_path": "cache/1150_pages/page_0395.png",
+    "confidence": 0.7359454855195912,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 514529,
+    "pg_end": 515781,
+    "scan_page": 360,
+    "scan_image_path": "cache/1150_pages/page_0396.png",
+    "confidence": 0.7410207939508506,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 515781,
+    "pg_end": 517246,
+    "scan_page": 361,
+    "scan_image_path": "cache/1150_pages/page_0397.png",
+    "confidence": 0.5754884547069272,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 517380,
+    "pg_end": 518835,
+    "scan_page": 362,
+    "scan_image_path": "cache/1150_pages/page_0398.png",
+    "confidence": 0.5882352941176471,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 518854,
+    "pg_end": 520364,
+    "scan_page": 363,
+    "scan_image_path": "cache/1150_pages/page_0399.png",
+    "confidence": 0.5438282647584973,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 520364,
+    "pg_end": 521957,
+    "scan_page": 364,
+    "scan_image_path": "cache/1150_pages/page_0400.png",
+    "confidence": 0.564935064935065,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 521957,
+    "pg_end": 523641,
+    "scan_page": 365,
+    "scan_image_path": "cache/1150_pages/page_0401.png",
+    "confidence": 0.5827814569536424,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 523641,
+    "pg_end": 525374,
+    "scan_page": 366,
+    "scan_image_path": "cache/1150_pages/page_0402.png",
+    "confidence": 0.618421052631579,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 525496,
+    "pg_end": 527233,
+    "scan_page": 367,
+    "scan_image_path": "cache/1150_pages/page_0403.png",
+    "confidence": 0.7491961414790996,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 527450,
+    "pg_end": 529188,
+    "scan_page": 368,
+    "scan_image_path": "cache/1150_pages/page_0404.png",
+    "confidence": 0.9210526315789473,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 529262,
+    "pg_end": 530977,
+    "scan_page": 369,
+    "scan_image_path": "cache/1150_pages/page_0405.png",
+    "confidence": 0.9490968801313628,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 531011,
+    "pg_end": 532523,
+    "scan_page": 370,
+    "scan_image_path": "cache/1150_pages/page_0406.png",
+    "confidence": 0.9338103756708408,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 532523,
+    "pg_end": 534045,
+    "scan_page": 371,
+    "scan_image_path": "cache/1150_pages/page_0407.png",
+    "confidence": 0.9352014010507881,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 534279,
+    "pg_end": 536050,
+    "scan_page": 372,
+    "scan_image_path": "cache/1150_pages/page_0408.png",
+    "confidence": 0.8580645161290322,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 536070,
+    "pg_end": 537801,
+    "scan_page": 373,
+    "scan_image_path": "cache/1150_pages/page_0409.png",
+    "confidence": 0.7987117552334944,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 537842,
+    "pg_end": 539465,
+    "scan_page": 374,
+    "scan_image_path": "cache/1150_pages/page_0410.png",
+    "confidence": 0.7435456110154905,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 539465,
+    "pg_end": 540678,
+    "scan_page": 375,
+    "scan_image_path": "cache/1150_pages/page_0411.png",
+    "confidence": 0.8349900596421471,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 540678,
+    "pg_end": 541834,
+    "scan_page": 376,
+    "scan_image_path": "cache/1150_pages/page_0412.png",
+    "confidence": 0.8074074074074075,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 541912,
+    "pg_end": 543149,
+    "scan_page": 377,
+    "scan_image_path": "cache/1150_pages/page_0413.png",
+    "confidence": 0.6875,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 543278,
+    "pg_end": 544647,
+    "scan_page": 378,
+    "scan_image_path": "cache/1150_pages/page_0414.png",
+    "confidence": 0.8811475409836066,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 545331,
+    "pg_end": 546666,
+    "scan_page": 379,
+    "scan_image_path": "cache/1150_pages/page_0415.png",
+    "confidence": 0.6818181818181818,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 546666,
+    "pg_end": 547842,
+    "scan_page": 380,
+    "scan_image_path": "cache/1150_pages/page_0416.png",
+    "confidence": 0.8249027237354085,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 547842,
+    "pg_end": 549285,
+    "scan_page": 381,
+    "scan_image_path": "cache/1150_pages/page_0417.png",
+    "confidence": 0.763302752293578,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 549285,
+    "pg_end": 550736,
+    "scan_page": 382,
+    "scan_image_path": "cache/1150_pages/page_0418.png",
+    "confidence": 0.6516464471403813,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 550736,
+    "pg_end": 552293,
+    "scan_page": 383,
+    "scan_image_path": "cache/1150_pages/page_0419.png",
+    "confidence": 0.5620689655172414,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 552293,
+    "pg_end": 553988,
+    "scan_page": 384,
+    "scan_image_path": "cache/1150_pages/page_0420.png",
+    "confidence": 0.5821138211382114,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 554069,
+    "pg_end": 555788,
+    "scan_page": 385,
+    "scan_image_path": "cache/1150_pages/page_0421.png",
+    "confidence": 0.687603305785124,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 556213,
+    "pg_end": 557688,
+    "scan_page": 386,
+    "scan_image_path": "cache/1150_pages/page_0422.png",
+    "confidence": 0.925589836660617,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 557947,
+    "pg_end": 559641,
+    "scan_page": 387,
+    "scan_image_path": "cache/1150_pages/page_0423.png",
+    "confidence": 0.9090909090909091,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 559736,
+    "pg_end": 561188,
+    "scan_page": 388,
+    "scan_image_path": "cache/1150_pages/page_0424.png",
+    "confidence": 0.8717948717948718,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 561416,
+    "pg_end": 563134,
+    "scan_page": 389,
+    "scan_image_path": "cache/1150_pages/page_0425.png",
+    "confidence": 0.7385103011093502,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 563170,
+    "pg_end": 564792,
+    "scan_page": 390,
+    "scan_image_path": "cache/1150_pages/page_0426.png",
+    "confidence": 0.6796747967479675,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 564792,
+    "pg_end": 566206,
+    "scan_page": 391,
+    "scan_image_path": "cache/1150_pages/page_0427.png",
+    "confidence": 0.7247386759581882,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 566206,
+    "pg_end": 567606,
+    "scan_page": 392,
+    "scan_image_path": "cache/1150_pages/page_0428.png",
+    "confidence": 0.8645640074211502,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 567727,
+    "pg_end": 569416,
+    "scan_page": 393,
+    "scan_image_path": "cache/1150_pages/page_0429.png",
+    "confidence": 0.8534201954397395,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 569416,
+    "pg_end": 571003,
+    "scan_page": 394,
+    "scan_image_path": "cache/1150_pages/page_0430.png",
+    "confidence": 0.8444444444444444,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 571003,
+    "pg_end": 572502,
+    "scan_page": 395,
+    "scan_image_path": "cache/1150_pages/page_0431.png",
+    "confidence": 0.9113043478260869,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 572502,
+    "pg_end": 574037,
+    "scan_page": 396,
+    "scan_image_path": "cache/1150_pages/page_0432.png",
+    "confidence": 0.9577464788732394,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 574076,
+    "pg_end": 575588,
+    "scan_page": 397,
+    "scan_image_path": "cache/1150_pages/page_0433.png",
+    "confidence": 0.9435897435897436,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 575730,
+    "pg_end": 577010,
+    "scan_page": 398,
+    "scan_image_path": "cache/1150_pages/page_0434.png",
+    "confidence": 0.8667917448405253,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 577010,
+    "pg_end": 578399,
+    "scan_page": 399,
+    "scan_image_path": "cache/1150_pages/page_0435.png",
+    "confidence": 0.6887661141804788,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 578399,
+    "pg_end": 580008,
+    "scan_page": 400,
+    "scan_image_path": "cache/1150_pages/page_0436.png",
+    "confidence": 0.656084656084656,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 580012,
+    "pg_end": 581745,
+    "scan_page": 401,
+    "scan_image_path": "cache/1150_pages/page_0437.png",
+    "confidence": 0.7006578947368421,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 582659,
+    "pg_end": 584259,
+    "scan_page": 403,
+    "scan_image_path": "cache/1150_pages/page_0440.png",
+    "confidence": 0.6802030456852792,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 584279,
+    "pg_end": 585762,
+    "scan_page": 404,
+    "scan_image_path": "cache/1150_pages/page_0441.png",
+    "confidence": 0.7050610820244329,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 585823,
+    "pg_end": 587336,
+    "scan_page": 405,
+    "scan_image_path": "cache/1150_pages/page_0442.png",
+    "confidence": 0.7580071174377224,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 587392,
+    "pg_end": 588699,
+    "scan_page": 406,
+    "scan_image_path": "cache/1150_pages/page_0443.png",
+    "confidence": 0.8677839851024208,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 588887,
+    "pg_end": 590529,
+    "scan_page": 407,
+    "scan_image_path": "cache/1150_pages/page_0444.png",
+    "confidence": 0.8556701030927835,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 590529,
+    "pg_end": 592128,
+    "scan_page": 408,
+    "scan_image_path": "cache/1150_pages/page_0445.png",
+    "confidence": 0.8388157894736842,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 592128,
+    "pg_end": 593739,
+    "scan_page": 409,
+    "scan_image_path": "cache/1150_pages/page_0446.png",
+    "confidence": 0.8263888888888888,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 593776,
+    "pg_end": 595152,
+    "scan_page": 410,
+    "scan_image_path": "cache/1150_pages/page_0447.png",
+    "confidence": 0.8540925266903915,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 595152,
+    "pg_end": 596478,
+    "scan_page": 411,
+    "scan_image_path": "cache/1150_pages/page_0448.png",
+    "confidence": 0.8571428571428571,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 596656,
+    "pg_end": 597896,
+    "scan_page": 412,
+    "scan_image_path": "cache/1150_pages/page_0449.png",
+    "confidence": 0.8142292490118577,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 598037,
+    "pg_end": 599293,
+    "scan_page": 413,
+    "scan_image_path": "cache/1150_pages/page_0450.png",
+    "confidence": 0.698292220113852,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 599313,
+    "pg_end": 600847,
+    "scan_page": 414,
+    "scan_image_path": "cache/1150_pages/page_0451.png",
+    "confidence": 0.5912162162162162,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 600998,
+    "pg_end": 602702,
+    "scan_page": 415,
+    "scan_image_path": "cache/1150_pages/page_0452.png",
+    "confidence": 0.6564102564102564,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 602993,
+    "pg_end": 604569,
+    "scan_page": 416,
+    "scan_image_path": "cache/1150_pages/page_0453.png",
+    "confidence": 0.8240887480190174,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 604833,
+    "pg_end": 606140,
+    "scan_page": 417,
+    "scan_image_path": "cache/1150_pages/page_0454.png",
+    "confidence": 0.84,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 606149,
+    "pg_end": 607580,
+    "scan_page": 418,
+    "scan_image_path": "cache/1150_pages/page_0455.png",
+    "confidence": 0.6544117647058824,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 607580,
+    "pg_end": 609133,
+    "scan_page": 419,
+    "scan_image_path": "cache/1150_pages/page_0456.png",
+    "confidence": 0.6144,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 609133,
+    "pg_end": 610693,
+    "scan_page": 420,
+    "scan_image_path": "cache/1150_pages/page_0457.png",
+    "confidence": 0.5463917525773195,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 610693,
+    "pg_end": 612314,
+    "scan_page": 421,
+    "scan_image_path": "cache/1150_pages/page_0458.png",
+    "confidence": 0.535593220338983,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 613062,
+    "pg_end": 613528,
+    "scan_page": 422,
+    "scan_image_path": "cache/1150_pages/page_0459.png",
+    "confidence": 0.8323699421965318,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 614013,
+    "pg_end": 615605,
+    "scan_page": 423,
+    "scan_image_path": "cache/1150_pages/page_0460.png",
+    "confidence": 0.571917808219178,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 615618,
+    "pg_end": 617310,
+    "scan_page": 424,
+    "scan_image_path": "cache/1150_pages/page_0461.png",
+    "confidence": 0.5685279187817259,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 617310,
+    "pg_end": 618961,
+    "scan_page": 425,
+    "scan_image_path": "cache/1150_pages/page_0462.png",
+    "confidence": 0.6151260504201681,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 618961,
+    "pg_end": 620628,
+    "scan_page": 426,
+    "scan_image_path": "cache/1150_pages/page_0463.png",
+    "confidence": 0.6420168067226891,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 620702,
+    "pg_end": 622239,
+    "scan_page": 427,
+    "scan_image_path": "cache/1150_pages/page_0464.png",
+    "confidence": 0.657762938230384,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 622239,
+    "pg_end": 623792,
+    "scan_page": 428,
+    "scan_image_path": "cache/1150_pages/page_0465.png",
+    "confidence": 0.6028368794326241,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 623792,
+    "pg_end": 625374,
+    "scan_page": 429,
+    "scan_image_path": "cache/1150_pages/page_0466.png",
+    "confidence": 0.6228373702422145,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 625464,
+    "pg_end": 626956,
+    "scan_page": 430,
+    "scan_image_path": "cache/1150_pages/page_0467.png",
+    "confidence": 0.6927175843694494,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 627011,
+    "pg_end": 628539,
+    "scan_page": 431,
+    "scan_image_path": "cache/1150_pages/page_0468.png",
+    "confidence": 0.7873462214411248,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 628575,
+    "pg_end": 630186,
+    "scan_page": 432,
+    "scan_image_path": "cache/1150_pages/page_0469.png",
+    "confidence": 0.8659420289855072,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 630291,
+    "pg_end": 631704,
+    "scan_page": 433,
+    "scan_image_path": "cache/1150_pages/page_0470.png",
+    "confidence": 0.9622266401590457,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 631834,
+    "pg_end": 633352,
+    "scan_page": 434,
+    "scan_image_path": "cache/1150_pages/page_0471.png",
+    "confidence": 0.8505338078291815,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 633352,
+    "pg_end": 634854,
+    "scan_page": 435,
+    "scan_image_path": "cache/1150_pages/page_0472.png",
+    "confidence": 0.8089887640449438,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 634896,
+    "pg_end": 636412,
+    "scan_page": 436,
+    "scan_image_path": "cache/1150_pages/page_0473.png",
+    "confidence": 0.738404452690167,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 636476,
+    "pg_end": 638086,
+    "scan_page": 437,
+    "scan_image_path": "cache/1150_pages/page_0474.png",
+    "confidence": 0.717607973421927,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 638086,
+    "pg_end": 639617,
+    "scan_page": 438,
+    "scan_image_path": "cache/1150_pages/page_0475.png",
+    "confidence": 0.7228070175438597,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 639617,
+    "pg_end": 641028,
+    "scan_page": 439,
+    "scan_image_path": "cache/1150_pages/page_0476.png",
+    "confidence": 0.738404452690167,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 641028,
+    "pg_end": 642399,
+    "scan_page": 440,
+    "scan_image_path": "cache/1150_pages/page_0478.png",
+    "confidence": 0.9635627530364372,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 642408,
+    "pg_end": 643879,
+    "scan_page": 441,
+    "scan_image_path": "cache/1150_pages/page_0479.png",
+    "confidence": 0.9452554744525548,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 643879,
+    "pg_end": 645333,
+    "scan_page": 442,
+    "scan_image_path": "cache/1150_pages/page_0480.png",
+    "confidence": 0.8686514886164624,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 645397,
+    "pg_end": 646651,
+    "scan_page": 443,
+    "scan_image_path": "cache/1150_pages/page_0481.png",
+    "confidence": 0.7729831144465291,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 646651,
+    "pg_end": 648113,
+    "scan_page": 444,
+    "scan_image_path": "cache/1150_pages/page_0482.png",
+    "confidence": 0.6304347826086957,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 648157,
+    "pg_end": 649852,
+    "scan_page": 445,
+    "scan_image_path": "cache/1150_pages/page_0483.png",
+    "confidence": 0.6796747967479675,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 649852,
+    "pg_end": 651468,
+    "scan_page": 446,
+    "scan_image_path": "cache/1150_pages/page_0484.png",
+    "confidence": 0.6542372881355932,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 651468,
+    "pg_end": 653137,
+    "scan_page": 447,
+    "scan_image_path": "cache/1150_pages/page_0485.png",
+    "confidence": 0.6815286624203821,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 653196,
+    "pg_end": 654865,
+    "scan_page": 448,
+    "scan_image_path": "cache/1150_pages/page_0486.png",
+    "confidence": 0.7377326565143824,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 655159,
+    "pg_end": 656775,
+    "scan_page": 449,
+    "scan_image_path": "cache/1150_pages/page_0487.png",
+    "confidence": 0.9550173010380623,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 656809,
+    "pg_end": 658147,
+    "scan_page": 450,
+    "scan_image_path": "cache/1150_pages/page_0488.png",
+    "confidence": 0.88,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 658147,
+    "pg_end": 659543,
+    "scan_page": 451,
+    "scan_image_path": "cache/1150_pages/page_0489.png",
+    "confidence": 0.725897920604915,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 659591,
+    "pg_end": 661091,
+    "scan_page": 452,
+    "scan_image_path": "cache/1150_pages/page_0490.png",
+    "confidence": 0.692967409948542,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 661128,
+    "pg_end": 662769,
+    "scan_page": 453,
+    "scan_image_path": "cache/1150_pages/page_0491.png",
+    "confidence": 0.6677966101694915,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 663362,
+    "pg_end": 665009,
+    "scan_page": 454,
+    "scan_image_path": "cache/1150_pages/page_0492.png",
+    "confidence": 0.9168081494057725,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 665009,
+    "pg_end": 666496,
+    "scan_page": 455,
+    "scan_image_path": "cache/1150_pages/page_0493.png",
+    "confidence": 0.9486301369863014,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 666496,
+    "pg_end": 667934,
+    "scan_page": 456,
+    "scan_image_path": "cache/1150_pages/page_0494.png",
+    "confidence": 0.9792843691148776,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 668118,
+    "pg_end": 669635,
+    "scan_page": 457,
+    "scan_image_path": "cache/1150_pages/page_0495.png",
+    "confidence": 0.8833333333333333,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 669792,
+    "pg_end": 671385,
+    "scan_page": 458,
+    "scan_image_path": "cache/1150_pages/page_0496.png",
+    "confidence": 0.8350515463917526,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 671385,
+    "pg_end": 672873,
+    "scan_page": 459,
+    "scan_image_path": "cache/1150_pages/page_0497.png",
+    "confidence": 0.8941176470588236,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 672873,
+    "pg_end": 674218,
+    "scan_page": 460,
+    "scan_image_path": "cache/1150_pages/page_0498.png",
+    "confidence": 0.9048473967684022,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 674218,
+    "pg_end": 675595,
+    "scan_page": 461,
+    "scan_image_path": "cache/1150_pages/page_0499.png",
+    "confidence": 0.7553956834532374,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 675627,
+    "pg_end": 677076,
+    "scan_page": 462,
+    "scan_image_path": "cache/1150_pages/page_0500.png",
+    "confidence": 0.6459854014598541,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 677076,
+    "pg_end": 678635,
+    "scan_page": 463,
+    "scan_image_path": "cache/1150_pages/page_0501.png",
+    "confidence": 0.5783132530120482,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 678937,
+    "pg_end": 680444,
+    "scan_page": 464,
+    "scan_image_path": "cache/1150_pages/page_0502.png",
+    "confidence": 0.7563352826510721,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 680622,
+    "pg_end": 682023,
+    "scan_page": 465,
+    "scan_image_path": "cache/1150_pages/page_0503.png",
+    "confidence": 0.8666666666666667,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 682023,
+    "pg_end": 683448,
+    "scan_page": 466,
+    "scan_image_path": "cache/1150_pages/page_0504.png",
+    "confidence": 0.8120567375886525,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 683448,
+    "pg_end": 684997,
+    "scan_page": 467,
+    "scan_image_path": "cache/1150_pages/page_0505.png",
+    "confidence": 0.7789473684210526,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 685072,
+    "pg_end": 686685,
+    "scan_page": 468,
+    "scan_image_path": "cache/1150_pages/page_0506.png",
+    "confidence": 0.8520325203252033,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 686698,
+    "pg_end": 688275,
+    "scan_page": 469,
+    "scan_image_path": "cache/1150_pages/page_0507.png",
+    "confidence": 0.9074733096085409,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 688448,
+    "pg_end": 690136,
+    "scan_page": 470,
+    "scan_image_path": "cache/1150_pages/page_0508.png",
+    "confidence": 0.9072847682119205,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 690465,
+    "pg_end": 691991,
+    "scan_page": 471,
+    "scan_image_path": "cache/1150_pages/page_0509.png",
+    "confidence": 0.6583629893238434,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 692021,
+    "pg_end": 693468,
+    "scan_page": 472,
+    "scan_image_path": "cache/1150_pages/page_0510.png",
+    "confidence": 0.6487455197132617,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 693614,
+    "pg_end": 695146,
+    "scan_page": 473,
+    "scan_image_path": "cache/1150_pages/page_0511.png",
+    "confidence": 0.66553480475382,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 695184,
+    "pg_end": 696433,
+    "scan_page": 474,
+    "scan_image_path": "cache/1150_pages/page_0512.png",
+    "confidence": 0.7471698113207547,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 696630,
+    "pg_end": 698235,
+    "scan_page": 475,
+    "scan_image_path": "cache/1150_pages/page_0513.png",
+    "confidence": 0.7411347517730497,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 698235,
+    "pg_end": 699780,
+    "scan_page": 476,
+    "scan_image_path": "cache/1150_pages/page_0514.png",
+    "confidence": 0.7379679144385026,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 699781,
+    "pg_end": 701303,
+    "scan_page": 477,
+    "scan_image_path": "cache/1150_pages/page_0515.png",
+    "confidence": 0.8088737201365188,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 701368,
+    "pg_end": 702841,
+    "scan_page": 478,
+    "scan_image_path": "cache/1150_pages/page_0516.png",
+    "confidence": 0.8282097649186256,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 702919,
+    "pg_end": 704515,
+    "scan_page": 479,
+    "scan_image_path": "cache/1150_pages/page_0517.png",
+    "confidence": 0.8388214904679376,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 704667,
+    "pg_end": 705926,
+    "scan_page": 480,
+    "scan_image_path": "cache/1150_pages/page_0518.png",
+    "confidence": 0.8449612403100775,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 706252,
+    "pg_end": 707878,
+    "scan_page": 481,
+    "scan_image_path": "cache/1150_pages/page_0519.png",
+    "confidence": 0.7474747474747475,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 707895,
+    "pg_end": 709428,
+    "scan_page": 482,
+    "scan_image_path": "cache/1150_pages/page_0520.png",
+    "confidence": 0.7668393782383419,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 709546,
+    "pg_end": 711276,
+    "scan_page": 483,
+    "scan_image_path": "cache/1150_pages/page_0521.png",
+    "confidence": 0.7423312883435583,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 711276,
+    "pg_end": 712771,
+    "scan_page": 484,
+    "scan_image_path": "cache/1150_pages/page_0522.png",
+    "confidence": 0.7225130890052356,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 712802,
+    "pg_end": 714026,
+    "scan_page": 485,
+    "scan_image_path": "cache/1150_pages/page_0523.png",
+    "confidence": 0.8416988416988417,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 714228,
+    "pg_end": 715768,
+    "scan_page": 486,
+    "scan_image_path": "cache/1150_pages/page_0524.png",
+    "confidence": 0.8756567425569177,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 715768,
+    "pg_end": 717240,
+    "scan_page": 487,
+    "scan_image_path": "cache/1150_pages/page_0525.png",
+    "confidence": 0.9430604982206405,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 717264,
+    "pg_end": 718767,
+    "scan_page": 488,
+    "scan_image_path": "cache/1150_pages/page_0526.png",
+    "confidence": 0.9450171821305842,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 718767,
+    "pg_end": 720328,
+    "scan_page": 489,
+    "scan_image_path": "cache/1150_pages/page_0527.png",
+    "confidence": 0.9064516129032258,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 720439,
+    "pg_end": 721833,
+    "scan_page": 490,
+    "scan_image_path": "cache/1150_pages/page_0528.png",
+    "confidence": 0.8812260536398467,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 721833,
+    "pg_end": 723236,
+    "scan_page": 491,
+    "scan_image_path": "cache/1150_pages/page_0529.png",
+    "confidence": 0.7527272727272727,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 723236,
+    "pg_end": 724831,
+    "scan_page": 492,
+    "scan_image_path": "cache/1150_pages/page_0530.png",
+    "confidence": 0.6923076923076923,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 725194,
+    "pg_end": 726464,
+    "scan_page": 493,
+    "scan_image_path": "cache/1150_pages/page_0531.png",
+    "confidence": 0.7703435804701627,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 726464,
+    "pg_end": 727840,
+    "scan_page": 494,
+    "scan_image_path": "cache/1150_pages/page_0532.png",
+    "confidence": 0.5895953757225434,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 728266,
+    "pg_end": 729962,
+    "scan_page": 495,
+    "scan_image_path": "cache/1150_pages/page_0533.png",
+    "confidence": 0.9273021001615509,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 730055,
+    "pg_end": 731521,
+    "scan_page": 496,
+    "scan_image_path": "cache/1150_pages/page_0534.png",
+    "confidence": 0.9342560553633218,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 731521,
+    "pg_end": 733075,
+    "scan_page": 497,
+    "scan_image_path": "cache/1150_pages/page_0535.png",
+    "confidence": 0.8576158940397351,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 733153,
+    "pg_end": 734675,
+    "scan_page": 498,
+    "scan_image_path": "cache/1150_pages/page_0536.png",
+    "confidence": 0.831973898858075,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 734780,
+    "pg_end": 736229,
+    "scan_page": 499,
+    "scan_image_path": "cache/1150_pages/page_0537.png",
+    "confidence": 0.8036363636363636,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 736400,
+    "pg_end": 737664,
+    "scan_page": 500,
+    "scan_image_path": "cache/1150_pages/page_0538.png",
+    "confidence": 0.8090349075975359,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 737664,
+    "pg_end": 739011,
+    "scan_page": 502,
+    "scan_image_path": "cache/1150_pages/page_0540.png",
+    "confidence": 0.6983471074380165,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 739011,
+    "pg_end": 740594,
+    "scan_page": 503,
+    "scan_image_path": "cache/1150_pages/page_0541.png",
+    "confidence": 0.7869415807560137,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 741006,
+    "pg_end": 741898,
+    "scan_page": 504,
+    "scan_image_path": "cache/1150_pages/page_0542.png",
+    "confidence": 0.9146757679180887,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 742289,
+    "pg_end": 743495,
+    "scan_page": 505,
+    "scan_image_path": "cache/1150_pages/page_0543.png",
+    "confidence": 0.6581196581196581,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 743540,
+    "pg_end": 744989,
+    "scan_page": 506,
+    "scan_image_path": "cache/1150_pages/page_0544.png",
+    "confidence": 0.5770750988142292,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 745773,
+    "pg_end": 747320,
+    "scan_page": 507,
+    "scan_image_path": "cache/1150_pages/page_0545.png",
+    "confidence": 0.9087719298245615,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 747320,
+    "pg_end": 748747,
+    "scan_page": 508,
+    "scan_image_path": "cache/1150_pages/page_0546.png",
+    "confidence": 0.9289617486338798,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 748999,
+    "pg_end": 749931,
+    "scan_page": 509,
+    "scan_image_path": "cache/1150_pages/page_0547.png",
+    "confidence": 0.7402985074626866,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 750941,
+    "pg_end": 752429,
+    "scan_page": 511,
+    "scan_image_path": "cache/1150_pages/page_0550.png",
+    "confidence": 0.6747826086956522,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 752452,
+    "pg_end": 753669,
+    "scan_page": 512,
+    "scan_image_path": "cache/1150_pages/page_0551.png",
+    "confidence": 0.78,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 753702,
+    "pg_end": 755128,
+    "scan_page": 513,
+    "scan_image_path": "cache/1150_pages/page_0552.png",
+    "confidence": 0.9047619047619048,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 755148,
+    "pg_end": 756609,
+    "scan_page": 514,
+    "scan_image_path": "cache/1150_pages/page_0553.png",
+    "confidence": 0.9136212624584718,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 756609,
+    "pg_end": 758053,
+    "scan_page": 515,
+    "scan_image_path": "cache/1150_pages/page_0554.png",
+    "confidence": 0.8049645390070922,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 758053,
+    "pg_end": 759512,
+    "scan_page": 516,
+    "scan_image_path": "cache/1150_pages/page_0555.png",
+    "confidence": 0.7097902097902098,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 759770,
+    "pg_end": 760681,
+    "scan_page": 517,
+    "scan_image_path": "cache/1150_pages/page_0556.png",
+    "confidence": 0.7521865889212828,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 761436,
+    "pg_end": 762892,
+    "scan_page": 518,
+    "scan_image_path": "cache/1150_pages/page_0557.png",
+    "confidence": 0.8452173913043478,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 763412,
+    "pg_end": 764170,
+    "scan_page": 519,
+    "scan_image_path": "cache/1150_pages/page_0558.png",
+    "confidence": 0.5846153846153846,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 764509,
+    "pg_end": 765946,
+    "scan_page": 520,
+    "scan_image_path": "cache/1150_pages/page_0559.png",
+    "confidence": 0.7781818181818182,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 765946,
+    "pg_end": 767474,
+    "scan_page": 521,
+    "scan_image_path": "cache/1150_pages/page_0560.png",
+    "confidence": 0.7263843648208469,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 767474,
+    "pg_end": 769173,
+    "scan_page": 522,
+    "scan_image_path": "cache/1150_pages/page_0561.png",
+    "confidence": 0.6963434022257552,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 769453,
+    "pg_end": 770993,
+    "scan_page": 523,
+    "scan_image_path": "cache/1150_pages/page_0562.png",
+    "confidence": 0.8281505728314239,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 771006,
+    "pg_end": 772616,
+    "scan_page": 524,
+    "scan_image_path": "cache/1150_pages/page_0563.png",
+    "confidence": 0.7642276422764228,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 772898,
+    "pg_end": 773990,
+    "scan_page": 525,
+    "scan_image_path": "cache/1150_pages/page_0564.png",
+    "confidence": 0.8779342723004695,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 774601,
+    "pg_end": 776085,
+    "scan_page": 526,
+    "scan_image_path": "cache/1150_pages/page_0565.png",
+    "confidence": 0.9259259259259259,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 776134,
+    "pg_end": 777754,
+    "scan_page": 527,
+    "scan_image_path": "cache/1150_pages/page_0566.png",
+    "confidence": 0.9385113268608414,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 777754,
+    "pg_end": 779429,
+    "scan_page": 528,
+    "scan_image_path": "cache/1150_pages/page_0567.png",
+    "confidence": 0.9789983844911146,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 779587,
+    "pg_end": 781087,
+    "scan_page": 529,
+    "scan_image_path": "cache/1150_pages/page_0568.png",
+    "confidence": 0.8934707903780069,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 781087,
+    "pg_end": 782474,
+    "scan_page": 530,
+    "scan_image_path": "cache/1150_pages/page_0569.png",
+    "confidence": 0.9047619047619048,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 782600,
+    "pg_end": 783862,
+    "scan_page": 531,
+    "scan_image_path": "cache/1150_pages/page_0570.png",
+    "confidence": 0.8641509433962264,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 783862,
+    "pg_end": 785332,
+    "scan_page": 532,
+    "scan_image_path": "cache/1150_pages/page_0571.png",
+    "confidence": 0.6816608996539792,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 785450,
+    "pg_end": 786913,
+    "scan_page": 533,
+    "scan_image_path": "cache/1150_pages/page_0572.png",
+    "confidence": 0.6666666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 786964,
+    "pg_end": 788568,
+    "scan_page": 534,
+    "scan_image_path": "cache/1150_pages/page_0573.png",
+    "confidence": 0.6768707482993197,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 788656,
+    "pg_end": 790121,
+    "scan_page": 535,
+    "scan_image_path": "cache/1150_pages/page_0574.png",
+    "confidence": 0.6385321100917432,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 790144,
+    "pg_end": 791778,
+    "scan_page": 536,
+    "scan_image_path": "cache/1150_pages/page_0575.png",
+    "confidence": 0.6296296296296297,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 791984,
+    "pg_end": 793502,
+    "scan_page": 537,
+    "scan_image_path": "cache/1150_pages/page_0576.png",
+    "confidence": 0.7,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 793572,
+    "pg_end": 795221,
+    "scan_page": 538,
+    "scan_image_path": "cache/1150_pages/page_0577.png",
+    "confidence": 0.7248322147651006,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 795221,
+    "pg_end": 796844,
+    "scan_page": 539,
+    "scan_image_path": "cache/1150_pages/page_0578.png",
+    "confidence": 0.7384105960264901,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 796844,
+    "pg_end": 798505,
+    "scan_page": 540,
+    "scan_image_path": "cache/1150_pages/page_0579.png",
+    "confidence": 0.7604166666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 798515,
+    "pg_end": 800214,
+    "scan_page": 541,
+    "scan_image_path": "cache/1150_pages/page_0580.png",
+    "confidence": 0.8244766505636071,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 800419,
+    "pg_end": 801908,
+    "scan_page": 542,
+    "scan_image_path": "cache/1150_pages/page_0581.png",
+    "confidence": 0.9281961471103327,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 802049,
+    "pg_end": 803823,
+    "scan_page": 543,
+    "scan_image_path": "cache/1150_pages/page_0582.png",
+    "confidence": 0.9587301587301588,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 803911,
+    "pg_end": 805610,
+    "scan_page": 544,
+    "scan_image_path": "cache/1150_pages/page_0583.png",
+    "confidence": 0.8501628664495114,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 805610,
+    "pg_end": 807302,
+    "scan_page": 545,
+    "scan_image_path": "cache/1150_pages/page_0584.png",
+    "confidence": 0.8155038759689922,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 807302,
+    "pg_end": 808657,
+    "scan_page": 546,
+    "scan_image_path": "cache/1150_pages/page_0585.png",
+    "confidence": 0.8824593128390597,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 808818,
+    "pg_end": 809512,
+    "scan_page": 547,
+    "scan_image_path": "cache/1150_pages/page_0586.png",
+    "confidence": 0.728744939271255,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 810152,
+    "pg_end": 811643,
+    "scan_page": 548,
+    "scan_image_path": "cache/1150_pages/page_0587.png",
+    "confidence": 0.8576388888888888,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 811681,
+    "pg_end": 813180,
+    "scan_page": 549,
+    "scan_image_path": "cache/1150_pages/page_0588.png",
+    "confidence": 0.8042704626334519,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 813246,
+    "pg_end": 814627,
+    "scan_page": 550,
+    "scan_image_path": "cache/1150_pages/page_0589.png",
+    "confidence": 0.7886178861788617,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 814627,
+    "pg_end": 816171,
+    "scan_page": 551,
+    "scan_image_path": "cache/1150_pages/page_0590.png",
+    "confidence": 0.6217616580310881,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 816480,
+    "pg_end": 817906,
+    "scan_page": 552,
+    "scan_image_path": "cache/1150_pages/page_0591.png",
+    "confidence": 0.7063339731285988,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 817906,
+    "pg_end": 819482,
+    "scan_page": 553,
+    "scan_image_path": "cache/1150_pages/page_0592.png",
+    "confidence": 0.6654676258992805,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 819645,
+    "pg_end": 821330,
+    "scan_page": 554,
+    "scan_image_path": "cache/1150_pages/page_0593.png",
+    "confidence": 0.7744227353463587,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 821375,
+    "pg_end": 823098,
+    "scan_page": 555,
+    "scan_image_path": "cache/1150_pages/page_0594.png",
+    "confidence": 0.8504983388704319,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 823274,
+    "pg_end": 824777,
+    "scan_page": 556,
+    "scan_image_path": "cache/1150_pages/page_0595.png",
+    "confidence": 0.9225352112676056,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 825141,
+    "pg_end": 826898,
+    "scan_page": 557,
+    "scan_image_path": "cache/1150_pages/page_0596.png",
+    "confidence": 0.8057784911717496,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 827011,
+    "pg_end": 828657,
+    "scan_page": 558,
+    "scan_image_path": "cache/1150_pages/page_0597.png",
+    "confidence": 0.6803418803418804,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 828657,
+    "pg_end": 830291,
+    "scan_page": 559,
+    "scan_image_path": "cache/1150_pages/page_0598.png",
+    "confidence": 0.6620689655172414,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 830291,
+    "pg_end": 831955,
+    "scan_page": 560,
+    "scan_image_path": "cache/1150_pages/page_0599.png",
+    "confidence": 0.6699186991869919,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 831955,
+    "pg_end": 833625,
+    "scan_page": 561,
+    "scan_image_path": "cache/1150_pages/page_0600.png",
+    "confidence": 0.6371100164203612,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 833625,
+    "pg_end": 835204,
+    "scan_page": 562,
+    "scan_image_path": "cache/1150_pages/page_0601.png",
+    "confidence": 0.6339754816112084,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 835204,
+    "pg_end": 836684,
+    "scan_page": 563,
+    "scan_image_path": "cache/1150_pages/page_0602.png",
+    "confidence": 0.6771929824561403,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 836684,
+    "pg_end": 838171,
+    "scan_page": 564,
+    "scan_image_path": "cache/1150_pages/page_0603.png",
+    "confidence": 0.7443478260869565,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 838243,
+    "pg_end": 839790,
+    "scan_page": 565,
+    "scan_image_path": "cache/1150_pages/page_0604.png",
+    "confidence": 0.7564766839378239,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 839790,
+    "pg_end": 841036,
+    "scan_page": 566,
+    "scan_image_path": "cache/1150_pages/page_0605.png",
+    "confidence": 0.8217054263565892,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 841036,
+    "pg_end": 842317,
+    "scan_page": 567,
+    "scan_image_path": "cache/1150_pages/page_0606.png",
+    "confidence": 0.8378378378378378,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 842317,
+    "pg_end": 843964,
+    "scan_page": 568,
+    "scan_image_path": "cache/1150_pages/page_0607.png",
+    "confidence": 0.7819063004846527,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 845177,
+    "pg_end": 846323,
+    "scan_page": 570,
+    "scan_image_path": "cache/1150_pages/page_0610.png",
+    "confidence": 0.7505827505827506,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 846323,
+    "pg_end": 847331,
+    "scan_page": 571,
+    "scan_image_path": "cache/1150_pages/page_0611.png",
+    "confidence": 0.7234927234927235,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 847331,
+    "pg_end": 848696,
+    "scan_page": 572,
+    "scan_image_path": "cache/1150_pages/page_0612.png",
+    "confidence": 0.6546762589928058,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 849183,
+    "pg_end": 850404,
+    "scan_page": 573,
+    "scan_image_path": "cache/1150_pages/page_0613.png",
+    "confidence": 0.7707509881422925,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 850446,
+    "pg_end": 851828,
+    "scan_page": 574,
+    "scan_image_path": "cache/1150_pages/page_0614.png",
+    "confidence": 0.6476190476190476,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 851828,
+    "pg_end": 853408,
+    "scan_page": 575,
+    "scan_image_path": "cache/1150_pages/page_0615.png",
+    "confidence": 0.6091549295774648,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 853430,
+    "pg_end": 855117,
+    "scan_page": 576,
+    "scan_image_path": "cache/1150_pages/page_0616.png",
+    "confidence": 0.6449399656946827,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 855217,
+    "pg_end": 856703,
+    "scan_page": 577,
+    "scan_image_path": "cache/1150_pages/page_0617.png",
+    "confidence": 0.7092198581560284,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 856703,
+    "pg_end": 858312,
+    "scan_page": 578,
+    "scan_image_path": "cache/1150_pages/page_0618.png",
+    "confidence": 0.6512396694214876,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 860125,
+    "pg_end": 861165,
+    "scan_page": 579,
+    "scan_image_path": "cache/1150_pages/page_0619.png",
+    "confidence": 0.4946695095948827,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 861188,
+    "pg_end": 862228,
+    "scan_page": 580,
+    "scan_image_path": "cache/1150_pages/page_0620.png",
+    "confidence": 0.6765327695560254,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 862723,
+    "pg_end": 864325,
+    "scan_page": 581,
+    "scan_image_path": "cache/1150_pages/page_0621.png",
+    "confidence": 0.6103448275862069,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 864327,
+    "pg_end": 865765,
+    "scan_page": 582,
+    "scan_image_path": "cache/1150_pages/page_0622.png",
+    "confidence": 0.6583184257602862,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 865816,
+    "pg_end": 867087,
+    "scan_page": 583,
+    "scan_image_path": "cache/1150_pages/page_0623.png",
+    "confidence": 0.7881040892193308,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 867205,
+    "pg_end": 868643,
+    "scan_page": 584,
+    "scan_image_path": "cache/1150_pages/page_0624.png",
+    "confidence": 0.8936936936936937,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 868643,
+    "pg_end": 870183,
+    "scan_page": 585,
+    "scan_image_path": "cache/1150_pages/page_0625.png",
+    "confidence": 0.9466437177280551,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 870761,
+    "pg_end": 872175,
+    "scan_page": 587,
+    "scan_image_path": "cache/1150_pages/page_0628.png",
+    "confidence": 0.6666666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 872175,
+    "pg_end": 873326,
+    "scan_page": 588,
+    "scan_image_path": "cache/1150_pages/page_0629.png",
+    "confidence": 0.827037773359841,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 873326,
+    "pg_end": 874703,
+    "scan_page": 589,
+    "scan_image_path": "cache/1150_pages/page_0630.png",
+    "confidence": 0.8597785977859779,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 874703,
+    "pg_end": 876320,
+    "scan_page": 590,
+    "scan_image_path": "cache/1150_pages/page_0631.png",
+    "confidence": 0.8370497427101201,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 876616,
+    "pg_end": 878213,
+    "scan_page": 591,
+    "scan_image_path": "cache/1150_pages/page_0632.png",
+    "confidence": 0.944078947368421,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 878213,
+    "pg_end": 879687,
+    "scan_page": 592,
+    "scan_image_path": "cache/1150_pages/page_0633.png",
+    "confidence": 0.9206349206349206,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 879687,
+    "pg_end": 881280,
+    "scan_page": 593,
+    "scan_image_path": "cache/1150_pages/page_0634.png",
+    "confidence": 0.971830985915493,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 881955,
+    "pg_end": 883607,
+    "scan_page": 594,
+    "scan_image_path": "cache/1150_pages/page_0635.png",
+    "confidence": 0.5923344947735192,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 883629,
+    "pg_end": 885143,
+    "scan_page": 595,
+    "scan_image_path": "cache/1150_pages/page_0636.png",
+    "confidence": 0.6262975778546713,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 885201,
+    "pg_end": 886771,
+    "scan_page": 596,
+    "scan_image_path": "cache/1150_pages/page_0637.png",
+    "confidence": 0.627318718381113,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 886771,
+    "pg_end": 888328,
+    "scan_page": 597,
+    "scan_image_path": "cache/1150_pages/page_0638.png",
+    "confidence": 0.6454849498327759,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 888328,
+    "pg_end": 889865,
+    "scan_page": 598,
+    "scan_image_path": "cache/1150_pages/page_0639.png",
+    "confidence": 0.6830122591943958,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 889870,
+    "pg_end": 891329,
+    "scan_page": 599,
+    "scan_image_path": "cache/1150_pages/page_0640.png",
+    "confidence": 0.7364620938628159,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 891396,
+    "pg_end": 892980,
+    "scan_page": 600,
+    "scan_image_path": "cache/1150_pages/page_0641.png",
+    "confidence": 0.7291666666666666,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 893005,
+    "pg_end": 894532,
+    "scan_page": 601,
+    "scan_image_path": "cache/1150_pages/page_0642.png",
+    "confidence": 0.7372013651877133,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 894588,
+    "pg_end": 896196,
+    "scan_page": 602,
+    "scan_image_path": "cache/1150_pages/page_0643.png",
+    "confidence": 0.7679465776293823,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 896229,
+    "pg_end": 897737,
+    "scan_page": 603,
+    "scan_image_path": "cache/1150_pages/page_0644.png",
+    "confidence": 0.7951388888888888,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 897857,
+    "pg_end": 899545,
+    "scan_page": 604,
+    "scan_image_path": "cache/1150_pages/page_0645.png",
+    "confidence": 0.7761674718196457,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 899545,
+    "pg_end": 901199,
+    "scan_page": 605,
+    "scan_image_path": "cache/1150_pages/page_0646.png",
+    "confidence": 0.7301587301587301,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 901243,
+    "pg_end": 902717,
+    "scan_page": 606,
+    "scan_image_path": "cache/1150_pages/page_0647.png",
+    "confidence": 0.7022058823529411,
+    "method": "llm_vision"
+  },
+  {
+    "pg_start": 902717,
+    "pg_end": 904030,
+    "scan_page": 607,
+    "scan_image_path": "cache/1150_pages/page_0648.png",
+    "confidence": 0.7903780068728522,
+    "method": "llm_vision"
+  }
+]

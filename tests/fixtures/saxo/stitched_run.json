@@ -1,0 +1,5161 @@
+{
+  "stats": {
+    "total": 643,
+    "pages_with_errors": 9,
+    "avg_per_page": 71.4,
+    "median_per_page": 62,
+    "max_per_page": 160,
+    "categories": {
+      "ocr_scanno": 279,
+      "missing_word": 10,
+      "wrong_word": 344,
+      "extra_word": 10
+    }
+  },
+  "candidates": [
+    {
+      "pg_text": "half-mythological",
+      "scan_text": "halfmythological",
+      "pg_offset": 1489,
+      "scan_page": 54,
+      "diff_description": "PG has 'half-mythological' where scan has 'halfmythological'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "name.",
+      "scan_text": "",
+      "pg_offset": 1833,
+      "scan_page": 54,
+      "diff_description": "Missing from scan: 'name.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "\"King's men\".",
+      "scan_text": "\u201cKing\u2019s men.\u201d",
+      "pg_offset": 1983,
+      "scan_page": 54,
+      "diff_description": "PG has '\"King's men\".' where scan has '\u201cKing\u2019s men.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "time\".",
+      "scan_text": "time.\u201d",
+      "pg_offset": 2071,
+      "scan_page": 54,
+      "diff_description": "PG has 'time\".' where scan has 'time.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"the Long\",",
+      "scan_text": "\u201cthe Long,\u201d",
+      "pg_offset": 2105,
+      "scan_page": 54,
+      "diff_description": "PG has '\"the Long\",' where scan has '\u201cthe Long,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Grammaticus\"",
+      "scan_text": "Grammaticus",
+      "pg_offset": 2123,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Grammaticus\"' where scan has 'Grammaticus'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"grammaticus\"),",
+      "scan_text": "(grammaticus),",
+      "pg_offset": 2142,
+      "scan_page": 54,
+      "diff_description": "PG has '(\"grammaticus\"),' where scan has '(grammaticus),'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "task\",",
+      "scan_text": "task,\u201d",
+      "pg_offset": 2257,
+      "scan_page": 54,
+      "diff_description": "PG has 'task\",' where scan has 'task,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "theory--which",
+      "scan_text": "theory\u2014which",
+      "pg_offset": 2295,
+      "scan_page": 54,
+      "diff_description": "PG has 'theory--which' where scan has 'theory\u2014which'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "evidence--that",
+      "scan_text": "evidence\u2014that",
+      "pg_offset": 2295,
+      "scan_page": 54,
+      "diff_description": "PG has 'evidence--that' where scan has 'evidence\u2014that'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "name--a",
+      "scan_text": "name\u2014a",
+      "pg_offset": 2480,
+      "scan_page": 54,
+      "diff_description": "PG has 'name--a' where scan has 'name\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "menial--who",
+      "scan_text": "menial\u2014who",
+      "pg_offset": 2480,
+      "scan_page": 54,
+      "diff_description": "PG has 'menial--who' where scan has 'menial\u2014who'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"contubernalis\".",
+      "scan_text": "contubernalis.",
+      "pg_offset": 2542,
+      "scan_page": 54,
+      "diff_description": "PG has '\"contubernalis\".' where scan has 'contubernalis.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"Contubernalis\"",
+      "scan_text": "(Contubernalis",
+      "pg_offset": 2579,
+      "scan_page": 54,
+      "diff_description": "PG has '(\"Contubernalis\"' where scan has '(Contubernalis'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Absalon's \"followers\" (\"comitum\"),",
+      "scan_text": "Absalon\u2019s \u201cfollowers\u201d (comitum),",
+      "pg_offset": 2597,
+      "scan_page": 54,
+      "diff_description": "PG has 'Absalon's \"followers\" (\"comitum\"),' where scan has 'Absalon\u2019s \u201cfollowers\u201d (comitum),'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"acolitus\",",
+      "scan_text": "acolitus,",
+      "pg_offset": 2617,
+      "scan_page": 54,
+      "diff_description": "PG has '\"acolitus\",' where scan has 'acolitus,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"acolitus\".",
+      "scan_text": "acolitus.",
+      "pg_offset": 2630,
+      "scan_page": 54,
+      "diff_description": "PG has '\"acolitus\".' where scan has 'acolitus.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Absalon's \"followers\",",
+      "scan_text": "Absalon\u2019s \u201cfollowers,\u201d",
+      "pg_offset": 2766,
+      "scan_page": 54,
+      "diff_description": "PG has 'Absalon's \"followers\",' where scan has 'Absalon\u2019s \u201cfollowers,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "task\",",
+      "scan_text": "task,\u201d",
+      "pg_offset": 2766,
+      "scan_page": 54,
+      "diff_description": "PG has 'task\",' where scan has 'task,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"had `determined'",
+      "scan_text": "\u201chad determined",
+      "pg_offset": 2868,
+      "scan_page": 54,
+      "diff_description": "PG has '\"had `determined'' where scan has '\u201chad determined'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "style\".",
+      "scan_text": "style.\u201d",
+      "pg_offset": 2890,
+      "scan_page": 54,
+      "diff_description": "PG has 'style\".' where scan has 'style.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"encompassed (`complexus')",
+      "scan_text": "\u201cencompassed (complexus)",
+      "pg_offset": 3016,
+      "scan_page": 54,
+      "diff_description": "PG has '\"encompassed (`complexus')' where scan has '\u201cencompassed (complexus)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"asserta\")",
+      "scan_text": "(asserta)",
+      "pg_offset": 3120,
+      "scan_page": 54,
+      "diff_description": "PG has '(\"asserta\")' where scan has '(asserta)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "polishing--which",
+      "scan_text": "polishing\u2014which",
+      "pg_offset": 3220,
+      "scan_page": 54,
+      "diff_description": "PG has 'polishing--which' where scan has 'polishing\u2014which'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "impossible--there",
+      "scan_text": "impossible\u2014there",
+      "pg_offset": 3220,
+      "scan_page": 54,
+      "diff_description": "PG has 'impossible--there' where scan has 'impossible\u2014there'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"plurima vocabula\")",
+      "scan_text": "(plurima vocabula)",
+      "pg_offset": 3478,
+      "scan_page": 54,
+      "diff_description": "PG has '(\"plurima vocabula\")' where scan has '(plurima vocabula)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"First Edition\"",
+      "scan_text": "First Edition",
+      "pg_offset": 3575,
+      "scan_page": 54,
+      "diff_description": "PG has '\"First Edition\"' where scan has 'First Edition'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "1511.",
+      "scan_text": "1514.",
+      "pg_offset": 3575,
+      "scan_page": 54,
+      "diff_description": "PG has '1511.' where scan has '1514.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "nostrum\".",
+      "scan_text": "nostrum.",
+      "pg_offset": 3636,
+      "scan_page": 54,
+      "diff_description": "PG has 'nostrum\".' where scan has 'nostrum.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Ascenshls,",
+      "scan_text": "Ascensius,",
+      "pg_offset": 3827,
+      "scan_page": 54,
+      "diff_description": "PG has 'Ascenshls,' where scan has 'Ascensius,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Basic",
+      "scan_text": "Basle",
+      "pg_offset": 3909,
+      "scan_page": 54,
+      "diff_description": "PG has 'Basic' where scan has 'Basle'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Frankfort-on-Main,",
+      "scan_text": "Frankfort-onMain,",
+      "pg_offset": 3909,
+      "scan_page": 54,
+      "diff_description": "PG has 'Frankfort-on-Main,' where scan has 'Frankfort-onMain,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"corculum Musarum\",",
+      "scan_text": "corculum Musarum,",
+      "pg_offset": 4061,
+      "scan_page": 54,
+      "diff_description": "PG has '\"corculum Musarum\",' where scan has 'corculum Musarum,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Muller,",
+      "scan_text": "M\u00fcller,",
+      "pg_offset": 4109,
+      "scan_page": 54,
+      "diff_description": "PG has 'Muller,' where scan has 'M\u00fcller,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Schousbolle,",
+      "scan_text": "Schousb\u00f6lle,",
+      "pg_offset": 4269,
+      "scan_page": 54,
+      "diff_description": "PG has 'Schousbolle,' where scan has 'Schousb\u00f6lle,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Schousbolle",
+      "scan_text": "Schousb\u00f6lle",
+      "pg_offset": 4296,
+      "scan_page": 54,
+      "diff_description": "PG has 'Schousbolle' where scan has 'Schousb\u00f6lle'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Stephenhis",
+      "scan_text": "Stephenius",
+      "pg_offset": 4432,
+      "scan_page": 54,
+      "diff_description": "PG has 'Stephenhis' where scan has 'Stephenius'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Angers Fragment.\" This",
+      "scan_text": "\u201cAngers FragThis",
+      "pg_offset": 4477,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Angers Fragment.\" This' where scan has '\u201cAngers FragThis'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Alencon.",
+      "scan_text": "Alen\u00e7on.",
+      "pg_offset": 4518,
+      "scan_page": 54,
+      "diff_description": "PG has 'Alencon.' where scan has 'Alen\u00e7on.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Vigfusson",
+      "scan_text": "Vigf\u00fasson",
+      "pg_offset": 4592,
+      "scan_page": 54,
+      "diff_description": "PG has 'Vigfusson' where scan has 'Vigf\u00fasson'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Holder's \"Apparatus Criticus\".",
+      "scan_text": "Holder\u2019s Apparatus Criticus.",
+      "pg_offset": 4785,
+      "scan_page": 54,
+      "diff_description": "PG has 'Holder's \"Apparatus Criticus\".' where scan has 'Holder\u2019s Apparatus Criticus.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Memorabilia\",",
+      "scan_text": "Memorabilia,",
+      "pg_offset": 5140,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Memorabilia\",' where scan has 'Memorabilia,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Mercurii\"",
+      "scan_text": "Mercurii.",
+      "pg_offset": 5217,
+      "scan_page": 54,
+      "diff_description": "PG has 'Mercurii\"' where scan has 'Mercurii.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "mediaeval",
+      "scan_text": "medi\u00e6val",
+      "pg_offset": 5231,
+      "scan_page": 54,
+      "diff_description": "PG has 'mediaeval' where scan has 'medi\u00e6val'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "images\";",
+      "scan_text": "images;\"",
+      "pg_offset": 5324,
+      "scan_page": 54,
+      "diff_description": "PG has 'images\";' where scan has 'images;\"'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "FOLK LORE",
+      "scan_text": "FOLK-LORE",
+      "pg_offset": 5385,
+      "scan_page": 54,
+      "diff_description": "PG has 'FOLK LORE' where scan has 'FOLK-LORE'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Poeticurn",
+      "scan_text": "Poeticum",
+      "pg_offset": 5517,
+      "scan_page": 54,
+      "diff_description": "PG has 'Poeticurn' where scan has 'Poeticum'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "King--As",
+      "scan_text": "King.\u2014As",
+      "pg_offset": 5523,
+      "scan_page": 54,
+      "diff_description": "PG has 'King--As' where scan has 'King.\u2014As'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\")",
+      "scan_text": "Beowulf\u2019s Lay)",
+      "pg_offset": 5534,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Beowulf's Lay\")' where scan has 'Beowulf\u2019s Lay)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "foregoer",
+      "scan_text": "fore-goer",
+      "pg_offset": 5572,
+      "scan_page": 54,
+      "diff_description": "PG has 'foregoer' where scan has 'fore-goer'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bolds",
+      "scan_text": "holds",
+      "pg_offset": 6136,
+      "scan_page": 54,
+      "diff_description": "PG has 'bolds' where scan has 'holds'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\").",
+      "scan_text": "Beowulf\u2019s Lay).",
+      "pg_offset": 6178,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Beowulf's Lay\").' where scan has 'Beowulf\u2019s Lay).'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Chronicle\", s.a.",
+      "scan_text": "Chronicle, s. a.",
+      "pg_offset": 6232,
+      "scan_page": 54,
+      "diff_description": "PG has 'Chronicle\", s.a.' where scan has 'Chronicle, s. a.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Eadwiceorla-kyning)",
+      "scan_text": "Eadwi ceorla-kyning)",
+      "pg_offset": 6232,
+      "scan_page": 54,
+      "diff_description": "PG has 'Eadwiceorla-kyning)' where scan has 'Eadwi ceorla-kyning)'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"counsellors\",",
+      "scan_text": "counsellors,",
+      "pg_offset": 6274,
+      "scan_page": 54,
+      "diff_description": "PG has '\"counsellors\",' where scan has 'counsellors,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"sapientes\"",
+      "scan_text": "sapientes",
+      "pg_offset": 6274,
+      "scan_page": 54,
+      "diff_description": "PG has '\"sapientes\"' where scan has 'sapientes'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Nibelungenlied\",",
+      "scan_text": "Nibelungenlied,",
+      "pg_offset": 6297,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Nibelungenlied\",' where scan has 'Nibelungenlied,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Hunferth",
+      "scan_text": "H\u00fanferth",
+      "pg_offset": 6319,
+      "scan_page": 54,
+      "diff_description": "PG has 'Hunferth' where scan has 'H\u00fanferth'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\".",
+      "scan_text": "Beowulf\u2019s Lay.",
+      "pg_offset": 6319,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Beowulf's Lay\".' where scan has 'Beowulf\u2019s Lay.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"moots\"",
+      "scan_text": "moots",
+      "pg_offset": 6319,
+      "scan_page": 54,
+      "diff_description": "PG has '\"moots\"' where scan has 'moots'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\")",
+      "scan_text": "Beowulf\u2019s Lay)",
+      "pg_offset": 6369,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Beowulf's Lay\")' where scan has 'Beowulf\u2019s Lay)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"hundreds\"",
+      "scan_text": "hundreds",
+      "pg_offset": 6436,
+      "scan_page": 54,
+      "diff_description": "PG has '\"hundreds\"' where scan has 'hundreds'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"hundred-elders\".",
+      "scan_text": "hundred-elders.",
+      "pg_offset": 6448,
+      "scan_page": 54,
+      "diff_description": "PG has '\"hundred-elders\".' where scan has 'hundred-elders.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"yeoman's\"",
+      "scan_text": "yeoman\u2019s",
+      "pg_offset": 6464,
+      "scan_page": 54,
+      "diff_description": "PG has '\"yeoman's\"' where scan has 'yeoman\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "not);",
+      "scan_text": "not) ;",
+      "pg_offset": 6511,
+      "scan_page": 54,
+      "diff_description": "PG has 'not);' where scan has 'not) ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"smith\"",
+      "scan_text": "smith",
+      "pg_offset": 6532,
+      "scan_page": 54,
+      "diff_description": "PG has '\"smith\"' where scan has 'smith'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Patrick's \"Lorica\",",
+      "scan_text": "Patrick\u2019s Lorica,",
+      "pg_offset": 6547,
+      "scan_page": 54,
+      "diff_description": "PG has 'Patrick's \"Lorica\",' where scan has 'Patrick\u2019s Lorica,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Slavery.--As",
+      "scan_text": "Slavery.\u2014As",
+      "pg_offset": 6613,
+      "scan_page": 54,
+      "diff_description": "PG has 'Slavery.--As' where scan has 'Slavery.\u2014As'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "rimur",
+      "scan_text": "r\u00edmur",
+      "pg_offset": 6778,
+      "scan_page": 54,
+      "diff_description": "PG has 'rimur' where scan has 'r\u00edmur'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "kaempe-viser.",
+      "scan_text": "k\u00e6mpe-viser.",
+      "pg_offset": 6778,
+      "scan_page": 54,
+      "diff_description": "PG has 'kaempe-viser.' where scan has 'k\u00e6mpe-viser.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "authoritative:-- \"It",
+      "scan_text": "authoritative:\u2014 It",
+      "pg_offset": 6846,
+      "scan_page": 54,
+      "diff_description": "PG has 'authoritative:-- \"It' where scan has 'authoritative:\u2014 It'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "woman.\"--The",
+      "scan_text": "woman.\u2014The",
+      "pg_offset": 6855,
+      "scan_page": 54,
+      "diff_description": "PG has 'woman.\"--The' where scan has 'woman.\u2014The'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "mediaeval",
+      "scan_text": "medi\u00e6val",
+      "pg_offset": 6921,
+      "scan_page": 54,
+      "diff_description": "PG has 'mediaeval' where scan has 'medi\u00e6val'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "suit.\"--This,",
+      "scan_text": "suit.\u2014This,",
+      "pg_offset": 6985,
+      "scan_page": 54,
+      "diff_description": "PG has 'suit.\"--This,' where scan has 'suit.\u2014This,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Njal's Saga\",",
+      "scan_text": "Njal\u2019s Saga,",
+      "pg_offset": 7008,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Njal's Saga\",' where scan has 'Njal\u2019s Saga,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "vengeance.\"--This",
+      "scan_text": "vengeance.\u2014This",
+      "pg_offset": 7072,
+      "scan_page": 54,
+      "diff_description": "PG has 'vengeance.\"--This' where scan has 'vengeance.\u2014This'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "MARRIAGE.--There",
+      "scan_text": "MARRIAGE.\u2014There",
+      "pg_offset": 7125,
+      "scan_page": 54,
+      "diff_description": "PG has 'MARRIAGE.--There' where scan has 'MARRIAGE.\u2014There'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"archaic",
+      "scan_text": "archaic",
+      "pg_offset": 7125,
+      "scan_page": 54,
+      "diff_description": "PG has '\"archaic' where scan has 'archaic'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Saxo.\"",
+      "scan_text": "Saxo.",
+      "pg_offset": 7125,
+      "scan_page": 54,
+      "diff_description": "PG has 'Saxo.\"' where scan has 'Saxo.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"marriage",
+      "scan_text": "marriage",
+      "pg_offset": 7224,
+      "scan_page": 54,
+      "diff_description": "PG has '\"marriage' where scan has 'marriage'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "purchase\",",
+      "scan_text": "purchase,",
+      "pg_offset": 7224,
+      "scan_page": 54,
+      "diff_description": "PG has 'purchase\",' where scan has 'purchase,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "ubere\".",
+      "scan_text": "ubere.",
+      "pg_offset": 7545,
+      "scan_page": 54,
+      "diff_description": "PG has 'ubere\".' where scan has 'ubere.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"motif\",",
+      "scan_text": "motif,",
+      "pg_offset": 7545,
+      "scan_page": 54,
+      "diff_description": "PG has '\"motif\",' where scan has 'motif,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Patient Grizzle\",",
+      "scan_text": "Patient Grizzle,",
+      "pg_offset": 7545,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Patient Grizzle\",' where scan has 'Patient Grizzle,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Good wives\"",
+      "scan_text": "Good wives",
+      "pg_offset": 7565,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Good wives\"' where scan has 'Good wives'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"bad wives\"",
+      "scan_text": "bad wives",
+      "pg_offset": 7589,
+      "scan_page": 54,
+      "diff_description": "PG has '\"bad wives\"' where scan has 'bad wives'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "option--disfigurement",
+      "scan_text": "option\u2014disfigurement",
+      "pg_offset": 7618,
+      "scan_page": 54,
+      "diff_description": "PG has 'option--disfigurement' where scan has 'option\u2014disfigurement'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"harlots\"",
+      "scan_text": "harlots",
+      "pg_offset": 7691,
+      "scan_page": 54,
+      "diff_description": "PG has '\"harlots\"' where scan has 'harlots'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "REVENGE.--This",
+      "scan_text": "REVENGE.\u2014This",
+      "pg_offset": 7708,
+      "scan_page": 54,
+      "diff_description": "PG has 'REVENGE.--This' where scan has 'REVENGE.\u2014This'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "CRIMES.--As",
+      "scan_text": "CRIMES.\u2014As",
+      "pg_offset": 7784,
+      "scan_page": 54,
+      "diff_description": "PG has 'CRIMES.--As' where scan has 'CRIMES.\u2014As'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "botes",
+      "scan_text": "b\u00f3tes",
+      "pg_offset": 7784,
+      "scan_page": 54,
+      "diff_description": "PG has 'botes' where scan has 'b\u00f3tes'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"sacratio\",",
+      "scan_text": "sacratio,",
+      "pg_offset": 7816,
+      "scan_page": 54,
+      "diff_description": "PG has '\"sacratio\",' where scan has 'sacratio,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"parricide\", i.e.,",
+      "scan_text": "parricide, i. e.,",
+      "pg_offset": 7907,
+      "scan_page": 54,
+      "diff_description": "PG has '\"parricide\", i.e.,' where scan has 'parricide, i. e.,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"arson\"",
+      "scan_text": "arson",
+      "pg_offset": 7947,
+      "scan_page": 54,
+      "diff_description": "PG has '\"arson\"' where scan has 'arson'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"incestuous adultery\"",
+      "scan_text": "incestuous adultery",
+      "pg_offset": 7955,
+      "scan_page": 54,
+      "diff_description": "PG has '\"incestuous adultery\"' where scan has 'incestuous adultery'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "punished,",
+      "scan_text": "punished",
+      "pg_offset": 7976,
+      "scan_page": 54,
+      "diff_description": "PG has 'punished,' where scan has 'punished'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "slur.",
+      "scan_text": "(absent in scan)",
+      "pg_offset": 8002,
+      "scan_page": 54,
+      "diff_description": "PG has extra text: 'slur.'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "\"witchcraft\",",
+      "scan_text": "witchcraft,",
+      "pg_offset": 8002,
+      "scan_page": 54,
+      "diff_description": "PG has '\"witchcraft\",' where scan has 'witchcraft,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Private revenge\"",
+      "scan_text": "Private revenge",
+      "pg_offset": 8013,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Private revenge\"' where scan has 'Private revenge'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Orkney Saga\".",
+      "scan_text": "Orkney",
+      "pg_offset": 8105,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Orkney Saga\".' where scan has 'Orkney'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "are:-- \"Highway robbery\".--There",
+      "scan_text": "are:\u2014 Highway robbery.\u2014There",
+      "pg_offset": 8144,
+      "scan_page": 54,
+      "diff_description": "PG has 'are:-- \"Highway robbery\".--There' where scan has 'are:\u2014 Highway robbery.\u2014There'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"probleme",
+      "scan_text": "probl\u00e8me",
+      "pg_offset": 8400,
+      "scan_page": 54,
+      "diff_description": "PG has '\"probleme' where scan has 'probl\u00e8me'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"Beowulf's Lay\".) \"Suicide\".--This",
+      "scan_text": "(Beowulf\u2019s Lay.) Suicide.\u2014This",
+      "pg_offset": 8444,
+      "scan_page": 54,
+      "diff_description": "PG has '(\"Beowulf's Lay\".) \"Suicide\".--This' where scan has '(Beowulf\u2019s Lay.) Suicide.\u2014This'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Njal's Saga\",",
+      "scan_text": "Njal\u2019s Saga,",
+      "pg_offset": 8487,
+      "scan_page": 54,
+      "diff_description": "PG has '\"Njal's Saga\",' where scan has 'Njal\u2019s Saga,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Gautrec's",
+      "scan_text": "of Gautrec\u2019s",
+      "pg_offset": 8554,
+      "scan_page": 54,
+      "diff_description": "PG has 'Gautrec's' where scan has 'of Gautrec\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "starvation death.",
+      "scan_text": "starvationdeath.",
+      "pg_offset": 8571,
+      "scan_page": 54,
+      "diff_description": "PG has 'starvation death.' where scan has 'starvationdeath.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "heavy--many",
+      "scan_text": "heavy\u2014many",
+      "pg_offset": 46760,
+      "scan_page": 56,
+      "diff_description": "PG has 'heavy--many' where scan has 'heavy\u2014many'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "for truage of the Slavs.",
+      "scan_text": "\u201c \u201c",
+      "pg_offset": 46937,
+      "scan_page": 88,
+      "diff_description": "PG has 'for truage of the Slavs.' where scan has '\u201c \u201c'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Scalc,",
+      "scan_text": "Salc,",
+      "pg_offset": 47000,
+      "scan_page": 88,
+      "diff_description": "PG has 'Scalc,' where scan has 'Salc,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "PROCEDURE.--\"Oaths\"",
+      "scan_text": "PROCEDURE.\u2014Oaths",
+      "pg_offset": 47127,
+      "scan_page": 88,
+      "diff_description": "PG has 'PROCEDURE.--\"Oaths\"' where scan has 'PROCEDURE.\u2014Oaths'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Testification\",",
+      "scan_text": "Testification,",
+      "pg_offset": 47158,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Testification\",' where scan has 'Testification,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Glum's Saga\"",
+      "scan_text": "Glum\u2019s Saga",
+      "pg_offset": 47172,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Glum's Saga\"' where scan has 'Glum\u2019s Saga'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Landnamaboc\",",
+      "scan_text": "Landn,",
+      "pg_offset": 47172,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Landnamaboc\",' where scan has 'Landn,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Lawgivers\".--The",
+      "scan_text": "Lawgivers.\u2014The",
+      "pg_offset": 47264,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Lawgivers\".--The' where scan has 'Lawgivers.\u2014The'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Sciold\"",
+      "scan_text": "Sciold",
+      "pg_offset": 47314,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Sciold\"' where scan has 'Sciold'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Frode\"",
+      "scan_text": "Frode",
+      "pg_offset": 47320,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Frode\"' where scan has 'Frode'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Helge\"",
+      "scan_text": "Helge",
+      "pg_offset": 47320,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Helge\"' where scan has 'Helge'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Ragnar\"",
+      "scan_text": "Ragnar",
+      "pg_offset": 47320,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Ragnar\"' where scan has 'Ragnar'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Sciold\",",
+      "scan_text": "Sciold,",
+      "pg_offset": 47320,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Sciold\",' where scan has 'Sciold,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Gregory's Handbook\"",
+      "scan_text": "Gregory\u2019s Handbook",
+      "pg_offset": 47448,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Gregory's Handbook\"' where scan has 'Gregory\u2019s Handbook'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "mediaeval",
+      "scan_text": "medi\u00e6val",
+      "pg_offset": 47471,
+      "scan_page": 88,
+      "diff_description": "PG has 'mediaeval' where scan has 'medi\u00e6val'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\",",
+      "scan_text": "Beowulf\u2019s Lay,",
+      "pg_offset": 47481,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Beowulf's Lay\",' where scan has 'Beowulf\u2019s Lay,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "men?",
+      "scan_text": "",
+      "pg_offset": 47601,
+      "scan_page": 88,
+      "diff_description": "Missing from scan: 'men?'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "be--gold",
+      "scan_text": "be\u2014gold",
+      "pg_offset": 47639,
+      "scan_page": 88,
+      "diff_description": "PG has 'be--gold' where scan has 'be\u2014gold'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf\", 2885). (e)",
+      "scan_text": "Beo(e)",
+      "pg_offset": 47711,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Beowulf\", 2885). (e)' where scan has 'Beo(e)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Vatzdaela Saga\", ch. 2).",
+      "scan_text": "Vatzd\u00e6la Saga,",
+      "pg_offset": 47987,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Vatzdaela Saga\", ch. 2).' where scan has 'Vatzd\u00e6la Saga,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "house-carle",
+      "scan_text": "housecarle",
+      "pg_offset": 48237,
+      "scan_page": 88,
+      "diff_description": "PG has 'house-carle' where scan has 'housecarle'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "mentioned:--",
+      "scan_text": "mentioned:\u2014",
+      "pg_offset": 48573,
+      "scan_page": 88,
+      "diff_description": "PG has 'mentioned:--' where scan has 'mentioned:\u2014'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Tributes\".--Akin",
+      "scan_text": "Tributes.\u2014Akin",
+      "pg_offset": 48638,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Tributes\".--Akin' where scan has 'Tributes.\u2014Akin'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Egil's Saga\")",
+      "scan_text": "Egil\u2019s Saga)",
+      "pg_offset": 48710,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Egil's Saga\")' where scan has 'Egil\u2019s Saga)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Ref-gild\",",
+      "scan_text": "Ref-gild,",
+      "pg_offset": 48909,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Ref-gild\",' where scan has 'Ref-gild,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "WAR. \"Weapons\".--The",
+      "scan_text": "Weapons.\u2014The",
+      "pg_offset": 49091,
+      "scan_page": 88,
+      "diff_description": "PG has 'WAR. \"Weapons\".--The' where scan has 'Weapons.\u2014The'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Snyrtir\", Bearce's",
+      "scan_text": "Snyrtir, Bearce\u2019s",
+      "pg_offset": 49135,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Snyrtir\", Bearce's' where scan has 'Snyrtir, Bearce\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Hothing\", Agnar's",
+      "scan_text": "Hothing, Agnar\u2019s",
+      "pg_offset": 49135,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Hothing\", Agnar's' where scan has 'Hothing, Agnar\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Lauf\",",
+      "scan_text": "Lauf,",
+      "pg_offset": 49135,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Lauf\",' where scan has 'Lauf,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Leaf\", Bearce's",
+      "scan_text": "Leaf, Bearce\u2019s",
+      "pg_offset": 49135,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Leaf\", Bearce's' where scan has 'Leaf, Bearce\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Screp\", Wermund's",
+      "scan_text": "Screp, Wermund\u2019s",
+      "pg_offset": 49135,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Screp\", Wermund's' where scan has 'Screp, Wermund\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(\"Mistletoe\"),",
+      "scan_text": "(Mistletoe),",
+      "pg_offset": 49163,
+      "scan_page": 88,
+      "diff_description": "PG has '(\"Mistletoe\"),' where scan has '(Mistletoe),'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Lyusing\"",
+      "scan_text": "Lyusing",
+      "pg_offset": 49177,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Lyusing\"' where scan has 'Lyusing'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Hwiting\",",
+      "scan_text": "Hwiting,",
+      "pg_offset": 49177,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Hwiting\",' where scan has 'Hwiting,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Logthe\",",
+      "scan_text": "L\u00f6gthe,",
+      "pg_offset": 49177,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Logthe\",' where scan has 'L\u00f6gthe,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Siward's son.",
+      "scan_text": "Siward\u2019s",
+      "pg_offset": 49177,
+      "scan_page": 88,
+      "diff_description": "PG has 'Siward's son.' where scan has 'Siward\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"war-club\"",
+      "scan_text": "war-club",
+      "pg_offset": 49177,
+      "scan_page": 88,
+      "diff_description": "PG has '\"war-club\"' where scan has 'war-club'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"spear\"",
+      "scan_text": "spear",
+      "pg_offset": 49266,
+      "scan_page": 88,
+      "diff_description": "PG has '\"spear\"' where scan has 'spear'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "arrows\"",
+      "scan_text": "arrows",
+      "pg_offset": 49280,
+      "scan_page": 88,
+      "diff_description": "PG has 'arrows\"' where scan has 'arrows'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Vigfusson",
+      "scan_text": "Vigf\u00fasson",
+      "pg_offset": 49324,
+      "scan_page": 88,
+      "diff_description": "PG has 'Vigfusson' where scan has 'Vigf\u00fasson'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Mail-coats\"",
+      "scan_text": "Mail-coats",
+      "pg_offset": 49366,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Mail-coats\"' where scan has 'Mail-coats'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Helmets\"",
+      "scan_text": "Helmets",
+      "pg_offset": 49391,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Helmets\"' where scan has 'Helmets'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\";",
+      "scan_text": "Beowulf\u2019s Lay;",
+      "pg_offset": 49401,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Beowulf's Lay\";' where scan has 'Beowulf\u2019s Lay;'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Banners\"",
+      "scan_text": "Banners",
+      "pg_offset": 49416,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Banners\"' where scan has 'Banners'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Bearcamal",
+      "scan_text": "Bearca-mal",
+      "pg_offset": 49448,
+      "scan_page": 88,
+      "diff_description": "PG has 'Bearcamal' where scan has 'Bearca-mal'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Horns\" (1)",
+      "scan_text": "Horns*",
+      "pg_offset": 49448,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Horns\" (1)' where scan has 'Horns*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Tactics\".--The",
+      "scan_text": "Tactics.\u2014The",
+      "pg_offset": 49485,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Tactics\".--The' where scan has 'Tactics.\u2014The'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"uht\",",
+      "scan_text": "\u201cuht,\u201d",
+      "pg_offset": 49741,
+      "scan_page": 88,
+      "diff_description": "PG has '\"uht\",' where scan has '\u201cuht,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Stratagems",
+      "scan_text": "Stratagems",
+      "pg_offset": 50232,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Stratagems' where scan has 'Stratagems'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"pretended death\"",
+      "scan_text": "pretended death",
+      "pg_offset": 50284,
+      "scan_page": 88,
+      "diff_description": "PG has '\"pretended death\"' where scan has 'pretended death'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"firing\"",
+      "scan_text": "firing",
+      "pg_offset": 50305,
+      "scan_page": 88,
+      "diff_description": "PG has '\"firing\"' where scan has 'firing'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Birnam Wood\"",
+      "scan_text": "Birnam Wood",
+      "pg_offset": 50342,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Birnam Wood\"' where scan has 'Birnam Wood'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "men.",
+      "scan_text": "",
+      "pg_offset": 50401,
+      "scan_page": 88,
+      "diff_description": "Missing from scan: 'men.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "\"brazen horses\"",
+      "scan_text": "brazen horses",
+      "pg_offset": 50408,
+      "scan_page": 88,
+      "diff_description": "PG has '\"brazen horses\"' where scan has 'brazen horses'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"machines\"",
+      "scan_text": "machines",
+      "pg_offset": 50408,
+      "scan_page": 88,
+      "diff_description": "PG has '\"machines\"' where scan has 'machines'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"sacratio\"",
+      "scan_text": "sacratio",
+      "pg_offset": 50550,
+      "scan_page": 88,
+      "diff_description": "PG has '\"sacratio\"' where scan has 'sacratio'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "516-595.",
+      "scan_text": "516-525.",
+      "pg_offset": 50582,
+      "scan_page": 88,
+      "diff_description": "PG has '516-595.' where scan has '516-525.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Warfare.\"--As",
+      "scan_text": "Warfare.\u2014As",
+      "pg_offset": 50638,
+      "scan_page": 88,
+      "diff_description": "PG has 'Warfare.\"--As' where scan has 'Warfare.\u2014As'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"strand-hewing\",",
+      "scan_text": "\u201cstrand-hewing,\u201d",
+      "pg_offset": 50759,
+      "scan_page": 88,
+      "diff_description": "PG has '\"strand-hewing\",' where scan has '\u201cstrand-hewing,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Frithiof Saga\"",
+      "scan_text": "Frithiof Saga",
+      "pg_offset": 50837,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Frithiof Saga\"' where scan has 'Frithiof Saga'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Rimegerd\").",
+      "scan_text": "Rimegerd).",
+      "pg_offset": 50837,
+      "scan_page": 88,
+      "diff_description": "PG has 'Rimegerd\").' where scan has 'Rimegerd).'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Champions\".--Professed",
+      "scan_text": "Champions.\u2014Professed",
+      "pg_offset": 50914,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Champions\".--Professed' where scan has 'Champions.\u2014Professed'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Hornclofe-- \"Wolf-coats",
+      "scan_text": "Hornclofe\u2014 \u201cWolf-coats",
+      "pg_offset": 50945,
+      "scan_page": 88,
+      "diff_description": "PG has 'Hornclofe-- \"Wolf-coats' where scan has 'Hornclofe\u2014 \u201cWolf-coats'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"bear-sarks\",",
+      "scan_text": "bear-sarks,",
+      "pg_offset": 50981,
+      "scan_page": 88,
+      "diff_description": "PG has '\"bear-sarks\",' where scan has 'bear-sarks,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"bear-sarks' way\",",
+      "scan_text": "\u201cbear-sarks\u2019 way,\u201d",
+      "pg_offset": 50993,
+      "scan_page": 88,
+      "diff_description": "PG has '\"bear-sarks' way\",' where scan has '\u201cbear-sarks\u2019 way,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"run-a-muck.\"",
+      "scan_text": "\u201crun a-muck.\u201d",
+      "pg_offset": 51048,
+      "scan_page": 88,
+      "diff_description": "PG has '\"run-a-muck.\"' where scan has '\u201crun a-muck.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"motif\"",
+      "scan_text": "motif",
+      "pg_offset": 51144,
+      "scan_page": 88,
+      "diff_description": "PG has '\"motif\"' where scan has 'motif'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"women-warriors\"",
+      "scan_text": "women-warriors",
+      "pg_offset": 51166,
+      "scan_page": 88,
+      "diff_description": "PG has '\"women-warriors\"' where scan has 'women-warriors'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "conjectures);",
+      "scan_text": "conjectures) ;",
+      "pg_offset": 51194,
+      "scan_page": 88,
+      "diff_description": "PG has 'conjectures);' where scan has 'conjectures) ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Feasts\".--The",
+      "scan_text": "Feasts.\u2014The",
+      "pg_offset": 51230,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Feasts\".--The' where scan has 'Feasts.\u2014The'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Rigsmal,",
+      "scan_text": "R\u00edgsm\u00e1l,",
+      "pg_offset": 51286,
+      "scan_page": 88,
+      "diff_description": "PG has 'Rigsmal,' where scan has 'R\u00edgsm\u00e1l,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "archaic",
+      "scan_text": "archiac",
+      "pg_offset": 51306,
+      "scan_page": 88,
+      "diff_description": "PG has 'archaic' where scan has 'archiac'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"giant-age\".",
+      "scan_text": "giantage.",
+      "pg_offset": 51548,
+      "scan_page": 88,
+      "diff_description": "PG has '\"giant-age\".' where scan has 'giantage.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Thor;",
+      "scan_text": "Thor ::",
+      "pg_offset": 51574,
+      "scan_page": 88,
+      "diff_description": "PG has 'Thor;' where scan has 'Thor ::'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Thor--a",
+      "scan_text": "Thor\u2014a",
+      "pg_offset": 51597,
+      "scan_page": 88,
+      "diff_description": "PG has 'Thor--a' where scan has 'Thor\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"embarras\".",
+      "scan_text": "embarras.",
+      "pg_offset": 51597,
+      "scan_page": 88,
+      "diff_description": "PG has '\"embarras\".' where scan has 'embarras.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "persians",
+      "scan_text": "persons",
+      "pg_offset": 51597,
+      "scan_page": 88,
+      "diff_description": "PG has 'persians' where scan has 'persons'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Woden\".",
+      "scan_text": "Woden.",
+      "pg_offset": 51660,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Woden\".' where scan has 'Woden.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Hyndla-Lay\",",
+      "scan_text": "HyndlaLay,",
+      "pg_offset": 51679,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Hyndla-Lay\",' where scan has 'HyndlaLay,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Woden:-- \"Let",
+      "scan_text": "Woden:\u2014 \u201cLet",
+      "pg_offset": 51685,
+      "scan_page": 88,
+      "diff_description": "PG has 'Woden:-- \"Let' where scan has 'Woden:\u2014 \u201cLet'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "men.",
+      "scan_text": "men,",
+      "pg_offset": 51737,
+      "scan_page": 88,
+      "diff_description": "PG has 'men.' where scan has 'men,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Hroptr\",",
+      "scan_text": "Hr\u00f3ptr,",
+      "pg_offset": 51786,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Hroptr\",' where scan has 'Hr\u00f3ptr,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Lysir\",",
+      "scan_text": "Lysir,",
+      "pg_offset": 51809,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Lysir\",' where scan has 'Lysir,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Brune\",",
+      "scan_text": "Brune,",
+      "pg_offset": 51830,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Brune\",' where scan has 'Brune,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Wecha\" (Waer)",
+      "scan_text": "Wecha (Wacr)",
+      "pg_offset": 51859,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Wecha\" (Waer)' where scan has 'Wecha (Wacr)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Skida-runa",
+      "scan_text": "Sk\u00edda-r\u00edma",
+      "pg_offset": 51909,
+      "scan_page": 88,
+      "diff_description": "PG has 'Skida-runa' where scan has 'Sk\u00edda-r\u00edma'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Flatey book\",",
+      "scan_text": "Flatey book,",
+      "pg_offset": 51935,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Flatey book\",' where scan has 'Flatey book,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(Asgard);",
+      "scan_text": "(Asgard) ;",
+      "pg_offset": 51960,
+      "scan_page": 88,
+      "diff_description": "PG has '(Asgard);' where scan has '(Asgard) ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "ring-bedecked,",
+      "scan_text": "ringbedecked,",
+      "pg_offset": 51970,
+      "scan_page": 88,
+      "diff_description": "PG has 'ring-bedecked,' where scan has 'ringbedecked,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Wrinda\"",
+      "scan_text": "Wrinda",
+      "pg_offset": 52247,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Wrinda\"' where scan has 'Wrinda'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(Wakr),",
+      "scan_text": "(W\u00e1kr),",
+      "pg_offset": 52317,
+      "scan_page": 88,
+      "diff_description": "PG has '(Wakr),' where scan has '(W\u00e1kr),'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "(\"Wale\") \"Bous\"",
+      "scan_text": "(Wale) Bous",
+      "pg_offset": 52328,
+      "scan_page": 88,
+      "diff_description": "PG has '(\"Wale\") \"Bous\"' where scan has '(Wale) Bous'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Wuldor\" (\"Oller\"),",
+      "scan_text": "Wuldor (Oller),",
+      "pg_offset": 52395,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Wuldor\" (\"Oller\"),' where scan has 'Wuldor (Oller),'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Frey\",",
+      "scan_text": "Frey,",
+      "pg_offset": 52461,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Frey\",' where scan has 'Frey,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"satrapa\"",
+      "scan_text": "satrapa",
+      "pg_offset": 52461,
+      "scan_page": 88,
+      "diff_description": "PG has '\"satrapa\"' where scan has 'satrapa'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Froblod (Freys-blot)",
+      "scan_text": "Fr\u00f6blod (Freys-bl\u00f3t)",
+      "pg_offset": 52488,
+      "scan_page": 88,
+      "diff_description": "PG has 'Froblod (Freys-blot)' where scan has 'Fr\u00f6blod (Freys-bl\u00f3t)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Phoenician",
+      "scan_text": "Ph\u0153nician",
+      "pg_offset": 52545,
+      "scan_page": 88,
+      "diff_description": "PG has 'Phoenician' where scan has 'Ph\u0153nician'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Thunder\",",
+      "scan_text": "Thunder,",
+      "pg_offset": 52557,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Thunder\",' where scan has 'Thunder,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Thor\",",
+      "scan_text": "Thor,",
+      "pg_offset": 52557,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Thor\",' where scan has 'Thor,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"bloom\",",
+      "scan_text": "\u201cbloom,\u201d",
+      "pg_offset": 52648,
+      "scan_page": 88,
+      "diff_description": "PG has '\"bloom\",' where scan has '\u201cbloom,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Sigyn\"",
+      "scan_text": "Sigyn",
+      "pg_offset": 52745,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Sigyn\"' where scan has 'Sigyn'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Nanna\"",
+      "scan_text": "Nanna",
+      "pg_offset": 52756,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Nanna\"' where scan has 'Nanna'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Freya\",",
+      "scan_text": "Freya,",
+      "pg_offset": 52783,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Freya\",' where scan has 'Freya,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Niord-Fridlaf,",
+      "scan_text": "NiordFridlaf,",
+      "pg_offset": 52801,
+      "scan_page": 88,
+      "diff_description": "PG has 'Niord-Fridlaf,' where scan has 'NiordFridlaf,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "(i.e.,",
+      "scan_text": "(i. e.,",
+      "pg_offset": 52943,
+      "scan_page": 88,
+      "diff_description": "PG has '(i.e.,' where scan has '(i. e.,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Caesarean operation)--Sigfred,",
+      "scan_text": "C\u00e6sarean operation)\u2014Sigfred,",
+      "pg_offset": 52949,
+      "scan_page": 88,
+      "diff_description": "PG has 'Caesarean operation)--Sigfred,' where scan has 'C\u00e6sarean operation)\u2014Sigfred,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Fates\"",
+      "scan_text": "Fates",
+      "pg_offset": 52970,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Fates\"' where scan has 'Fates'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Helge Lay\",",
+      "scan_text": "Helge Lay,",
+      "pg_offset": 53002,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Helge Lay\",' where scan has 'Helge Lay,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Beowulf's Lay\".",
+      "scan_text": "Beowulf\u2019s Lay.",
+      "pg_offset": 53032,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Beowulf's Lay\".' where scan has 'Beowulf\u2019s Lay.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Darrada-liod,",
+      "scan_text": "Darrada-li\u00f3d,",
+      "pg_offset": 53127,
+      "scan_page": 88,
+      "diff_description": "PG has 'Darrada-liod,' where scan has 'Darrada-li\u00f3d,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Giants\".--These",
+      "scan_text": "Giants.\u2014These",
+      "pg_offset": 53139,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Giants\".--These' where scan has 'Giants.\u2014These'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(Ofoti),",
+      "scan_text": "(Of\u00f3ti),",
+      "pg_offset": 53213,
+      "scan_page": 88,
+      "diff_description": "PG has '(Ofoti),' where scan has '(Of\u00f3ti),'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Dwarves\".--These",
+      "scan_text": "Dwarves.\u2014These",
+      "pg_offset": 53335,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Dwarves\".--These' where scan has 'Dwarves.\u2014These'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"obsequy",
+      "scan_text": "obsequy",
+      "pg_offset": 53459,
+      "scan_page": 88,
+      "diff_description": "PG has '\"obsequy' where scan has 'obsequy'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"sati\";",
+      "scan_text": "sati;",
+      "pg_offset": 53473,
+      "scan_page": 88,
+      "diff_description": "PG has '\"sati\";' where scan has 'sati;'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Brunhild's Lay\",",
+      "scan_text": "Brunhild\u2019s Lay,",
+      "pg_offset": 53499,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Brunhild's Lay\",' where scan has 'Brunhild\u2019s Lay,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Gudrumar",
+      "scan_text": "Gudrunar",
+      "pg_offset": 53499,
+      "scan_page": 88,
+      "diff_description": "PG has 'Gudrumar' where scan has 'Gudrunar'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bound)",
+      "scan_text": "hound)",
+      "pg_offset": 53610,
+      "scan_page": 88,
+      "diff_description": "PG has 'bound)' where scan has 'hound)'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"barrow-ghost\"",
+      "scan_text": "barrow-ghost",
+      "pg_offset": 53678,
+      "scan_page": 88,
+      "diff_description": "PG has '\"barrow-ghost\"' where scan has 'barrow-ghost'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "WORLDS.--The \"Land",
+      "scan_text": "WORLDS.\u2014The Land",
+      "pg_offset": 53755,
+      "scan_page": 88,
+      "diff_description": "PG has 'WORLDS.--The \"Land' where scan has 'WORLDS.\u2014The Land'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Undeath\"",
+      "scan_text": "Undeath",
+      "pg_offset": 53755,
+      "scan_page": 88,
+      "diff_description": "PG has 'Undeath\"' where scan has 'Undeath'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Herrand",
+      "scan_text": "Herraud",
+      "pg_offset": 53779,
+      "scan_page": 88,
+      "diff_description": "PG has 'Herrand' where scan has 'Herraud'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Baearmagn",
+      "scan_text": "B\u00e6armagn",
+      "pg_offset": 53791,
+      "scan_page": 88,
+      "diff_description": "PG has 'Baearmagn' where scan has 'B\u00e6armagn'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Hadding's",
+      "scan_text": "Hadding\u2019s",
+      "pg_offset": 53818,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Hadding's' where scan has 'Hadding\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Underground\".--(a)",
+      "scan_text": "Underground.\u2014(a)",
+      "pg_offset": 53818,
+      "scan_page": 88,
+      "diff_description": "PG has 'Underground\".--(a)' where scan has 'Underground.\u2014(a)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "angelica:-- \"Through",
+      "scan_text": "angelica :\u2014 \u201cThrough",
+      "pg_offset": 53892,
+      "scan_page": 88,
+      "diff_description": "PG has 'angelica:-- \"Through' where scan has 'angelica :\u2014 \u201cThrough'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "garnished.\" --F.Q. ii. 7, 51.",
+      "scan_text": "garnished.\u201d",
+      "pg_offset": 53904,
+      "scan_page": 88,
+      "diff_description": "PG has 'garnished.\" --F.Q. ii. 7, 51.' where scan has 'garnished.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"River",
+      "scan_text": "River",
+      "pg_offset": 53917,
+      "scan_page": 88,
+      "diff_description": "PG has '\"River' where scan has 'River'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Blades\",",
+      "scan_text": "Blades,",
+      "pg_offset": 53917,
+      "scan_page": 88,
+      "diff_description": "PG has 'Blades\",' where scan has 'Blades,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "fighting\",",
+      "scan_text": "fighting,",
+      "pg_offset": 53917,
+      "scan_page": 88,
+      "diff_description": "PG has 'fighting\",' where scan has 'fighting,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Hadfling",
+      "scan_text": "Hadding",
+      "pg_offset": 53979,
+      "scan_page": 88,
+      "diff_description": "PG has 'Hadfling' where scan has 'Hadding'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "e.g.,",
+      "scan_text": "e. g.,",
+      "pg_offset": 54026,
+      "scan_page": 88,
+      "diff_description": "PG has 'e.g.,' where scan has 'e. g.,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Crack-a-Nuts,",
+      "scan_text": "Cracka-Nuts,",
+      "pg_offset": 54026,
+      "scan_page": 88,
+      "diff_description": "PG has 'Crack-a-Nuts,' where scan has 'Cracka-Nuts,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"River",
+      "scan_text": "River",
+      "pg_offset": 54026,
+      "scan_page": 88,
+      "diff_description": "PG has '\"River' where scan has 'River'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Blades\"",
+      "scan_text": "Blades",
+      "pg_offset": 54026,
+      "scan_page": 88,
+      "diff_description": "PG has 'Blades\"' where scan has 'Blades'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Warriors\"",
+      "scan_text": "Warriors",
+      "pg_offset": 54026,
+      "scan_page": 88,
+      "diff_description": "PG has 'Warriors\"' where scan has 'Warriors'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Usher's Well--a",
+      "scan_text": "Usher\u2019s Well\u2014a",
+      "pg_offset": 54062,
+      "scan_page": 88,
+      "diff_description": "PG has 'Usher's Well--a' where scan has 'Usher\u2019s Well\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "course-- \"It",
+      "scan_text": "course\u2014 \u201cIt",
+      "pg_offset": 54069,
+      "scan_page": 88,
+      "diff_description": "PG has 'course-- \"It' where scan has 'course\u2014 \u201cIt'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "powers--a",
+      "scan_text": "powers\u2014a",
+      "pg_offset": 54151,
+      "scan_page": 88,
+      "diff_description": "PG has 'powers--a' where scan has 'powers\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Seven Sleepers\"",
+      "scan_text": "Seven Sleepers",
+      "pg_offset": 54179,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Seven Sleepers\"' where scan has 'Seven Sleepers'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "cornel-wood spear.\"",
+      "scan_text": "cornelwood spear.\u201d",
+      "pg_offset": 54470,
+      "scan_page": 88,
+      "diff_description": "PG has 'cornel-wood spear.\"' where scan has 'cornelwood spear.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "demens",
+      "scan_text": "demons",
+      "pg_offset": 54483,
+      "scan_page": 88,
+      "diff_description": "PG has 'demens' where scan has 'demons'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "world\",",
+      "scan_text": "world,\u201d",
+      "pg_offset": 54538,
+      "scan_page": 88,
+      "diff_description": "PG has 'world\",' where scan has 'world,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "soils'",
+      "scan_text": "sons\u2019",
+      "pg_offset": 54709,
+      "scan_page": 88,
+      "diff_description": "PG has 'soils'' where scan has 'sons\u2019'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sword-blade,",
+      "scan_text": "sword-blade",
+      "pg_offset": 54717,
+      "scan_page": 88,
+      "diff_description": "PG has 'sword-blade,' where scan has 'sword-blade'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "earthquakes--a",
+      "scan_text": "earthquakes\u2014a",
+      "pg_offset": 54752,
+      "scan_page": 88,
+      "diff_description": "PG has 'earthquakes--a' where scan has 'earthquakes\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Skin-changing\"",
+      "scan_text": "Skin-changing",
+      "pg_offset": 54860,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Skin-changing\"' where scan has 'Skin-changing'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Landnamaboc\")",
+      "scan_text": "Landn\u00e1mab\u00f3c)",
+      "pg_offset": 54860,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Landnamaboc\")' where scan has 'Landn\u00e1mab\u00f3c)'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "weather\"",
+      "scan_text": "weather",
+      "pg_offset": 54961,
+      "scan_page": 88,
+      "diff_description": "PG has 'weather\"' where scan has 'weather'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Panic Terror\"",
+      "scan_text": "Panic Terror",
+      "pg_offset": 54990,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Panic Terror\"' where scan has 'Panic Terror'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "counter-curse. \"Magic help\"",
+      "scan_text": "countercurse. Magic help",
+      "pg_offset": 55024,
+      "scan_page": 88,
+      "diff_description": "PG has 'counter-curse. \"Magic help\"' where scan has 'countercurse. Magic help'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Charms\"",
+      "scan_text": "Charms",
+      "pg_offset": 55310,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Charms\"' where scan has 'Charms'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Love philtres\"",
+      "scan_text": "Love philtres",
+      "pg_offset": 55319,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Love philtres\"' where scan has 'Love philtres'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Food\",",
+      "scan_text": "Food,",
+      "pg_offset": 55336,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Food\",' where scan has 'Food,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Poison\"",
+      "scan_text": "Poison",
+      "pg_offset": 55362,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Poison\"' where scan has 'Poison'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Witches",
+      "scan_text": "Witches",
+      "pg_offset": 55558,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Witches' where scan has 'Witches'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "wizards\"",
+      "scan_text": "wizards",
+      "pg_offset": 55558,
+      "scan_page": 88,
+      "diff_description": "PG has 'wizards\"' where scan has 'wizards'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Folk-medicine\"",
+      "scan_text": "Folk-medicine",
+      "pg_offset": 55659,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Folk-medicine\"' where scan has 'Folk-medicine'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "`Surely",
+      "scan_text": "\u2018Surely",
+      "pg_offset": 55900,
+      "scan_page": 88,
+      "diff_description": "PG has '`Surely' where scan has '\u2018Surely'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Captain Cook's path\"",
+      "scan_text": "Captain Cook\u2019s path",
+      "pg_offset": 55965,
+      "scan_page": 88,
+      "diff_description": "PG has '\"Captain Cook's path\"' where scan has 'Captain Cook\u2019s path'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"dumb man\"",
+      "scan_text": "dumb man",
+      "pg_offset": 56020,
+      "scan_page": 88,
+      "diff_description": "PG has '\"dumb man\"' where scan has 'dumb man'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "hide-wrapped",
+      "scan_text": "hidewrapped",
+      "pg_offset": 102653,
+      "scan_page": 90,
+      "diff_description": "PG has 'hide-wrapped' where scan has 'hidewrapped'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Vigffisson",
+      "scan_text": "Vigf\u00fasson",
+      "pg_offset": 102786,
+      "scan_page": 90,
+      "diff_description": "PG has 'Vigffisson' where scan has 'Vigf\u00fasson'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Loathly Worm\".",
+      "scan_text": "Loathly Worm.",
+      "pg_offset": 102814,
+      "scan_page": 90,
+      "diff_description": "PG has '\"Loathly Worm\".' where scan has 'Loathly Worm.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "girls\",",
+      "scan_text": "girls,\u201d",
+      "pg_offset": 102923,
+      "scan_page": 90,
+      "diff_description": "PG has 'girls\",' where scan has 'girls,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"narrow shelter\",",
+      "scan_text": "\u201cnarrow shelter,\u201d",
+      "pg_offset": 102934,
+      "scan_page": 90,
+      "diff_description": "PG has '\"narrow shelter\",' where scan has '\u201cnarrow shelter,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "nick-names",
+      "scan_text": "nicknames",
+      "pg_offset": 102961,
+      "scan_page": 90,
+      "diff_description": "PG has 'nick-names' where scan has 'nicknames'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Maiden guarded\"",
+      "scan_text": "Maiden guarded",
+      "pg_offset": 103012,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Maiden guarded\"' where scan has 'Maiden guarded'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Proud Lady\",",
+      "scan_text": "Proud Lady",
+      "pg_offset": 103124,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Proud Lady\",' where scan has 'Proud Lady'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "out-witted",
+      "scan_text": "outwitted",
+      "pg_offset": 103155,
+      "scan_page": 102,
+      "diff_description": "PG has 'out-witted' where scan has 'outwitted'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Beggar",
+      "scan_text": "Beggar",
+      "pg_offset": 103189,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Beggar' where scan has 'Beggar'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "folk-tales",
+      "scan_text": "folktales",
+      "pg_offset": 103221,
+      "scan_page": 102,
+      "diff_description": "PG has 'folk-tales' where scan has 'folktales'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Crafty Soaker\"",
+      "scan_text": "Crafty Soaker",
+      "pg_offset": 103237,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Crafty Soaker\"' where scan has 'Crafty Soaker'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Magician's",
+      "scan_text": "Magician\u2019s",
+      "pg_offset": 103402,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Magician's' where scan has 'Magician\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "pursuit\",",
+      "scan_text": "pursuit,",
+      "pg_offset": 103402,
+      "scan_page": 102,
+      "diff_description": "PG has 'pursuit\",' where scan has 'pursuit,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "e.g.,",
+      "scan_text": "e. g.,",
+      "pg_offset": 103415,
+      "scan_page": 102,
+      "diff_description": "PG has 'e.g.,' where scan has 'e. g.,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Wood\",",
+      "scan_text": "Wood,",
+      "pg_offset": 103531,
+      "scan_page": 102,
+      "diff_description": "PG has 'Wood\",' where scan has 'Wood,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Clever King's Daughter\",",
+      "scan_text": "Clever King\u2019s Daughter,",
+      "pg_offset": 103553,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Clever King's Daughter\",' where scan has 'Clever King\u2019s Daughter,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Device",
+      "scan_text": "Device",
+      "pg_offset": 103625,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Device' where scan has 'Device'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Ecgherht,",
+      "scan_text": "Ecgberht,",
+      "pg_offset": 103688,
+      "scan_page": 102,
+      "diff_description": "PG has 'Ecgherht,' where scan has 'Ecgberht,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Disguise\"",
+      "scan_text": "Disguise",
+      "pg_offset": 103730,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Disguise\"' where scan has 'Disguise'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Escaped recognition\"",
+      "scan_text": "Escaped recognition",
+      "pg_offset": 103784,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Escaped recognition\"' where scan has 'Escaped recognition'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Hrolf.",
+      "scan_text": "Hr\u00f3lf.",
+      "pg_offset": 103810,
+      "scan_page": 102,
+      "diff_description": "PG has 'Hrolf.' where scan has 'Hr\u00f3lf.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Devices\"",
+      "scan_text": "Devices",
+      "pg_offset": 103810,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Devices\"' where scan has 'Devices'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "earth-houses.",
+      "scan_text": "earthhouses.",
+      "pg_offset": 103845,
+      "scan_page": 102,
+      "diff_description": "PG has 'earth-houses.' where scan has 'earthhouses.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "cattle,",
+      "scan_text": "cattle",
+      "pg_offset": 103886,
+      "scan_page": 102,
+      "diff_description": "PG has 'cattle,' where scan has 'cattle'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Hero's",
+      "scan_text": "Hero's",
+      "pg_offset": 103896,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Hero's' where scan has 'Hero's'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Childhood\"",
+      "scan_text": "Childhood",
+      "pg_offset": 103896,
+      "scan_page": 102,
+      "diff_description": "PG has 'Childhood\"' where scan has 'Childhood'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"fierce eyes\"",
+      "scan_text": "fierce eyes",
+      "pg_offset": 103948,
+      "scan_page": 102,
+      "diff_description": "PG has '\"fierce eyes\"' where scan has 'fierce eyes'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"illuminating hair\"",
+      "scan_text": "illuminating hair",
+      "pg_offset": 103978,
+      "scan_page": 102,
+      "diff_description": "PG has '\"illuminating hair\"' where scan has 'illuminating hair'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "thongs\",",
+      "scan_text": "thongs,",
+      "pg_offset": 104019,
+      "scan_page": 102,
+      "diff_description": "PG has 'thongs\",' where scan has 'thongs,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "rill\",",
+      "scan_text": "rill,",
+      "pg_offset": 104046,
+      "scan_page": 102,
+      "diff_description": "PG has 'rill\",' where scan has 'rill,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"king's",
+      "scan_text": "king\u2019s",
+      "pg_offset": 104082,
+      "scan_page": 102,
+      "diff_description": "PG has '\"king's' where scan has 'king\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "washing\",",
+      "scan_text": "washing,",
+      "pg_offset": 104082,
+      "scan_page": 102,
+      "diff_description": "PG has 'washing\",' where scan has 'washing,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Everlasting Battle\"",
+      "scan_text": "Everlasting Battle",
+      "pg_offset": 104130,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Everlasting Battle\"' where scan has 'Everlasting Battle'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Children preserved\"",
+      "scan_text": "Children preserved",
+      "pg_offset": 104156,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Children preserved\"' where scan has 'Children preserved'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"True Thomas\"",
+      "scan_text": "True Thomas",
+      "pg_offset": 104267,
+      "scan_page": 102,
+      "diff_description": "PG has '\"True Thomas\"' where scan has 'True Thomas'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Endurance\"",
+      "scan_text": "Endurance",
+      "pg_offset": 104267,
+      "scan_page": 102,
+      "diff_description": "PG has 'Endurance\"' where scan has 'Endurance'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Robbers",
+      "scan_text": "Robbers",
+      "pg_offset": 104302,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Robbers' where scan has 'Robbers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Island\",",
+      "scan_text": "Island,",
+      "pg_offset": 104302,
+      "scan_page": 102,
+      "diff_description": "PG has 'Island\",' where scan has 'Island,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Holmveria Saga\"",
+      "scan_text": "Holmveria Saga",
+      "pg_offset": 104313,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Holmveria Saga\"' where scan has 'Holmveria Saga'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "(Ofote),",
+      "scan_text": "(Of\u00f3te),",
+      "pg_offset": 104360,
+      "scan_page": 102,
+      "diff_description": "PG has '(Ofote),' where scan has '(Of\u00f3te),'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "robber-hands",
+      "scan_text": "robber-bands",
+      "pg_offset": 104400,
+      "scan_page": 102,
+      "diff_description": "PG has 'robber-hands' where scan has 'robber-bands'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Starcad\",",
+      "scan_text": "Starcad,",
+      "pg_offset": 104408,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Starcad\",' where scan has 'Starcad,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Teutonic Mythology\"",
+      "scan_text": "Teutonic Mythology",
+      "pg_offset": 104549,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Teutonic Mythology\"' where scan has 'Teutonic Mythology'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"T.M.\").",
+      "scan_text": "T. M.).",
+      "pg_offset": 104564,
+      "scan_page": 102,
+      "diff_description": "PG has '\"T.M.\").' where scan has 'T. M.).'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "patriarchs:--",
+      "scan_text": "patriarchs:\u2014",
+      "pg_offset": 104607,
+      "scan_page": 102,
+      "diff_description": "PG has 'patriarchs:--' where scan has 'patriarchs:\u2014'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Scef--Heimdal--Rig.",
+      "scan_text": "Scef\u2014Heimdal\u2014Rig.",
+      "pg_offset": 104607,
+      "scan_page": 102,
+      "diff_description": "PG has 'Scef--Heimdal--Rig.' where scan has 'Scef\u2014Heimdal\u2014Rig.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Sciold--Borgar--Jarl.",
+      "scan_text": "Sciold\u2014Borgar\u2014Jarl.",
+      "pg_offset": 104607,
+      "scan_page": 102,
+      "diff_description": "PG has 'Sciold--Borgar--Jarl.' where scan has 'Sciold\u2014Borgar\u2014Jarl.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Gram--Halfdan--Koming.",
+      "scan_text": "Gram\u2014Halfdan\u2014Konung.",
+      "pg_offset": 104607,
+      "scan_page": 102,
+      "diff_description": "PG has 'Gram--Halfdan--Koming.' where scan has 'Gram\u2014Halfdan\u2014Konung.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "follows:--",
+      "scan_text": "follows:\u2014",
+      "pg_offset": 104646,
+      "scan_page": 102,
+      "diff_description": "PG has 'follows:--' where scan has 'follows:\u2014'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Grio,",
+      "scan_text": "Gno,",
+      "pg_offset": 105147,
+      "scan_page": 102,
+      "diff_description": "PG has 'Grio,' where scan has 'Gno,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sealskin,",
+      "scan_text": "seal-skin,",
+      "pg_offset": 105320,
+      "scan_page": 102,
+      "diff_description": "PG has 'sealskin,' where scan has 'seal-skin,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Heimdall",
+      "scan_text": "Heimdall",
+      "pg_offset": 105344,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Heimdall' where scan has 'Heimdall'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Sol\",",
+      "scan_text": "Sol,",
+      "pg_offset": 105344,
+      "scan_page": 102,
+      "diff_description": "PG has 'Sol\",' where scan has 'Sol,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "mediaeval",
+      "scan_text": "medi\u00e6val",
+      "pg_offset": 105375,
+      "scan_page": 102,
+      "diff_description": "PG has 'mediaeval' where scan has 'medi\u00e6val'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Ryuberg",
+      "scan_text": "Rydberg",
+      "pg_offset": 105383,
+      "scan_page": 102,
+      "diff_description": "PG has 'Ryuberg' where scan has 'Rydberg'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Hrutr,",
+      "scan_text": "Hr\u00fatr,",
+      "pg_offset": 105383,
+      "scan_page": 102,
+      "diff_description": "PG has 'Hrutr,' where scan has 'Hr\u00fatr,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "god).",
+      "scan_text": "(absent in scan)",
+      "pg_offset": 105391,
+      "scan_page": 102,
+      "diff_description": "PG has extra text: 'god).'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "\"Othar\"",
+      "scan_text": "Othar",
+      "pg_offset": 105391,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Othar\"' where scan has 'Othar'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Syritha\"",
+      "scan_text": "Syritha",
+      "pg_offset": 105391,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Syritha\"' where scan has 'Syritha'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Yggr,",
+      "scan_text": "Yggr.",
+      "pg_offset": 105647,
+      "scan_page": 102,
+      "diff_description": "PG has 'Yggr,' where scan has 'Yggr.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Hildiger story\",",
+      "scan_text": "Hildiger story,",
+      "pg_offset": 105677,
+      "scan_page": 102,
+      "diff_description": "PG has '\"Hildiger story\",' where scan has 'Hildiger story,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Champions' bane\".",
+      "scan_text": "Champions\u2019 bane.",
+      "pg_offset": 105714,
+      "scan_page": 102,
+      "diff_description": "PG has 'Champions' bane\".' where scan has 'Champions\u2019 bane.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"story",
+      "scan_text": "story",
+      "pg_offset": 105744,
+      "scan_page": 102,
+      "diff_description": "PG has '\"story' where scan has 'story'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Orwandel\"",
+      "scan_text": "Orwandel",
+      "pg_offset": 105744,
+      "scan_page": 102,
+      "diff_description": "PG has 'Orwandel\"' where scan has 'Orwandel'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "foster-parents",
+      "scan_text": "fosterparents",
+      "pg_offset": 105885,
+      "scan_page": 102,
+      "diff_description": "PG has 'foster-parents' where scan has 'fosterparents'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "primaeval",
+      "scan_text": "prim\u00e6val",
+      "pg_offset": 105911,
+      "scan_page": 102,
+      "diff_description": "PG has 'primaeval' where scan has 'prim\u00e6val'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "myth--that",
+      "scan_text": "myth\u2014that",
+      "pg_offset": 106263,
+      "scan_page": 102,
+      "diff_description": "PG has 'myth--that' where scan has 'myth\u2014that'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "task--the",
+      "scan_text": "task\u2014 the",
+      "pg_offset": 128239,
+      "scan_page": 311,
+      "diff_description": "PG has 'task--the' where scan has 'task\u2014 the'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "covered",
+      "scan_text": "dowered",
+      "pg_offset": 128531,
+      "scan_page": 319,
+      "diff_description": "PG has 'covered' where scan has 'dowered'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Waldemar, (1)",
+      "scan_text": "Waldemar,*",
+      "pg_offset": 129414,
+      "scan_page": 319,
+      "diff_description": "PG has 'Waldemar, (1)' where scan has 'Waldemar,*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "armed,",
+      "scan_text": "armed",
+      "pg_offset": 129559,
+      "scan_page": 319,
+      "diff_description": "PG has 'armed,' where scan has 'armed'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "fore-most",
+      "scan_text": "foremost",
+      "pg_offset": 129894,
+      "scan_page": 319,
+      "diff_description": "PG has 'fore-most' where scan has 'foremost'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "well-starred",
+      "scan_text": "wellstarred",
+      "pg_offset": 130368,
+      "scan_page": 319,
+      "diff_description": "PG has 'well-starred' where scan has 'wellstarred'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Bootes",
+      "scan_text": "Bo\u00f6tes",
+      "pg_offset": 130542,
+      "scan_page": 319,
+      "diff_description": "PG has 'Bootes' where scan has 'Bo\u00f6tes'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "antiquity;",
+      "scan_text": "antiquity,",
+      "pg_offset": 132190,
+      "scan_page": 319,
+      "diff_description": "PG has 'antiquity;' where scan has 'antiquity,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "SKIOLDUNG'S.",
+      "scan_text": "SKIOLDUNGS.",
+      "pg_offset": 132711,
+      "scan_page": 319,
+      "diff_description": "PG has 'SKIOLDUNG'S.' where scan has 'SKIOLDUNGS.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "self-control",
+      "scan_text": "selfcontrol",
+      "pg_offset": 132727,
+      "scan_page": 319,
+      "diff_description": "PG has 'self-control' where scan has 'selfcontrol'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "born?\"",
+      "scan_text": "(absent in scan)",
+      "pg_offset": 133486,
+      "scan_page": 319,
+      "diff_description": "PG has extra text: 'born?\"'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "insurrection;",
+      "scan_text": "insurrection ;",
+      "pg_offset": 134545,
+      "scan_page": 319,
+      "diff_description": "PG has 'insurrection;' where scan has 'insurrection ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "expanded:",
+      "scan_text": "expanded :",
+      "pg_offset": 135842,
+      "scan_page": 319,
+      "diff_description": "PG has 'expanded:' where scan has 'expanded :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "will:",
+      "scan_text": "will :",
+      "pg_offset": 135924,
+      "scan_page": 319,
+      "diff_description": "PG has 'will:' where scan has 'will :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Thunderer;",
+      "scan_text": "Thunderer ;",
+      "pg_offset": 135936,
+      "scan_page": 319,
+      "diff_description": "PG has 'Thunderer;' where scan has 'Thunderer ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "wise;",
+      "scan_text": "wise ;",
+      "pg_offset": 135971,
+      "scan_page": 319,
+      "diff_description": "PG has 'wise;' where scan has 'wise ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "knee;",
+      "scan_text": "knee ;",
+      "pg_offset": 136008,
+      "scan_page": 319,
+      "diff_description": "PG has 'knee;' where scan has 'knee ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "twofold:",
+      "scan_text": "twofold :",
+      "pg_offset": 136040,
+      "scan_page": 319,
+      "diff_description": "PG has 'twofold:' where scan has 'twofold :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "closed;",
+      "scan_text": "closed ;",
+      "pg_offset": 136055,
+      "scan_page": 319,
+      "diff_description": "PG has 'closed;' where scan has 'closed ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "forms;",
+      "scan_text": "forms :",
+      "pg_offset": 136093,
+      "scan_page": 319,
+      "diff_description": "PG has 'forms;' where scan has 'forms :'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "through-out.",
+      "scan_text": "throughout.",
+      "pg_offset": 136949,
+      "scan_page": 319,
+      "diff_description": "PG has 'through-out.' where scan has 'throughout.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "rigour,",
+      "scan_text": "vigour,",
+      "pg_offset": 138258,
+      "scan_page": 319,
+      "diff_description": "PG has 'rigour,' where scan has 'vigour,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "springtime",
+      "scan_text": "springtide",
+      "pg_offset": 138791,
+      "scan_page": 319,
+      "diff_description": "PG has 'springtime' where scan has 'springtide'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "dweller's",
+      "scan_text": "dwellers",
+      "pg_offset": 139398,
+      "scan_page": 319,
+      "diff_description": "PG has 'dweller's' where scan has 'dwellers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Froblod",
+      "scan_text": "Fr\u00f6blod",
+      "pg_offset": 139598,
+      "scan_page": 319,
+      "diff_description": "PG has 'Froblod' where scan has 'Fr\u00f6blod'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "soft-dealing",
+      "scan_text": "softdealing",
+      "pg_offset": 141246,
+      "scan_page": 319,
+      "diff_description": "PG has 'soft-dealing' where scan has 'softdealing'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "forces--so",
+      "scan_text": "forces\u2014so",
+      "pg_offset": 141477,
+      "scan_page": 319,
+      "diff_description": "PG has 'forces--so' where scan has 'forces\u2014so'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "received--he",
+      "scan_text": "received\u2014he",
+      "pg_offset": 141484,
+      "scan_page": 319,
+      "diff_description": "PG has 'received--he' where scan has 'received\u2014he'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "king--would",
+      "scan_text": "king\u2014would",
+      "pg_offset": 142119,
+      "scan_page": 319,
+      "diff_description": "PG has 'king--would' where scan has 'king\u2014would'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "stripling,",
+      "scan_text": "stripling",
+      "pg_offset": 142627,
+      "scan_page": 319,
+      "diff_description": "PG has 'stripling,' where scan has 'stripling'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "flowing",
+      "scan_text": "flooding",
+      "pg_offset": 143868,
+      "scan_page": 319,
+      "diff_description": "PG has 'flowing' where scan has 'flooding'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Vespasins,",
+      "scan_text": "Vespasius,",
+      "pg_offset": 144112,
+      "scan_page": 319,
+      "diff_description": "PG has 'Vespasins,' where scan has 'Vespasius,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "covetousness.",
+      "scan_text": "coyetousness.",
+      "pg_offset": 144536,
+      "scan_page": 319,
+      "diff_description": "PG has 'covetousness.' where scan has 'coyetousness.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "trader",
+      "scan_text": "under",
+      "pg_offset": 145323,
+      "scan_page": 319,
+      "diff_description": "PG has 'trader' where scan has 'under'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "diver's",
+      "scan_text": "divers",
+      "pg_offset": 145478,
+      "scan_page": 319,
+      "diff_description": "PG has 'diver's' where scan has 'divers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Ragnar,",
+      "scan_text": "Ragnar",
+      "pg_offset": 146036,
+      "scan_page": 319,
+      "diff_description": "PG has 'Ragnar,' where scan has 'Ragnar'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "throat",
+      "scan_text": "thoat",
+      "pg_offset": 146328,
+      "scan_page": 319,
+      "diff_description": "PG has 'throat' where scan has 'thoat'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "molder",
+      "scan_text": "moulder",
+      "pg_offset": 147181,
+      "scan_page": 319,
+      "diff_description": "PG has 'molder' where scan has 'moulder'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "gold;",
+      "scan_text": "gold ;",
+      "pg_offset": 147410,
+      "scan_page": 319,
+      "diff_description": "PG has 'gold;' where scan has 'gold ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "ill will:",
+      "scan_text": "illwill:",
+      "pg_offset": 147751,
+      "scan_page": 319,
+      "diff_description": "PG has 'ill will:' where scan has 'illwill:'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "brutes:",
+      "scan_text": "brutes :",
+      "pg_offset": 148112,
+      "scan_page": 319,
+      "diff_description": "PG has 'brutes:' where scan has 'brutes :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "arms,",
+      "scan_text": "arms.",
+      "pg_offset": 148432,
+      "scan_page": 319,
+      "diff_description": "PG has 'arms,' where scan has 'arms.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "reigned",
+      "scan_text": "feigned",
+      "pg_offset": 148475,
+      "scan_page": 319,
+      "diff_description": "PG has 'reigned' where scan has 'feigned'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Helge.",
+      "scan_text": "HELGE,",
+      "pg_offset": 148944,
+      "scan_page": 319,
+      "diff_description": "PG has 'Helge.' where scan has 'HELGE,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "splendour. Meantime",
+      "scan_text": "splenMeantime",
+      "pg_offset": 149539,
+      "scan_page": 319,
+      "diff_description": "PG has 'splendour. Meantime' where scan has 'splenMeantime'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "hoot.",
+      "scan_text": "boot.",
+      "pg_offset": 150077,
+      "scan_page": 319,
+      "diff_description": "PG has 'hoot.' where scan has 'boot.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Blind-witted",
+      "scan_text": "Blindwitted",
+      "pg_offset": 150128,
+      "scan_page": 319,
+      "diff_description": "PG has 'Blind-witted' where scan has 'Blindwitted'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "vizor-holes.",
+      "scan_text": "vizorholes.",
+      "pg_offset": 151437,
+      "scan_page": 319,
+      "diff_description": "PG has 'vizor-holes.' where scan has 'vizorholes.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Lovi.",
+      "scan_text": "L\u00f6vi.",
+      "pg_offset": 151523,
+      "scan_page": 319,
+      "diff_description": "PG has 'Lovi.' where scan has 'L\u00f6vi.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "beauty",
+      "scan_text": "bounty",
+      "pg_offset": 151741,
+      "scan_page": 319,
+      "diff_description": "PG has 'beauty' where scan has 'bounty'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "poverty-stricken,",
+      "scan_text": "povertystricken,",
+      "pg_offset": 151871,
+      "scan_page": 319,
+      "diff_description": "PG has 'poverty-stricken,' where scan has 'povertystricken,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "quickly",
+      "scan_text": "qiuckly",
+      "pg_offset": 152522,
+      "scan_page": 319,
+      "diff_description": "PG has 'quickly' where scan has 'qiuckly'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "follows: \"Up,",
+      "scan_text": "fol\u201cUp,",
+      "pg_offset": 152835,
+      "scan_page": 319,
+      "diff_description": "PG has 'follows: \"Up,' where scan has 'fol\u201cUp,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "back:",
+      "scan_text": "back;",
+      "pg_offset": 153255,
+      "scan_page": 319,
+      "diff_description": "PG has 'back:' where scan has 'back;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "`Eagles",
+      "scan_text": "\u2018Eagles",
+      "pg_offset": 153264,
+      "scan_page": 319,
+      "diff_description": "PG has '`Eagles' where scan has '\u2018Eagles'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "foremost',",
+      "scan_text": "foremost,\u2019",
+      "pg_offset": 153264,
+      "scan_page": 319,
+      "diff_description": "PG has 'foremost',' where scan has 'foremost,\u2019'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "spears:",
+      "scan_text": "spears;",
+      "pg_offset": 153357,
+      "scan_page": 319,
+      "diff_description": "PG has 'spears:' where scan has 'spears;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "council-chamber",
+      "scan_text": "councilchamber",
+      "pg_offset": 153551,
+      "scan_page": 319,
+      "diff_description": "PG has 'council-chamber' where scan has 'councilchamber'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "floors?",
+      "scan_text": "doors?",
+      "pg_offset": 154469,
+      "scan_page": 319,
+      "diff_description": "PG has 'floors?' where scan has 'doors?'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "war-waging",
+      "scan_text": "warwaging",
+      "pg_offset": 155593,
+      "scan_page": 319,
+      "diff_description": "PG has 'war-waging' where scan has 'warwaging'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "",
+      "scan_text": "a",
+      "pg_offset": 155860,
+      "scan_page": 319,
+      "diff_description": "Extra word in scan: 'a'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "hard-frozen",
+      "scan_text": "hardfrozen",
+      "pg_offset": 157090,
+      "scan_page": 319,
+      "diff_description": "PG has 'hard-frozen' where scan has 'hardfrozen'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Demnark",
+      "scan_text": "Denmark",
+      "pg_offset": 158726,
+      "scan_page": 319,
+      "diff_description": "PG has 'Demnark' where scan has 'Denmark'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "two horse",
+      "scan_text": "two-horse",
+      "pg_offset": 158904,
+      "scan_page": 319,
+      "diff_description": "PG has 'two horse' where scan has 'two-horse'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Hother (1)",
+      "scan_text": "Hother*",
+      "pg_offset": 159004,
+      "scan_page": 319,
+      "diff_description": "PG has 'Hother (1)' where scan has 'Hother*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "rigour",
+      "scan_text": "vigour",
+      "pg_offset": 159705,
+      "scan_page": 319,
+      "diff_description": "PG has 'rigour' where scan has 'vigour'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Harald, (2)",
+      "scan_text": "Harald,*",
+      "pg_offset": 160283,
+      "scan_page": 319,
+      "diff_description": "PG has 'Harald, (2)' where scan has 'Harald,*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "upon, and",
+      "scan_text": "upon. And",
+      "pg_offset": 160355,
+      "scan_page": 319,
+      "diff_description": "PG has 'upon, and' where scan has 'upon. And'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "beard",
+      "scan_text": "heard",
+      "pg_offset": 160562,
+      "scan_page": 319,
+      "diff_description": "PG has 'beard' where scan has 'heard'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "stubborn-hearted",
+      "scan_text": "stubbornhearted",
+      "pg_offset": 161019,
+      "scan_page": 319,
+      "diff_description": "PG has 'stubborn-hearted' where scan has 'stubbornhearted'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "hornage",
+      "scan_text": "homage",
+      "pg_offset": 162450,
+      "scan_page": 319,
+      "diff_description": "PG has 'hornage' where scan has 'homage'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Rhlda,",
+      "scan_text": "Rinda,",
+      "pg_offset": 162461,
+      "scan_page": 319,
+      "diff_description": "PG has 'Rhlda,' where scan has 'Rinda,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "vengeande",
+      "scan_text": "vengeance",
+      "pg_offset": 162493,
+      "scan_page": 319,
+      "diff_description": "PG has 'vengeande' where scan has 'vengeance'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "vengeande.",
+      "scan_text": "vengeance.",
+      "pg_offset": 162526,
+      "scan_page": 319,
+      "diff_description": "PG has 'vengeande.' where scan has 'vengeance.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "devisors.",
+      "scan_text": "devisers.",
+      "pg_offset": 163011,
+      "scan_page": 319,
+      "diff_description": "PG has 'devisors.' where scan has 'devisers.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "inextricaly",
+      "scan_text": "inextricably",
+      "pg_offset": 163301,
+      "scan_page": 319,
+      "diff_description": "PG has 'inextricaly' where scan has 'inextricably'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "one's title.",
+      "scan_text": "one\u2019s due.",
+      "pg_offset": 163567,
+      "scan_page": 319,
+      "diff_description": "PG has 'one's title.' where scan has 'one\u2019s due.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "living--the",
+      "scan_text": "living\u2014the",
+      "pg_offset": 164799,
+      "scan_page": 319,
+      "diff_description": "PG has 'living--the' where scan has 'living\u2014the'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "spring-green",
+      "scan_text": "springgreen",
+      "pg_offset": 164963,
+      "scan_page": 319,
+      "diff_description": "PG has 'spring-green' where scan has 'springgreen'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "foster-brother,",
+      "scan_text": "fosterbrother,",
+      "pg_offset": 166216,
+      "scan_page": 319,
+      "diff_description": "PG has 'foster-brother,' where scan has 'fosterbrother,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "wood--a",
+      "scan_text": "wood\u2014a",
+      "pg_offset": 167588,
+      "scan_page": 319,
+      "diff_description": "PG has 'wood--a' where scan has 'wood\u2014a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "searched",
+      "scan_text": "seached",
+      "pg_offset": 167622,
+      "scan_page": 319,
+      "diff_description": "PG has 'searched' where scan has 'seached'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "carefully cooked",
+      "scan_text": "carefullycooked",
+      "pg_offset": 167801,
+      "scan_page": 319,
+      "diff_description": "PG has 'carefully cooked' where scan has 'carefullycooked'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "illustrious",
+      "scan_text": "illustrous",
+      "pg_offset": 168004,
+      "scan_page": 319,
+      "diff_description": "PG has 'illustrious' where scan has 'illustrous'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "",
+      "scan_text": "a",
+      "pg_offset": 168520,
+      "scan_page": 319,
+      "diff_description": "Extra word in scan: 'a'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "handmaids",
+      "scan_text": "bondmaids",
+      "pg_offset": 168556,
+      "scan_page": 319,
+      "diff_description": "PG has 'handmaids' where scan has 'bondmaids'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "through",
+      "scan_text": "though",
+      "pg_offset": 168824,
+      "scan_page": 319,
+      "diff_description": "PG has 'through' where scan has 'though'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "jollied",
+      "scan_text": "joined",
+      "pg_offset": 168905,
+      "scan_page": 319,
+      "diff_description": "PG has 'jollied' where scan has 'joined'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "fratricide-brother,",
+      "scan_text": "fratricide\u2014 brother,",
+      "pg_offset": 169747,
+      "scan_page": 319,
+      "diff_description": "PG has 'fratricide-brother,' where scan has 'fratricide\u2014 brother,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "deed;",
+      "scan_text": "deed ;",
+      "pg_offset": 169971,
+      "scan_page": 319,
+      "diff_description": "PG has 'deed;' where scan has 'deed ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "you;",
+      "scan_text": "you ;",
+      "pg_offset": 170047,
+      "scan_page": 319,
+      "diff_description": "PG has 'you;' where scan has 'you ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "you;",
+      "scan_text": "you ;",
+      "pg_offset": 170073,
+      "scan_page": 319,
+      "diff_description": "PG has 'you;' where scan has 'you ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "dust;",
+      "scan_text": "dust ;",
+      "pg_offset": 170158,
+      "scan_page": 319,
+      "diff_description": "PG has 'dust;' where scan has 'dust ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "remain;",
+      "scan_text": "remain ;",
+      "pg_offset": 170177,
+      "scan_page": 319,
+      "diff_description": "PG has 'remain;' where scan has 'remain ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "limbs;",
+      "scan_text": "limbs ;",
+      "pg_offset": 170190,
+      "scan_page": 319,
+      "diff_description": "PG has 'limbs;' where scan has 'limbs ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "him;",
+      "scan_text": "him ;",
+      "pg_offset": 170197,
+      "scan_page": 319,
+      "diff_description": "PG has 'him;' where scan has 'him ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "harboring",
+      "scan_text": "harbouring",
+      "pg_offset": 170206,
+      "scan_page": 319,
+      "diff_description": "PG has 'harboring' where scan has 'harbouring'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "rest;",
+      "scan_text": "rest ;",
+      "pg_offset": 170214,
+      "scan_page": 319,
+      "diff_description": "PG has 'rest;' where scan has 'rest ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "execrate",
+      "scan_text": "execute",
+      "pg_offset": 171625,
+      "scan_page": 319,
+      "diff_description": "PG has 'execrate' where scan has 'execute'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "resting--the",
+      "scan_text": "resting\u2014the",
+      "pg_offset": 171836,
+      "scan_page": 319,
+      "diff_description": "PG has 'resting--the' where scan has 'resting\u2014the'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sleep--and",
+      "scan_text": "sleep\u2014and",
+      "pg_offset": 171846,
+      "scan_page": 319,
+      "diff_description": "PG has 'sleep--and' where scan has 'sleep\u2014and'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sent out",
+      "scan_text": "sentout",
+      "pg_offset": 171861,
+      "scan_page": 319,
+      "diff_description": "PG has 'sent out' where scan has 'sentout'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "the approach",
+      "scan_text": "theapproach",
+      "pg_offset": 171868,
+      "scan_page": 319,
+      "diff_description": "PG has 'the approach' where scan has 'theapproach'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "nicely calculated",
+      "scan_text": "nicelycalculated",
+      "pg_offset": 171999,
+      "scan_page": 319,
+      "diff_description": "PG has 'nicely calculated' where scan has 'nicelycalculated'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "band,",
+      "scan_text": "hand,",
+      "pg_offset": 172023,
+      "scan_page": 319,
+      "diff_description": "PG has 'band,' where scan has 'hand,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "handled",
+      "scan_text": "handed",
+      "pg_offset": 172271,
+      "scan_page": 319,
+      "diff_description": "PG has 'handled' where scan has 'handed'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "willful",
+      "scan_text": "wilful",
+      "pg_offset": 172919,
+      "scan_page": 319,
+      "diff_description": "PG has 'willful' where scan has 'wilful'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Self-confidence",
+      "scan_text": "Selfconfidence",
+      "pg_offset": 174302,
+      "scan_page": 319,
+      "diff_description": "PG has 'Self-confidence' where scan has 'Selfconfidence'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Jellinge. (1)",
+      "scan_text": "Jellinge.*",
+      "pg_offset": 174634,
+      "scan_page": 319,
+      "diff_description": "PG has 'Jellinge. (1)' where scan has 'Jellinge.*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "drain:",
+      "scan_text": "drain :",
+      "pg_offset": 175058,
+      "scan_page": 319,
+      "diff_description": "PG has 'drain:' where scan has 'drain :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "end:",
+      "scan_text": "end :",
+      "pg_offset": 175097,
+      "scan_page": 319,
+      "diff_description": "PG has 'end:' where scan has 'end :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"for manslaughter\".",
+      "scan_text": "\u201cfor manslaughter.\u201d",
+      "pg_offset": 175888,
+      "scan_page": 319,
+      "diff_description": "PG has '\"for manslaughter\".' where scan has '\u201cfor manslaughter.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "usage, (2)",
+      "scan_text": "usage,*",
+      "pg_offset": 176778,
+      "scan_page": 319,
+      "diff_description": "PG has 'usage, (2)' where scan has 'usage,*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Skrep\",",
+      "scan_text": "\u201cSkrep,\u201d",
+      "pg_offset": 178148,
+      "scan_page": 319,
+      "diff_description": "PG has '\"Skrep\",' where scan has '\u201cSkrep,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "dashing",
+      "scan_text": "flashing",
+      "pg_offset": 179581,
+      "scan_page": 319,
+      "diff_description": "PG has 'dashing' where scan has 'flashing'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "gold-hilted",
+      "scan_text": "goldhilted",
+      "pg_offset": 179590,
+      "scan_page": 319,
+      "diff_description": "PG has 'gold-hilted' where scan has 'goldhilted'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "name--Grep in",
+      "scan_text": "name\u2014Grep\u2014in",
+      "pg_offset": 180782,
+      "scan_page": 319,
+      "diff_description": "PG has 'name--Grep in' where scan has 'name\u2014Grep\u2014in'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "country,",
+      "scan_text": "country?",
+      "pg_offset": 180860,
+      "scan_page": 319,
+      "diff_description": "PG has 'country,' where scan has 'country?'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bas-relief,",
+      "scan_text": "basrelief,",
+      "pg_offset": 181435,
+      "scan_page": 319,
+      "diff_description": "PG has 'bas-relief,' where scan has 'basrelief,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "love-philtres,",
+      "scan_text": "lovephiltres,",
+      "pg_offset": 181764,
+      "scan_page": 319,
+      "diff_description": "PG has 'love-philtres,' where scan has 'lovephiltres,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "beard. Something--sorrow",
+      "scan_text": "heard. Something \u2014sorrow",
+      "pg_offset": 181932,
+      "scan_page": 319,
+      "diff_description": "PG has 'beard. Something--sorrow' where scan has 'heard. Something \u2014sorrow'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "joy--we",
+      "scan_text": "joy\u2014we",
+      "pg_offset": 181932,
+      "scan_page": 319,
+      "diff_description": "PG has 'joy--we' where scan has 'joy\u2014we'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "heads--a",
+      "scan_text": "heads\u2014 a",
+      "pg_offset": 182873,
+      "scan_page": 319,
+      "diff_description": "PG has 'heads--a' where scan has 'heads\u2014 a'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "whitish:",
+      "scan_text": "whitish :",
+      "pg_offset": 184276,
+      "scan_page": 319,
+      "diff_description": "PG has 'whitish:' where scan has 'whitish :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Lesso.",
+      "scan_text": "Less\u00f6.",
+      "pg_offset": 185297,
+      "scan_page": 319,
+      "diff_description": "PG has 'Lesso.' where scan has 'Less\u00f6.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "free-booters",
+      "scan_text": "freebooters",
+      "pg_offset": 185393,
+      "scan_page": 319,
+      "diff_description": "PG has 'free-booters' where scan has 'freebooters'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "free-booting",
+      "scan_text": "freebooting",
+      "pg_offset": 185496,
+      "scan_page": 319,
+      "diff_description": "PG has 'free-booting' where scan has 'freebooting'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Grep:",
+      "scan_text": "Grep.",
+      "pg_offset": 185688,
+      "scan_page": 319,
+      "diff_description": "PG has 'Grep:' where scan has 'Grep.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "things",
+      "scan_text": "doings",
+      "pg_offset": 185741,
+      "scan_page": 319,
+      "diff_description": "PG has 'things' where scan has 'doings'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Erik:",
+      "scan_text": "Erik.",
+      "pg_offset": 185759,
+      "scan_page": 319,
+      "diff_description": "PG has 'Erik:' where scan has 'Erik.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "hand.\" Grep:",
+      "scan_text": "Grep.",
+      "pg_offset": 185863,
+      "scan_page": 319,
+      "diff_description": "PG has 'hand.\" Grep:' where scan has 'Grep.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Erik:",
+      "scan_text": "Erik.",
+      "pg_offset": 185910,
+      "scan_page": 319,
+      "diff_description": "PG has 'Erik:' where scan has 'Erik.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "treachery.\" Grep: \"Shameless",
+      "scan_text": "treachery.\u201d Grep. \u201cShameless",
+      "pg_offset": 185977,
+      "scan_page": 319,
+      "diff_description": "PG has 'treachery.\" Grep: \"Shameless' where scan has 'treachery.\u201d Grep. \u201cShameless'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "bird.\" Erik: \"The",
+      "scan_text": "bird.\u201d Erik. \u201cThe",
+      "pg_offset": 186039,
+      "scan_page": 319,
+      "diff_description": "PG has 'bird.\" Erik: \"The' where scan has 'bird.\u201d Erik. \u201cThe'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "hearth.\" Grep: \"I",
+      "scan_text": "hearth.\u201d Grep. \u201cI",
+      "pg_offset": 186102,
+      "scan_page": 319,
+      "diff_description": "PG has 'hearth.\" Grep: \"I' where scan has 'hearth.\u201d Grep. \u201cI'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "counsel.\" Erik: \"Lo,",
+      "scan_text": "counsel.\u201d Erik. \u201cLo,",
+      "pg_offset": 186138,
+      "scan_page": 319,
+      "diff_description": "PG has 'counsel.\" Erik: \"Lo,' where scan has 'counsel.\u201d Erik. \u201cLo,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "dolphin.\" Frode",
+      "scan_text": "dolFrode",
+      "pg_offset": 187329,
+      "scan_page": 319,
+      "diff_description": "PG has 'dolphin.\" Frode' where scan has 'dolFrode'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "common.\" Then",
+      "scan_text": "comThen",
+      "pg_offset": 187338,
+      "scan_page": 319,
+      "diff_description": "PG has 'common.\" Then' where scan has 'comThen'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "tree.\"",
+      "scan_text": "",
+      "pg_offset": 187378,
+      "scan_page": 319,
+      "diff_description": "Missing from scan: 'tree.\"'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "`spear-point'",
+      "scan_text": "'spear-point'",
+      "pg_offset": 187557,
+      "scan_page": 319,
+      "diff_description": "PG has '`spear-point'' where scan has ''spear-point''",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "transfix",
+      "scan_text": "tranfix",
+      "pg_offset": 187771,
+      "scan_page": 319,
+      "diff_description": "PG has 'transfix' where scan has 'tranfix'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "`that",
+      "scan_text": "\u2018that",
+      "pg_offset": 187843,
+      "scan_page": 319,
+      "diff_description": "PG has '`that' where scan has '\u2018that'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "`that",
+      "scan_text": "\u2018that",
+      "pg_offset": 187852,
+      "scan_page": 319,
+      "diff_description": "PG has '`that' where scan has '\u2018that'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "feign there.\"",
+      "scan_text": "reign there.\u201d",
+      "pg_offset": 188419,
+      "scan_page": 319,
+      "diff_description": "PG has 'feign there.\"' where scan has 'reign there.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "reveller.\"",
+      "scan_text": "reveler.\u201d",
+      "pg_offset": 188582,
+      "scan_page": 319,
+      "diff_description": "PG has 'reveller.\"' where scan has 'reveler.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Erode",
+      "scan_text": "Frode",
+      "pg_offset": 189294,
+      "scan_page": 319,
+      "diff_description": "PG has 'Erode' where scan has 'Frode'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "foolhardy;",
+      "scan_text": "foolhardy ;",
+      "pg_offset": 467521,
+      "scan_page": 578,
+      "diff_description": "PG has 'foolhardy;' where scan has 'foolhardy ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "thee.",
+      "scan_text": "thee,",
+      "pg_offset": 467772,
+      "scan_page": 578,
+      "diff_description": "PG has 'thee.' where scan has 'thee,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "as-in",
+      "scan_text": "as in",
+      "pg_offset": 467983,
+      "scan_page": 578,
+      "diff_description": "PG has 'as-in' where scan has 'as in'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "reigned?",
+      "scan_text": "feigned?",
+      "pg_offset": 468709,
+      "scan_page": 578,
+      "diff_description": "PG has 'reigned?' where scan has 'feigned?'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "panic:",
+      "scan_text": "panic.",
+      "pg_offset": 468988,
+      "scan_page": 578,
+      "diff_description": "PG has 'panic:' where scan has 'panic.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "\"Shrewd-spoken\",",
+      "scan_text": "\u201cShrewd-spoken,\u201d",
+      "pg_offset": 469091,
+      "scan_page": 578,
+      "diff_description": "PG has '\"Shrewd-spoken\",' where scan has '\u201cShrewd-spoken,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "party-wall",
+      "scan_text": "partywall",
+      "pg_offset": 469735,
+      "scan_page": 578,
+      "diff_description": "PG has 'party-wall' where scan has 'partywall'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "",
+      "scan_text": "(c)",
+      "pg_offset": 471815,
+      "scan_page": 578,
+      "diff_description": "Extra word in scan: '(c)'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "realm",
+      "scan_text": "r\u00e8alm",
+      "pg_offset": 472620,
+      "scan_page": 578,
+      "diff_description": "PG has 'realm' where scan has 'r\u00e8alm'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "pass.\"",
+      "scan_text": "",
+      "pg_offset": 472821,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'pass.\"'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "really;",
+      "scan_text": "many;",
+      "pg_offset": 473048,
+      "scan_page": 578,
+      "diff_description": "PG has 'really;' where scan has 'many;'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "",
+      "scan_text": "(c)",
+      "pg_offset": 473759,
+      "scan_page": 578,
+      "diff_description": "Extra word in scan: '(c)'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "sword--it",
+      "scan_text": "sword\u2014it",
+      "pg_offset": 475334,
+      "scan_page": 578,
+      "diff_description": "PG has 'sword--it' where scan has 'sword\u2014it'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sharers",
+      "scan_text": "snarers",
+      "pg_offset": 475990,
+      "scan_page": 578,
+      "diff_description": "PG has 'sharers' where scan has 'snarers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "him.",
+      "scan_text": "him,",
+      "pg_offset": 476322,
+      "scan_page": 578,
+      "diff_description": "PG has 'him.' where scan has 'him,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "thus:-- \"Why",
+      "scan_text": "thus:\u2014 \u201cWhy",
+      "pg_offset": 476537,
+      "scan_page": 578,
+      "diff_description": "PG has 'thus:-- \"Why' where scan has 'thus:\u2014 \u201cWhy'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "",
+      "scan_text": "(c)",
+      "pg_offset": 477224,
+      "scan_page": 578,
+      "diff_description": "Extra word in scan: '(c)'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "wide-resounding",
+      "scan_text": "wideresounding",
+      "pg_offset": 477850,
+      "scan_page": 578,
+      "diff_description": "PG has 'wide-resounding' where scan has 'wideresounding'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Samso,",
+      "scan_text": "Sams\u00f6,",
+      "pg_offset": 477904,
+      "scan_page": 578,
+      "diff_description": "PG has 'Samso,' where scan has 'Sams\u00f6,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "propelled",
+      "scan_text": "panelled",
+      "pg_offset": 478659,
+      "scan_page": 578,
+      "diff_description": "PG has 'propelled' where scan has 'panelled'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "attempted",
+      "scan_text": "attemped",
+      "pg_offset": 479064,
+      "scan_page": 578,
+      "diff_description": "PG has 'attempted' where scan has 'attemped'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "",
+      "scan_text": ".",
+      "pg_offset": 479349,
+      "scan_page": 578,
+      "diff_description": "Extra word in scan: '.'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "encroach",
+      "scan_text": "\u00e8ncroach",
+      "pg_offset": 479560,
+      "scan_page": 578,
+      "diff_description": "PG has 'encroach' where scan has '\u00e8ncroach'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "beasts:",
+      "scan_text": "beasts :",
+      "pg_offset": 480177,
+      "scan_page": 578,
+      "diff_description": "PG has 'beasts:' where scan has 'beasts :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Caesar's",
+      "scan_text": "C\u00e6sar\u2019s",
+      "pg_offset": 480635,
+      "scan_page": 578,
+      "diff_description": "PG has 'Caesar's' where scan has 'C\u00e6sar\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "them--for",
+      "scan_text": "them\u2014for",
+      "pg_offset": 480978,
+      "scan_page": 578,
+      "diff_description": "PG has 'them--for' where scan has 'them\u2014for'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "antiquity--Gerbiorn,",
+      "scan_text": "antiquity\u2014Gerbiorn,",
+      "pg_offset": 480984,
+      "scan_page": 578,
+      "diff_description": "PG has 'antiquity--Gerbiorn,' where scan has 'antiquity\u2014Gerbiorn,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "promiscuously--these,",
+      "scan_text": "promiscuously\u2014these,",
+      "pg_offset": 481281,
+      "scan_page": 578,
+      "diff_description": "PG has 'promiscuously--these,' where scan has 'promiscuously\u2014these,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "island;",
+      "scan_text": "island ;",
+      "pg_offset": 481836,
+      "scan_page": 578,
+      "diff_description": "PG has 'island;' where scan has 'island ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "extirpated:",
+      "scan_text": "extirpated :",
+      "pg_offset": 482049,
+      "scan_page": 578,
+      "diff_description": "PG has 'extirpated:' where scan has 'extirpated :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "man's name.",
+      "scan_text": "man\u2019s",
+      "pg_offset": 482726,
+      "scan_page": 578,
+      "diff_description": "PG has 'man's name.' where scan has 'man\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "showed",
+      "scan_text": "shewed",
+      "pg_offset": 482805,
+      "scan_page": 578,
+      "diff_description": "PG has 'showed' where scan has 'shewed'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Around",
+      "scan_text": "Amund",
+      "pg_offset": 482873,
+      "scan_page": 578,
+      "diff_description": "PG has 'Around' where scan has 'Amund'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "booty-laden",
+      "scan_text": "bootyladen",
+      "pg_offset": 483622,
+      "scan_page": 578,
+      "diff_description": "PG has 'booty-laden' where scan has 'bootyladen'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "virtue",
+      "scan_text": "virture",
+      "pg_offset": 484676,
+      "scan_page": 578,
+      "diff_description": "PG has 'virtue' where scan has 'virture'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "soldiers:",
+      "scan_text": "soldiers :",
+      "pg_offset": 484913,
+      "scan_page": 578,
+      "diff_description": "PG has 'soldiers:' where scan has 'soldiers :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "follows:--",
+      "scan_text": "follows:\u2014",
+      "pg_offset": 485794,
+      "scan_page": 578,
+      "diff_description": "PG has 'follows:--' where scan has 'follows:\u2014'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sea-roving.",
+      "scan_text": "searoving.",
+      "pg_offset": 485931,
+      "scan_page": 578,
+      "diff_description": "PG has 'sea-roving.' where scan has 'searoving.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "money-bargain.",
+      "scan_text": "moneybargain.",
+      "pg_offset": 486155,
+      "scan_page": 578,
+      "diff_description": "PG has 'money-bargain.' where scan has 'moneybargain.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "and, longing",
+      "scan_text": "and,longing",
+      "pg_offset": 487737,
+      "scan_page": 578,
+      "diff_description": "PG has 'and, longing' where scan has 'and,longing'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "self-control",
+      "scan_text": "selfcontrol",
+      "pg_offset": 488189,
+      "scan_page": 578,
+      "diff_description": "PG has 'self-control' where scan has 'selfcontrol'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Fowl-fatteners,",
+      "scan_text": "Fowlfatteners,",
+      "pg_offset": 488236,
+      "scan_page": 578,
+      "diff_description": "PG has 'Fowl-fatteners,' where scan has 'Fowlfatteners,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "banquet--the",
+      "scan_text": "banquet\u2014the",
+      "pg_offset": 488248,
+      "scan_page": 578,
+      "diff_description": "PG has 'banquet--the' where scan has 'banquet\u2014the'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Antiquity",
+      "scan_text": "AntiquityFOOTNOTE",
+      "pg_offset": 488432,
+      "scan_page": 578,
+      "diff_description": "PG has 'Antiquity' where scan has 'AntiquityFOOTNOTE'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "garment\",",
+      "scan_text": "garment,\u201d",
+      "pg_offset": 488631,
+      "scan_page": 578,
+      "diff_description": "PG has 'garment\",' where scan has 'garment,\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "`Maiden,",
+      "scan_text": "\u2018Maiden,",
+      "pg_offset": 489488,
+      "scan_page": 578,
+      "diff_description": "PG has '`Maiden,' where scan has '\u2018Maiden,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "`Refrain",
+      "scan_text": "\u2018Refrain",
+      "pg_offset": 489567,
+      "scan_page": 578,
+      "diff_description": "PG has '`Refrain' where scan has '\u2018Refrain'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "`Turn",
+      "scan_text": "\u2018Turn",
+      "pg_offset": 489602,
+      "scan_page": 578,
+      "diff_description": "PG has '`Turn' where scan has '\u2018Turn'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "ridiculous",
+      "scan_text": "ridiculous.",
+      "pg_offset": 490894,
+      "scan_page": 578,
+      "diff_description": "PG has 'ridiculous' where scan has 'ridiculous.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "with-them",
+      "scan_text": "with them",
+      "pg_offset": 491435,
+      "scan_page": 578,
+      "diff_description": "PG has 'with-them' where scan has 'with them'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bridal-chamber,",
+      "scan_text": "bridalchamber,",
+      "pg_offset": 492517,
+      "scan_page": 578,
+      "diff_description": "PG has 'bridal-chamber,' where scan has 'bridalchamber,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "heard--for",
+      "scan_text": "heard\u2014for",
+      "pg_offset": 492746,
+      "scan_page": 578,
+      "diff_description": "PG has 'heard--for' where scan has 'heard\u2014for'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "spread--that",
+      "scan_text": "spread\u2014that",
+      "pg_offset": 492746,
+      "scan_page": 578,
+      "diff_description": "PG has 'spread--that' where scan has 'spread\u2014that'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "scot-free,",
+      "scan_text": "scotfree,",
+      "pg_offset": 495030,
+      "scan_page": 578,
+      "diff_description": "PG has 'scot-free,' where scan has 'scotfree,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "gold;",
+      "scan_text": "gold ;",
+      "pg_offset": 495824,
+      "scan_page": 578,
+      "diff_description": "PG has 'gold;' where scan has 'gold ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Teutons;",
+      "scan_text": "Teutons ;",
+      "pg_offset": 495879,
+      "scan_page": 578,
+      "diff_description": "PG has 'Teutons;' where scan has 'Teutons ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "feast;",
+      "scan_text": "feast ;",
+      "pg_offset": 495898,
+      "scan_page": 578,
+      "diff_description": "PG has 'feast;' where scan has 'feast ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "preparation;",
+      "scan_text": "preparation ;",
+      "pg_offset": 495934,
+      "scan_page": 578,
+      "diff_description": "PG has 'preparation;' where scan has 'preparation ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "hog;",
+      "scan_text": "hog ;",
+      "pg_offset": 495956,
+      "scan_page": 578,
+      "diff_description": "PG has 'hog;' where scan has 'hog ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "trusting.... \"She",
+      "scan_text": "trusting . . . . \u201cShe",
+      "pg_offset": 495956,
+      "scan_page": 578,
+      "diff_description": "PG has 'trusting.... \"She' where scan has 'trusting . . . . \u201cShe'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "",
+      "scan_text": ".",
+      "pg_offset": 496063,
+      "scan_page": 578,
+      "diff_description": "Extra word in scan: '.'",
+      "category": "extra_word"
+    },
+    {
+      "pg_text": "quelled",
+      "scan_text": "quelied",
+      "pg_offset": 496273,
+      "scan_page": 578,
+      "diff_description": "PG has 'quelled' where scan has 'quelied'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "display. \"The",
+      "scan_text": "dis\u201cThe",
+      "pg_offset": 496300,
+      "scan_page": 578,
+      "diff_description": "PG has 'display. \"The' where scan has 'dis\u201cThe'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "wine-jars",
+      "scan_text": "winejars",
+      "pg_offset": 496418,
+      "scan_page": 578,
+      "diff_description": "PG has 'wine-jars' where scan has 'winejars'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Frode",
+      "scan_text": "Frotle",
+      "pg_offset": 496561,
+      "scan_page": 578,
+      "diff_description": "PG has 'Frode' where scan has 'Frotle'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "soup? \"When",
+      "scan_text": "\u201cWhen",
+      "pg_offset": 496600,
+      "scan_page": 578,
+      "diff_description": "PG has 'soup? \"When' where scan has '\u201cWhen'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "hiding. (1)",
+      "scan_text": "hiding.*",
+      "pg_offset": 498730,
+      "scan_page": 578,
+      "diff_description": "PG has 'hiding. (1)' where scan has 'hiding.*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Then--for",
+      "scan_text": "Then\u2014for",
+      "pg_offset": 499473,
+      "scan_page": 578,
+      "diff_description": "PG has 'Then--for' where scan has 'Then\u2014for'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "bravery--amid",
+      "scan_text": "bravery\u2014amid",
+      "pg_offset": 499482,
+      "scan_page": 578,
+      "diff_description": "PG has 'bravery--amid' where scan has 'bravery\u2014amid'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "helmet,",
+      "scan_text": "helmet,,",
+      "pg_offset": 499495,
+      "scan_page": 578,
+      "diff_description": "PG has 'helmet,' where scan has 'helmet,,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "hard-pressed",
+      "scan_text": "hardpressed",
+      "pg_offset": 499851,
+      "scan_page": 578,
+      "diff_description": "PG has 'hard-pressed' where scan has 'hardpressed'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "(\"rock strong\"),",
+      "scan_text": "(rock strong),",
+      "pg_offset": 499956,
+      "scan_page": 578,
+      "diff_description": "PG has '(\"rock strong\"),' where scan has '(rock strong),'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "them.",
+      "scan_text": "",
+      "pg_offset": 500689,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'them.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "celibacy.",
+      "scan_text": "celibacy,",
+      "pg_offset": 500907,
+      "scan_page": 578,
+      "diff_description": "PG has 'celibacy.' where scan has 'celibacy,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Halfdan",
+      "scan_text": "Halfden",
+      "pg_offset": 501212,
+      "scan_page": 578,
+      "diff_description": "PG has 'Halfdan' where scan has 'Halfden'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "table.",
+      "scan_text": "table,",
+      "pg_offset": 501879,
+      "scan_page": 578,
+      "diff_description": "PG has 'table.' where scan has 'table,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "son-in-law",
+      "scan_text": "son-inlaw",
+      "pg_offset": 501956,
+      "scan_page": 578,
+      "diff_description": "PG has 'son-in-law' where scan has 'son-inlaw'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "self-restraint,",
+      "scan_text": "selfrestraint,",
+      "pg_offset": 502201,
+      "scan_page": 578,
+      "diff_description": "PG has 'self-restraint,' where scan has 'selfrestraint,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "self-restraint",
+      "scan_text": "selfrestraint",
+      "pg_offset": 502233,
+      "scan_page": 578,
+      "diff_description": "PG has 'self-restraint' where scan has 'selfrestraint'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "while--it",
+      "scan_text": "while\u2014it",
+      "pg_offset": 502731,
+      "scan_page": 578,
+      "diff_description": "PG has 'while--it' where scan has 'while\u2014it'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "gesture--lift",
+      "scan_text": "gesture\u2014lift",
+      "pg_offset": 502731,
+      "scan_page": 578,
+      "diff_description": "PG has 'gesture--lift' where scan has 'gesture\u2014lift'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "rover captain",
+      "scan_text": "rovercaptain",
+      "pg_offset": 503991,
+      "scan_page": 578,
+      "diff_description": "PG has 'rover captain' where scan has 'rovercaptain'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Hyldeland.",
+      "scan_text": "Hyldetand.",
+      "pg_offset": 504456,
+      "scan_page": 578,
+      "diff_description": "PG has 'Hyldeland.' where scan has 'Hyldetand.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bye quality",
+      "scan_text": "by equality",
+      "pg_offset": 504802,
+      "scan_page": 578,
+      "diff_description": "PG has 'bye quality' where scan has 'by equality'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "fighting-maid",
+      "scan_text": "fightingmaid",
+      "pg_offset": 505569,
+      "scan_page": 578,
+      "diff_description": "PG has 'fighting-maid' where scan has 'fightingmaid'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "men-at-arms;--by",
+      "scan_text": "men-at-arms;\u2014by",
+      "pg_offset": 506126,
+      "scan_page": 578,
+      "diff_description": "PG has 'men-at-arms;--by' where scan has 'men-at-arms;\u2014by'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "wine.",
+      "scan_text": "",
+      "pg_offset": 506749,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'wine.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "foot-soldiers",
+      "scan_text": "footsoldiers",
+      "pg_offset": 507575,
+      "scan_page": 578,
+      "diff_description": "PG has 'foot-soldiers' where scan has 'footsoldiers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "scabbards;",
+      "scan_text": "scabbards,",
+      "pg_offset": 507737,
+      "scan_page": 578,
+      "diff_description": "PG has 'scabbards;' where scan has 'scabbards,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "men.",
+      "scan_text": "men,",
+      "pg_offset": 508605,
+      "scan_page": 578,
+      "diff_description": "PG has 'men.' where scan has 'men,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "smith-craft,",
+      "scan_text": "smithcraft,",
+      "pg_offset": 508678,
+      "scan_page": 578,
+      "diff_description": "PG has 'smith-craft,' where scan has 'smithcraft,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "whir,",
+      "scan_text": "whit,",
+      "pg_offset": 509213,
+      "scan_page": 578,
+      "diff_description": "PG has 'whir,' where scan has 'whit,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "nickname,...",
+      "scan_text": "nickname, . . .",
+      "pg_offset": 509663,
+      "scan_page": 578,
+      "diff_description": "PG has 'nickname,...' where scan has 'nickname, . . .'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "chastity",
+      "scan_text": "chasity",
+      "pg_offset": 509723,
+      "scan_page": 578,
+      "diff_description": "PG has 'chastity' where scan has 'chasity'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "war.",
+      "scan_text": "",
+      "pg_offset": 509951,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'war.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "he had",
+      "scan_text": "hehad",
+      "pg_offset": 509991,
+      "scan_page": 578,
+      "diff_description": "PG has 'he had' where scan has 'hehad'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Lyusing....",
+      "scan_text": "Lyusing . . .",
+      "pg_offset": 510112,
+      "scan_page": 578,
+      "diff_description": "PG has 'Lyusing....' where scan has 'Lyusing . . .'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "feelings--the",
+      "scan_text": "feelings\u2014the",
+      "pg_offset": 510314,
+      "scan_page": 578,
+      "diff_description": "PG has 'feelings--the' where scan has 'feelings\u2014the'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "ambiguous",
+      "scan_text": "ambigous",
+      "pg_offset": 511131,
+      "scan_page": 578,
+      "diff_description": "PG has 'ambiguous' where scan has 'ambigous'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "overthrew,",
+      "scan_text": "overthrew",
+      "pg_offset": 511155,
+      "scan_page": 578,
+      "diff_description": "PG has 'overthrew,' where scan has 'overthrew'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Their",
+      "scan_text": "'Their",
+      "pg_offset": 512580,
+      "scan_page": 578,
+      "diff_description": "PG has 'Their' where scan has ''Their'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "kingdom.",
+      "scan_text": "kingdoin.",
+      "pg_offset": 512678,
+      "scan_page": 578,
+      "diff_description": "PG has 'kingdom.' where scan has 'kingdoin.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "anger;",
+      "scan_text": "anger ;",
+      "pg_offset": 513339,
+      "scan_page": 578,
+      "diff_description": "PG has 'anger;' where scan has 'anger ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "single-handed--an",
+      "scan_text": "single-handed\u2014an",
+      "pg_offset": 514786,
+      "scan_page": 578,
+      "diff_description": "PG has 'single-handed--an' where scan has 'single-handed\u2014an'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "father-in-law's",
+      "scan_text": "father-inlaw\u2019s",
+      "pg_offset": 514851,
+      "scan_page": 578,
+      "diff_description": "PG has 'father-in-law's' where scan has 'father-inlaw\u2019s'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "surnamed....",
+      "scan_text": "surnamed . . . .",
+      "pg_offset": 514877,
+      "scan_page": 578,
+      "diff_description": "PG has 'surnamed....' where scan has 'surnamed . . . .'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sea-kings",
+      "scan_text": "seakings",
+      "pg_offset": 515212,
+      "scan_page": 578,
+      "diff_description": "PG has 'sea-kings' where scan has 'seakings'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Thule, (1)",
+      "scan_text": "Thule,*",
+      "pg_offset": 515894,
+      "scan_page": 578,
+      "diff_description": "PG has 'Thule, (1)' where scan has 'Thule,*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Thorguy,",
+      "scan_text": "Thorgny,",
+      "pg_offset": 515907,
+      "scan_page": 578,
+      "diff_description": "PG has 'Thorguy,' where scan has 'Thorgny,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Wohin",
+      "scan_text": "Wollin",
+      "pg_offset": 516200,
+      "scan_page": 578,
+      "diff_description": "PG has 'Wohin' where scan has 'Wollin'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Harald:",
+      "scan_text": "Harald :",
+      "pg_offset": 516316,
+      "scan_page": 578,
+      "diff_description": "PG has 'Harald:' where scan has 'Harald :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Him....,",
+      "scan_text": "Him . . . .,",
+      "pg_offset": 516316,
+      "scan_page": 578,
+      "diff_description": "PG has 'Him....,' where scan has 'Him . . . .,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "arrogance--Thorleif",
+      "scan_text": "arrogance\u2014Thorleif",
+      "pg_offset": 516709,
+      "scan_page": 578,
+      "diff_description": "PG has 'arrogance--Thorleif' where scan has 'arrogance\u2014Thorleif'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Snub-nosed;",
+      "scan_text": "Snubnosed;",
+      "pg_offset": 516758,
+      "scan_page": 578,
+      "diff_description": "PG has 'Snub-nosed;' where scan has 'Snubnosed;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "consider,",
+      "scan_text": "consider",
+      "pg_offset": 517588,
+      "scan_page": 578,
+      "diff_description": "PG has 'consider,' where scan has 'consider'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "standard-bearer.",
+      "scan_text": "standardbearer.",
+      "pg_offset": 517676,
+      "scan_page": 578,
+      "diff_description": "PG has 'standard-bearer.' where scan has 'standardbearer.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "pyre,",
+      "scan_text": "pyre.",
+      "pg_offset": 518920,
+      "scan_page": 578,
+      "diff_description": "PG has 'pyre,' where scan has 'pyre.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "nowise",
+      "scan_text": "no wise",
+      "pg_offset": 519655,
+      "scan_page": 578,
+      "diff_description": "PG has 'nowise' where scan has 'no wise'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Omund,",
+      "scan_text": "Omund.",
+      "pg_offset": 520005,
+      "scan_page": 578,
+      "diff_description": "PG has 'Omund,' where scan has 'Omund.'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "could--for",
+      "scan_text": "could\u2014for",
+      "pg_offset": 520164,
+      "scan_page": 578,
+      "diff_description": "PG has 'could--for' where scan has 'could\u2014for'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "him--he",
+      "scan_text": "him\u2014he",
+      "pg_offset": 520164,
+      "scan_page": 578,
+      "diff_description": "PG has 'him--he' where scan has 'him\u2014he'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Hatfier",
+      "scan_text": "Hather",
+      "pg_offset": 521107,
+      "scan_page": 578,
+      "diff_description": "PG has 'Hatfier' where scan has 'Hather'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "squeamish,--then",
+      "scan_text": "squeamish,\u2014then",
+      "pg_offset": 521357,
+      "scan_page": 578,
+      "diff_description": "PG has 'squeamish,--then' where scan has 'squeamish,\u2014then'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "fray;--witness",
+      "scan_text": "fray;\u2014witness",
+      "pg_offset": 522621,
+      "scan_page": 578,
+      "diff_description": "PG has 'fray;--witness' where scan has 'fray;\u2014witness'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sought:",
+      "scan_text": "sought :",
+      "pg_offset": 522979,
+      "scan_page": 578,
+      "diff_description": "PG has 'sought:' where scan has 'sought :'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "knew.",
+      "scan_text": "",
+      "pg_offset": 524518,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'knew.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "brother;",
+      "scan_text": "brother ;",
+      "pg_offset": 524747,
+      "scan_page": 578,
+      "diff_description": "PG has 'brother;' where scan has 'brother ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "about;",
+      "scan_text": "about ;",
+      "pg_offset": 524763,
+      "scan_page": 578,
+      "diff_description": "PG has 'about;' where scan has 'about ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "taken;",
+      "scan_text": "taken ;",
+      "pg_offset": 524795,
+      "scan_page": 578,
+      "diff_description": "PG has 'taken;' where scan has 'taken ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "down;",
+      "scan_text": "down ;",
+      "pg_offset": 524857,
+      "scan_page": 578,
+      "diff_description": "PG has 'down;' where scan has 'down ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "bridge;",
+      "scan_text": "bridge ;",
+      "pg_offset": 524885,
+      "scan_page": 578,
+      "diff_description": "PG has 'bridge;' where scan has 'bridge ;'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "returned; \"for,",
+      "scan_text": "returned ; \u201cfor,",
+      "pg_offset": 524995,
+      "scan_page": 578,
+      "diff_description": "PG has 'returned; \"for,' where scan has 'returned ; \u201cfor,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "destroyed",
+      "scan_text": "dstroyed",
+      "pg_offset": 525268,
+      "scan_page": 578,
+      "diff_description": "PG has 'destroyed' where scan has 'dstroyed'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "away.",
+      "scan_text": "",
+      "pg_offset": 527044,
+      "scan_page": 578,
+      "diff_description": "Missing from scan: 'away.'",
+      "category": "missing_word"
+    },
+    {
+      "pg_text": "love-message,",
+      "scan_text": "lovemessage,",
+      "pg_offset": 527179,
+      "scan_page": 578,
+      "diff_description": "PG has 'love-message,' where scan has 'lovemessage,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "gram,",
+      "scan_text": "grain,",
+      "pg_offset": 527335,
+      "scan_page": 578,
+      "diff_description": "PG has 'gram,' where scan has 'grain,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "plentiful",
+      "scan_text": "plentifui",
+      "pg_offset": 527352,
+      "scan_page": 578,
+      "diff_description": "PG has 'plentiful' where scan has 'plentifui'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "continue",
+      "scan_text": "contiue",
+      "pg_offset": 528119,
+      "scan_page": 578,
+      "diff_description": "PG has 'continue' where scan has 'contiue'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Rugen,",
+      "scan_text": "R\u00fcgen,",
+      "pg_offset": 528435,
+      "scan_page": 578,
+      "diff_description": "PG has 'Rugen,' where scan has 'R\u00fcgen,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "temptation. With",
+      "scan_text": "temptaWith",
+      "pg_offset": 530196,
+      "scan_page": 578,
+      "diff_description": "PG has 'temptation. With' where scan has 'temptaWith'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "uncleanliness.",
+      "scan_text": "uncleanness.",
+      "pg_offset": 530796,
+      "scan_page": 578,
+      "diff_description": "PG has 'uncleanliness.' where scan has 'uncleanness.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "sitting",
+      "scan_text": "sitting,",
+      "pg_offset": 530915,
+      "scan_page": 578,
+      "diff_description": "PG has 'sitting' where scan has 'sitting,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "heart--if,",
+      "scan_text": "heart\u2014if,",
+      "pg_offset": 533514,
+      "scan_page": 578,
+      "diff_description": "PG has 'heart--if,' where scan has 'heart\u2014if,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "thankless--as",
+      "scan_text": "thankless\u2014as",
+      "pg_offset": 533521,
+      "scan_page": 578,
+      "diff_description": "PG has 'thankless--as' where scan has 'thankless\u2014as'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "kindliness.",
+      "scan_text": "kindness.",
+      "pg_offset": 533824,
+      "scan_page": 578,
+      "diff_description": "PG has 'kindliness.' where scan has 'kindness.'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"Fox-cub\"",
+      "scan_text": "\u201cFox-cub.\u201d",
+      "pg_offset": 533989,
+      "scan_page": 578,
+      "diff_description": "PG has '\"Fox-cub\"' where scan has '\u201cFox-cub.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "\"the Fox-cub's tribute\".",
+      "scan_text": "\u201cthe Fox-cub\u2019s tribute.\u201d",
+      "pg_offset": 534390,
+      "scan_page": 578,
+      "diff_description": "PG has '\"the Fox-cub's tribute\".' where scan has '\u201cthe Fox-cub\u2019s tribute.\u201d'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "against",
+      "scan_text": "aganst",
+      "pg_offset": 534535,
+      "scan_page": 578,
+      "diff_description": "PG has 'against' where scan has 'aganst'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "reigned",
+      "scan_text": "feigned",
+      "pg_offset": 535620,
+      "scan_page": 578,
+      "diff_description": "PG has 'reigned' where scan has 'feigned'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "All-marvelled",
+      "scan_text": "All marvelled",
+      "pg_offset": 535965,
+      "scan_page": 578,
+      "diff_description": "PG has 'All-marvelled' where scan has 'All marvelled'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "fellow soldiers",
+      "scan_text": "fellowsoldiers",
+      "pg_offset": 536000,
+      "scan_page": 578,
+      "diff_description": "PG has 'fellow soldiers' where scan has 'fellowsoldiers'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "peace.",
+      "scan_text": "peace",
+      "pg_offset": 536206,
+      "scan_page": 578,
+      "diff_description": "PG has 'peace.' where scan has 'peace'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "brothers--Siward,",
+      "scan_text": "brothers\u2014Siward,",
+      "pg_offset": 536909,
+      "scan_page": 578,
+      "diff_description": "PG has 'brothers--Siward,' where scan has 'brothers\u2014Siward,'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "husband....",
+      "scan_text": "husband. . .",
+      "pg_offset": 537250,
+      "scan_page": 578,
+      "diff_description": "PG has 'husband....' where scan has 'husband. . .'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "day,",
+      "scan_text": "day:",
+      "pg_offset": 862277,
+      "scan_page": 607,
+      "diff_description": "PG has 'day,' where scan has 'day:'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Ragnar",
+      "scan_text": "Ragner",
+      "pg_offset": 862304,
+      "scan_page": 607,
+      "diff_description": "PG has 'Ragnar' where scan has 'Ragner'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "enrapped",
+      "scan_text": "entrapped",
+      "pg_offset": 862880,
+      "scan_page": 607,
+      "diff_description": "PG has 'enrapped' where scan has 'entrapped'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Utgard. (1)",
+      "scan_text": "Utgard.*",
+      "pg_offset": 863425,
+      "scan_page": 607,
+      "diff_description": "PG has 'Utgard. (1)' where scan has 'Utgard.*'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "chalice",
+      "scan_text": "chance",
+      "pg_offset": 866091,
+      "scan_page": 607,
+      "diff_description": "PG has 'chalice' where scan has 'chance'",
+      "category": "wrong_word"
+    },
+    {
+      "pg_text": "Germ,",
+      "scan_text": "Gorm,",
+      "pg_offset": 867901,
+      "scan_page": 607,
+      "diff_description": "PG has 'Germ,' where scan has 'Gorm,'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Germ:",
+      "scan_text": "Gorm:",
+      "pg_offset": 867981,
+      "scan_page": 607,
+      "diff_description": "PG has 'Germ:' where scan has 'Gorm:'",
+      "category": "ocr_scanno"
+    },
+    {
+      "pg_text": "Kanute?\" (2)",
+      "scan_text": "Kanute?\"*",
+      "pg_offset": 867990,
+      "scan_page": 607,
+      "diff_description": "PG has 'Kanute?\" (2)' where scan has 'Kanute?\"*'",
+      "category": "wrong_word"
+    }
+  ]
+}
