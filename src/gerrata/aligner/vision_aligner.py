@@ -246,11 +246,33 @@ def strip_paratext(text: str) -> str:
 
 
 def normalize_for_matching(text: str) -> str:
-    """Normalize text for fuzzy matching: lowercase, strip punctuation, collapse whitespace."""
+    r"""Normalize text for fuzzy matching: lowercase, strip punctuation, collapse whitespace.
+
+    Handles PG-specific formatting artifacts that would otherwise interfere
+    with SequenceMatcher scoring:
+    - _italic_ → italic (underscore markup)
+    - <i>tag</i> → tag (HTML tags)
+    - &amp; &mdash; &#8217; → stripped (HTML entities)
+    - [1] [Footnote 1:] → stripped (footnote markers and blocks)
+    - [Illustration:] [Sidenote:] → stripped (PG block markers)
+    - Underscores stripped (survive \w in regex otherwise)
+    """
     text = unicodedata.normalize("NFC", text)
     text = text.lower()
+    # Strip HTML tags
+    text = re.sub(r"<[^>]+>", "", text)
+    # Strip HTML entities (named and numeric)
+    text = re.sub(r"&[a-zA-Z]+;", " ", text)
+    text = re.sub(r"&#\d+;", " ", text)
+    # Strip PG footnote references [1], [2], etc.
+    text = re.sub(r"\[\d+\]", "", text)
+    # Strip PG footnote blocks [Footnote ...]
+    text = re.sub(r"\[footnote[^\]]*\]", "", text)
+    # Strip PG illustration/sidenote markers
+    text = re.sub(r"\[(?:illustration|sidenote)[^\]]*\]", "", text)
     # Remove punctuation (keep alphanumeric and spaces)
-    text = re.sub(r"[^\w\s]", "", text)
+    # Explicitly include underscore since \w matches it in regex
+    text = re.sub(r"[^\w\s]|_", "", text)
     # Collapse whitespace
     text = re.sub(r"\s+", " ", text).strip()
     return text

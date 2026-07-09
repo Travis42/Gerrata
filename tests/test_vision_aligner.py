@@ -35,6 +35,47 @@ class TestNormalizeForMatching:
         result = normalize_for_matching("café résumé")
         assert "café" in result
 
+    def test_strips_underscores(self):
+        """PG italic markup _word_ should be stripped, not preserved."""
+        assert normalize_for_matching("_Nostromo_") == "nostromo"
+        assert normalize_for_matching("_italic_ and _more_") == "italic and more"
+
+    def test_strips_html_tags(self):
+        """HTML tags like <i>, <em>, <p> should be stripped."""
+        assert normalize_for_matching("<i>text</i>") == "text"
+        assert normalize_for_matching("<em>word</em>") == "word"
+        assert normalize_for_matching("<p>para</p>") == "para"
+
+    def test_strips_html_entities(self):
+        """Named and numeric HTML entities should be stripped."""
+        assert normalize_for_matching("Tom &amp; Jerry") == "tom jerry"
+        assert normalize_for_matching("word &mdash; word") == "word word"
+        assert normalize_for_matching("word &#8217; word") == "word word"
+
+    def test_strips_footnote_refs(self):
+        """PG footnote references [1] should be stripped."""
+        assert normalize_for_matching("text [1] more") == "text more"
+        assert normalize_for_matching("see [23] and [45]") == "see and"
+
+    def test_strips_footnote_blocks(self):
+        """PG footnote blocks [Footnote ...] should be stripped entirely."""
+        assert normalize_for_matching("[Footnote 1: A note.]") == ""
+        assert normalize_for_matching("text [Footnote 2: Long note.] end") == "text end"
+
+    def test_strips_illustration_markers(self):
+        """PG [Illustration:] markers should be stripped."""
+        assert normalize_for_matching("[Illustration: A ship.]") == ""
+        assert normalize_for_matching("text [Illustration: Scene.] end") == "text end"
+
+    def test_strips_sidenote_markers(self):
+        """PG [Sidenote:] markers should be stripped."""
+        assert normalize_for_matching("[Sidenote: A note.]") == ""
+
+    def test_huck_finn_density(self):
+        """Dense underscore usage (like Huck Finn) should normalize cleanly."""
+        text = "_could_ he ever want _look_ at it s I"
+        assert normalize_for_matching(text) == "could he ever want look at it s i"
+
 
 class TestChunkTextForMatching:
     def test_basic_chunking(self):
