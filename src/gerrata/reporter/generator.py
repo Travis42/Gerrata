@@ -893,6 +893,7 @@ class ReportGenerator:
             ErrorCategory.ALIGNMENT_ARTIFACT,
             ErrorCategory.FORMATTING_ERROR,
             ErrorCategory.AMBIGUOUS,
+            ErrorCategory.PUNCTUATION_DIFF,
         }
         submit_ready = [
             e for e in report.errors
@@ -1119,6 +1120,83 @@ class ReportGenerator:
 
                 lines.append(f"PG:    {pg_text}")
                 lines.append(f"Scan:  {scan_text}")
+                lines.append("")
+
+        # Punctuation differences (informational, for downstream use)
+        punctuation_diffs = [
+            e for e in report.errors
+            if e.category == ErrorCategory.PUNCTUATION_DIFF
+        ]
+
+        if punctuation_diffs:
+            lines.append("---")
+            lines.append("")
+            lines.append("PUNCTUATION DIFFERENCES (not errata — captured for downstream use)")
+            lines.append("")
+            lines.append(
+                "The following are punctuation-only differences between PG and "
+            )
+            lines.append(
+                "scan (quote style, em-dashes, spacing). Not errors — captured "
+            )
+            lines.append(
+                "for editorial reference and Impression Editions processing."
+            )
+            lines.append("")
+
+            # Group by type for readability
+            quote_diffs = []
+            dash_diffs = []
+            spacing_diffs = []
+            other_punct = []
+
+            for err in punctuation_diffs:
+                pg_t = err.candidate.pg_text
+                scan_t = err.candidate.scan_text
+                if any(q in pg_t + scan_t for q in ['\u201c', '\u201d', '\u2018', '\u2019', '"']):
+                    quote_diffs.append(err)
+                elif '--' in pg_t or '\u2014' in scan_t:
+                    dash_diffs.append(err)
+                elif pg_t.replace(' ', '').replace(';', '').replace(':', '').replace(',', '').replace('.', '') == \
+                     scan_t.replace(' ', '').replace(';', '').replace(':', '').replace(',', '').replace('.', ''):
+                    spacing_diffs.append(err)
+                else:
+                    other_punct.append(err)
+
+            if quote_diffs:
+                lines.append(f"Quotation marks ({len(quote_diffs)}):")
+                for err in quote_diffs:
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+                    pg_t = self._strip_html(err.candidate.pg_text).strip()
+                    scan_t = self._strip_html(err.candidate.scan_text).strip()
+                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
+                lines.append("")
+
+            if dash_diffs:
+                lines.append(f"Em-dashes ({len(dash_diffs)}):")
+                for err in dash_diffs:
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+                    pg_t = self._strip_html(err.candidate.pg_text).strip()
+                    scan_t = self._strip_html(err.candidate.scan_text).strip()
+                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
+                lines.append("")
+
+            if spacing_diffs:
+                lines.append(f"Punctuation spacing ({len(spacing_diffs)}):")
+                for err in spacing_diffs:
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+                    pg_t = self._strip_html(err.candidate.pg_text).strip()
+                    scan_t = self._strip_html(err.candidate.scan_text).strip()
+                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
+                lines.append("")
+
+            if other_punct:
+                lines.append(f"Other punctuation ({len(other_punct)}):")
+                for err in other_punct:
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+                    pg_t = self._strip_html(err.candidate.pg_text).strip()
+                    scan_t = self._strip_html(err.candidate.scan_text).strip()
+                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
                 lines.append("")
 
         # Coverage gap analysis - missing content detection

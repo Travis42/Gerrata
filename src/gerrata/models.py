@@ -22,6 +22,7 @@ class ErrorCategory(str, Enum):
     EXTRA_WORD = "extra_word"
     MISSING_PUNCTUATION = "missing_punctuation"
     WRONG_WORD = "wrong_word"
+    PUNCTUATION_DIFF = "punctuation_diff"
     MISSING_CONTENT = "missing_content"
     ENCODING_ERROR = "encoding_error"
     FORMATTING_ERROR = "formatting_error"
@@ -177,7 +178,7 @@ class Error:
             return ErrorSeverity.CRITICAL
         elif cat in (ErrorCategory.OCR_SCANNO, ErrorCategory.WRONG_WORD, ErrorCategory.MISSING_WORD):
             return ErrorSeverity.HIGH
-        elif cat in (ErrorCategory.EXTRA_WORD, ErrorCategory.MISSING_PUNCTUATION, ErrorCategory.ENCODING_ERROR):
+        elif cat in (ErrorCategory.EXTRA_WORD, ErrorCategory.MISSING_PUNCTUATION, ErrorCategory.ENCODING_ERROR, ErrorCategory.PUNCTUATION_DIFF):
             return ErrorSeverity.MEDIUM
         elif cat == ErrorCategory.FORMATTING_ERROR:
             return ErrorSeverity.LOW

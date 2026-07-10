@@ -226,6 +226,65 @@ class TestFalsePositiveFilter:
         assert len(f_relaxed.filter([error])) == 0
 
 
+class TestPunctuationDiff:
+    """Tests for punctuation-only diff classification."""
+
+    def setup_method(self):
+        self.checker = TextDiffChecker()
+
+    def test_straight_vs_curly_quotes(self):
+        """Straight quotes vs curly quotes should be PUNCTUATION_DIFF."""
+        cat = self.checker._categorize_replacement('style".', 'style\u201d.')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_opening_quote_style(self):
+        cat = self.checker._categorize_replacement('"word', '\u201cword')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_em_dash_vs_double_hyphen(self):
+        """PG -- convention vs scan em-dash should be PUNCTUATION_DIFF."""
+        cat = self.checker._categorize_replacement('Thor--a', 'Thor\u2014a')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_semicolon_spacing(self):
+        """word; vs word ; should be PUNCTUATION_DIFF."""
+        cat = self.checker._categorize_replacement('deed;', 'deed ;')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_colon_spacing(self):
+        cat = self.checker._categorize_replacement('will:', 'will :')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_quotes_dropped(self):
+        """PG has quotes around a word, scan doesn't."""
+        cat = self.checker._categorize_replacement('"Mistletoe"', 'Mistletoe')
+        assert cat == ErrorCategory.PUNCTUATION_DIFF
+
+    def test_real_word_diff_not_punctuation(self):
+        """Actual word differences should not be PUNCTUATION_DIFF."""
+        cat = self.checker._categorize_replacement('Herrand', 'Herraud')
+        assert cat != ErrorCategory.PUNCTUATION_DIFF
+
+    def test_real_char_diff_not_punctuation(self):
+        cat = self.checker._categorize_replacement('reigned?', 'feigned?')
+        assert cat != ErrorCategory.PUNCTUATION_DIFF
+
+    def test_ocr_scanno_not_punctuation(self):
+        cat = self.checker._categorize_replacement('showed', 'shewed')
+        assert cat != ErrorCategory.PUNCTUATION_DIFF
+
+    def test_pure_punctuation_not_classified(self):
+        """Pure punctuation with no alphabetic content should not be PUNCTUATION_DIFF."""
+        assert not TextDiffChecker._is_punctuation_only_diff('--', '\u2014')
+        assert not TextDiffChecker._is_punctuation_only_diff(';', ' ;')
+
+    def test_punctuation_only_helper(self):
+        assert TextDiffChecker._is_punctuation_only_diff('word".', 'word\u201d.')
+        assert TextDiffChecker._is_punctuation_only_diff('"word"', 'word')
+        assert not TextDiffChecker._is_punctuation_only_diff('Herrand', 'Herraud')
+        assert not TextDiffChecker._is_punctuation_only_diff('cat', 'bat')
+
+
 class TestEditDistance:
     def test_identical(self):
         assert TextDiffChecker._edit_distance("hello", "hello") == 0

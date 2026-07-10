@@ -761,7 +761,7 @@ class TextDiffChecker:
         """Categorize a word replacement.
 
         Attempts to distinguish between OCR scannos, encoding errors,
-        and other types of differences.
+        punctuation conventions, and other types of differences.
         """
         pg_lower = pg_word.lower()
         scan_lower = scan_word.lower()
@@ -769,6 +769,10 @@ class TextDiffChecker:
         # Same word with different case
         if pg_lower == scan_lower:
             return ErrorCategory.FORMATTING_ERROR
+
+        # Punctuation-only difference (quote style, em-dash, spacing)
+        if self._is_punctuation_only_diff(pg_word, scan_word):
+            return ErrorCategory.PUNCTUATION_DIFF
 
         # Single character difference — likely OCR scanno
         if len(pg_word) > 2 and len(scan_word) > 2:
@@ -781,6 +785,31 @@ class TextDiffChecker:
                 return ErrorCategory.WRONG_WORD
 
         return ErrorCategory.WRONG_WORD
+
+    @staticmethod
+    def _is_punctuation_only_diff(pg: str, scan: str) -> bool:
+        """Check if the difference between pg and scan is punctuation-only.
+
+        Returns True when the alphabetic content is identical and only
+        punctuation differs. Covers:
+        - Quote style: straight " ' vs curly \u201c \u201d \u2018 \u2019
+        - Dash style: -- (double hyphen) vs \u2014 (em-dash)
+        - Punctuation spacing: word; vs word ;
+        - Presence/absence of surrounding punctuation: "word" vs word
+        """
+        # Extract only alphabetic characters
+        pg_alpha = re.sub(r'[^a-zA-Z]', '', pg).lower()
+        scan_alpha = re.sub(r'[^a-zA-Z]', '', scan).lower()
+
+        # Must have same alphabetic content
+        if pg_alpha != scan_alpha:
+            return False
+
+        # Must have at least some alphabetic content (not pure punctuation)
+        if not pg_alpha:
+            return False
+
+        return True
 
     @staticmethod
     def _edit_distance(s1: str, s2: str) -> int:

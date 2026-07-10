@@ -7,9 +7,10 @@
     "max_per_page": 14,
     "categories": {
       "extra_word": 459,
-      "wrong_word": 377,
-      "ocr_scanno": 212,
-      "missing_word": 245
+      "punctuation_diff": 341,
+      "wrong_word": 183,
+      "missing_word": 245,
+      "ocr_scanno": 65
     }
   },
   "candidates": [
@@ -27,7 +28,7 @@
       "pg_offset": 1304,
       "scan_page": 31,
       "diff_description": "PG has 'Saxo Grammaticus,' where scan has 'SAXO \u201cGRAMMATICUS,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"The Lettered\",",
@@ -35,7 +36,7 @@
       "pg_offset": 1304,
       "scan_page": 31,
       "diff_description": "PG has '\"The Lettered\",' where scan has '\u201cThe Lettered,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "half-mythological",
@@ -43,7 +44,7 @@
       "pg_offset": 1304,
       "scan_page": 31,
       "diff_description": "PG has 'half-mythological' where scan has 'halfmythological'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ueno Aggonis, or Sweyn (Svend) Aageson, who wrote about 1185, shares or anticipates the credit of attempting a connected record. His brief draft of annals is written in rough mediocre Latin. It names but a few of the kings recorded by Saxo, and tells little that Saxo does not. Yet there is a certain link between the two writers. Sweyn speaks of Saxo with respect; he not obscurely leaves him the task of filling up his omissions. Both writers, servants of the brilliant Bishop Absalon, and probably set by him upon their task, proceed, like Geoffrey of Monmouth, by gathering and editing mythical",
@@ -67,7 +68,7 @@
       "pg_offset": 4450,
       "scan_page": 33,
       "diff_description": "PG has '\"King's men\".' where scan has '\u201cKing\u2019s men.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "time\".",
@@ -75,7 +76,7 @@
       "pg_offset": 4450,
       "scan_page": 33,
       "diff_description": "PG has 'time\".' where scan has 'time.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"the Long\",",
@@ -83,7 +84,7 @@
       "pg_offset": 4450,
       "scan_page": 33,
       "diff_description": "PG has '\"the Long\",' where scan has '\u201cthe Long,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -107,7 +108,7 @@
       "pg_offset": 6225,
       "scan_page": 34,
       "diff_description": "PG has 'task\",' where scan has 'task,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "theory--which",
@@ -115,7 +116,7 @@
       "pg_offset": 6225,
       "scan_page": 34,
       "diff_description": "PG has 'theory--which' where scan has 'theory\u2014which'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "evidence--that",
@@ -123,7 +124,7 @@
       "pg_offset": 6225,
       "scan_page": 34,
       "diff_description": "PG has 'evidence--that' where scan has 'evidence\u2014that'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "--a comparative menial--who is named in the will of Bishop Absalon; and hardly more warranted is the theory that he was a member, perhaps a subdeacon, of the monastery of St. Laurence, whose secular canons formed part of the Chapter of Lund. It is true that Sweyn Aageson, Saxo's senior by about twenty years, speaks (writing about 1185) of Saxo as his \"contubernalis\". Sweyn Aageson is known to have had strong family connections",
@@ -139,7 +140,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has '(\"Contubernalis\"' where scan has '(Contubernalis'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Absalon's \"followers\" (\"comitum\"),",
@@ -147,7 +148,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has 'Absalon's \"followers\" (\"comitum\"),' where scan has 'Absalon\u2019s \u201cfollowers\u201d (comitum),'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"acolitus\",",
@@ -155,7 +156,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has '\"acolitus\",' where scan has 'acolitus,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"acolitus\".",
@@ -163,7 +164,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has '\"acolitus\".' where scan has 'acolitus.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Absalon's \"followers\",",
@@ -171,7 +172,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has 'Absalon's \"followers\",' where scan has 'Absalon\u2019s \u201cfollowers,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "task\",",
@@ -179,7 +180,7 @@
       "pg_offset": 8356,
       "scan_page": 35,
       "diff_description": "PG has 'task\",' where scan has 'task,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -195,7 +196,7 @@
       "pg_offset": 10429,
       "scan_page": 36,
       "diff_description": "PG has '\"had `determined'' where scan has '\u201chad determined'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "style\".",
@@ -203,7 +204,7 @@
       "pg_offset": 10429,
       "scan_page": 36,
       "diff_description": "PG has 'style\".' where scan has 'style.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"encompassed (`complexus')",
@@ -211,7 +212,7 @@
       "pg_offset": 10429,
       "scan_page": 36,
       "diff_description": "PG has '\"encompassed (`complexus')' where scan has '\u201cencompassed (complexus)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(\"asserta\")",
@@ -219,7 +220,7 @@
       "pg_offset": 10429,
       "scan_page": 36,
       "diff_description": "PG has '(\"asserta\")' where scan has '(asserta)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "sonally communicated memoirs. But we have seen that Absalon died in 1201, and that Bk. xi, at any rate, was not written after 1202. It almost certainly follows that the",
@@ -235,7 +236,7 @@
       "pg_offset": 12222,
       "scan_page": 37,
       "diff_description": "PG has 'polishing--which' where scan has 'polishing\u2014which'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "impossible--there",
@@ -243,7 +244,7 @@
       "pg_offset": 12222,
       "scan_page": 37,
       "diff_description": "PG has 'impossible--there' where scan has 'impossible\u2014there'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"First Edition\"",
@@ -251,7 +252,7 @@
       "pg_offset": 14377,
       "scan_page": 38,
       "diff_description": "PG has '\"First Edition\"' where scan has 'First Edition'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "1511.",
@@ -267,7 +268,7 @@
       "pg_offset": 14377,
       "scan_page": 38,
       "diff_description": "PG has 'nostrum\".' where scan has 'nostrum.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Badius Ascenshls, who adds a third letter written by himself to Bishop Urne, vindicating his application to Saxo of the title Grammaticus, which he well defines as \"one who knows how to speak or write with diligence, acuteness, or knowledge.\" The beautiful book he produced was worth",
@@ -291,7 +292,7 @@
       "pg_offset": 16344,
       "scan_page": 39,
       "diff_description": "PG has 'Frankfort-on-Main,' where scan has 'Frankfort-onMain,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"corculum Musarum\",",
@@ -299,7 +300,7 @@
       "pg_offset": 16344,
       "scan_page": 39,
       "diff_description": "PG has '\"corculum Musarum\",' where scan has 'corculum Musarum,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Muller,",
@@ -379,7 +380,7 @@
       "pg_offset": 21564,
       "scan_page": 42,
       "diff_description": "PG has 'Holder's \"Apparatus Criticus\".' where scan has 'Holder\u2019s Apparatus Criticus.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -403,7 +404,7 @@
       "pg_offset": 23263,
       "scan_page": 43,
       "diff_description": "PG has '\"Memorabilia\",' where scan has 'Memorabilia,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Mercurii\"",
@@ -411,7 +412,7 @@
       "pg_offset": 23263,
       "scan_page": 43,
       "diff_description": "PG has 'Mercurii\"' where scan has 'Mercurii.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "mediaeval",
@@ -451,7 +452,7 @@
       "pg_offset": 24836,
       "scan_page": 44,
       "diff_description": "PG has 'King--As' where scan has 'King.\u2014As'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Beowulf's Lay\")",
@@ -459,7 +460,7 @@
       "pg_offset": 24836,
       "scan_page": 44,
       "diff_description": "PG has '\"Beowulf's Lay\")' where scan has 'Beowulf\u2019s Lay)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "foregoer",
@@ -467,7 +468,7 @@
       "pg_offset": 24836,
       "scan_page": 44,
       "diff_description": "PG has 'foregoer' where scan has 'fore-goer'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "plots. Kings sometimes abdicated, giving up the crown perforce",
@@ -515,7 +516,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"Beowulf's Lay\".' where scan has 'Beowulf\u2019s Lay.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"moots\"",
@@ -523,7 +524,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"moots\"' where scan has 'moots'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Beowulf's Lay\")",
@@ -531,7 +532,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"Beowulf's Lay\")' where scan has 'Beowulf\u2019s Lay)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"hundreds\"",
@@ -539,7 +540,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"hundreds\"' where scan has 'hundreds'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"hundred-elders\".",
@@ -547,7 +548,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"hundred-elders\".' where scan has 'hundred-elders.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"yeoman's\"",
@@ -555,7 +556,7 @@
       "pg_offset": 29778,
       "scan_page": 47,
       "diff_description": "PG has '\"yeoman's\"' where scan has 'yeoman\u2019s'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Starca",
@@ -579,7 +580,7 @@
       "pg_offset": 31973,
       "scan_page": 48,
       "diff_description": "PG has 'Slavery.--As' where scan has 'Slavery.\u2014As'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "rimur",
@@ -619,7 +620,7 @@
       "pg_offset": 33890,
       "scan_page": 49,
       "diff_description": "PG has 'suit.\"--This,' where scan has 'suit.\u2014This,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Njal's Saga\",",
@@ -627,7 +628,7 @@
       "pg_offset": 33890,
       "scan_page": 49,
       "diff_description": "PG has '\"Njal's Saga\",' where scan has 'Njal\u2019s Saga,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "vengeance.\"--This",
@@ -635,7 +636,7 @@
       "pg_offset": 33890,
       "scan_page": 49,
       "diff_description": "PG has 'vengeance.\"--This' where scan has 'vengeance.\u2014This'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "wholl",
@@ -659,7 +660,7 @@
       "pg_offset": 35324,
       "scan_page": 50,
       "diff_description": "PG has '\"marriage' where scan has 'marriage'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "purchase\",",
@@ -667,7 +668,7 @@
       "pg_offset": 35324,
       "scan_page": 50,
       "diff_description": "PG has 'purchase\",' where scan has 'purchase,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "observa",
@@ -691,7 +692,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has 'ubere\".' where scan has 'ubere.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"motif\",",
@@ -699,7 +700,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has '\"motif\",' where scan has 'motif,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Patient Grizzle\",",
@@ -707,7 +708,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has '\"Patient Grizzle\",' where scan has 'Patient Grizzle,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Good wives\"",
@@ -715,7 +716,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has '\"Good wives\"' where scan has 'Good wives'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"bad wives\"",
@@ -723,7 +724,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has '\"bad wives\"' where scan has 'bad wives'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "option--disfigurement",
@@ -731,7 +732,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has 'option--disfigurement' where scan has 'option\u2014disfigurement'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"harlots\"",
@@ -739,7 +740,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has '\"harlots\"' where scan has 'harlots'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "REVENGE.--This",
@@ -747,7 +748,7 @@
       "pg_offset": 37438,
       "scan_page": 51,
       "diff_description": "PG has 'REVENGE.--This' where scan has 'REVENGE.\u2014This'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -763,7 +764,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has '\"parricide\", i.e.,' where scan has 'parricide, i. e.,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"arson\"",
@@ -771,7 +772,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has '\"arson\"' where scan has 'arson'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"incestuous adultery\"",
@@ -779,7 +780,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has '\"incestuous adultery\"' where scan has 'incestuous adultery'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "punished,",
@@ -787,7 +788,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has 'punished,' where scan has 'punished'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "slur.",
@@ -803,7 +804,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has '\"witchcraft\",' where scan has 'witchcraft,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Private revenge\"",
@@ -811,7 +812,7 @@
       "pg_offset": 39952,
       "scan_page": 52,
       "diff_description": "PG has '\"Private revenge\"' where scan has 'Private revenge'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ns act the blood-eagle on Ella, and salt his flesh. There is an undoubted instance of this act of vengeance (the",
@@ -859,7 +860,7 @@
       "pg_offset": 42428,
       "scan_page": 54,
       "diff_description": "PG has '(\"Beowulf's Lay\".) \"Suicide\".--This' where scan has '(Beowulf\u2019s Lay.) Suicide.\u2014This'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Njal's Saga\",",
@@ -867,7 +868,7 @@
       "pg_offset": 42428,
       "scan_page": 54,
       "diff_description": "PG has '\"Njal's Saga\",' where scan has 'Njal\u2019s Saga,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Gautrec's",
@@ -883,7 +884,7 @@
       "pg_offset": 42428,
       "scan_page": 54,
       "diff_description": "PG has 'starvation death.' where scan has 'starvationdeath.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Procedure",
@@ -891,7 +892,7 @@
       "pg_offset": 42428,
       "scan_page": 54,
       "diff_description": "PG has '\"Procedure' where scan has 'Procedure'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Battle\".--This",
@@ -899,7 +900,7 @@
       "pg_offset": 42428,
       "scan_page": 54,
       "diff_description": "PG has 'Battle\".--This' where scan has 'Battle.\u2014This'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -915,7 +916,7 @@
       "pg_offset": 46678,
       "scan_page": 56,
       "diff_description": "PG has 'heavy--many' where scan has 'heavy\u2014many'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "king is 120 of the same. Of the incidents of the combat, beside fair sleight of fence, there is the continual occurrence of the sword-blunting spell, often",
@@ -971,7 +972,7 @@
       "pg_offset": 48276,
       "scan_page": 57,
       "diff_description": "PG has 'PROCEDURE.--\"Oaths\"' where scan has 'PROCEDURE.\u2014Oaths'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "procedure, and noticed by Saxo; one calling the g",
@@ -987,7 +988,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Lawgivers\".--The' where scan has 'Lawgivers.\u2014The'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Sciold\"",
@@ -995,7 +996,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Sciold\"' where scan has 'Sciold'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Frode\"",
@@ -1003,7 +1004,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Frode\"' where scan has 'Frode'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Helge\"",
@@ -1011,7 +1012,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Helge\"' where scan has 'Helge'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Ragnar\"",
@@ -1019,7 +1020,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Ragnar\"' where scan has 'Ragnar'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Sciold\",",
@@ -1027,7 +1028,7 @@
       "pg_offset": 49756,
       "scan_page": 58,
       "diff_description": "PG has '\"Sciold\",' where scan has 'Sciold,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "of him by the ingratitude of attempting his life. Sciold thereupon decrees the unlawfulness of manumissions, or (as Saxo puts it), revoked all manumissions, thus ordaining perpetual slavery on all that were or might become slaves. The heathen lack of pity noticed in Alfred's preface to \"Gregory's Handbook\" is illustrated here by contrast with the philosophic humanity of the Civil Law, and the sympathy of t",
@@ -1043,7 +1044,7 @@
       "pg_offset": 51454,
       "scan_page": 59,
       "diff_description": "PG has '\"Beowulf's Lay\",' where scan has 'Beowulf\u2019s Lay,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "men?",
@@ -1059,7 +1060,7 @@
       "pg_offset": 51454,
       "scan_page": 59,
       "diff_description": "PG has 'be--gold' where scan has 'be\u2014gold'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "in his barrow with horse and arms (cf. \"Vatzdaela Saga\", ch. 2). The body-snatcher was to be punished by death and the lack of sepulture. Earl or king to be burned in his own ship. Ten sailors may be burnt on one ship. (b) Ruthenians to have the same law of war as Danes. (c) Ruthenians must adopt Danish sale-marriage. (This involves the abolition of the Baltic custom of capture-marriage. That capture-marriage was a bar to social progress appears in the legislation o",
@@ -1075,7 +1076,7 @@
       "pg_offset": 54678,
       "scan_page": 61,
       "diff_description": "PG has 'house-carle' where scan has 'housecarle'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1107,7 +1108,7 @@
       "pg_offset": 57912,
       "scan_page": 63,
       "diff_description": "PG has '\"Tributes\".--Akin' where scan has 'Tributes.\u2014Akin'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Egil's Saga\")",
@@ -1115,7 +1116,7 @@
       "pg_offset": 57912,
       "scan_page": 63,
       "diff_description": "PG has '\"Egil's Saga\")' where scan has 'Egil\u2019s Saga)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "is Frode, too (though Saxo has carved a number of Frodes out of one or two kings of gigantic personality), that made the Saxons pay a poll-tax, a piece of money per head, using, like William the Conqueror, his extraordinary revenue to reward his soldiers, whom he first regaled with double pay. But on the conquered folks rebell",
@@ -1139,7 +1140,7 @@
       "pg_offset": 59214,
       "scan_page": 64,
       "diff_description": "PG has '\"Ref-gild\",' where scan has 'Ref-gild,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "WAR. \"Weapons\".--The",
@@ -1171,7 +1172,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '(\"Mistletoe\"),' where scan has '(Mistletoe),'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Lyusing\"",
@@ -1179,7 +1180,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"Lyusing\"' where scan has 'Lyusing'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Hwiting\",",
@@ -1187,7 +1188,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"Hwiting\",' where scan has 'Hwiting,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Logthe\",",
@@ -1211,7 +1212,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"war-club\"' where scan has 'war-club'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"spear\"",
@@ -1219,7 +1220,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"spear\"' where scan has 'spear'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "arrows\"",
@@ -1227,7 +1228,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has 'arrows\"' where scan has 'arrows'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Vigfusson",
@@ -1243,7 +1244,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"Mail-coats\"' where scan has 'Mail-coats'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Helmets\"",
@@ -1251,7 +1252,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"Helmets\"' where scan has 'Helmets'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Beowulf's Lay\";",
@@ -1259,7 +1260,7 @@
       "pg_offset": 61019,
       "scan_page": 65,
       "diff_description": "PG has '\"Beowulf's Lay\";' where scan has 'Beowulf\u2019s Lay;'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "helme",
@@ -1283,7 +1284,7 @@
       "pg_offset": 62652,
       "scan_page": 66,
       "diff_description": "PG has '\"Tactics\".--The' where scan has 'Tactics.\u2014The'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "scabbard",
@@ -1315,7 +1316,7 @@
       "pg_offset": 66038,
       "scan_page": 68,
       "diff_description": "PG has '\"Stratagems' where scan has 'Stratagems'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"pretended death\"",
@@ -1347,7 +1348,7 @@
       "pg_offset": 67812,
       "scan_page": 69,
       "diff_description": "PG has '\"brazen horses\"' where scan has 'brazen horses'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"machines\"",
@@ -1355,7 +1356,7 @@
       "pg_offset": 67812,
       "scan_page": 69,
       "diff_description": "PG has '\"machines\"' where scan has 'machines'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1379,7 +1380,7 @@
       "pg_offset": 69189,
       "scan_page": 70,
       "diff_description": "PG has '\"strand-hewing\",' where scan has '\u201cstrand-hewing,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1403,7 +1404,7 @@
       "pg_offset": 70846,
       "scan_page": 71,
       "diff_description": "PG has '\"bear-sarks\",' where scan has 'bear-sarks,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"bear-sarks' way\",",
@@ -1411,7 +1412,7 @@
       "pg_offset": 70846,
       "scan_page": 71,
       "diff_description": "PG has '\"bear-sarks' way\",' where scan has '\u201cbear-sarks\u2019 way,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"run-a-muck.\"",
@@ -1419,7 +1420,7 @@
       "pg_offset": 70846,
       "scan_page": 71,
       "diff_description": "PG has '\"run-a-muck.\"' where scan has '\u201crun a-muck.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"motif\"",
@@ -1427,7 +1428,7 @@
       "pg_offset": 70846,
       "scan_page": 71,
       "diff_description": "PG has '\"motif\"' where scan has 'motif'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1483,7 +1484,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has '\"giant-age\".' where scan has 'giantage.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Thor;",
@@ -1491,7 +1492,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has 'Thor;' where scan has 'Thor ::'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Thor--a",
@@ -1499,7 +1500,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has 'Thor--a' where scan has 'Thor\u2014a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"embarras\".",
@@ -1507,7 +1508,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has '\"embarras\".' where scan has 'embarras.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "persians",
@@ -1523,7 +1524,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has '\"Woden\".' where scan has 'Woden.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Hyndla-Lay\",",
@@ -1531,7 +1532,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has '\"Hyndla-Lay\",' where scan has 'HyndlaLay,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Woden:-- \"Let",
@@ -1539,7 +1540,7 @@
       "pg_offset": 74381,
       "scan_page": 73,
       "diff_description": "PG has 'Woden:-- \"Let' where scan has 'Woden:\u2014 \u201cLet'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "mail-coat",
@@ -1579,7 +1580,7 @@
       "pg_offset": 76034,
       "scan_page": 74,
       "diff_description": "PG has '\"Flatey book\",' where scan has 'Flatey book,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(Asgard);",
@@ -1587,7 +1588,7 @@
       "pg_offset": 76034,
       "scan_page": 74,
       "diff_description": "PG has '(Asgard);' where scan has '(Asgard) ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ring-bedecked,",
@@ -1595,7 +1596,7 @@
       "pg_offset": 76034,
       "scan_page": 74,
       "diff_description": "PG has 'ring-bedecked,' where scan has 'ringbedecked,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1619,7 +1620,7 @@
       "pg_offset": 78228,
       "scan_page": 75,
       "diff_description": "PG has '\"Wrinda\"' where scan has 'Wrinda'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(Wakr),",
@@ -1635,7 +1636,7 @@
       "pg_offset": 78228,
       "scan_page": 75,
       "diff_description": "PG has '(\"Wale\") \"Bous\"' where scan has '(Wale) Bous'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Wuldor\" (\"Oller\"),",
@@ -1643,7 +1644,7 @@
       "pg_offset": 78228,
       "scan_page": 75,
       "diff_description": "PG has '\"Wuldor\" (\"Oller\"),' where scan has 'Wuldor (Oller),'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "rapa\" of the gods at Upsala, and as the originator of human sacrifice, and as appeased by black victims, at a sacrifice called Froblod (Freys-blot) instituted by Hadding, who began it as an atonement for having slain a sea-monster, a deed for which he had incurred a",
@@ -1667,7 +1668,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"Thunder\",' where scan has 'Thunder,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Thor\",",
@@ -1675,7 +1676,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"Thor\",' where scan has 'Thor,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"bloom\",",
@@ -1683,7 +1684,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"bloom\",' where scan has '\u201cbloom,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Sigyn\"",
@@ -1691,7 +1692,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"Sigyn\"' where scan has 'Sigyn'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Nanna\"",
@@ -1699,7 +1700,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"Nanna\"' where scan has 'Nanna'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Freya\",",
@@ -1707,7 +1708,7 @@
       "pg_offset": 80255,
       "scan_page": 76,
       "diff_description": "PG has '\"Freya\",' where scan has 'Freya,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -1731,7 +1732,7 @@
       "pg_offset": 82665,
       "scan_page": 78,
       "diff_description": "PG has '(i.e.,' where scan has '(i. e.,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Caesarean operation)--Sigfred,",
@@ -1747,7 +1748,7 @@
       "pg_offset": 82665,
       "scan_page": 78,
       "diff_description": "PG has '\"Fates\"' where scan has 'Fates'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Helge Lay\",",
@@ -1755,7 +1756,7 @@
       "pg_offset": 82665,
       "scan_page": 78,
       "diff_description": "PG has '\"Helge Lay\",' where scan has 'Helge Lay,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Beowulf's Lay\".",
@@ -1763,7 +1764,7 @@
       "pg_offset": 82665,
       "scan_page": 78,
       "diff_description": "PG has '\"Beowulf's Lay\".' where scan has 'Beowulf\u2019s Lay.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Darrada-liod,",
@@ -1795,7 +1796,7 @@
       "pg_offset": 84599,
       "scan_page": 79,
       "diff_description": "PG has '\"Dwarves\".--These' where scan has 'Dwarves.\u2014These'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "itself for its possessor. He is trapped by the hero and robbed of his treasures. FUNERAL RITES AND MAN'S FUTURE STATE. \"Barrow-burials\".--The obsequies of great men (such as the classic funeral of \"Beowulf's Lay\", 3138-80) are much noticed by Saxo, and we might expect that he knew such a poem (one similar to Ynglingatal, but not it) which, like the Books of the Kings of Israel and Judah, recorded the deaths and burials, as well as the pedigrees and deeds, of the Danish kings. The various stages of the \"obsequy by fire\" are noted;",
@@ -1819,7 +1820,7 @@
       "pg_offset": 86030,
       "scan_page": 80,
       "diff_description": "PG has '\"sati\";' where scan has 'sati;'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Brunhild's Lay\",",
@@ -1827,7 +1828,7 @@
       "pg_offset": 86030,
       "scan_page": 80,
       "diff_description": "PG has '\"Brunhild's Lay\",' where scan has 'Brunhild\u2019s Lay,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Gudrumar",
@@ -1851,7 +1852,7 @@
       "pg_offset": 86030,
       "scan_page": 80,
       "diff_description": "PG has '\"barrow-ghost\"' where scan has 'barrow-ghost'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "WORLDS.--The \"Land",
@@ -1859,7 +1860,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'WORLDS.--The \"Land' where scan has 'WORLDS.\u2014The Land'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Undeath\"",
@@ -1867,7 +1868,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'Undeath\"' where scan has 'Undeath'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Herrand",
@@ -1891,7 +1892,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has '\"Hadding's' where scan has 'Hadding\u2019s'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Underground\".--(a)",
@@ -1899,7 +1900,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'Underground\".--(a)' where scan has 'Underground.\u2014(a)'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "angelica:-- \"Through",
@@ -1907,7 +1908,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'angelica:-- \"Through' where scan has 'angelica :\u2014 \u201cThrough'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "garnished.\" --F.Q. ii. 7, 51.",
@@ -1923,7 +1924,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has '\"River' where scan has 'River'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Blades\",",
@@ -1931,7 +1932,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'Blades\",' where scan has 'Blades,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "fighting\",",
@@ -1939,7 +1940,7 @@
       "pg_offset": 87552,
       "scan_page": 81,
       "diff_description": "PG has 'fighting\",' where scan has 'fighting,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Hadfling",
@@ -1971,7 +1972,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'e.g.,' where scan has 'e. g.,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Crack-a-Nuts,",
@@ -1979,7 +1980,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'Crack-a-Nuts,' where scan has 'Cracka-Nuts,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"River",
@@ -1987,7 +1988,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has '\"River' where scan has 'River'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Blades\"",
@@ -1995,7 +1996,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'Blades\"' where scan has 'Blades'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Warriors\"",
@@ -2003,7 +2004,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'Warriors\"' where scan has 'Warriors'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Usher's Well--a",
@@ -2011,7 +2012,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'Usher's Well--a' where scan has 'Usher\u2019s Well\u2014a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "course-- \"It",
@@ -2019,7 +2020,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'course-- \"It' where scan has 'course\u2014 \u201cIt'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "powers--a",
@@ -2027,7 +2028,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has 'powers--a' where scan has 'powers\u2014a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Seven Sleepers\"",
@@ -2035,7 +2036,7 @@
       "pg_offset": 89140,
       "scan_page": 82,
       "diff_description": "PG has '\"Seven Sleepers\"' where scan has 'Seven Sleepers'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "s should be sent with him. (b) In one well-stored and hide-defended ship they set out, reached a sunless, starless land, without fuel; ate raw food and suffered. At last, after many days, a fire was seen ashore. Thorkill, setting a jewel at the mast-head to be able to regain his vessel easily, rows ashore to get fire. (c) In a filthy, snake-paved, stinking cavern he sees two",
@@ -2051,7 +2052,7 @@
       "pg_offset": 90524,
       "scan_page": 83,
       "diff_description": "PG has 'giants, (2)' where scan has 'giants,*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "cornel-wood spear.\"",
@@ -2059,7 +2060,7 @@
       "pg_offset": 90524,
       "scan_page": 83,
       "diff_description": "PG has 'cornel-wood spear.\"' where scan has 'cornelwood spear.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "demens",
@@ -2099,7 +2100,7 @@
       "pg_offset": 91915,
       "scan_page": 84,
       "diff_description": "PG has 'sword-blade,' where scan has 'sword-blade'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "earthquakes--a",
@@ -2107,7 +2108,7 @@
       "pg_offset": 91915,
       "scan_page": 84,
       "diff_description": "PG has 'earthquakes--a' where scan has 'earthquakes\u2014a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -2131,7 +2132,7 @@
       "pg_offset": 93692,
       "scan_page": 85,
       "diff_description": "PG has 'weather\"' where scan has 'weather'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Panic Terror\"",
@@ -2139,7 +2140,7 @@
       "pg_offset": 93692,
       "scan_page": 85,
       "diff_description": "PG has '\"Panic Terror\"' where scan has 'Panic Terror'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "counter-curse. \"Magic help\"",
@@ -2147,7 +2148,7 @@
       "pg_offset": 93692,
       "scan_page": 85,
       "diff_description": "PG has 'counter-curse. \"Magic help\"' where scan has 'countercurse. Magic help'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -2171,7 +2172,7 @@
       "pg_offset": 95612,
       "scan_page": 86,
       "diff_description": "PG has '\"Charms\"' where scan has 'Charms'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Love philtres\"",
@@ -2179,7 +2180,7 @@
       "pg_offset": 95612,
       "scan_page": 86,
       "diff_description": "PG has '\"Love philtres\"' where scan has 'Love philtres'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Food\",",
@@ -2187,7 +2188,7 @@
       "pg_offset": 95612,
       "scan_page": 86,
       "diff_description": "PG has '\"Food\",' where scan has 'Food,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -2211,7 +2212,7 @@
       "pg_offset": 97313,
       "scan_page": 87,
       "diff_description": "PG has '\"magic messengers\"' where scan has 'magic messengers'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Witches",
@@ -2219,7 +2220,7 @@
       "pg_offset": 97313,
       "scan_page": 87,
       "diff_description": "PG has '\"Witches' where scan has 'Witches'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "wizards\"",
@@ -2227,7 +2228,7 @@
       "pg_offset": 97313,
       "scan_page": 87,
       "diff_description": "PG has 'wizards\"' where scan has 'wizards'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ernot was clearly dead. And now she goes to Gislher and thrusts the firebrand in his mouth. He was not dead before, but Gislher died of that. Now King Thidrec of Bern saw what Grimhild is doing, and speaks to King Attila. `See how that devil Grimhild, thy wife, is",
@@ -2243,7 +2244,7 @@
       "pg_offset": 99209,
       "scan_page": 88,
       "diff_description": "PG has '`Surely' where scan has '\u2018Surely'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Captain Cook's path\"",
@@ -2251,7 +2252,7 @@
       "pg_offset": 99209,
       "scan_page": 88,
       "diff_description": "PG has '\"Captain Cook's path\"' where scan has 'Captain Cook\u2019s path'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"dumb man\"",
@@ -2259,7 +2260,7 @@
       "pg_offset": 99209,
       "scan_page": 88,
       "diff_description": "PG has '\"dumb man\"' where scan has 'dumb man'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "speech-power.",
@@ -2267,7 +2268,7 @@
       "pg_offset": 99209,
       "scan_page": 88,
       "diff_description": "PG has 'speech-power.' where scan has 'speechpower.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "hide-wrapped",
@@ -2275,7 +2276,7 @@
       "pg_offset": 102586,
       "scan_page": 90,
       "diff_description": "PG has 'hide-wrapped' where scan has 'hidewrapped'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Vigffisson",
@@ -2291,7 +2292,7 @@
       "pg_offset": 102586,
       "scan_page": 90,
       "diff_description": "PG has '\"Loathly Worm\".' where scan has 'Loathly Worm.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -2315,7 +2316,7 @@
       "pg_offset": 104321,
       "scan_page": 91,
       "diff_description": "PG has '\"Maiden guarded\"' where scan has 'Maiden guarded'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Proud Lady\",",
@@ -2323,7 +2324,7 @@
       "pg_offset": 104321,
       "scan_page": 91,
       "diff_description": "PG has '\"Proud Lady\",' where scan has 'Proud Lady'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "out-witted",
@@ -2331,7 +2332,7 @@
       "pg_offset": 104321,
       "scan_page": 91,
       "diff_description": "PG has 'out-witted' where scan has 'outwitted'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Beggar",
@@ -2339,7 +2340,7 @@
       "pg_offset": 104321,
       "scan_page": 91,
       "diff_description": "PG has '\"Beggar' where scan has 'Beggar'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -2363,7 +2364,7 @@
       "pg_offset": 106536,
       "scan_page": 92,
       "diff_description": "PG has '\"Magician's' where scan has 'Magician\u2019s'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "pursuit\",",
@@ -2371,7 +2372,7 @@
       "pg_offset": 106536,
       "scan_page": 92,
       "diff_description": "PG has 'pursuit\",' where scan has 'pursuit,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "e.g.,",
@@ -2379,7 +2380,7 @@
       "pg_offset": 106536,
       "scan_page": 92,
       "diff_description": "PG has 'e.g.,' where scan has 'e. g.,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Wood\",",
@@ -2387,7 +2388,7 @@
       "pg_offset": 106536,
       "scan_page": 92,
       "diff_description": "PG has 'Wood\",' where scan has 'Wood,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Clever King's Daughter\",",
@@ -2395,7 +2396,7 @@
       "pg_offset": 106536,
       "scan_page": 92,
       "diff_description": "PG has '\"Clever King's Daughter\",' where scan has 'Clever King\u2019s Daughter,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "dda chooses her husband), and was able to do so by the device she had practised of sewing up her ring in his leg sometime",
@@ -2411,7 +2412,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has '\"Device' where scan has 'Device'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Ecgherht,",
@@ -2427,7 +2428,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has '\"Disguise\"' where scan has 'Disguise'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Escaped recognition\"",
@@ -2435,7 +2436,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has '\"Escaped recognition\"' where scan has 'Escaped recognition'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Hrolf.",
@@ -2451,7 +2452,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has '\"Devices\"' where scan has 'Devices'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "earth-houses.",
@@ -2459,7 +2460,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has 'earth-houses.' where scan has 'earthhouses.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "cattle,",
@@ -2467,7 +2468,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has 'cattle,' where scan has 'cattle'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Hero's",
@@ -2475,7 +2476,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has '\"Hero's' where scan has 'Hero's'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Childhood\"",
@@ -2483,7 +2484,7 @@
       "pg_offset": 108308,
       "scan_page": 93,
       "diff_description": "PG has 'Childhood\"' where scan has 'Childhood'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "David's",
@@ -2499,7 +2500,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has '\"fierce eyes\"' where scan has 'fierce eyes'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"illuminating hair\"",
@@ -2507,7 +2508,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has '\"illuminating hair\"' where scan has 'illuminating hair'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "thongs\",",
@@ -2515,7 +2516,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has 'thongs\",' where scan has 'thongs,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "rill\",",
@@ -2523,7 +2524,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has 'rill\",' where scan has 'rill,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"king's",
@@ -2531,7 +2532,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has '\"king's' where scan has 'king\u2019s'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "washing\",",
@@ -2539,7 +2540,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has 'washing\",' where scan has 'washing,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Everlasting Battle\"",
@@ -2547,7 +2548,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has '\"Everlasting Battle\"' where scan has 'Everlasting Battle'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Children preserved\"",
@@ -2555,7 +2556,7 @@
       "pg_offset": 110328,
       "scan_page": 94,
       "diff_description": "PG has '\"Children preserved\"' where scan has 'Children preserved'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "by the slaying of other children in their place; and afterwards by their being kept and named as dogs; they come to their own and avenge their wrong",
@@ -2571,7 +2572,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has '\"True Thomas\"' where scan has 'True Thomas'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Endurance\"",
@@ -2579,7 +2580,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has 'Endurance\"' where scan has 'Endurance'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Robbers",
@@ -2587,7 +2588,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has '\"Robbers' where scan has 'Robbers'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Island\",",
@@ -2595,7 +2596,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has 'Island\",' where scan has 'Island,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Holmveria Saga\"",
@@ -2603,7 +2604,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has '\"Holmveria Saga\"' where scan has 'Holmveria Saga'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(Ofote),",
@@ -2627,7 +2628,7 @@
       "pg_offset": 112217,
       "scan_page": 95,
       "diff_description": "PG has '\"Starcad\",' where scan has 'Starcad,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "maze he treads so easily and confidently, and sometimes he stumbles badly. But he has placed the whole subject on a fresh footing, and much that is to follow will be drawn from his \"Teutonic Mythology\" (cited here from the English version by Rasmus B. An",
@@ -2651,7 +2652,7 @@
       "pg_offset": 114272,
       "scan_page": 96,
       "diff_description": "PG has 'patriarchs:--' where scan has 'patriarchs:\u2014'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Scef--Heimdal--Rig.",
@@ -2659,7 +2660,7 @@
       "pg_offset": 114272,
       "scan_page": 96,
       "diff_description": "PG has 'Scef--Heimdal--Rig.' where scan has 'Scef\u2014Heimdal\u2014Rig.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Sciold--Borgar--Jarl.",
@@ -2667,7 +2668,7 @@
       "pg_offset": 114272,
       "scan_page": 96,
       "diff_description": "PG has 'Sciold--Borgar--Jarl.' where scan has 'Sciold\u2014Borgar\u2014Jarl.'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Gram--Halfdan--Koming.",
@@ -2683,7 +2684,7 @@
       "pg_offset": 114272,
       "scan_page": 96,
       "diff_description": "PG has 'follows:--' where scan has 'follows:\u2014'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "thus:-- Swipdag--Eric Freya--Gunwara Frey--Frode III Niord--Fridlaf Wuldor--Roller Thor--Brac Giants--The Greps Giants--Coller. Frey and F",
@@ -2731,7 +2732,7 @@
       "pg_offset": 118273,
       "scan_page": 99,
       "diff_description": "PG has '\"Othar\"' where scan has 'Othar'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"Syritha\"",
@@ -2739,7 +2740,7 @@
       "pg_offset": 118273,
       "scan_page": 99,
       "diff_description": "PG has '\"Syritha\"' where scan has 'Syritha'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ile in exile Wuldor takes Woden's place and name, and Woden lives on earth, part of the time at least, with Scathe Thiasse's daughter, who had parted from Niord. The giants now resolved to attack Ansegard; and Woden, under the name of Yggr, warned the gods, who recall him after ten years' exile. But for Saxo this part of the story of the wars of the gods would be very fragmentary. The \"Hildiger story\", where a father slays his son unwittingly, and then falls at his brother's hand, a tale combining the Rustam and the Balin-Balan types, is one of the Hilding tragedies, and curiously preserved in the late \"Saga of Asmund the Champions' bane\". It is an antithesis, as Dr.",
@@ -2755,7 +2756,7 @@
       "pg_offset": 119982,
       "scan_page": 100,
       "diff_description": "PG has '\"story' where scan has 'story'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Orwandel\"",
@@ -2763,7 +2764,7 @@
       "pg_offset": 119982,
       "scan_page": 100,
       "diff_description": "PG has 'Orwandel\"' where scan has 'Orwandel'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "foster-parents",
@@ -2771,7 +2772,7 @@
       "pg_offset": 119982,
       "scan_page": 100,
       "diff_description": "PG has 'foster-parents' where scan has 'fosterparents'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "primaeval",
@@ -2795,7 +2796,7 @@
       "pg_offset": 121892,
       "scan_page": 101,
       "diff_description": "PG has 'myth--that' where scan has 'myth\u2014that'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "s come? Why has the bear no tail? Why are fishes dumb, the swallow cleft-tail? How did evil come? Why did men begin to quarrel? How did death arise? What will the end be? Why do dead persons come back? What do the dead do? What is the earth shaped like? Who invented tools and weapons, and musical instruments, and how? When did kings and chiefs first come?",
@@ -2827,7 +2828,7 @@
       "pg_offset": 128230,
       "scan_page": 104,
       "diff_description": "PG has 'followers--since' where scan has 'followers\u2014since'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "task--the",
@@ -2835,7 +2836,7 @@
       "pg_offset": 128230,
       "scan_page": 104,
       "diff_description": "PG has 'task--the' where scan has 'task\u2014 the'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "fearing that while our neighbours rejoiced and transmitted records of their deeds, the repute of our own people might appear not to possess any written chronicle, but rather to be sunk in oblivion and antiquity. Thus I, forced to put my shoulder, which was unused to the task, to a burden unfamiliar to all authors of preceding time, and dreading to slight his command, have obeyed more boldly than effectually, borrowing from the gre",
@@ -2899,7 +2900,7 @@
       "pg_offset": 134243,
       "scan_page": 108,
       "diff_description": "PG has 'Waldemar, (1)' where scan has 'Waldemar,*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "conquering thy neighbours, and in",
@@ -2947,7 +2948,7 @@
       "pg_offset": 137373,
       "scan_page": 110,
       "diff_description": "PG has 'fore-most' where scan has 'foremost'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "cut off from the mainland by a very na",
@@ -3067,7 +3068,7 @@
       "pg_offset": 150290,
       "scan_page": 118,
       "diff_description": "PG has 'antiquity;' where scan has 'antiquity,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -3195,7 +3196,7 @@
       "pg_offset": 163046,
       "scan_page": 126,
       "diff_description": "PG has 'insurrection;' where scan has 'insurrection ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "on a garb of the utmost meanness, he lay down at",
@@ -3251,7 +3252,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'expanded:' where scan has 'expanded :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "will:",
@@ -3259,7 +3260,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'will:' where scan has 'will :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Thunderer;",
@@ -3267,7 +3268,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'Thunderer;' where scan has 'Thunderer ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "wise;",
@@ -3275,7 +3276,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'wise;' where scan has 'wise ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "knee;",
@@ -3283,7 +3284,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'knee;' where scan has 'knee ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "twofold:",
@@ -3291,7 +3292,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'twofold:' where scan has 'twofold :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "closed;",
@@ -3299,7 +3300,7 @@
       "pg_offset": 170727,
       "scan_page": 131,
       "diff_description": "PG has 'closed;' where scan has 'closed ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -3483,7 +3484,7 @@
       "pg_offset": 189539,
       "scan_page": 143,
       "diff_description": "PG has 'dweller's' where scan has 'dwellers'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "hipwrecked man, he sought entertainment, he found a sudden downfall of that house. Nor was there any cure for his trouble, ere he atoned by sacrifice for his crime, and was able to return into favour with heaven. For, in order to appease the deities, he sacrificed dusky victims to the god Frey. This manner",
@@ -3563,7 +3564,7 @@
       "pg_offset": 199026,
       "scan_page": 149,
       "diff_description": "PG has 'soft-dealing' where scan has 'softdealing'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "him, and came back to his fleet; when he saw from afar off a light boat tossing on the ocean billows. Putting out some vessels, he resolved to give it chase, but was brought back by peril of shipwreck, and only just reached the shore. Then he quickly took",
@@ -3579,7 +3580,7 @@
       "pg_offset": 200803,
       "scan_page": 150,
       "diff_description": "PG has 'forces--so' where scan has 'forces\u2014so'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "received--he",
@@ -3587,7 +3588,7 @@
       "pg_offset": 200803,
       "scan_page": 150,
       "diff_description": "PG has 'received--he' where scan has 'received\u2014he'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "spread the spirit of strife through the whole ship, and the jest gave place to quarrelling, which engendered bloody combat. Also, fain to get some gain out of the misfortunes of others, he seized the moneys of the slain, and attached to him a certain rover then famous, named Koll; and a little after returned in his company to his own land, where he was challenged and slain by Hadding, who preferred to hazard his own fortune rather than that of his soldiers. For generals of antique valour were loth to accomplish by general massacre what could be decided by the lot of a few.",
@@ -3643,7 +3644,7 @@
       "pg_offset": 207735,
       "scan_page": 154,
       "diff_description": "PG has 'stripling,' where scan has 'stripling'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "father",
@@ -3787,7 +3788,7 @@
       "pg_offset": 223165,
       "scan_page": 164,
       "diff_description": "PG has 'diver's' where scan has 'divers'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "en together; but less when parted. Therefore if it be joy to thee to win fame by the palm of war, pursue with daring whatsoever is hard pressed by thy hand.\" After thus discoursing long in harmoniously-adjusted strains, she sent away her retinue, and passed all the night in combat against the foulest throngs of monsters; and at return of daybreak she perceived fallen all over the fields diverse shapes of phantoms, and figures extraordinary",
@@ -3819,7 +3820,7 @@
       "pg_offset": 226655,
       "scan_page": 166,
       "diff_description": "PG has 'Ragnar,' where scan has 'Ragnar'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ife follows the mind of childhood; nor do the traces easily fade",
@@ -3923,7 +3924,7 @@
       "pg_offset": 238095,
       "scan_page": 173,
       "diff_description": "PG has 'brutes:' where scan has 'brutes :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -3947,7 +3948,7 @@
       "pg_offset": 239839,
       "scan_page": 174,
       "diff_description": "PG has 'arms,' where scan has 'arms.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "reigned",
@@ -3979,7 +3980,7 @@
       "pg_offset": 241801,
       "scan_page": 175,
       "diff_description": "PG has 'Helge.' where scan has 'HELGE,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "in population and enhanced in power by Sweyn, who was famous for the surname Forkbeard. Ro was short and spare, while Helge was rather tall of stature. Dividing the realm with his brother, Helge was allotted the domain of the sea; and attacking Skalk, the King of Sklavia, with his naval force, he slew him. Having reduced Sklavia into a province, he scoured the various arms of the sea i",
@@ -4099,7 +4100,7 @@
       "pg_offset": 255671,
       "scan_page": 184,
       "diff_description": "PG has 'vizor-holes.' where scan has 'vizorholes.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -4235,7 +4236,7 @@
       "pg_offset": 266698,
       "scan_page": 191,
       "diff_description": "PG has 'spears:' where scan has 'spears;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "the blows, or so unwarlike that he dares not avenge his lord, and disowns all honours worthy of his valour. \"Thou, Ruta, rise and put forth thy snow-white head, come forth from thy hiding into the battle. The carnage that is being done without calls thee. By now the council-chamber is shaken with warfare, and the gates creak with the dreadful fray. Steel rends the mail-coats, the woven mesh is torn apart, and the midriff gives under the rain of spears. By now the huge axes have hacked small the shield of the king; by now the long swords clash, and the battle-axe clatters its blows upon the shoulders of men, and cleaves their breasts. Why are your hearts afraid?",
@@ -4331,7 +4332,7 @@
       "pg_offset": 278671,
       "scan_page": 198,
       "diff_description": "PG has 'war-waging' where scan has 'warwaging'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "death.\" I have composed this particular series of harangues in metrical shape, because the gist of the same thoughts is found arranged in a short form in a certain ancient Danish song, which is repeated by heart by many conversant with antiquity. Now, it came to pass that the Goths",
@@ -4475,7 +4476,7 @@
       "pg_offset": 297661,
       "scan_page": 212,
       "diff_description": "PG has 'Hother (1)' where scan has 'Hother*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "by his sudden end. And so, while he was celebrating the death of another with immode",
@@ -4547,7 +4548,7 @@
       "pg_offset": 304941,
       "scan_page": 217,
       "diff_description": "PG has 'Harald, (2)' where scan has 'Harald,*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "be careful of their lives. Now it is certain that this apparent flood was not real but phantasmal; not born in the bowels of the earth (since Nature suffereth not liquid springs to gush forth in a dry place), but produced by some magic agency. All men afterwards, to whom the story of that breaking in had come down, left this hill undisturbed. Wherefore it has never been made sure whether it really contains any wealth; for the dread of peril has daunted anyone since Harald from probing its dark foundations. But Odin, though he was accounted the chief of the gods, began to inquire of the prophets and diviners",
@@ -4587,7 +4588,7 @@
       "pg_offset": 307683,
       "scan_page": 219,
       "diff_description": "PG has 'stubborn-hearted' where scan has 'stubbornhearted'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -4819,7 +4820,7 @@
       "pg_offset": 328881,
       "scan_page": 232,
       "diff_description": "PG has 'living--the' where scan has 'living\u2014the'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "spring-green",
@@ -4827,7 +4828,7 @@
       "pg_offset": 328881,
       "scan_page": 232,
       "diff_description": "PG has 'spring-green' where scan has 'springgreen'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "r, became keener to attack his enemy than to defend his own body; and, heedless of his shield, had grasped his sword with both hands; and his boldness did not fail. For by his rain of blows he destroyed Koller's shield and deprived him of it, and at last hewed off his foot and drove him lifeless to the ground. Then, not to fail of his compact, he buried him royally, gave him a howe of lordly make and pompous obsequies. Then he pursued and slew Koller's",
@@ -4931,7 +4932,7 @@
       "pg_offset": 344020,
       "scan_page": 241,
       "diff_description": "PG has 'wood--a' where scan has 'wood\u2014a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "searched",
@@ -4955,7 +4956,7 @@
       "pg_offset": 345576,
       "scan_page": 242,
       "diff_description": "PG has 'carefully cooked' where scan has 'carefullycooked'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -5059,7 +5060,7 @@
       "pg_offset": 354124,
       "scan_page": 247,
       "diff_description": "PG has '\"Hamlet\",' where scan has '\u201cHamlet,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "BOOK FOUR. Amleth, when he",
@@ -5099,7 +5100,7 @@
       "pg_offset": 356829,
       "scan_page": 250,
       "diff_description": "PG has 'fratricide-brother,' where scan has 'fratricide\u2014 brother,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "culpri",
@@ -5123,7 +5124,7 @@
       "pg_offset": 358093,
       "scan_page": 251,
       "diff_description": "PG has 'deed;' where scan has 'deed ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "you;",
@@ -5131,7 +5132,7 @@
       "pg_offset": 358093,
       "scan_page": 251,
       "diff_description": "PG has 'you;' where scan has 'you ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "you;",
@@ -5139,7 +5140,7 @@
       "pg_offset": 358093,
       "scan_page": 251,
       "diff_description": "PG has 'you;' where scan has 'you ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "dust;",
@@ -5147,7 +5148,7 @@
       "pg_offset": 358093,
       "scan_page": 251,
       "diff_description": "PG has 'dust;' where scan has 'dust ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -5227,7 +5228,7 @@
       "pg_offset": 367360,
       "scan_page": 257,
       "diff_description": "PG has 'resting--the' where scan has 'resting\u2014the'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "sleep--and",
@@ -5235,7 +5236,7 @@
       "pg_offset": 367360,
       "scan_page": 257,
       "diff_description": "PG has 'sleep--and' where scan has 'sleep\u2014and'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "sent out",
@@ -5243,7 +5244,7 @@
       "pg_offset": 367360,
       "scan_page": 257,
       "diff_description": "PG has 'sent out' where scan has 'sentout'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "the approach",
@@ -5251,7 +5252,7 @@
       "pg_offset": 367360,
       "scan_page": 257,
       "diff_description": "PG has 'the approach' where scan has 'theapproach'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "n. With equal address he filched the letter entrusted to Amleth from the coffer in which it was kept. When these things were brought to the queen, she scanned the shield narrowly, and from the notes appended made out the whole argument. Then she knew that here was the man who, trusting in his own nicely calculated scheme, had avenged on his uncle the murder of his father. She also looked at the letter containing the",
@@ -5363,7 +5364,7 @@
       "pg_offset": 381547,
       "scan_page": 266,
       "diff_description": "PG has 'Self-confidence' where scan has 'Selfconfidence'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "their valour, not by the help of their respective sides, but by a trial of personal strength. The end was that, though the blows rained thick on either side, Athisl prevailed and overthrew Frowin, and won a public victory as well as a duel, breaking up and shattering the Danish ranks in all directions. When he returned to Sweden, he not only counted the slaying",
@@ -5387,7 +5388,7 @@
       "pg_offset": 383111,
       "scan_page": 267,
       "diff_description": "PG has 'Jellinge. (1)' where scan has 'Jellinge.*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "sighed for, and now granted to him by this lucky event. For Athisl had come encompassed with countless forces of the Swedes, just as though in his firm assurance he had made sure of victory; and since the enemy who was goi",
@@ -5419,7 +5420,7 @@
       "pg_offset": 385895,
       "scan_page": 269,
       "diff_description": "PG has 'drain:' where scan has 'drain :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "end:",
@@ -5427,7 +5428,7 @@
       "pg_offset": 385895,
       "scan_page": 269,
       "diff_description": "PG has 'end:' where scan has 'end :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -5475,7 +5476,7 @@
       "pg_offset": 390357,
       "scan_page": 272,
       "diff_description": "PG has '\"for manslaughter\".' where scan has '\u201cfor manslaughter.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -5579,7 +5580,7 @@
       "pg_offset": 402109,
       "scan_page": 279,
       "diff_description": "PG has '\"Skrep\",' where scan has '\u201cSkrep,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "nded it to his son. Uffe saw it was frail with great age and rusted away; and, not daring to strike with it, asked if he must prove this one also like the rest, declaring that he must try its temper before the battle ought to be",
@@ -5659,7 +5660,7 @@
       "pg_offset": 410329,
       "scan_page": 284,
       "diff_description": "PG has 'gold-hilted' where scan has 'goldhilted'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Danes",
@@ -5715,7 +5716,7 @@
       "pg_offset": 417368,
       "scan_page": 288,
       "diff_description": "PG has 'name--Grep in' where scan has 'name\u2014Grep\u2014in'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "country,",
@@ -5723,7 +5724,7 @@
       "pg_offset": 417368,
       "scan_page": 288,
       "diff_description": "PG has 'country,' where scan has 'country?'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "chamber was no safety to him: there was scarce a spot in the land but bore traces of their lust. Husbands were vexed with fear, and wives with insult to their persons: and to these wrongs folk bowed. No ties were respected, and forced embraces became a common thing. Love was prostituted, all reverence for marriage ties died out, and lust was greedily run after. And the reason of all this was the peace; for men's bodies lacked exercise and were enervated in the ease so propitious to vices. At last the eldest of those who shared the name of Grep, wishing to re",
@@ -5755,7 +5756,7 @@
       "pg_offset": 420703,
       "scan_page": 290,
       "diff_description": "PG has 'bas-relief,' where scan has 'basrelief,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "to make herself pleasant to the envoys with a most courteous address, and her blithe presence added not a little to the festal delights of the banqueters. And as the drink went faster Westmar revealed his purpose in due course, in a very merry declaration, wishing to sound the mind of the maiden in talk of a friendly sort. And, in order not to inflict on himself a rebuff, he spoke in a mirthful vein, and broke the ground of his mission, by venturing to make up a sportive spee",
@@ -5779,7 +5780,7 @@
       "pg_offset": 422324,
       "scan_page": 291,
       "diff_description": "PG has 'love-philtres,' where scan has 'lovephiltres,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "So Westmar entered the palace with his men-at-arms, and said: \"Now thou must needs either consent to our entreaties, or meet in battle us who entreat thee. We would rather die nobly than go back with our mission unperformed; lest, foully repulsed and foiled of our purpose, we should take home disgrace where we hoped to will honour. If thou refuse thy daughter, consent to fight: thou must needs grant one thing or the other. We wish either to die or to have our prayers beard. Something--sorrow if not joy--we will get from thee. Frode will be better pleased to hear of our slaughter than of our repulse.\" Witho",
@@ -5835,7 +5836,7 @@
       "pg_offset": 427774,
       "scan_page": 295,
       "diff_description": "PG has 'heads--a' where scan has 'heads\u2014 a'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "thee to be encouraged by the internal jealousi",
@@ -5963,7 +5964,7 @@
       "pg_offset": 443452,
       "scan_page": 304,
       "diff_description": "PG has 'free-booting' where scan has 'freebooting'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "in stubbornness of speech. So he began the dispute with reviling, and assailed Erik as follows: Grep: \"Fool, who art thou? What idle quest is thine? Tell me, whence or whither dost thou journey? What is thy road? What thy desire? Who thy father? What thy lineage? Those have strength beyond others who have never left their own homes, and the Luck of kings is their houseluck. For the things of a vile man are acceptable unto few, and seldom are the deed",
@@ -5995,7 +5996,7 @@
       "pg_offset": 444993,
       "scan_page": 305,
       "diff_description": "PG has 'Erik:' where scan has 'Erik.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "sinister ears of the wolf, we believe that the wolf himself is near. Men think no credit due to him that hath no credit, whom report accuses of treachery.\" Grep: \"Shameless boy, owl astray from the path, night-owl in the darkness, thou shalt pay for thy reckless words. Thou shalt be sorry for the words thou now belchest forth madly, and shalt pay with thy d",
@@ -6019,7 +6020,7 @@
       "pg_offset": 446491,
       "scan_page": 306,
       "diff_description": "PG has 'hearth.\" Grep: \"I' where scan has 'hearth.\u201d Grep. \u201cI'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "counsel.\" Erik: \"Lo,",
@@ -6027,7 +6028,7 @@
       "pg_offset": 446491,
       "scan_page": 306,
       "diff_description": "PG has 'counsel.\" Erik: \"Lo,' where scan has 'counsel.\u201d Erik. \u201cLo,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "For he swore that he would lay the host of the foreigners under the claws of eagles. But the king warned him that he should give his frenzy pause for counsel, that blind plans were commonly hurtful; that nothing could be done both cautiously and quickly at once; that headstrong efforts were the worst obstacle; and lastly, that it was unseemly to attack a handful with a host. Also, said he, the sagacious man was he who could bridle a raging spirit, and stop his frantic empetuosity in time. Thus the king forced",
@@ -6123,7 +6124,7 @@
       "pg_offset": 453652,
       "scan_page": 311,
       "diff_description": "PG has '`spear-point'' where scan has ''spear-point''",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "straightway to",
@@ -6307,7 +6308,7 @@
       "pg_offset": 471930,
       "scan_page": 334,
       "diff_description": "PG has 'foolhardy;' where scan has 'foolhardy ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "n softer than women? Hast thou not yet begun thy prime, and art thou already taken with weariness of life? Whoever set such an example before? Shall the grandson of a famous man, and the child of the unvanquished, be too weak to endure a slight gust of adversity? Thy nature portrays the courage of thy sires; none has conquered thee, only thine own heedlessness has hurt thee. We snatched thee from peril, we did not subdue thee; wilt thou give us hatred for love, and set our friendship down as wrongdoing? Our service should have appeased thee, and not troubled thee. May the gods never desire thee to go so far in frenzy, as to persist in branding thy preserver",
@@ -6323,7 +6324,7 @@
       "pg_offset": 473657,
       "scan_page": 335,
       "diff_description": "PG has 'as-in' where scan has 'as in'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ech softened the king towards himself as much as towards his foe. Then, everything being arranged and made friendly, they returned to the shore. The king ordered that Erik and his sailors should be taken in carriages. But when they reached the palace he had an assembly summoned, to which he called Erik, and under the pledge of betrothal gave him his sister and command over a hundred men. Then he added that the queen would be a weariness to him, and that the daughter of Gotar had taken his liking. He must, therefore, have a fresh embassy, and the business could best be done by",
@@ -6363,7 +6364,7 @@
       "pg_offset": 480159,
       "scan_page": 339,
       "diff_description": "PG has '\"Shrewd-spoken\",' where scan has '\u201cShrewd-spoken,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "preparations to be confounded in one ceremony. The king was prevailed upon by her answers, and highly approved her requests. Gotar's",
@@ -6395,7 +6396,7 @@
       "pg_offset": 483664,
       "scan_page": 341,
       "diff_description": "PG has 'party-wall' where scan has 'partywall'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "hat was no mere likeness, but the very same face in both places. For it seemed flatly impossible that different people should look exactly and undistinguishably alike. At last, when the",
@@ -6683,7 +6684,7 @@
       "pg_offset": 514529,
       "scan_page": 360,
       "diff_description": "PG has 'sword--it' where scan has 'sword\u2014it'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -6771,7 +6772,7 @@
       "pg_offset": 529262,
       "scan_page": 369,
       "diff_description": "PG has 'wide-resounding' where scan has 'wideresounding'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Samso,",
@@ -6923,7 +6924,7 @@
       "pg_offset": 546666,
       "scan_page": 380,
       "diff_description": "PG has 'them--for' where scan has 'them\u2014for'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "antiquity--Gerbiorn,",
@@ -6931,7 +6932,7 @@
       "pg_offset": 546666,
       "scan_page": 380,
       "diff_description": "PG has 'antiquity--Gerbiorn,' where scan has 'antiquity\u2014Gerbiorn,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "istant view. Biorn had also a dog of extraordinary fierceness, a terribly vicious brute, dangerous for people to live with, which had often singly destroyed twelve men. But, since the tale is hearsay rather than certainty, let",
@@ -6947,7 +6948,7 @@
       "pg_offset": 547842,
       "scan_page": 381,
       "diff_description": "PG has 'promiscuously--these,' where scan has 'promiscuously\u2014these,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "aised their valour and their vows, but bidding the onlookers wait, went in the night to the river, satisfied with a single companion. For, not to seem better provided with other men's valour than with his own, he determined to forestall their aid by his own courage. Thereupon he crushed and killed his companion with a shower of flints, and flung his bloodless corpse into the waves, having dressed it in his own clothes; which he",
@@ -6971,7 +6972,7 @@
       "pg_offset": 550736,
       "scan_page": 383,
       "diff_description": "PG has 'island;' where scan has 'island ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7075,7 +7076,7 @@
       "pg_offset": 561416,
       "scan_page": 389,
       "diff_description": "PG has 'booty-laden' where scan has 'bootyladen'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Northmen was a thing to blush for; for an enemy crushed it by borrowing the aid of a brute. Nor was it treacherous of Fridleif to recruit the failing valour of his men with the aid of a dog. In this war Amund fell; and his servant Ane, surnamed the Archer, challenged Fridleif to fight him; but Biorn, being a man of meaner estate, not suffering the king to engage with a common fellow, attacked him himself. And when Biorn had bent his bow and was fitting the",
@@ -7131,7 +7132,7 @@
       "pg_offset": 567727,
       "scan_page": 393,
       "diff_description": "PG has 'soldiers:' where scan has 'soldiers :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "which his friends perished, and was received by Frode as his guest for his incredible excellence both of mind and body. And, after being for some little time his comrade, he was dressed in a better and more comely fashion every",
@@ -7171,7 +7172,7 @@
       "pg_offset": 572502,
       "scan_page": 396,
       "diff_description": "PG has 'follows:--' where scan has 'follows:\u2014'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "abominabl",
@@ -7195,7 +7196,7 @@
       "pg_offset": 574076,
       "scan_page": 397,
       "diff_description": "PG has 'sea-roving.' where scan has 'searoving.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "money-bargain.",
@@ -7203,7 +7204,7 @@
       "pg_offset": 574076,
       "scan_page": 397,
       "diff_description": "PG has 'money-bargain.' where scan has 'moneybargain.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7251,7 +7252,7 @@
       "pg_offset": 584279,
       "scan_page": 404,
       "diff_description": "PG has 'and, longing' where scan has 'and,longing'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "as that soul is slippery, which hides its insolent treachery by stealthy arts, so is it right that whatsoever is akin to guilt should be frail and fleeting. For guilt has been usually found to come home to its author; and rumour relates that such was the fate of Swerting. For he had resolved to surprise the king under the pretence of a banquet, and burn him to death; but the",
@@ -7275,7 +7276,7 @@
       "pg_offset": 585823,
       "scan_page": 405,
       "diff_description": "PG has 'self-control' where scan has 'selfcontrol'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "plunge into most abominable gulfs of foulness. Fowl-fatteners, scullions, frying-pans, countless cook-houses, different cooks to roast or spice the banquet--the choosing of these stood to him for glory. As to arms, soldiering, and wars, he could endure neither to train himself to them, nor to l",
@@ -7307,7 +7308,7 @@
       "pg_offset": 588887,
       "scan_page": 407,
       "diff_description": "PG has 'garment\",' where scan has 'garment,\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "the old man whom she once had known, and felt ashamed. She spurned the wanton and libidinous fingering, and repulsed the unchaste hands, telling the man also that he had need of arms, and urging him to cease his lewd sport.",
@@ -7347,7 +7348,7 @@
       "pg_offset": 593776,
       "scan_page": 410,
       "diff_description": "PG has '`Maiden,' where scan has '\u2018Maiden,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "`Refrain",
@@ -7355,7 +7356,7 @@
       "pg_offset": 593776,
       "scan_page": 410,
       "diff_description": "PG has '`Refrain' where scan has '\u2018Refrain'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "`Turn",
@@ -7363,7 +7364,7 @@
       "pg_offset": 593776,
       "scan_page": 410,
       "diff_description": "PG has '`Turn' where scan has '\u2018Turn'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "entrails. Presently I rise and crush the girl's mouth with my fist, an",
@@ -7419,7 +7420,7 @@
       "pg_offset": 600998,
       "scan_page": 415,
       "diff_description": "PG has 'ridiculous' where scan has 'ridiculous.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "pledg",
@@ -7507,7 +7508,7 @@
       "pg_offset": 609133,
       "scan_page": 420,
       "diff_description": "PG has 'bridal-chamber,' where scan has 'bridalchamber,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7531,7 +7532,7 @@
       "pg_offset": 610693,
       "scan_page": 421,
       "diff_description": "PG has 'heard--for' where scan has 'heard\u2014for'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "spread--that",
@@ -7539,7 +7540,7 @@
       "pg_offset": 610693,
       "scan_page": 421,
       "diff_description": "PG has 'spread--that' where scan has 'spread\u2014that'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7651,7 +7652,7 @@
       "pg_offset": 623792,
       "scan_page": 429,
       "diff_description": "PG has 'scot-free,' where scan has 'scotfree,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7691,7 +7692,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'gold;' where scan has 'gold ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Teutons;",
@@ -7699,7 +7700,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'Teutons;' where scan has 'Teutons ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "feast;",
@@ -7707,7 +7708,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'feast;' where scan has 'feast ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "preparation;",
@@ -7715,7 +7716,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'preparation;' where scan has 'preparation ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "hog;",
@@ -7723,7 +7724,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'hog;' where scan has 'hog ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "trusting.... \"She",
@@ -7731,7 +7732,7 @@
       "pg_offset": 628575,
       "scan_page": 432,
       "diff_description": "PG has 'trusting.... \"She' where scan has 'trusting . . . . \u201cShe'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "\"What for",
@@ -7771,7 +7772,7 @@
       "pg_offset": 631834,
       "scan_page": 434,
       "diff_description": "PG has 'wine-jars' where scan has 'winejars'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Frode",
@@ -7899,7 +7900,7 @@
       "pg_offset": 643879,
       "scan_page": 442,
       "diff_description": "PG has 'hiding. (1)' where scan has 'hiding.*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7947,7 +7948,7 @@
       "pg_offset": 648157,
       "scan_page": 445,
       "diff_description": "PG has 'Then--for' where scan has 'Then\u2014for'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "bravery--amid",
@@ -7955,7 +7956,7 @@
       "pg_offset": 648157,
       "scan_page": 445,
       "diff_description": "PG has 'bravery--amid' where scan has 'bravery\u2014amid'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "helmet,",
@@ -7963,7 +7964,7 @@
       "pg_offset": 648157,
       "scan_page": 445,
       "diff_description": "PG has 'helmet,' where scan has 'helmet,,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -7987,7 +7988,7 @@
       "pg_offset": 649852,
       "scan_page": 446,
       "diff_description": "PG has 'hard-pressed' where scan has 'hardpressed'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8059,7 +8060,7 @@
       "pg_offset": 656809,
       "scan_page": 450,
       "diff_description": "PG has 'celibacy.' where scan has 'celibacy,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8123,7 +8124,7 @@
       "pg_offset": 661128,
       "scan_page": 453,
       "diff_description": "PG has 'table.' where scan has 'table,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "son-in-law",
@@ -8131,7 +8132,7 @@
       "pg_offset": 661128,
       "scan_page": 453,
       "diff_description": "PG has 'son-in-law' where scan has 'son-inlaw'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8147,7 +8148,7 @@
       "pg_offset": 663362,
       "scan_page": 454,
       "diff_description": "PG has 'self-restraint,' where scan has 'selfrestraint,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "self-restraint",
@@ -8155,7 +8156,7 @@
       "pg_offset": 663362,
       "scan_page": 454,
       "diff_description": "PG has 'self-restraint' where scan has 'selfrestraint'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "A giant desired the same thing, but, finding himself equally foiled, he suborned a woman; and she, pretending friendship for the girl, ser",
@@ -8171,7 +8172,7 @@
       "pg_offset": 666496,
       "scan_page": 456,
       "diff_description": "PG has 'while--it' where scan has 'while\u2014it'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "gesture--lift",
@@ -8179,7 +8180,7 @@
       "pg_offset": 666496,
       "scan_page": 456,
       "diff_description": "PG has 'gesture--lift' where scan has 'gesture\u2014lift'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "motion of their eyes! So when",
@@ -8235,7 +8236,7 @@
       "pg_offset": 672873,
       "scan_page": 460,
       "diff_description": "PG has 'rover captain' where scan has 'rovercaptain'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8291,7 +8292,7 @@
       "pg_offset": 677076,
       "scan_page": 463,
       "diff_description": "PG has 'bye quality' where scan has 'by equality'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8331,7 +8332,7 @@
       "pg_offset": 682023,
       "scan_page": 466,
       "diff_description": "PG has 'fighting-maid' where scan has 'fightingmaid'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "n. \"Not the distaff or the wool-frails, but spears dripping from the slaughter, have served for our handling.\" Signe did not hesitate to back up his words with like dissembling, and replied that it was natural that hands which dealt more in wounds than wools, and in battle than in tasks of the house should show the hardness that",
@@ -8355,7 +8356,7 @@
       "pg_offset": 685072,
       "scan_page": 468,
       "diff_description": "PG has 'men-at-arms;--by' where scan has 'men-at-arms;\u2014by'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ceived a better judgment, and advised that it would be better to use his stout service than to deal with him too ruthlessly. Then Bolwis came forward and declared that it was evil",
@@ -8435,7 +8436,7 @@
       "pg_offset": 693614,
       "scan_page": 473,
       "diff_description": "PG has 'scabbards;' where scan has 'scabbards,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "brought news of a portentous thing; for he saw leaves and shrubs like men walking. Then the king asked him how far off was the advancing forest; and when he heard that it was near, he added that this prodigy boded his own death. Hence the marsh where the shrubs were cut down was styled in common parlance Deadly Marsh. Therefore, fearing the narrow passages, he left the town, and went to a level spot which was more open, there to meet the enemy in battle. Sigar fought unsucc",
@@ -8491,7 +8492,7 @@
       "pg_offset": 698235,
       "scan_page": 476,
       "diff_description": "PG has 'men.' where scan has 'men,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "made and shut up in it his daughter Drota, giving her due attendance, and providing her maintenance for a long time. Also he committed to the cave some swords which had been adorned with the choicest smith-craft, besides the royal household gear; so that he might not leave the enemy to capture and use the sword, which he saw that he could not wield himself. A",
@@ -8563,7 +8564,7 @@
       "pg_offset": 704667,
       "scan_page": 480,
       "diff_description": "PG has 'nickname,...' where scan has 'nickname, . . .'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "chastity",
@@ -8595,7 +8596,7 @@
       "pg_offset": 706252,
       "scan_page": 481,
       "diff_description": "PG has 'he had' where scan has 'hehad'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "yet greater, he got from his mother the swords of his grandfather, one of which was called Lyusing.... and the other Hwyting, after the sheen of its well-whetted point. But when he heard that war was raging between Alver, the King of Sweden, and the Ruthenians (Russians), he instantly went to Russia, offered help to the natives, and was received by all with the utmost honour. Alver was",
@@ -8611,7 +8612,7 @@
       "pg_offset": 707895,
       "scan_page": 482,
       "diff_description": "PG has 'feelings--the' where scan has 'feelings\u2014the'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "for two men to fight with, and slew them both. On the third day he subdued three; on the fourth he overcame four who met him; and on the fifth he asked for five. When Halfdan conquered these, and when the eighth day had been reached with an equal increase in the combatants and",
@@ -8667,7 +8668,7 @@
       "pg_offset": 712802,
       "scan_page": 485,
       "diff_description": "PG has 'overthrew,' where scan has 'overthrew'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "are both yet unchanged, they s",
@@ -8723,7 +8724,7 @@
       "pg_offset": 720439,
       "scan_page": 490,
       "diff_description": "PG has 'Their' where scan has ''Their'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "kingdom.",
@@ -8827,7 +8828,7 @@
       "pg_offset": 733153,
       "scan_page": 498,
       "diff_description": "PG has 'father-in-law's' where scan has 'father-inlaw\u2019s'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "surnamed....",
@@ -8835,7 +8836,7 @@
       "pg_offset": 733153,
       "scan_page": 498,
       "diff_description": "PG has 'surnamed....' where scan has 'surnamed . . . .'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8859,7 +8860,7 @@
       "pg_offset": 734780,
       "scan_page": 499,
       "diff_description": "PG has 'sea-kings' where scan has 'seakings'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8915,7 +8916,7 @@
       "pg_offset": 741006,
       "scan_page": 504,
       "diff_description": "PG has 'Harald:' where scan has 'Harald :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "Him....,",
@@ -8923,7 +8924,7 @@
       "pg_offset": 741006,
       "scan_page": 504,
       "diff_description": "PG has 'Him....,' where scan has 'Him . . . .,'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "timate favour of Harald by reason of ancient allegiance. Thus the sea was studded with the Danish fleet, and seemed to interpose a bridge, uniting Zealand to Skaane. To those that wished to pass between those provinces, the sea offered a short road on foot over the dense mass of ships. But Harald",
@@ -8947,7 +8948,7 @@
       "pg_offset": 743540,
       "scan_page": 506,
       "diff_description": "PG has 'Snub-nosed;' where scan has 'Snubnosed;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -8979,7 +8980,7 @@
       "pg_offset": 748999,
       "scan_page": 509,
       "diff_description": "PG has 'standard-bearer.' where scan has 'standardbearer.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "pilt.",
@@ -9019,7 +9020,7 @@
       "pg_offset": 755148,
       "scan_page": 514,
       "diff_description": "PG has 'pyre,' where scan has 'pyre.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "uld be transferred to an urn, taken to Leire, and there, together with the horse and armour, receive a royal funeral. By paying these due rites of honour to his uncle's shade, he won the favour of the Danes, and",
@@ -9059,7 +9060,7 @@
       "pg_offset": 759770,
       "scan_page": 517,
       "diff_description": "PG has 'nowise' where scan has 'no wise'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "father, and that he was bound to fight armed with courage, and not with numbers. Meanwhile Ring had returned from roving; and when",
@@ -9075,7 +9076,7 @@
       "pg_offset": 761436,
       "scan_page": 518,
       "diff_description": "PG has 'Omund,' where scan has 'Omund.'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -9187,7 +9188,7 @@
       "pg_offset": 774601,
       "scan_page": 526,
       "diff_description": "PG has 'fray;--witness' where scan has 'fray;\u2014witness'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -9227,7 +9228,7 @@
       "pg_offset": 777754,
       "scan_page": 528,
       "diff_description": "PG has 'sought:' where scan has 'sought :'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "while peace was unbroken, leaving",
@@ -9291,7 +9292,7 @@
       "pg_offset": 786964,
       "scan_page": 534,
       "diff_description": "PG has 'brother;' where scan has 'brother ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "about;",
@@ -9299,7 +9300,7 @@
       "pg_offset": 786964,
       "scan_page": 534,
       "diff_description": "PG has 'about;' where scan has 'about ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "taken;",
@@ -9307,7 +9308,7 @@
       "pg_offset": 786964,
       "scan_page": 534,
       "diff_description": "PG has 'taken;' where scan has 'taken ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "down;",
@@ -9315,7 +9316,7 @@
       "pg_offset": 786964,
       "scan_page": 534,
       "diff_description": "PG has 'down;' where scan has 'down ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "bridge;",
@@ -9323,7 +9324,7 @@
       "pg_offset": 786964,
       "scan_page": 534,
       "diff_description": "PG has 'bridge;' where scan has 'bridge ;'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "d the strand they seized a vessel chance threw in their way, and made for the deep. The barbarians who pursued them, tried, when they saw them sailing off, to bring them back by shouting promises after them that they should be kings if they returned; \"for, by the public statute of the ancients, the succession was appointed to the slayers of the kings.\" As they retreated, their ears were long deafened by the Sclavs obstinately shouting their treacherous promises.",
@@ -9443,7 +9444,7 @@
       "pg_offset": 800419,
       "scan_page": 542,
       "diff_description": "PG has 'love-message,' where scan has 'lovemessage,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "plentiful",
@@ -9627,7 +9628,7 @@
       "pg_offset": 821375,
       "scan_page": 555,
       "diff_description": "PG has 'sitting' where scan has 'sitting,'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "(absent in PG)",
@@ -9763,7 +9764,7 @@
       "pg_offset": 838243,
       "scan_page": 565,
       "diff_description": "PG has '\"Fox-cub\"' where scan has '\u201cFox-cub.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "adorned with gold, but the other arm he kept hidden as lacking ornament; for which shrewdness he received a gift equal to the first from that hand of matchless generosity. At this he was overjoyed, not so much because the reward was great, as because he had won his contention. And when the king learnt from him about the wager he ha",
@@ -9795,7 +9796,7 @@
       "pg_offset": 841036,
       "scan_page": 567,
       "diff_description": "PG has '\"the Fox-cub's tribute\".' where scan has '\u201cthe Fox-cub\u2019s tribute.\u201d'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "against",
@@ -9859,7 +9860,7 @@
       "pg_offset": 849183,
       "scan_page": 573,
       "diff_description": "PG has 'All-marvelled' where scan has 'All marvelled'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "fellow soldiers",
@@ -9867,7 +9868,7 @@
       "pg_offset": 849183,
       "scan_page": 573,
       "diff_description": "PG has 'fellow soldiers' where scan has 'fellowsoldiers'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "ory by the might of one woman. Learning that she was of noble birth among the barbarians, he steadfastly wooed her by means of messengers. She spurned his mission in her heart, but feigned compliance. Giving false answers, she made her panting wooer confident that he would gain his desires; but ordered that a bear and a dog should be set at the porch of her dwelling, thinking to guard her own room against all the ardour",
@@ -9883,7 +9884,7 @@
       "pg_offset": 850446,
       "scan_page": 574,
       "diff_description": "PG has 'peace.' where scan has 'peace'",
-      "category": "ocr_scanno"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "iteby, and when the winter was over he fought successfully with the Jutlanders who dwelt near the Liim-fjord in that region. A third and a fourth time he conquered the Skanians and the Hallanders triumphantly. Afterwards, changing his love, and desiring Thora, the daughter of the King Herodd, to wife, Ragnar divorced himself from Ladgerda; for he thought ill of her trustworthiness, remembering that she had long ago set the most savage beasts to destroy him. Meantime Herodd, the King of the Swedes, happening to go and hunt in the woods, brought home some snakes, found by his",
@@ -9947,7 +9948,7 @@
       "pg_offset": 856703,
       "scan_page": 578,
       "diff_description": "PG has 'husband....' where scan has 'husband. . .'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "his law removed all chance of incurring litigation lightly. Thinking that there was thus sufficient provision made against false accusations by unscrupulous men, he lifted up his arms against Britain, and attacked and slew in battle its king, Hame, the father of Ella, who was a most noble youth. Then he killed the earls of Scotland and of Pictland, and of the isles that they call",
@@ -10131,7 +10132,7 @@
       "pg_offset": 878213,
       "scan_page": 592,
       "diff_description": "PG has 'Utgard. (1)' where scan has 'Utgard.*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": ", Dunwat and Radbard,",
@@ -10347,7 +10348,7 @@
       "pg_offset": 902717,
       "scan_page": 607,
       "diff_description": "PG has 'Kanute?\" (2)' where scan has 'Kanute?\"*'",
-      "category": "wrong_word"
+      "category": "punctuation_diff"
     },
     {
       "pg_text": "her son to her husband, she united them in death, and followed the obsequies of both with e",
