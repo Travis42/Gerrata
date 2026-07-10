@@ -1,62 +1,87 @@
 # Gerrata TODO — 2026-07-10
 
-## 1. Missing Content: Wire In All 3 Detection Types
+## Completed
 
-**Problem:** The MISSING CONTENT section only shows results from `detect_scan_gaps` (whole unaligned pages). The other two detection methods exist in the codebase but aren't wired into the pipeline.
+### ✅ 1. Missing Content: Wire In All 3 Detection Types
+- `detect_content_holes()` wired into CLI at step 5a
+- Saxo: no content holes found, but detection runs
 
-**Three types of missing content:**
-1. **Scan gap** (whole pages) — `detect_scan_gaps()` — WIRED IN ✓
-2. **Content hole** (gaps within aligned passages) — `detect_content_holes()` — NOT WIRED ✗
-3. **Missing/extra word** (individual token diffs) — from `check_stitched()` — produced but heavily filtered
+### ✅ 2. PUNCTUATION DIFFERENCES Section Nearly Empty
+- Fixed false positive filter in `rules.py` — PUNCTUATION_DIFF candidates no longer deleted
+- Report now shows ~300 punctuation entries instead of ~5
 
-**Fix:**
-- Call `detect_content_holes()` in the CLI after `detect_scan_gaps()` (step 5a)
-- Merge results into the MISSING CONTENT section
-- Ensure missing_word/extra_word candidates that survive filtering appear in the errata section (they already do)
+### ✅ 3. Dictionary-Based Errata Ordering
+- DictionaryChecker: NLTK words + system dict (~301K words)
+- Global replacements split validated/flagged, both alphabetical
+- Singular errata split validated/flagged
+- Global replacement instances follow same split
+
+### ✅ 4. Diacritic/Ligature Auto-Validation
+- Words with diacritics/ligatures skip dictionary, auto-validated
+
+---
+
+## In Progress
+
+### 5. Promote Singular Diacritic/Ligature Errata to Global Replacements
+
+**Requirement:** Singular errata that are diacritic/ligature additions should be promoted to the global replacements list, since they're almost certainly systematic.
+
+**Plan:**
+- In the reporter or CLI step 8a, after detecting global replacements, scan remaining singular errata for diacritic/ligature entries
+- Check if the pg_word appears multiple times in the PG text (even if only 1 was caught by diff)
+- If the scan has a diacritic version and the word appears N+ times in PG, add as a global replacement
+- Use the existing diacritic detection from DictionaryChecker
 
 **Status:** TODO
 
 ---
 
-## 2. PUNCTUATION DIFFERENCES Section Nearly Empty
+### 6. Numbers Should Not Be Flagged
 
-**Problem:** Raw candidates contain 452 PUNCTUATION_DIFF entries, but only 5 survive into the filtered report. The false positive filter (`rules.py` line 194) strips punctuation, compares word-only versions, and if they match, marks them as false positives with reason "Only punctuation/whitespace difference" — deleting them before they reach the reporter.
+**Requirement:** If the replacement word is purely numeric (or numbers with punctuation), it should not be flagged.
 
-**Root cause:** The PUNCTUATION_DIFF category was added to `_categorize_replacement()` in `text_diff.py`, and the reporter has a section for it, but the false positive filter doesn't know that PUNCTUATION_DIFF should be RETAINED (not filtered). The filter rule `pg_words == scan_words` catches exactly the same cases.
-
-**Fix:**
-- In `rules.py`, add a check: if `error.category == ErrorCategory.PUNCTUATION_DIFF`, do NOT filter as false positive
-- The reporter already skips PUNCTUATION_DIFF in the main errata section and puts them in their own section
-- Verify: after fix, the ~447 filtered-out punctuation diffs should appear in the report section
-
-**Impact:** The false positive filter's "Only punctuation/whitespace" rule becomes a no-op for pre-classified PUNCTUATION_DIFF candidates. The rule can still fire for other categories where punctuation-only differences indicate alignment noise.
+**Fix:** In `DictionaryChecker.validate_replacement()`, add a check: if the cleaned word matches `^\d+([.,]\d+)*$` or similar, return True (auto-validate).
 
 **Status:** TODO
 
 ---
 
-## 3. Dictionary-Based Errata Ordering
+### 7. Fix Punctuation Contamination in Dictionary Lookup
 
-**Problem:** Errata should be ordered by whether the replacement word is found in a dictionary. Old English needs coverage too, so we need either a comprehensive dictionary or two dictionaries.
+**Problem:** `validate_replacement()` receives scan_text with trailing punctuation (e.g., `doors?`, `boot.`, `grain,`). These fail dictionary lookup because `doors?` ≠ `doors`.
 
-**Requirements:**
-- For **singular errata**: entries where the replacement word IS in the dictionary come first (higher confidence). Entries where it ISN'T go in a separate flagged section below.
-- For **global replacements**: two alphabetical groups — dictionary-validated first, then flagged/uncertain.
-- Accompanying individual findings for each global replacement group follow after their respective group.
+**Root cause:** The function strips HTML markup but not trailing punctuation before lookup.
 
-**Dictionary options to investigate:**
-- **NLTK words** (`nltk.corpus.words`) — ~236K English words, modern
-- **PyEnchant** — wraps various dictionaries, supports en_US/en_GB
-- **Old English dictionary** — Bosworth-Toller API or export, or a wordlist file
-- **aspell** — has en_US, en_GB, and can potentially handle archaic forms
-- ** Combined approach:** Modern English dictionary + Old English wordlist
+**Fix:** Strip leading/trailing punctuation in `validate_replacement()` before dictionary lookup. Keep internal punctuation (hyphens, apostrophes).
 
-**Implementation plan:**
-1. Research dictionary options (speed, coverage, archaic/old English support)
-2. Build a `DictionaryChecker` class with fast lookup
-3. Add `dictionary_validated` flag to candidates during step 6c (additional filtering)
-4. Update reporter:
-   - Singular errata: dictionary-validated first, then flagged section
-   - Global replacements: two alphabetical groups + their findings
+**Status:** TODO
 
-**Status:** TODO — needs dictionary research first
+---
+
+### 8. Handle Inflected Forms (plurals, -ing, -ed)
+
+**Problem:** Words like `harbouring` fail lookup even though `harbour` is in the dictionary. UK spellings and inflected forms need handling.
+
+**Fix:** In `is_in_dictionary()`, try stripping common English inflections:
+- `-ing` → check base (`harbouring` → `harbour`)
+- `-ed` → check base (`handed` → `hand`)
+- `-s`/`-es` → check singular (`doors` → `door`)
+- `-ly` → check base
+- `-er`/`-est` → check base
+
+**Status:** TODO
+
+---
+
+### 9. Supplemental Dictionary File (Human-Editable)
+
+**Requirement:** A human-readable/editable file where users can add words to the dictionary. Always in the same location, documented as a feature.
+
+**Plan:**
+- File: `/root/projects/gerrata/dictionary_supplement.txt` (one word per line)
+- Loaded by `DictionaryChecker` at init, merged into word_set
+- Documented in README and DOCS.md
+- Support comments (lines starting with `#`)
+
+**Status:** TODO

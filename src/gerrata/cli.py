@@ -1228,6 +1228,52 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         for gr in global_replacements
     ])
 
+    # Promote singular diacritic/ligature errata to global replacements.
+    # These are almost certainly systematic (scan preserves original accents).
+    from gerrata.checker.dictionary import DictionaryChecker
+    dict_checker = DictionaryChecker()
+    existing_gr_keys = {(gr.pg_text.lower(), gr.scan_text.lower()) for gr in global_replacements}
+    pg_body_lower = parsed.body_text.lower()
+    promoted = []
+    for err in verified_errors:
+        c = err.candidate if hasattr(err, 'candidate') else err
+        scan_t = getattr(c, 'scan_text', '')
+        pg_t = getattr(c, 'pg_text', '')
+        # Skip if already a global replacement
+        if (pg_t.lower(), scan_t.lower()) in existing_gr_keys:
+            continue
+        # Only promote diacritic/ligature entries
+        if not dict_checker._has_diacritic_or_ligature(scan_t):
+            continue
+        # Must be a word-level diff (not multi-word)
+        if ' ' in pg_t.strip() or ' ' in scan_t.strip():
+            continue
+        # Count occurrences in PG text
+        pg_clean = re.sub(r"<[^>]+>", "", pg_t).strip()
+        if len(pg_clean) < 2:
+            continue
+        occ = pg_body_lower.count(pg_clean.lower())
+        if occ >= 1:
+            from gerrata.checker.global_replacements import GlobalReplacement
+            promoted.append(GlobalReplacement(
+                pg_text=pg_clean,
+                scan_text=re.sub(r"<[^>]+>", "", scan_t).strip(),
+                occurrences_in_pg=occ,
+                caught_by_errata=1,
+                examples=[],
+            ))
+            existing_gr_keys.add((pg_clean.lower(), scan_t.lower()))
+    if promoted:
+        console.print(f"  Promoted {len(promoted)} diacritic/ligature singular errata to global replacements")
+        global_replacements.extend(promoted)
+        save_intermediate(intermed_dir, "07_global_replacements", [
+            {"pg_text": gr.pg_text, "scan_text": gr.scan_text,
+             "occurrences_in_pg": gr.occurrences_in_pg,
+             "caught_by_errata": gr.caught_by_errata,
+             "examples": gr.examples}
+            for gr in global_replacements
+        ])
+
     # Build report
     console.print(f"[bold blue]Step {step_num + 3}:[/bold blue] Generating report...")
 
