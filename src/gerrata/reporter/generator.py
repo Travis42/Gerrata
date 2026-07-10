@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from gerrata.checker.dictionary import DictionaryChecker
+
 
 def _next_version(path: Path) -> Path:
     """If path exists, return the next available versioned filename.
@@ -943,17 +945,37 @@ class ReportGenerator:
 
         lines.append("")
 
-        # Global replacements (detected deterministically)
+        # Dictionary validation for global replacements
+        dict_checker = DictionaryChecker()
+        gr_validated = []
+        gr_flagged = []
+        for gr in self.global_replacements:
+            if dict_checker.validate_replacement(gr.scan_text, gr.pg_text):
+                gr_validated.append(gr)
+            else:
+                gr_flagged.append(gr)
+
+        # Global replacements — validated (dictionary-confirmed)
         lines.append("Global Replacements {")
-        if self.global_replacements:
-            for gr in sorted(self.global_replacements, key=lambda g: g.pg_text.lower()):
+        if gr_validated:
+            for gr in sorted(gr_validated, key=lambda g: g.pg_text.lower()):
                 lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
-            total = sum(gr.occurrences_in_pg for gr in self.global_replacements)
-            lines.append(f"({total} total occurrences in text)")
+            total_v = sum(gr.occurrences_in_pg for gr in gr_validated)
+            lines.append(f"({total_v} total occurrences in text)")
         else:
             lines.append("(none found)")
         lines.append("}")
         lines.append("")
+
+        # Global replacements — flagged (scan word not in dictionary)
+        if gr_flagged:
+            lines.append("Global Replacements (flagged — scan word not in dictionary) {")
+            for gr in sorted(gr_flagged, key=lambda g: g.pg_text.lower()):
+                lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
+            total_f = sum(gr.occurrences_in_pg for gr in gr_flagged)
+            lines.append(f"({total_f} total occurrences in text)")
+            lines.append("}")
+            lines.append("")
 
         # Separate individual errors into those that are instances of
         # global replacements (shown grouped) vs. unique errors
@@ -976,19 +998,6 @@ class ReportGenerator:
         # Group global replacement instances by their pg_word→scan_word pair
         # so the reviewer can see all caught examples together and decide
         if global_instances:
-            lines.append("GLOBAL REPLACEMENT INSTANCES (individual pages for visual confirmation)")
-            lines.append("")
-            lines.append(
-                "These are individual page-level occurrences of words also listed"
-            )
-            lines.append(
-                "above as global replacements. Review each before deciding whether"
-            )
-            lines.append(
-                "to apply as a global find/replace or reject."
-            )
-            lines.append("")
-
             # Build a lookup: (pg_text, scan_text) → list of errors
             from gerrata.checker.global_replacements import normalize_possessive
             grouped: dict[tuple[str, str], list] = {}
@@ -1009,34 +1018,57 @@ class ReportGenerator:
                     key = (pg_word, scan_word)
                     grouped.setdefault(key, []).append(err)
 
-            for (pg_word, scan_word), errs in sorted(grouped.items(), key=lambda x: -len(x[1])):
-                # Find occurrence count from global replacements
-                occ = ""
-                for gr in self.global_replacements:
-                    if normalize_possessive(gr.pg_text) == normalize_possessive(pg_word) and normalize_possessive(gr.scan_text) == normalize_possessive(scan_word):
-                        occ = f" ({gr.occurrences_in_pg}x in PG text, {len(errs)} caught)"
-                        break
-                lines.append(f"  {pg_word} → {scan_word}{occ}")
+            # Split grouped instances into validated and flagged
+            grouped_validated: dict[tuple[str, str], list] = {}
+            grouped_flagged: dict[tuple[str, str], list] = {}
+            for key, errs in grouped.items():
+                if dict_checker.validate_replacement(key[1], key[0]):
+                    grouped_validated[key] = errs
+                else:
+                    grouped_flagged[key] = errs
+
+            def _emit_grouped(label: str, grouped_items: dict[tuple[str, str], list]):
+                if not grouped_items:
+                    return
+                lines.append(label)
                 lines.append("")
-                for err in errs:
-                    pg_t = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
-                    scan_t = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
-                    page = self._get_ia_leaf_number(err.candidate.scan_page)
-                    if self.scan_id:
-                        leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
-                        scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                        lines.append(f"  Page {page} ({scan_url}):")
-                    else:
-                        lines.append(f"  Page {page}:")
-                    # PG file line context
-                    if err.pg_file_line > 0:
-                        line_context = self.get_line_context(err.pg_file_line)
-                        if line_context:
-                            for lc_line in line_context.split("\n"):
-                                lines.append(f"    {lc_line}")
-                    pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
-                    lines.append(f"    {pg_trimmed} ==> {scan_trimmed}")
+                for (pg_word, scan_word), errs in sorted(grouped_items.items(), key=lambda x: x[0][0].lower()):
+                    # Find occurrence count from global replacements
+                    occ = ""
+                    for gr in self.global_replacements:
+                        if normalize_possessive(gr.pg_text) == normalize_possessive(pg_word) and normalize_possessive(gr.scan_text) == normalize_possessive(scan_word):
+                            occ = f" ({gr.occurrences_in_pg}x in PG text, {len(errs)} caught)"
+                            break
+                    lines.append(f"  {pg_word} → {scan_word}{occ}")
                     lines.append("")
+                    for err in errs:
+                        pg_t = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
+                        scan_t = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
+                        page = self._get_ia_leaf_number(err.candidate.scan_page)
+                        if self.scan_id:
+                            leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                            scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                            lines.append(f"  Page {page} ({scan_url}):")
+                        else:
+                            lines.append(f"  Page {page}:")
+                        # PG file line context
+                        if err.pg_file_line > 0:
+                            line_context = self.get_line_context(err.pg_file_line)
+                            if line_context:
+                                for lc_line in line_context.split("\n"):
+                                    lines.append(f"    {lc_line}")
+                        pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
+                        lines.append(f"    {pg_trimmed} ==> {scan_trimmed}")
+                        lines.append("")
+
+            _emit_grouped(
+                "GLOBAL REPLACEMENT INSTANCES (individual pages for visual confirmation)",
+                grouped_validated,
+            )
+            _emit_grouped(
+                "GLOBAL REPLACEMENT INSTANCES — FLAGGED (scan word not in dictionary)",
+                grouped_flagged,
+            )
             lines.append("---")
             lines.append("")
 
@@ -1048,46 +1080,66 @@ class ReportGenerator:
             lines.append("(No additional unique errors beyond global replacements above.)")
             return "\n".join(lines)
 
-        lines.append("")
-
+        # Split unique errors into dictionary-validated and flagged
+        unique_validated = []
+        unique_flagged = []
         for err in unique_errors:
-            pg_text = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
-            scan_text = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
-            page = self._get_ia_leaf_number(err.candidate.scan_page)  # 1-indexed
-
-            # Get context sentence containing the error
-            context = ""
-            if self.body_text:
-                search_text = pg_text
-                pos = self.body_text.find(search_text)
-                if pos < 0 and '(absent in PG)' in search_text:
-                    search_text = scan_text
-                    pos = self.body_text.find(search_text)
-                if pos >= 0:
-                    context = self._extract_sentence(
-                        self.body_text, pos, len(search_text)
-                    )
-
-            # PG format: page reference, context line, then fix line
-            if self.scan_id:
-                leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
-                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                lines.append(f"Page {page} ({scan_url}):")
+            scan_clean = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
+            pg_clean = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
+            if dict_checker.validate_replacement(scan_clean, pg_clean):
+                unique_validated.append(err)
             else:
-                lines.append(f"Page {page}:")
+                unique_flagged.append(err)
 
-            # Add PG file line context
-            if err.pg_file_line > 0:
-                line_context = self.get_line_context(err.pg_file_line)
-                if line_context:
-                    lines.append(line_context)
+        def _emit_singular(errs: list):
+            for err in errs:
+                pg_text = re.sub(r"<[^>]+>", "", err.candidate.pg_text.strip())
+                scan_text = re.sub(r"<[^>]+>", "", err.candidate.scan_text.strip())
+                page = self._get_ia_leaf_number(err.candidate.scan_page)  # 1-indexed
 
-            if context:
-                lines.append(context)
-            pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_text, scan_text)
-            lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
+                # Get context sentence containing the error
+                context = ""
+                if self.body_text:
+                    search_text = pg_text
+                    pos = self.body_text.find(search_text)
+                    if pos < 0 and '(absent in PG)' in search_text:
+                        search_text = scan_text
+                        pos = self.body_text.find(search_text)
+                    if pos >= 0:
+                        context = self._extract_sentence(
+                            self.body_text, pos, len(search_text)
+                        )
 
+                # PG format: page reference, context line, then fix line
+                if self.scan_id:
+                    leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                    scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                    lines.append(f"Page {page} ({scan_url}):")
+                else:
+                    lines.append(f"Page {page}:")
+
+                # Add PG file line context
+                if err.pg_file_line > 0:
+                    line_context = self.get_line_context(err.pg_file_line)
+                    if line_context:
+                        lines.append(line_context)
+
+                if context:
+                    lines.append(context)
+                pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_text, scan_text)
+                lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
+
+                lines.append("")
+
+        lines.append("")
+        _emit_singular(unique_validated)
+
+        if unique_flagged:
+            lines.append("---")
             lines.append("")
+            lines.append("FLAGGED ERRATA (scan word not in dictionary — review before submitting)")
+            lines.append("")
+            _emit_singular(unique_flagged)
 
         # Edition variants (informational, not for submission)
         edition_variants = [

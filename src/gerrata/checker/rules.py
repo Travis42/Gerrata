@@ -190,7 +190,13 @@ class FalsePositiveFilter:
                 reason="US/UK spelling variant (not a scanno)",
             )
 
-        if pg_words == scan_words and not has_initials:
+        # PUNCTUATION_DIFF candidates are already classified and go to
+        # their own report section — don't filter them out here.
+        if (
+            pg_words == scan_words
+            and not has_initials
+            and error.category != ErrorCategory.PUNCTUATION_DIFF
+        ):
             return FilterResult(
                 error=error,
                 is_false_positive=True,

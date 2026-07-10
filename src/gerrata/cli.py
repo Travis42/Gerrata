@@ -325,6 +325,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Use strict false positive filtering (keep more candidates)",
     )
     parser.add_argument(
+        "--stitched",
+        action="store_true",
+        default=True,
+        help="Use chapter-stitched diff mode (default: enabled)."
+             "Stitches scan pages into continuous segments for diffing.",
+    )
+    parser.add_argument(
+        "--no-stitched",
+        dest="stitched",
+        action="store_false",
+        help="Disable stitched mode, use per-page diff.",
+    )
+    parser.add_argument(
         "--cache-dir",
         type=str,
         default="",
@@ -910,11 +923,20 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     else:
         console.print(f"[bold blue]Step {step_num}:[/bold blue] Running text diff...")
         checker = TextDiffChecker()
-        candidates = checker.check_all_alignments(
-            pg_text=parsed.body_text,
-            alignments=alignments,
-            scan_pages=scan_pages,
-        )
+        if getattr(args, 'stitched', True):
+            candidates = checker.check_stitched(
+                pg_text=parsed.body_text,
+                alignments=alignments,
+                scan_pages=scan_pages,
+            )
+            console.print(f"  [dim](stitched mode)[/dim]")
+        else:
+            candidates = checker.check_all_alignments(
+                pg_text=parsed.body_text,
+                alignments=alignments,
+                scan_pages=scan_pages,
+                use_recursive=True,
+            )
         console.print(f"  Raw candidates: {len(candidates)}")
         save_intermediate(intermed_dir, "04_candidates_raw", candidates)
 
@@ -943,6 +965,33 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 console.print(f"  No high-confidence gaps for report")
         else:
             console.print(f"  No coverage gaps detected")
+
+        # Content holes: gaps within aligned passages (scan has text PG lacks
+        # between two matched blocks)
+        from gerrata.checker.gap_detector import detect_content_holes
+        content_holes = detect_content_holes(
+            alignments=alignments,
+            scan_pages=scan_pages,
+            pg_text=parsed.body_text,
+            pg_full_text=parsed.full_text,
+        )
+        if content_holes:
+            console.print(f"  Content holes (within aligned passages): {len(content_holes)}")
+            # Save alongside scan gaps
+            existing_gaps = []
+            if (intermed_dir / "05_gaps.json").exists():
+                with open(intermed_dir / "05_gaps.json") as f:
+                    existing_gaps = json.load(f)
+            existing_gaps.extend([g.to_dict() for g in content_holes])
+            with open(intermed_dir / "05_gaps.json", "w") as f:
+                json.dump(existing_gaps, f, indent=2)
+            # Add high-confidence content holes to candidates
+            report_holes = filter_for_report(content_holes)
+            if report_holes:
+                console.print(f"  High-confidence content holes for report: {len(report_holes)}")
+                candidates.extend(gaps_to_candidate_errors(report_holes))
+        else:
+            console.print(f"  No content holes detected")
 
     # Step 6: False positive filter + additional filtering + line numbers
     if resume_from not in ("pre-verify", "pre-report"):
