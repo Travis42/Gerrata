@@ -435,6 +435,51 @@ class TestReportGenerator:
         # respecters should appear
         assert "respectors ==> respecters" in email_content
 
+    def test_dedup_keeps_different_errors_at_nearby_offsets(self, generator, sample_metadata):
+        """Dedup must not collapse two DIFFERENT errors within 50 chars offset.
+
+        The old dedup code collapsed anything within 50 chars regardless of text
+        content, losing distinct errors. Different text pairs must both survive.
+        """
+        # Error A — robber-hands ==> robber-bands
+        cA = CandidateError(
+            pg_text="robber-hands",
+            scan_text="robber-bands",
+            pg_offset=104400,
+            scan_page=96,
+            category=ErrorCategory.OCR_SCANNO,
+        )
+        errA = Error(
+            candidate=cA,
+            verdict=Verdict.SCAN_CORRECT,
+            confidence=0.72,
+        )
+
+        # Error B — (Ofote) ==> (Ofóte), 40 chars away (within 50) but different text
+        cB = CandidateError(
+            pg_text="(Ofote)",
+            scan_text="(Ofóte)",
+            pg_offset=104360,
+            scan_page=96,
+            category=ErrorCategory.OCR_SCANNO,
+        )
+        errB = Error(
+            candidate=cB,
+            verdict=Verdict.SCAN_CORRECT,
+            confidence=0.65,
+        )
+
+        report = Report(
+            metadata=sample_metadata,
+            errors=[errA, errB],
+        )
+
+        email_content = generator.generate_errata_email(report)
+
+        # Both distinct errors must survive dedup and appear in the email.
+        assert "robber-hands ==> robber-bands" in email_content
+        assert "Ofote" in email_content and "Ofóte" in email_content
+
     def test_errata_email_arrow_format(self, generator_with_context, sample_metadata):
         """Test that errata_email uses -> arrow format."""
         c1 = CandidateError(
@@ -532,6 +577,58 @@ class TestReportGenerator:
         assert "no errors requiring correction" in email_content
         assert "hello" not in email_content
         assert "Only" not in email_content
+
+    def test_report_shows_all_missing_content_pages(self, sample_metadata, monkeypatch):
+        """All coverage gaps render in the email (indentation regression).
+
+        The gap-rendering loop previously had an indentation bug that only
+        rendered the last gap. All uncovered pages must appear in the output.
+        """
+        import gerrata.checker.gap_detector as gap_mod
+        from gerrata.checker.gap_detector import CoverageGap
+
+        gaps = [
+            CoverageGap(page=10, strategy="uncovered", word_count=60,
+                        scan_text_preview="alpha missing content page one " * 10,
+                        pg_verified=True, confidence="high"),
+            CoverageGap(page=20, strategy="uncovered", word_count=60,
+                        scan_text_preview="bravo missing content page two " * 10,
+                        pg_verified=True, confidence="high"),
+            CoverageGap(page=30, strategy="uncovered", word_count=60,
+                        scan_text_preview="charlie missing content page three " * 10,
+                        pg_verified=True, confidence="high"),
+        ]
+        # Stub detect_scan_gaps so the generator renders exactly these gaps
+        monkeypatch.setattr(gap_mod, "detect_scan_gaps", lambda **kwargs: list(gaps))
+
+        # A single error is needed to reach the gap-rendering section (the
+        # email returns early when there are no unique errors).
+        c = CandidateError(
+            pg_text="tne",
+            scan_text="the",
+            pg_offset=25,
+            scan_page=5,
+            category=ErrorCategory.OCR_SCANNO,
+        )
+        err = Error(candidate=c, verdict=Verdict.SCAN_CORRECT, confidence=0.95)
+
+        report = Report(metadata=sample_metadata, errors=[err])
+
+        generator = ReportGenerator(
+            alignments=[Alignment(pg_start=0, pg_end=100, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            scan_pages=[object()],  # non-empty to enter the gap section
+            body_text="Some body text here.",
+            scan_id="test-scan",
+        )
+
+        email_content = generator.generate_errata_email(report)
+
+        # All three gap pages must appear (old indentation bug only rendered
+        # the last gap, so the first two would be missing).
+        assert "page/n10/mode/1up" in email_content
+        assert "page/n20/mode/1up" in email_content
+        assert "page/n30/mode/1up" in email_content
 
 
 class TestCLI:

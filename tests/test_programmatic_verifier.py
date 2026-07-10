@@ -207,6 +207,49 @@ class TestContextMatchScore:
         # "porcupine" won't appear anywhere in the PG context
         assert error.confidence < 0.5
 
+    def test_single_word_similar_diff_not_zero_context(self):
+        """Single-word similar diff must not get 0.0 context (override applies).
+
+        For a single-word diff like band,→hand, the scan word is the correction
+        itself and won't appear in PG context, so raw context is 0.0. But the
+        words are similar, so context must be overridden so the candidate scores
+        above the reporting threshold instead of being silently dropped.
+        """
+        # PG text deliberately does NOT contain "hand" near offset 100
+        verifier = make_verifier(
+            "The quick brown fox jumps over the lazy dog near the riverbank."
+        )
+        candidate = make_candidate(
+            pg_text="band,",
+            scan_text="hand,",
+            pg_offset=100,
+            scan_page=5,
+        )
+        error = verifier.verify(candidate)
+        assert error.confidence >= 0.4
+        assert "single-word diff" in error.reasoning
+
+    def test_single_word_dissimilar_diff_still_zero_context(self):
+        """Single-word dissimilar diff stays at 0.0 context (no override).
+
+        cathedral→breakfast are too dissimilar for the similarity override, so
+        the raw 0.0 context score is preserved and the candidate stays below the
+        reporting threshold.
+        """
+        verifier = make_verifier(
+            "The quick brown fox jumps over the lazy dog near the riverbank."
+        )
+        candidate = make_candidate(
+            pg_text="cathedral",
+            scan_text="breakfast",
+            pg_offset=12,
+            scan_page=0,
+        )
+        error = verifier.verify(candidate)
+        assert error.confidence < 0.4
+        assert "single-word diff" not in error.reasoning
+        assert "0/1 scan words" in error.reasoning or "misaligned" in error.reasoning
+
 
 # ── Alignment confidence influence ─────────────────────────────────────
 

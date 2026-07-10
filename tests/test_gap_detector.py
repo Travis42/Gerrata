@@ -175,6 +175,32 @@ class TestDetectScanGaps:
         assert not uncovered[0].pg_verified  # text found in PG → absence NOT confirmed
         assert uncovered[0].confidence == "low"  # should not appear in report
 
+    def test_text_in_pg_not_flagged_as_missing(self):
+        """pg_verified means 'absence confirmed' — text that EXISTS in PG must
+        have pg_verified=False and low confidence (should not appear in report)."""
+        pages = [FakeScanPage(
+            0,
+            "He walked to the door and opened it slowly. "
+            "A figure stood outside in the rain.",
+        )]
+        gaps = detect_scan_gaps(PG_TEXT, [], pages)
+        assert len(gaps) >= 1
+        assert gaps[0].pg_verified is False  # text IS in PG → absence not confirmed
+        assert gaps[0].confidence == "low"  # should not appear in report
+
+    def test_text_not_in_pg_flagged_as_missing(self):
+        """Text NOT in PG must have pg_verified=True (absence confirmed) and
+        medium/high confidence (should appear in report)."""
+        pages = [FakeScanPage(
+            0,
+            "The ambassador declared that the treaty was null and void. "
+            "Furthermore, the Senate would vote on the matter before dawn.",
+        )]
+        gaps = detect_scan_gaps(PG_TEXT, [], pages)
+        assert len(gaps) >= 1
+        assert gaps[0].pg_verified is True  # absence confirmed
+        assert gaps[0].confidence in ("high", "medium")  # should appear in report
+
     def test_small_gap_ignored(self):
         pages = [FakeScanPage(0, "Hello world test.")]
         gaps = detect_scan_gaps(PG_TEXT, [], pages, min_gap_words=5)
