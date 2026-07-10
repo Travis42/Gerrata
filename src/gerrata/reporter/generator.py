@@ -955,11 +955,32 @@ class ReportGenerator:
             else:
                 gr_flagged.append(gr)
 
+        # Helper to strip punctuation from global replacement display
+        def _clean_gr(text: str) -> str:
+            return re.sub(r"^[^\w']+", "", re.sub(r"[^\w']+$", "", text))
+
+        # Deduplicate global replacements after punctuation stripping.
+        # The detector may create separate entries for 'word' and 'word.'
+        # Combine occurrences and keep the longest pg_text as representative.
+        def _dedup_grs(grs):
+            seen = {}
+            for gr in grs:
+                key = (_clean_gr(gr.pg_text).lower(), _clean_gr(gr.scan_text).lower())
+                if key in seen:
+                    seen[key].occurrences_in_pg = max(seen[key].occurrences_in_pg, gr.occurrences_in_pg)
+                    seen[key].caught_by_errata = max(seen[key].caught_by_errata, gr.caught_by_errata)
+                else:
+                    seen[key] = gr
+            return list(seen.values())
+
+        gr_validated = _dedup_grs(gr_validated)
+        gr_flagged = _dedup_grs(gr_flagged)
+
         # Global replacements — validated (dictionary-confirmed)
         lines.append("Global Replacements {")
         if gr_validated:
-            for gr in sorted(gr_validated, key=lambda g: g.pg_text.lower()):
-                lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
+            for gr in sorted(gr_validated, key=lambda g: _clean_gr(g.pg_text).lower()):
+                lines.append(f"{_clean_gr(gr.pg_text)} ==> {_clean_gr(gr.scan_text)}")
             total_v = sum(gr.occurrences_in_pg for gr in gr_validated)
             lines.append(f"({total_v} total occurrences in text)")
         else:
@@ -970,8 +991,8 @@ class ReportGenerator:
         # Global replacements — flagged (scan word not in dictionary)
         if gr_flagged:
             lines.append("Global Replacements (flagged — scan word not in dictionary) {")
-            for gr in sorted(gr_flagged, key=lambda g: g.pg_text.lower()):
-                lines.append(f"{gr.pg_text} ==> {gr.scan_text}")
+            for gr in sorted(gr_flagged, key=lambda g: _clean_gr(g.pg_text).lower()):
+                lines.append(f"{_clean_gr(gr.pg_text)} ==> {_clean_gr(gr.scan_text)}")
             total_f = sum(gr.occurrences_in_pg for gr in gr_flagged)
             lines.append(f"({total_f} total occurrences in text)")
             lines.append("}")
@@ -1265,6 +1286,8 @@ class ReportGenerator:
                     pg_full_text=self.pg_full_text,
                 )
                 report_gaps = filter_for_report(all_gaps)
+                # Only show high-confidence gaps in the report
+                report_gaps = [g for g in report_gaps if g.confidence == "high"]
                 if report_gaps:
                     lines.append("---")
                     lines.append("")
