@@ -917,10 +917,24 @@ class ReportGenerator:
         deduplicated: list[Error] = []
 
         for err in sorted_by_offset:
-            if err.candidate.pg_offset not in seen_offsets and any(
-                0 < abs(err.candidate.pg_offset - seen) < 50
-                for seen in seen_offsets
-            ):
+            # Dedup: skip exact duplicate (same offset OR same text pair within 50 chars)
+            is_dup = False
+            if err.candidate.pg_offset in seen_offsets:
+                is_dup = True
+            else:
+                # Check if a nearby entry has the same text pair
+                for seen in seen_offsets:
+                    if 0 < abs(err.candidate.pg_offset - seen) < 50:
+                        # Only dedup if it's the same text (alignment variant)
+                        for d in deduplicated:
+                            if d.candidate.pg_offset == seen:
+                                if (d.candidate.pg_text == err.candidate.pg_text
+                                    and d.candidate.scan_text == err.candidate.scan_text):
+                                    is_dup = True
+                                break
+                        if is_dup:
+                            break
+            if is_dup:
                 continue
             if self._is_punctuation_only(err.candidate.pg_text, err.candidate.scan_text):
                 continue

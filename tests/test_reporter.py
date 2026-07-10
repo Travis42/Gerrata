@@ -284,8 +284,8 @@ class TestReportGenerator:
         # Should use ==> arrow format (PG's preferred format)
         assert "tne ==> the" in email_content
 
-        # Low confidence error should NOT be included (below 0.85 threshold)
-        assert "walked" not in email_content
+        # Low confidence error should still be included (above 0.4 threshold)
+        assert "walked" in email_content
 
     def test_report_structure_with_new_fields(self, generator_with_context, sample_metadata):
         """Test that the full report structure works with new fields."""
@@ -367,8 +367,8 @@ class TestReportGenerator:
         # Should include high confidence
         assert "tne ==> the" in email_content
 
-        # Should exclude low confidence
-        assert "walked" not in email_content
+        # Should include both (0.7 is above 0.4 threshold)
+        assert "walked" in email_content
 
         # Summary should show 1 error found
         # error count removed from email output
