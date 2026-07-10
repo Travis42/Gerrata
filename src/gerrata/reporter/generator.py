@@ -1235,17 +1235,7 @@ class ReportGenerator:
         if punctuation_diffs:
             lines.append("---")
             lines.append("")
-            lines.append("PUNCTUATION DIFFERENCES (not errata — captured for downstream use)")
-            lines.append("")
-            lines.append(
-                "The following are punctuation-only differences between PG and "
-            )
-            lines.append(
-                "scan (quote style, em-dashes, spacing). Not errors — captured "
-            )
-            lines.append(
-                "for editorial reference and Impression Editions processing."
-            )
+            lines.append("PUNCTUATION DIFFERENCES")
             lines.append("")
 
             # Group by type for readability
