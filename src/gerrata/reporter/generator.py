@@ -1215,6 +1215,23 @@ class ReportGenerator:
             if e.category == ErrorCategory.PUNCTUATION_DIFF
         ]
 
+        def _get_context_for_error(err: Error) -> str:
+            """Extract a short context snippet around the error in PG text."""
+            if not self.body_text or not hasattr(err, 'pg_file_line') and not hasattr(err.candidate, 'pg_offset'):
+                return ""
+            # Try line-based context first (richer)
+            line_ctx = self.get_line_context(getattr(err, 'pg_file_line', 0))
+            if line_ctx:
+                return line_ctx
+            # Fall back to body text context using offset
+            offset = getattr(err.candidate, 'pg_offset', 0)
+            if offset > 0 and self.body_text:
+                start = max(0, offset - 80)
+                end = min(len(self.body_text), offset + len(err.candidate.pg_text) + 80)
+                snippet = self.body_text[start:end].replace('\n', ' ').strip()
+                return f"...{snippet}..."
+            return ""
+
         if punctuation_diffs:
             lines.append("---")
             lines.append("")
@@ -1233,17 +1250,29 @@ class ReportGenerator:
 
             # Group by type for readability
             quote_diffs = []
-            dash_diffs = []
             spacing_diffs = []
             other_punct = []
+
+            _all_quote_chars = set('"\'\u201c\u201d\u2018\u2019')
+            _em_dash_set = {'\u2014'}  # em dash only, not double-hyphen
 
             for err in punctuation_diffs:
                 pg_t = err.candidate.pg_text
                 scan_t = err.candidate.scan_text
-                if any(q in pg_t + scan_t for q in ['\u201c', '\u201d', '\u2018', '\u2019', '"']):
-                    quote_diffs.append(err)
-                elif '--' in pg_t or '\u2014' in scan_t:
-                    dash_diffs.append(err)
+                pg_has_quote = bool(set(pg_t) & _all_quote_chars)
+                scan_has_quote = bool(set(scan_t) & _all_quote_chars)
+
+                # Skip em-dash diffs (-- vs —) entirely
+                is_em_dash = ('--' in pg_t and '\u2014' in scan_t) or \
+                             ('\u2014' in pg_t and '--' in scan_t)
+                if is_em_dash:
+                    continue
+
+                # Quotes: only include one-sided (present on one side, absent on other)
+                if pg_has_quote or scan_has_quote:
+                    if pg_has_quote != scan_has_quote:
+                        quote_diffs.append(err)
+                    # else: both have quotes (style swap) — skip
                 elif pg_t.replace(' ', '').replace(';', '').replace(':', '').replace(',', '').replace('.', '') == \
                      scan_t.replace(' ', '').replace(';', '').replace(':', '').replace(',', '').replace('.', ''):
                     spacing_diffs.append(err)
@@ -1259,15 +1288,6 @@ class ReportGenerator:
                     lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
                 lines.append("")
 
-            if dash_diffs:
-                lines.append(f"Em-dashes ({len(dash_diffs)}):")
-                for err in dash_diffs:
-                    page = self._get_ia_leaf_number(err.candidate.scan_page)
-                    pg_t = self._strip_html(err.candidate.pg_text).strip()
-                    scan_t = self._strip_html(err.candidate.scan_text).strip()
-                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
-                lines.append("")
-
             if spacing_diffs:
                 lines.append(f"Punctuation spacing ({len(spacing_diffs)}):")
                 for err in spacing_diffs:
@@ -1275,6 +1295,10 @@ class ReportGenerator:
                     pg_t = self._strip_html(err.candidate.pg_text).strip()
                     scan_t = self._strip_html(err.candidate.scan_text).strip()
                     lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
+                    # Add context line for review
+                    ctx = _get_context_for_error(err)
+                    if ctx:
+                        lines.append(f"    {ctx}")
                 lines.append("")
 
             if other_punct:
@@ -1284,6 +1308,10 @@ class ReportGenerator:
                     pg_t = self._strip_html(err.candidate.pg_text).strip()
                     scan_t = self._strip_html(err.candidate.scan_text).strip()
                     lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
+                    # Add context line for review
+                    ctx = _get_context_for_error(err)
+                    if ctx:
+                        lines.append(f"    {ctx}")
                 lines.append("")
 
         # Coverage gap analysis - missing content detection
