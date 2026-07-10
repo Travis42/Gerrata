@@ -277,16 +277,11 @@ class DictionaryChecker:
         if re.match(r"^\d+([.,]\d+)*(-\d+)*$", s):
             return True
 
-        # Proper noun heuristic: if the PG word (original text) is capitalized
-        # in the PG text and never appears lowercase, it's a proper noun (name,
-        # place). These shouldn't be flagged — dictionaries don't cover names.
-        # Check pg_text word, not scan word, because PG word is what's in the text.
-        if self._pg_text and pg_text:
-            pg_clean = re.sub(r"<[^>]+>", "", pg_text).strip()
-            pg_clean = re.sub(r"^[^\w']+", "", pg_clean)
-            pg_clean = re.sub(r"[^\w']+$", "", pg_clean)
-            if pg_clean and self.is_proper_noun(pg_clean):
-                return True
+        # Proper noun heuristic: if the scan word is capitalized in the PG
+        # text and never appears lowercase, it's a proper noun (name, place).
+        # These shouldn't be flagged — dictionaries don't cover names.
+        if self._pg_text and self.is_proper_noun(s):
+            return True
 
         # For multi-word replacements, check the longest word
         words = s.split()
