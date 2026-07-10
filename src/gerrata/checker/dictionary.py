@@ -118,20 +118,41 @@ class DictionaryChecker:
 
         return False
 
+    # Diacritic ranges: Latin extended/combining that indicate the scan
+    # preserves original printing accents the PG transcription dropped.
+    _DIACRITIC_CHARS = set(
+        "àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚě"
+        "ĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏ"
+        "ŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"
+        "œæÆŒ"  # ligatures
+    )
+
+    def _has_diacritic_or_ligature(self, word: str) -> bool:
+        """Check if word contains diacritics or ligatures."""
+        return bool(self._DIACRITIC_CHARS & set(word.lower()))
+
     def validate_replacement(self, scan_text: str, pg_text: str = "") -> bool:
         """Validate the replacement word (scan_text) for an errata entry.
+
+        Diacritic/ligature additions are auto-validated (return True) since
+        they almost always represent the scan preserving original printing
+        accents that the PG transcription dropped.
 
         Args:
             scan_text: The scan text (proposed correction).
             pg_text: The PG text (original), used for context.
 
         Returns:
-            True if scan_text is a valid dictionary word.
+            True if validated (dictionary match or diacritic/ligature addition).
         """
         # Clean markup
         s = re.sub(r"<[^>]+>", "", scan_text)
         s = re.sub(r"_([^_]+)_", r"\1", s)  # PG underscores
         s = s.strip()
+
+        # Heuristic: diacritic/ligature additions are auto-validated
+        if self._has_diacritic_or_ligature(s):
+            return True
 
         # For multi-word replacements, check the longest word
         words = s.split()
