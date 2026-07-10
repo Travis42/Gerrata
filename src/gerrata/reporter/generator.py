@@ -1253,7 +1253,8 @@ class ReportGenerator:
             spacing_diffs = []
             other_punct = []
 
-            _all_quote_chars = set('"\'\u201c\u201d\u2018\u2019')
+            _all_quote_chars = set('"\'\u201c\u201d\u2018\u2019`')
+            # backtick ` is PG's encoding of opening single quote
             _em_dash_set = {'\u2014'}  # em dash only, not double-hyphen
 
             for err in punctuation_diffs:
@@ -1290,29 +1291,33 @@ class ReportGenerator:
 
             if spacing_diffs:
                 lines.append(f"Punctuation spacing ({len(spacing_diffs)}):")
+                lines.append("")
                 for err in spacing_diffs:
                     page = self._get_ia_leaf_number(err.candidate.scan_page)
                     pg_t = self._strip_html(err.candidate.pg_text).strip()
                     scan_t = self._strip_html(err.candidate.scan_text).strip()
                     lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
-                    # Add context line for review
+                    # Add context lines for review, properly indented
                     ctx = _get_context_for_error(err)
                     if ctx:
-                        lines.append(f"    {ctx}")
-                lines.append("")
+                        for ctx_line in ctx.split('\n'):
+                            lines.append(f"    {ctx_line}")
+                    lines.append("")
 
             if other_punct:
                 lines.append(f"Other punctuation ({len(other_punct)}):")
+                lines.append("")
                 for err in other_punct:
                     page = self._get_ia_leaf_number(err.candidate.scan_page)
                     pg_t = self._strip_html(err.candidate.pg_text).strip()
                     scan_t = self._strip_html(err.candidate.scan_text).strip()
                     lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
-                    # Add context line for review
+                    # Add context lines for review, properly indented
                     ctx = _get_context_for_error(err)
                     if ctx:
-                        lines.append(f"    {ctx}")
-                lines.append("")
+                        for ctx_line in ctx.split('\n'):
+                            lines.append(f"    {ctx_line}")
+                    lines.append("")
 
         # Coverage gap analysis - missing content detection
         # Note: gaps are already computed in the CLI and included as
