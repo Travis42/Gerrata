@@ -946,7 +946,7 @@ class ReportGenerator:
         lines.append("")
 
         # Dictionary validation for global replacements
-        dict_checker = DictionaryChecker()
+        dict_checker = DictionaryChecker(pg_text=self.body_text or "")
         gr_validated = []
         gr_flagged = []
         for gr in self.global_replacements:

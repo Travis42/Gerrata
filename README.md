@@ -556,6 +556,33 @@ The default is OpenRouter with Gemini 3.1 Flash Lite, but this is not a hard dep
 | `--substantive-key` | `$OPENROUTER_API_KEY` | API key for substantive analysis (separate from vision key) |
 | `--verbose`, `-v` | off | Enable verbose logging |
 
+## Supplemental Dictionary
+
+The dictionary validator (used to split errata into validated/flagged groups) combines NLTK words (~234K) with the system dictionary (~102K). You can extend it with project-specific vocabulary:
+
+**File:** `dictionary_supplement.txt` in the project root
+
+**Format:** One word per line, lowercase. Lines starting with `#` are comments.
+
+```
+# Project-specific vocabulary
+Gorm
+Halfdan
+Ragnar
+Frode
+```
+
+The file is loaded automatically at startup if it exists. Use it for proper names, archaic forms, and domain-specific terms that aren't in standard dictionaries.
+
+### Dictionary Heuristics
+
+The validator applies several heuristics before consulting the dictionary:
+
+- **Diacritics/ligatures** (é, ü, æ, œ, etc.) — auto-validated, not flagged. These almost always represent the scan preserving original printing accents.
+- **Numbers** (digits, decimals, ranges) — auto-validated.
+- **Inflected forms** — tries stripping `-ing`, `-ed`, `-s`, `-es`, `-ly`, `-er`, `-est` to find the base form.
+- **Trailing punctuation** — stripped before lookup (`doors?` → `doors`).
+
 ## Development
 
 ```bash

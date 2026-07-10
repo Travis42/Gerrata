@@ -81,10 +81,23 @@ def _get_word_set() -> set[str]:
 
 
 class DictionaryChecker:
-    """Validate words against a comprehensive English dictionary."""
+    """Validate words against a comprehensive English dictionary.
 
-    def __init__(self):
+    Combines NLTK words, system dictionary, and an optional supplemental
+    file. Applies heuristics for diacritics, numbers, inflections, and
+    proper noun detection.
+    """
+
+    def __init__(self, pg_text: str = ""):
         self.word_set = _get_word_set()
+        self._pg_text = pg_text
+        self._proper_noun_cache: dict[str, bool] = {}
+
+    def set_pg_text(self, pg_text: str):
+        """Set the PG body text for proper noun detection."""
+        if pg_text != self._pg_text:
+            self._pg_text = pg_text
+            self._proper_noun_cache.clear()
 
     def is_in_dictionary(self, word: str) -> bool:
         """Check if a word appears in the dictionary.
@@ -194,6 +207,39 @@ class DictionaryChecker:
         """Check if word contains diacritics or ligatures."""
         return bool(self._DIACRITIC_CHARS & set(word.lower()))
 
+    def is_proper_noun(self, word: str) -> bool:
+        """Detect proper nouns by checking if the word appears capitalized
+        but never lowercase in the PG text.
+
+        A word like 'Frode' that appears 220 times capitalized and 0 times
+        as 'frode' is clearly a proper noun. Common words like 'kingdom'
+        may appear capitalized at sentence starts but also lowercase mid-sentence.
+
+        Caches results per word for performance.
+        """
+        if not self._pg_text or not word:
+            return False
+
+        # Strip markup/punctuation for cache key
+        cache_key = re.sub(r"<[^>]+>", "", word).strip().lower()
+        if not cache_key or cache_key in self._proper_noun_cache:
+            return self._proper_noun_cache.get(cache_key, False)
+
+        clean = re.sub(r"<[^>]+>", "", word).strip()
+        if len(clean) < 2:
+            self._proper_noun_cache[cache_key] = False
+            return False
+
+        cap_form = clean[0].upper() + clean[1:]
+        lower_form = clean[0].lower() + clean[1:]
+
+        cap_count = self._pg_text.count(cap_form)
+        lower_count = self._pg_text.count(lower_form)
+
+        result = cap_count > 0 and lower_count == 0
+        self._proper_noun_cache[cache_key] = result
+        return result
+
     def validate_replacement(self, scan_text: str, pg_text: str = "") -> bool:
         """Validate the replacement word (scan_text) for an errata entry.
 
@@ -230,6 +276,17 @@ class DictionaryChecker:
         # Pure numbers (including decimals, ranges) — auto-validate
         if re.match(r"^\d+([.,]\d+)*(-\d+)*$", s):
             return True
+
+        # Proper noun heuristic: if the PG word (original text) is capitalized
+        # in the PG text and never appears lowercase, it's a proper noun (name,
+        # place). These shouldn't be flagged — dictionaries don't cover names.
+        # Check pg_text word, not scan word, because PG word is what's in the text.
+        if self._pg_text and pg_text:
+            pg_clean = re.sub(r"<[^>]+>", "", pg_text).strip()
+            pg_clean = re.sub(r"^[^\w']+", "", pg_clean)
+            pg_clean = re.sub(r"[^\w']+$", "", pg_clean)
+            if pg_clean and self.is_proper_noun(pg_clean):
+                return True
 
         # For multi-word replacements, check the longest word
         words = s.split()
