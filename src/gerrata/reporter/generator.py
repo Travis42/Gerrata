@@ -1340,21 +1340,21 @@ class ReportGenerator:
                         lines.append("")
                         for g in structural_gaps:
                             page = self._get_ia_leaf_number(g.page)
-                        wc = g.word_count
-                        conf = g.confidence.upper()
-                        if g.strategy == "partial":
-                            desc = f"page coverage {g.coverage_ratio:.0%}"
-                        else:
-                            desc = "no alignment"
-                        if self.scan_id:
-                            leaf_num = self._get_ia_leaf_number(g.page)
-                            scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                            lines.append(f"Page {page} ({scan_url}) - ~{wc} words, {desc} [{conf}]:")
-                        else:
-                            lines.append(f"Page {page} - ~{wc} words, {desc} [{conf}]:")
-                        preview = g.scan_text_preview[:150].strip()
-                        lines.append(preview)
-                        lines.append("")
+                            wc = g.word_count
+                            conf = g.confidence.upper()
+                            if g.strategy == "partial":
+                                desc = f"page coverage {g.coverage_ratio:.0%}"
+                            else:
+                                desc = "no alignment"
+                            if self.scan_id:
+                                leaf_num = self._get_ia_leaf_number(g.page)
+                                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                                lines.append(f"Page {page} ({scan_url}) - ~{wc} words, {desc} [{conf}]:")
+                            else:
+                                lines.append(f"Page {page} - ~{wc} words, {desc} [{conf}]:")
+                            preview = g.scan_text_preview[:150].strip()
+                            lines.append(preview)
+                            lines.append("")
             except Exception:
                 pass  # Don't let gap detection failure break report generation
 

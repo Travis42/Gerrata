@@ -163,15 +163,17 @@ class TestDetectScanGaps:
         gaps = detect_scan_gaps(PG_TEXT, [], pages)
         assert len(gaps) >= 1
         assert gaps[0].strategy == "uncovered"
-        assert not gaps[0].pg_verified  # text absent from PG
+        assert gaps[0].pg_verified  # absence confirmed (text NOT in PG)
+        assert gaps[0].confidence in ("high", "medium")  # real missing content
 
     def test_alignment_miss_filtered_by_pg_search(self):
-        """Page with text that exists in PG but wasn't aligned → pg_verified=True."""
+        """Page with text that exists in PG but wasn't aligned → NOT flagged as missing."""
         pages = [FakeScanPage(0, "He walked to the door and opened it slowly. A figure stood outside in the rain.")]
         gaps = detect_scan_gaps(PG_TEXT, [], pages)
         uncovered = [g for g in gaps if g.strategy == "uncovered"]
         assert len(uncovered) == 1
-        assert uncovered[0].pg_verified  # text found in PG
+        assert not uncovered[0].pg_verified  # text found in PG → absence NOT confirmed
+        assert uncovered[0].confidence == "low"  # should not appear in report
 
     def test_small_gap_ignored(self):
         pages = [FakeScanPage(0, "Hello world test.")]

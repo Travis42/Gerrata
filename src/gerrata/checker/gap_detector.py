@@ -556,12 +556,12 @@ def detect_scan_gaps(
 
         is_nc = _is_non_content(text_clean)
 
-        # PG verification
+        # PG verification: pg_verified means absence confirmed (text NOT in PG)
         pg_verified = False
         pg_match_ratio = 0.0
         if not skip_pg_verification and not is_nc:
             found, ratio = _gap_text_exists_in_pg(text_clean, pg_text)
-            pg_verified = found
+            pg_verified = not found  # True = confirmed absent from PG
             pg_match_ratio = ratio
 
         gap = CoverageGap(
@@ -641,12 +641,12 @@ def detect_scan_gaps(
 
             is_nc = _is_non_content(gap_text)
 
-            # PG verification
+            # PG verification: pg_verified means absence confirmed (text NOT in PG)
             pg_verified = False
             pg_match_ratio = 0.0
             if not skip_pg_verification and not is_nc:
                 found, ratio = _gap_text_exists_in_pg(gap_text, pg_text)
-                pg_verified = found
+                pg_verified = not found  # True = confirmed absent from PG
                 pg_match_ratio = ratio
 
             gap = CoverageGap(
