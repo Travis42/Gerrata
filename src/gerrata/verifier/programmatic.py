@@ -83,6 +83,22 @@ class ProgrammaticVerifier:
 
         # 1. Context match ratio (most important factor)
         ctx_score, ctx_reason = self._context_match_score(candidate)
+        # For single-word diffs, context check is meaningless — the only
+        # scan word IS the correction, so it won't appear in PG context.
+        # But only skip if the words are close (likely real substitution).
+        # For completely different words (alignment artifact), keep low context.
+        scan_word_count = len([w for w in candidate.scan_text.split() if len(w) >= 3])
+        if scan_word_count <= 1 and ctx_score == 0.0:
+            # Check if words are similar enough to be a real substitution
+            pg_clean = candidate.pg_text.strip().strip(".,;:!?\"'\u201c\u201d").lower()
+            scan_clean = candidate.scan_text.strip().strip(".,;:!?\"'\u201c\u201d").lower()
+            if len(pg_clean) > 2 and len(scan_clean) > 2:
+                ed = _levenshtein(pg_clean, scan_clean)
+                similarity = 1 - ed / max(len(pg_clean), len(scan_clean))
+                if similarity >= 0.5:
+                    # Close match — context check is unreliable for single words
+                    ctx_score = 0.5
+                    ctx_reason = f"single-word diff, close match (sim={similarity:.2f})"
         factors.append(("context", ctx_score, ctx_reason))
 
         # 2. Edit distance similarity
