@@ -13,20 +13,34 @@ def trim_shared_edges(pg_text: str, scan_text: str) -> tuple[str, str]:
     real change.
 
     Only trims punctuation — never alphanumeric characters — and
-    only when both texts share the same edge character.
+    only when both texts share the same edge character (treating
+    straight and curly quotes as equivalent).
     """
-    edge_chars = set("'\";:,.!?()[]*\u2014\u2013 ")
+    edge_chars = set("'\";:,.!?()[]*\u2014\u2013 \u2018\u2019\u201c\u201d")
+
+    # Quote equivalence: treat straight and curly quotes as the same
+    quote_map = {
+        "'": "'", "\u2018": "'", "\u2019": "'",  # single quotes
+        '"': '"', "\u201c": '"', "\u201d": '"',     # double quotes
+    }
+
+    def _norm_char(c: str) -> str:
+        return quote_map.get(c, c)
 
     pg = pg_text
     scan = scan_text
 
     # Trim common leading characters
-    while pg and scan and pg[0] == scan[0] and pg[0] in edge_chars:
+    while pg and scan and pg[0] in edge_chars and scan[0] in edge_chars:
+        if _norm_char(pg[0]) != _norm_char(scan[0]):
+            break
         pg = pg[1:]
         scan = scan[1:]
 
     # Trim common trailing characters
-    while pg and scan and pg[-1] == scan[-1] and pg[-1] in edge_chars:
+    while pg and scan and pg[-1] in edge_chars and scan[-1] in edge_chars:
+        if _norm_char(pg[-1]) != _norm_char(scan[-1]):
+            break
         pg = pg[:-1]
         scan = scan[:-1]
 
