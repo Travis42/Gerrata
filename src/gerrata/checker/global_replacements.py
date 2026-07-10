@@ -150,7 +150,11 @@ class GlobalReplacementDetector:
             groups[(pg_root, scan_root)].append((pg_t, scan_t, page))
 
         # Step 3: Count occurrences in PG text and qualify
+        from gerrata.checker.dictionary import DictionaryChecker
+        dict_checker = DictionaryChecker(pg_text=pg_body_text)
+
         results = []
+        demoted = []  # pairs that stay as individual errata
         for (pg_word, scan_word), instances in groups.items():
             # Count whole-word, case-sensitive occurrences in PG text
             count = len(re.findall(r"\b" + re.escape(pg_word) + r"\b", pg_body_text))
@@ -161,11 +165,27 @@ class GlobalReplacementDetector:
             # Qualify if the word appears 2+ times in PG text.
             # Exception: diacritic/ligature-only changes qualify with 1+ occurrence,
             # because transcribers apply orthographic decisions systematically
-                       # (every instance of the word will have the same diacritic stripped).
+            # (every instance of the word will have the same diacritic stripped).
             is_diacritic = is_diacritic_or_ligature_change(pg_word, scan_word)
             threshold = 1 if is_diacritic else 2
 
-            if count >= threshold:
+            if count < threshold:
+                continue
+
+            # Safety check: only promote to global if the replacement is
+            # unambiguous. If both PG and scan words are valid dictionary
+            # words, a global find/replace could introduce new errors.
+            # Keep as individual errata instead.
+            is_capitalized = bool(scan_word) and scan_word[0].isupper()
+            pg_in_dict = dict_checker.is_in_dictionary(pg_word)
+            scan_in_dict = (
+                dict_checker._has_diacritic_or_ligature(scan_word)
+                or is_capitalized
+                or dict_checker.is_in_dictionary(scan_word)
+            )
+
+            if is_diacritic or is_capitalized or (not pg_in_dict and scan_in_dict):
+                # Unambiguous — safe for global replacement
                 results.append(GlobalReplacement(
                     pg_text=pg_word,
                     scan_text=scan_word,
@@ -173,6 +193,10 @@ class GlobalReplacementDetector:
                     caught_by_errata=caught,
                     examples=sorted(pages),
                 ))
+            else:
+                # Ambiguous — both sides could be valid words.
+                # Demote to individual errata.
+                demoted.append((pg_word, scan_word, instances))
 
         # Sort by occurrences descending, then alphabetically
         results.sort(key=lambda r: (-r.occurrences_in_pg, r.pg_text.lower()))
