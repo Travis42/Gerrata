@@ -277,10 +277,8 @@ class DictionaryChecker:
         if re.match(r"^\d+([.,]\d+)*(-\d+)*$", s):
             return True
 
-        # Proper noun heuristic: if the scan word is capitalized in the PG
-        # text and never appears lowercase, it's a proper noun (name, place).
-        # These shouldn't be flagged — dictionaries don't cover names.
-        if self._pg_text and self.is_proper_noun(s):
+        # Capitalized scan word → proper noun (name, place). Don't flag.
+        if s and s[0].isupper():
             return True
 
         # For multi-word replacements, check the longest word
