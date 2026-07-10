@@ -1255,7 +1255,30 @@ class ReportGenerator:
 
             _all_quote_chars = set('"\'\u201c\u201d\u2018\u2019`')
             # backtick ` is PG's encoding of opening single quote
-            _em_dash_set = {'\u2014'}  # em dash only, not double-hyphen
+
+            # Latin abbreviations where spaced dots are wrong (PG style = compact)
+            # PG correctly uses: i.e.  e.g.  s.a.  cf.  ca.  etc.  vs.  et al.
+            # Scan incorrectly spaces: i. e.  e. g.  s. a.
+            import re as _re
+            _latin_pattern = _re.compile(
+                r'\b([ievqsf])\.\s+([a-z])\.',  # "i. e." "e. g." "s. a." etc.
+                _re.IGNORECASE
+            )
+
+            def _is_concat_artifact(pg: str, scan: str) -> bool:
+                """Scan has two words smashed together that PG correctly separates."""
+                pg_clean = pg.strip().rstrip(',.;:!?)')
+                scan_clean = scan.strip().rstrip(',.;:!?)')
+                pg_words = pg_clean.split()
+                # PG has 2+ words, scan has them concatenated into one
+                if len(pg_words) >= 2:
+                    joined = ''.join(pg_words)
+                    return joined == scan_clean
+                return False
+
+            def _is_latin_abbrev_noise(pg: str, scan: str) -> bool:
+                """Spaced Latin abbreviation (i. e. / e. g. / s. a.) — PG style is compact."""
+                return bool(_latin_pattern.search(pg) or _latin_pattern.search(scan))
 
             for err in punctuation_diffs:
                 pg_t = err.candidate.pg_text
@@ -1267,6 +1290,14 @@ class ReportGenerator:
                 is_em_dash = ('--' in pg_t and '\u2014' in scan_t) or \
                              ('\u2014' in pg_t and '--' in scan_t)
                 if is_em_dash:
+                    continue
+
+                # Skip OCR concatenation artifacts (scan has words smashed together)
+                if _is_concat_artifact(pg_t, scan_t):
+                    continue
+
+                # Skip Latin abbreviation spacing noise (i. e. / e. g. / s. a.)
+                if _is_latin_abbrev_noise(pg_t, scan_t):
                     continue
 
                 # Quotes: only include one-sided (present on one side, absent on other)
