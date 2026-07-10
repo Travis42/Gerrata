@@ -1277,8 +1277,15 @@ class ReportGenerator:
                 return False
 
             def _is_latin_abbrev_noise(pg: str, scan: str) -> bool:
-                """Spaced Latin abbreviation (i. e. / e. g. / s. a.) — PG style is compact."""
-                return bool(_latin_pattern.search(pg) or _latin_pattern.search(scan))
+                """Spaced Latin abbreviation noise: PG has compact form, scan has spaced form.
+
+                Only filter when PG is correct (i.e., e.g., s.a.) and scan is wrong
+                (i. e., e. g., s. a.). If PG has the spaced form, the entry is real.
+                """
+                pg_spaced = bool(_latin_pattern.search(pg))
+                scan_spaced = bool(_latin_pattern.search(scan))
+                # Filter only when PG is compact (not spaced) and scan is spaced
+                return scan_spaced and not pg_spaced
 
             for err in punctuation_diffs:
                 pg_t = err.candidate.pg_text
