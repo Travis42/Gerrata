@@ -1215,23 +1215,6 @@ class ReportGenerator:
             if e.category == ErrorCategory.PUNCTUATION_DIFF
         ]
 
-        def _get_context_for_error(err: Error) -> str:
-            """Extract a short context snippet around the error in PG text."""
-            if not self.body_text or not hasattr(err, 'pg_file_line') and not hasattr(err.candidate, 'pg_offset'):
-                return ""
-            # Try line-based context first (richer)
-            line_ctx = self.get_line_context(getattr(err, 'pg_file_line', 0))
-            if line_ctx:
-                return line_ctx
-            # Fall back to body text context using offset
-            offset = getattr(err.candidate, 'pg_offset', 0)
-            if offset > 0 and self.body_text:
-                start = max(0, offset - 80)
-                end = min(len(self.body_text), offset + len(err.candidate.pg_text) + 80)
-                snippet = self.body_text[start:end].replace('\n', ' ').strip()
-                return f"...{snippet}..."
-            return ""
-
         if punctuation_diffs:
             lines.append("---")
             lines.append("")
@@ -1310,41 +1293,95 @@ class ReportGenerator:
 
             if quote_diffs:
                 lines.append(f"Quotation marks ({len(quote_diffs)}):")
-                for err in quote_diffs:
-                    page = self._get_ia_leaf_number(err.candidate.scan_page)
-                    pg_t = self._strip_html(err.candidate.pg_text).strip()
-                    scan_t = self._strip_html(err.candidate.scan_text).strip()
-                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
                 lines.append("")
+                for err in quote_diffs:
+                    pg_t = re.sub(r'<[^>]+>', '', err.candidate.pg_text.strip())
+                    scan_t = re.sub(r'<[^>]+>', '', err.candidate.scan_text.strip())
+                    page = self._get_ia_leaf_number(err.candidate.scan_page)
+
+                    # Get context sentence
+                    context = ""
+                    if self.body_text:
+                        pos = self.body_text.find(pg_t)
+                        if pos >= 0:
+                            context = self._extract_sentence(self.body_text, pos, len(pg_t))
+
+                    if self.scan_id:
+                        leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                        scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                        lines.append(f"Page {page} ({scan_url}):")
+                    else:
+                        lines.append(f"Page {page}:")
+                    if err.pg_file_line > 0:
+                        line_context = self.get_line_context(err.pg_file_line)
+                        if line_context:
+                            lines.append(line_context)
+                    if context:
+                        lines.append(context)
+                    pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
+                    lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
+                    lines.append("")
 
             if spacing_diffs:
                 lines.append(f"Punctuation spacing ({len(spacing_diffs)}):")
                 lines.append("")
                 for err in spacing_diffs:
+                    pg_t = re.sub(r'<[^>]+>', '', err.candidate.pg_text.strip())
+                    scan_t = re.sub(r'<[^>]+>', '', err.candidate.scan_text.strip())
                     page = self._get_ia_leaf_number(err.candidate.scan_page)
-                    pg_t = self._strip_html(err.candidate.pg_text).strip()
-                    scan_t = self._strip_html(err.candidate.scan_text).strip()
-                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
-                    # Add context lines for review, properly indented
-                    ctx = _get_context_for_error(err)
-                    if ctx:
-                        for ctx_line in ctx.split('\n'):
-                            lines.append(f"    {ctx_line}")
+
+                    # Get context sentence
+                    context = ""
+                    if self.body_text:
+                        pos = self.body_text.find(pg_t)
+                        if pos >= 0:
+                            context = self._extract_sentence(self.body_text, pos, len(pg_t))
+
+                    if self.scan_id:
+                        leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                        scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                        lines.append(f"Page {page} ({scan_url}):")
+                    else:
+                        lines.append(f"Page {page}:")
+                    if err.pg_file_line > 0:
+                        line_context = self.get_line_context(err.pg_file_line)
+                        if line_context:
+                            lines.append(line_context)
+                    if context:
+                        lines.append(context)
+                    pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
+                    lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
                     lines.append("")
 
             if other_punct:
                 lines.append(f"Other punctuation ({len(other_punct)}):")
                 lines.append("")
                 for err in other_punct:
+                    pg_t = re.sub(r'<[^>]+>', '', err.candidate.pg_text.strip())
+                    scan_t = re.sub(r'<[^>]+>', '', err.candidate.scan_text.strip())
                     page = self._get_ia_leaf_number(err.candidate.scan_page)
-                    pg_t = self._strip_html(err.candidate.pg_text).strip()
-                    scan_t = self._strip_html(err.candidate.scan_text).strip()
-                    lines.append(f"  Page {page}: {pg_t} ==> {scan_t}")
-                    # Add context lines for review, properly indented
-                    ctx = _get_context_for_error(err)
-                    if ctx:
-                        for ctx_line in ctx.split('\n'):
-                            lines.append(f"    {ctx_line}")
+
+                    # Get context sentence
+                    context = ""
+                    if self.body_text:
+                        pos = self.body_text.find(pg_t)
+                        if pos >= 0:
+                            context = self._extract_sentence(self.body_text, pos, len(pg_t))
+
+                    if self.scan_id:
+                        leaf_num = self._get_ia_leaf_number(err.candidate.scan_page)
+                        scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
+                        lines.append(f"Page {page} ({scan_url}):")
+                    else:
+                        lines.append(f"Page {page}:")
+                    if err.pg_file_line > 0:
+                        line_context = self.get_line_context(err.pg_file_line)
+                        if line_context:
+                            lines.append(line_context)
+                    if context:
+                        lines.append(context)
+                    pg_trimmed, scan_trimmed = self._trim_shared_edges(pg_t, scan_t)
+                    lines.append(f"{pg_trimmed} ==> {scan_trimmed}")
                     lines.append("")
 
         # Coverage gap analysis - missing content detection
