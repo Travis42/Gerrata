@@ -167,7 +167,8 @@ class GlobalReplacementDetector:
             # because transcribers apply orthographic decisions systematically
             # (every instance of the word will have the same diacritic stripped).
             is_diacritic = is_diacritic_or_ligature_change(pg_word, scan_word)
-            threshold = 1 if is_diacritic else 2
+            is_capitalized_scan = bool(scan_word) and scan_word[0].isupper()
+            threshold = 1 if (is_diacritic or is_capitalized_scan) else 2
 
             if count < threshold:
                 continue
@@ -176,7 +177,7 @@ class GlobalReplacementDetector:
             # unambiguous. If both PG and scan words are valid dictionary
             # words, a global find/replace could introduce new errors.
             # Keep as individual errata instead.
-            is_capitalized = bool(scan_word) and scan_word[0].isupper()
+            is_capitalized = is_capitalized_scan
             pg_in_dict = dict_checker.is_in_dictionary(pg_word)
             scan_in_dict = (
                 dict_checker._has_diacritic_or_ligature(scan_word)
