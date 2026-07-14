@@ -106,8 +106,8 @@ def build_parser() -> argparse.ArgumentParser:
     ve_parser.add_argument(
         "--output", "-o",
         type=str,
-        default="./reports/temp",
-        help="Output directory for results (default: ./reports/temp)",
+        default="./reports",
+        help="Output directory for results (default: ./reports)",
     )
     ve_parser.add_argument(
         "--verbose", "-v",
@@ -177,8 +177,8 @@ def build_parser() -> argparse.ArgumentParser:
     ce_parser.add_argument(
         "--output", "-o",
         type=str,
-        default="./reports/temp",
-        help="Output directory for reports (default: ./reports/temp)",
+        default="./reports",
+        help="Output directory for reports (default: ./reports)",
     )
     ce_parser.add_argument(
         "--significance",
@@ -280,8 +280,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output", "-o",
         type=str,
-        default="./reports/temp",
-        help="Output directory for reports (default: ./reports/temp)",
+        default="./reports",
+        help="Output directory for reports (default: ./reports)",
     )
     parser.add_argument(
         "--verbose", "-v",
