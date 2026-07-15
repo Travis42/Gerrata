@@ -1176,9 +1176,24 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             pg_text = candidate.pg_text
             if '(absent in PG)' in pg_text or '(absent in scan)' in pg_text:
                 pg_text = candidate.scan_text
-            pos = parsed.body_text.find(pg_text)
-            if pos >= 0:
-                candidate.pg_file_line = parsed.body_text[:pos].count('\n') + 1
+            # Find the occurrence nearest to candidate.pg_offset
+            # (find() always returns the first match, which is wrong for
+            # words that appear multiple times in the text)
+            pos = -1
+            search_from = 0
+            best_pos = -1
+            best_dist = float('inf')
+            while True:
+                found = parsed.body_text.find(pg_text, search_from)
+                if found < 0:
+                    break
+                dist = abs(found - candidate.pg_offset)
+                if dist < best_dist:
+                    best_dist = dist
+                    best_pos = found
+                search_from = found + 1
+            if best_pos >= 0:
+                candidate.pg_file_line = parsed.body_text[:best_pos].count('\n') + 1
             else:
                 candidate.pg_file_line = parsed.body_text[:candidate.pg_offset].count('\n') + 1
         console.print(f"  Computed line numbers for {len(candidates)} candidates")
