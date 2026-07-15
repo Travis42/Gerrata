@@ -27,6 +27,7 @@ mkdir -p "$CACHE_PATH"
 
 cp -n "$ARCHIVE_PATH/01_pg_parsed.json" "$CACHE_PATH/" 2>/dev/null || true
 cp -n "$ARCHIVE_PATH/01b_page_classifications.json" "$CACHE_PATH/" 2>/dev/null || true
+cp -n "$ARCHIVE_PATH/02_transcriptions.json" "$CACHE_PATH/" 2>/dev/null || true
 cp -n "$ARCHIVE_PATH/02_transcriptions.jsonl" "$CACHE_PATH/" 2>/dev/null || true
 
 echo "Done. Resume with:"

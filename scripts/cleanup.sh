@@ -22,7 +22,8 @@ echo ""
 
 # --- Transcriptions archive ---
 # Save the expensive artifacts (OCR API output) before wiping cache.
-# Resume kit: 01_pg_parsed.json, 01b_page_classifications.json, 02_transcriptions.jsonl
+# Resume kit: 01_pg_parsed.json, 01b_page_classifications.json, 02_transcriptions.json
+# (the .json is what the pipeline loads on resume; .jsonl is the crash log)
 # These allow regenerating everything downstream in seconds without API calls.
 if [ -d "$CACHE_DIR" ]; then
     mkdir -p "$TRANSCRIPTIONS_DIR"
@@ -59,11 +60,12 @@ print(d.get('pg_id', d.get('source_id', '')))
         archive_path="$TRANSCRIPTIONS_DIR/$archive_name"
 
         # Check if transcriptions exist (the expensive artifact)
-        if [ -f "$book_dir/02_transcriptions.jsonl" ]; then
+        if [ -f "$book_dir/02_transcriptions.json" ] || [ -f "$book_dir/02_transcriptions.jsonl" ]; then
             if [ "$DRY_RUN" = false ]; then
                 mkdir -p "$archive_path"
                 cp -n "$book_dir/01_pg_parsed.json" "$archive_path/" 2>/dev/null || true
                 cp -n "$book_dir/01b_page_classifications.json" "$archive_path/" 2>/dev/null || true
+                cp -n "$book_dir/02_transcriptions.json" "$archive_path/" 2>/dev/null || true
                 cp -n "$book_dir/02_transcriptions.jsonl" "$archive_path/" 2>/dev/null || true
                 echo "  Archived transcriptions: $archive_name"
             else

@@ -885,6 +885,13 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             "dropped": validation.dropped,
         })
 
+    # Free transcriptions — not needed after alignment
+    try:
+        del transcriptions
+        import gc as _gc_t; _gc_t.collect()
+    except NameError:
+        pass
+
     # Step 5: Text diff
     step_num = 5
     if resume_from == "pre-verify":
@@ -1220,6 +1227,12 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     # Convert Error objects to dicts for the detector
     verified_dicts = [e.to_dict() if hasattr(e, 'to_dict') else e for e in verified_errors]
     global_replacements = detector.detect(verified_dicts, parsed.body_text)
+    del verified_dicts
+    try:
+        del candidates
+        import gc as _gc_c; _gc_c.collect()
+    except NameError:
+        pass
     if global_replacements:
         total_occ = sum(gr.occurrences_in_pg for gr in global_replacements)
         console.print(f"  Found {len(global_replacements)} global replacements ({total_occ} total occurrences in PG text)")
