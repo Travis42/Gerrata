@@ -477,6 +477,12 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     console.print()
 
     # Step 1: Parse PG text
+    resolved_pg_file = args.pg_file
+    # Try to resolve from cache if not explicitly provided
+    if not resolved_pg_file:
+        cached_pg = cache_dir / f"{args.pg_id}.txt"
+        if cached_pg.exists():
+            resolved_pg_file = str(cached_pg)
     if resume_from in ("transcriptions", "alignments", "candidates-raw", "pre-verify", "pre-report"):
         cached = load_intermediate(intermed_dir, "01_pg_parsed")
         if not cached:
@@ -501,11 +507,12 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         console.print(f"  [dim]Resumed from 01_pg_parsed[/dim]")
     else:
         console.print("[bold blue]Step 1:[/bold blue] Parsing PG text...")
-        if args.pg_file:
-            parsed = pg_fetcher.parse_file(args.pg_file)
+        if resolved_pg_file:
+            parsed = pg_fetcher.parse_file(resolved_pg_file)
         else:
             pg_path = await pg_fetcher.download(args.pg_id, dest=cache_dir or Path("./cache"))
             parsed = pg_fetcher.parse_file(pg_path)
+            resolved_pg_file = str(pg_path)
 
         console.print(f"  Title: {parsed.metadata.title}")
         console.print(f"  Author: {parsed.metadata.author}")
@@ -1296,7 +1303,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
     # Create generator with PG text context for line number mapping
     generator = ReportGenerator(
         pg_parsed_text=parsed,
-        pg_file_path=args.pg_file,
+        pg_file_path=resolved_pg_file,
         scan_id=scan_id,
         scan_pages=scan_pages,
         body_text=parsed.body_text,

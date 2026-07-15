@@ -35,3 +35,4 @@ PROCESSING_A_BOOK.md
 !test*.txt
 **/pages/*.png
 **/pages/*.jpg
+transcriptions/*
