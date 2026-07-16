@@ -909,6 +909,8 @@ class ReportGenerator:
             and not self._is_suffix_fragment(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_quoted_fragment(e.candidate.pg_text, e.candidate.scan_text)
             and not self._is_substring_fragment(e.candidate.pg_text, e.candidate.scan_text)
+            and 'FOOTNOTE' not in e.candidate.pg_text.upper()
+            and 'FOOTNOTE' not in e.candidate.scan_text.upper()
         ]
 
         # Deduplicate by offset proximity (within 50 chars)
