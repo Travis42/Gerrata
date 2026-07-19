@@ -13,7 +13,7 @@ Build an automated pipeline to batch-process PG Top 100 books through Gerrata, p
 
 1. **Fetch PG text** — Download from Gutenberg, parse, extract edition info (transcriber notes, front/back matter)
 2. **Find matching IA scan** — Search IA for the edition mentioned in PG text
-3. **Download JP2 zip** — From IA (confirmed working from this server)
+3. **Download scan images** — ALWAYS use the `ia` CLI (`ia download <id> <id>_jp2.zip --destdir cache/<id>/`). The pipeline's built-in HTTP downloader gets 503 errors frequently. If no JP2, download TIF and convert to PNG with PIL, then use `--pages-dir`.
 4. **Extract + convert** — JP2 → PNG via OpenCV
 5. **Run Gerrata pipeline** — Transcribe → Align → Diff → Verify → Report
 6. **Evaluate results** — Count email entries, flag plausible real errata
