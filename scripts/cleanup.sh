@@ -83,8 +83,9 @@ if [ -d "$CACHE_DIR" ]; then
     CACHE_ITEMS=$(find "$CACHE_DIR" -mindepth 1 -maxdepth 1 | wc -l)
     echo "Cache: $CACHE_ITEMS subdirectories, $CACHE_SIZE"
     if [ "$DRY_RUN" = false ]; then
-        rm -rf "${CACHE_DIR:?}/"*
-        echo "  → Cleared"
+        # Preserve PG text files (needed for report regeneration and cross-referencing)
+        find "$CACHE_DIR" -mindepth 1 -maxdepth 1 ! -name '*.txt' -exec rm -rf {} +
+        echo "  → Cleared (preserved *.txt files)"
     fi
 else
     echo "Cache: does not exist, skipping"
