@@ -857,6 +857,251 @@ class ReportGenerator:
         meaningful_shared = {w for w in shared if len(w) > 3}
         return not meaningful_shared
 
+    # -- MISSING CONTENT rendering helpers -----------------------------------
+
+    def _looks_like_header(self, text: str) -> bool:
+        """Heuristic: short line that looks like a running header (not prose).
+
+        Used to strip per-page headers and "digit + header" combos when cleaning
+        transcriptions for the MISSING CONTENT section.
+        """
+        if len(text) > 40:
+            return False
+        if not text.strip():
+            return False
+        # ALL CAPS title (e.g. "THE YOUNGER EDDA.", "PREFACE.")
+        if text.isupper() and any(c.isalpha() for c in text):
+            return True
+        # Title Case with 2+ words (e.g. "The Younger Edda")
+        words = [w for w in text.split() if w]
+        if len(words) >= 2 and all(w[0].isupper() for w in words if w[0].isalpha()):
+            return True
+        return False
+
+    def _detect_running_headers(self) -> set[str]:
+        """Find lines that appear (trimmed) on 2+ scan pages.
+
+        Such repetition is the signature of a running header (book title,
+        chapter title, author) reprinted on every page.
+        """
+        line_pages: dict[str, set[int]] = {}
+        for sp in self.scan_pages:
+            pnum = getattr(sp, "page_num", None)
+            if pnum is None:
+                continue
+            text = getattr(sp, "vision_text", "") or getattr(sp, "ocr_text", "") or ""
+            if isinstance(sp, dict):
+                text = sp.get("vision_text", "") or sp.get("ocr_text", "") or ""
+            seen: set[str] = set()
+            for line in text.split("\n"):
+                s = line.strip()
+                if not s or len(s) > 40:
+                    continue
+                seen.add(s)
+            for s in seen:
+                line_pages.setdefault(s, set()).add(pnum)
+        return {line for line, pages in line_pages.items() if len(pages) >= 2}
+
+    def _clean_page_transcription(self, text: str, running_headers: set[str]) -> str:
+        """Strip page numbers and running headers from a scan transcription.
+
+        Preserves internal blank lines (paragraph breaks) but trims leading and
+        trailing whitespace.
+        """
+        if not text:
+            return ""
+        kept: list[str] = []
+        for line in text.split("\n"):
+            stripped = line.strip()
+            if not stripped:
+                kept.append("")
+                continue
+            # Standalone page number
+            if re.match(r"^\d{1,4}$", stripped):
+                continue
+            # Exact running-header match
+            if stripped in running_headers:
+                continue
+            # "6 PREFACE." / "PREFACE. 6" style combos
+            m = re.match(r"^(\d{1,4})\s+(.+)$", stripped)
+            if m and (m.group(2) in running_headers or self._looks_like_header(m.group(2))):
+                continue
+            m = re.match(r"^(.+?)\s+(\d{1,4})$", stripped)
+            if m and (m.group(1) in running_headers or self._looks_like_header(m.group(1))):
+                continue
+            kept.append(stripped)
+        return "\n".join(kept).strip()
+
+    def _get_full_page_text(self, page_num: int) -> str:
+        """Return the full transcription (vision_text preferred) for a scan page."""
+        for sp in self.scan_pages:
+            pnum = getattr(sp, "page_num", None)
+            if pnum is None and isinstance(sp, dict):
+                pnum = sp.get("page_num")
+            if pnum == page_num:
+                vt = getattr(sp, "vision_text", "") or ""
+                if isinstance(sp, dict):
+                    vt = sp.get("vision_text", "") or ""
+                ocr = getattr(sp, "ocr_text", "") or ""
+                if isinstance(sp, dict):
+                    ocr = sp.get("ocr_text", "") or ""
+                return vt if vt else ocr
+        return ""
+
+    def _group_consecutive_structural_gaps(self, gaps: list) -> list[list]:
+        """Group structural gaps whose page numbers are consecutive.
+
+        Each returned group is a list of CoverageGap objects in page order. A
+        gap is only grouped with the previous one if its page == previous.page + 1.
+        """
+        if not gaps:
+            return []
+        ordered = sorted(gaps, key=lambda g: g.page)
+        groups: list[list] = [[ordered[0]]]
+        for g in ordered[1:]:
+            if g.page == groups[-1][-1].page + 1:
+                groups[-1].append(g)
+            else:
+                groups.append([g])
+        return groups
+
+    def _pg_context_for_structural_group(self, group: list) -> str:
+        """Build a `PG context: ...before [gap] after...` line for a gap group.
+
+        Locates the neighboring alignments (largest scan_page < first page,
+        smallest scan_page > last page) and pulls ~30 words of body text on
+        each side. Returns "" if no context could be derived.
+        """
+        if not self.alignments or not self.body_text:
+            return ""
+        first_page = group[0].page
+        last_page = group[-1].page
+
+        before_offset: int | None = None
+        after_offset: int | None = None
+        for a in self.alignments:
+            sp = a.scan_page if hasattr(a, "scan_page") else a.get("scan_page")
+            if sp is None:
+                continue
+            if sp < first_page:
+                end = a.pg_end if hasattr(a, "pg_end") else a["pg_end"]
+                if before_offset is None or end > before_offset:
+                    before_offset = end
+            elif sp > last_page:
+                start = a.pg_start if hasattr(a, "pg_start") else a["pg_start"]
+                if after_offset is None or start < after_offset:
+                    after_offset = start
+
+        def _words_around(offset: int, before: bool) -> str:
+            bt = self.body_text
+            if before:
+                seg_end = min(offset, len(bt))
+                while seg_end > 0 and not bt[seg_end - 1].isspace():
+                    seg_end -= 1
+                words = bt[:seg_end].split()
+                return " ".join(words[-30:]).replace("_", "")
+            else:
+                seg_start = min(offset, len(bt))
+                while seg_start < len(bt) and not bt[seg_start].isspace():
+                    seg_start += 1
+                words = bt[seg_start:].split()
+                return " ".join(words[:30]).replace("_", "")
+
+        before_text = _words_around(before_offset, True) if before_offset is not None else ""
+        after_text = _words_around(after_offset, False) if after_offset is not None else ""
+
+        if before_text and after_text:
+            return f"PG context: ...{before_text} [gap] {after_text}..."
+        if after_text:
+            return f"PG context: [gap] {after_text}..."
+        if before_text:
+            return f"PG context: ...{before_text} [gap]"
+        return ""
+
+    def _render_content_hole(self, lines: list[str], g, running_headers: set[str]) -> None:
+        """Render a content_hole gap in the short format."""
+        page = self._get_ia_leaf_number(g.page)
+        conf = g.confidence.upper()
+        if self.scan_id:
+            url = f"https://archive.org/details/{self.scan_id}/page/n{page}/mode/1up"
+            lines.append(f"Page {page} ({url}) - {g.word_count} words [{conf}]:")
+        else:
+            lines.append(f"Page {page} - {g.word_count} words [{conf}]:")
+        if g.missing_words:
+            text = self._clean_page_transcription(g.missing_words, running_headers)
+            if not text:
+                text = g.missing_words
+            lines.append(f'Missing: "{text}"')
+        if g.pg_context_before and g.pg_context_after:
+            lines.append(f"PG context: ...{g.pg_context_before} [gap] {g.pg_context_after}...")
+        lines.append("")
+
+    def _render_structural_group(self, lines: list[str], group: list,
+                                 running_headers: set[str]) -> bool:
+        """Render a group of structural gaps (1+ consecutive pages).
+
+        Returns True if the group was rendered as a multi-page long-format entry
+        (so the caller knows whether to emit the "Source scan:" header).
+        """
+        first = group[0]
+        conf = first.confidence.upper()
+        first_leaf = self._get_ia_leaf_number(first.page)
+
+        # Fetch + clean full text for each page in the group
+        text_parts: list[str] = []
+        total_words = 0
+        for g in group:
+            raw = self._get_full_page_text(g.page)
+            if not raw:
+                raw = g.scan_text_preview
+            cleaned = self._clean_page_transcription(raw, running_headers)
+            if cleaned:
+                text_parts.append(cleaned)
+                total_words += len(cleaned.split())
+        if not text_parts:
+            for g in group:
+                text_parts.append(g.scan_text_preview.strip())
+                total_words += g.word_count
+
+        is_multi = len(group) > 1
+        is_long = is_multi or total_words >= 100
+
+        # Header line (URL always points to the first page)
+        if self.scan_id:
+            url = f"https://archive.org/details/{self.scan_id}/page/n{first_leaf}/mode/1up"
+            if is_multi:
+                last_leaf = self._get_ia_leaf_number(group[-1].page)
+                wc_label = f"~{total_words} words"
+                label = f"Pages {first_leaf}-{last_leaf} ({url})"
+            else:
+                wc_label = f"{total_words} words" if not is_long else f"~{total_words} words"
+                label = f"Page {first_leaf} ({url})"
+        else:
+            if is_multi:
+                last_leaf = self._get_ia_leaf_number(group[-1].page)
+                wc_label = f"~{total_words} words"
+                label = f"Pages {first_leaf}-{last_leaf}"
+            else:
+                wc_label = f"{total_words} words" if not is_long else f"~{total_words} words"
+                label = f"Page {first_leaf}"
+        lines.append(f"{label} - {wc_label} [{conf}]:")
+
+        body = "\n\n".join(text_parts) if is_multi else text_parts[0]
+        if is_long:
+            lines.append(body)
+            lines.append("")
+            context = self._pg_context_for_structural_group(group)
+            if context:
+                lines.append(context)
+            lines.append("")
+        else:
+            lines.append(f'Missing: "{body}"')
+            context = self._pg_context_for_structural_group(group)
+            if context:
+                lines.append(context)
+            lines.append("")
+        return is_multi
+
     def generate_errata_email(self, report: Report) -> str:
         """Generate errata report in Project Gutenberg's preferred format.
 
@@ -1403,58 +1648,32 @@ class ReportGenerator:
                 # Only show high-confidence gaps in the report
                 report_gaps = [g for g in report_gaps if g.confidence == "high"]
                 if report_gaps:
+                    # Split content holes (short inline gaps) from structural
+                    # gaps (whole missing pages / large chunks). Each maps to
+                    # the short vs. long MISSING CONTENT formats.
+                    content_holes = [g for g in report_gaps if g.strategy == "content_hole"]
+                    structural_gaps = [g for g in report_gaps if g.strategy != "content_hole"]
+
+                    structural_groups = self._group_consecutive_structural_gaps(structural_gaps)
+                    has_multi_page = any(len(g) > 1 for g in structural_groups)
+
                     lines.append("---")
                     lines.append("")
                     lines.append("MISSING CONTENT")
                     lines.append("")
-
-                    # Separate content holes from structural gaps
-                    content_holes = [g for g in report_gaps if g.strategy == "content_hole"]
-                    structural_gaps = [g for g in report_gaps if g.strategy != "content_hole"]
-
-                    if content_holes:
-                        lines.append(
-                            f"{len(content_holes)} passage(s) have words missing within aligned text:"
-                        )
+                    if has_multi_page and self.scan_id:
+                        lines.append(f"Source scan: https://archive.org/details/{self.scan_id}")
                         lines.append("")
-                        for g in content_holes:
-                            page = self._get_ia_leaf_number(g.page)
-                            conf = g.confidence.upper()
-                            if self.scan_id:
-                                leaf_num = self._get_ia_leaf_number(g.page)
-                                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                                lines.append(f"Page {page} ({scan_url}) - {g.word_count} words [{conf}]:")
-                            else:
-                                lines.append(f"Page {page} - {g.word_count} words [{conf}]:")
-                            if g.missing_words:
-                                lines.append(f'  Missing: "{g.missing_words}"')
-                            if g.pg_context_before and g.pg_context_after:
-                                lines.append(f"  PG context: ...{g.pg_context_before} [gap] {g.pg_context_after}...")
-                            lines.append("")
 
-                    if structural_gaps:
-                        lines.append(
-                            f"The following {len(structural_gaps)} scan pages contain text that has "
-                            f"no corresponding passage in the PG text (verified via fuzzy search)."
-                        )
-                        lines.append("")
-                        for g in structural_gaps:
-                            page = self._get_ia_leaf_number(g.page)
-                            wc = g.word_count
-                            conf = g.confidence.upper()
-                            if g.strategy == "partial":
-                                desc = f"page coverage {g.coverage_ratio:.0%}"
-                            else:
-                                desc = "no alignment"
-                            if self.scan_id:
-                                leaf_num = self._get_ia_leaf_number(g.page)
-                                scan_url = f"https://archive.org/details/{self.scan_id}/page/n{leaf_num}/mode/1up"
-                                lines.append(f"Page {page} ({scan_url}) - ~{wc} words, {desc} [{conf}]:")
-                            else:
-                                lines.append(f"Page {page} - ~{wc} words, {desc} [{conf}]:")
-                            preview = g.scan_text_preview[:150].strip()
-                            lines.append(preview)
-                            lines.append("")
+                    running_headers = self._detect_running_headers()
+
+                    # Content holes first (short format), sorted by page
+                    for g in sorted(content_holes, key=lambda x: x.page):
+                        self._render_content_hole(lines, g, running_headers)
+
+                    # Structural gap groups, sorted by first page
+                    for group in structural_groups:
+                        self._render_structural_group(lines, group, running_headers)
             except Exception:
                 pass  # Don't let gap detection failure break report generation
 

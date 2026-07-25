@@ -631,6 +631,264 @@ class TestReportGenerator:
         assert "page/n30/mode/1up" in email_content
 
 
+class TestMissingContentFormat:
+    """Tests for the standardized MISSING CONTENT report format.
+
+    Covers the spec in TASK.md:
+    - content_hole gaps render in the short format (Missing: "..." + PG context)
+    - consecutive structural gaps group into "Pages N-M" with the long format
+    - running headers and page numbers are stripped from transcriptions
+    - "Source scan:" header appears only when a multi-page group exists
+    - "no alignment" jargon is gone
+    """
+
+    def _make_generator(self, scan_pages, alignments, body_text, scan_id="test-scan"):
+        return ReportGenerator(
+            alignments=alignments,
+            scan_pages=scan_pages,
+            body_text=body_text,
+            scan_id=scan_id,
+        )
+
+    def _stub_gaps(self, monkeypatch, gaps):
+        import gerrata.checker.gap_detector as gap_mod
+        monkeypatch.setattr(gap_mod, "detect_scan_gaps", lambda **kwargs: list(gaps))
+
+    def _trigger_error(self, sample_metadata):
+        # The email returns early without a unique error, so inject one.
+        c = CandidateError(
+            pg_text="tne", scan_text="the", pg_offset=25, scan_page=5,
+            category=ErrorCategory.OCR_SCANNO,
+        )
+        return Error(candidate=c, verdict=Verdict.SCAN_CORRECT, confidence=0.95)
+
+    def test_content_hole_uses_short_format(self, sample_metadata, monkeypatch):
+        """Content hole renders as Page N (URL) - N words + Missing: \"...\" + PG context."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        hole = CoverageGap(
+            page=219, strategy="content_hole", word_count=9,
+            scan_text_preview="barrios with his 2 000 improved rifles here something",
+            pg_verified=True, confidence="high",
+            missing_words="barrios with his 2 000 improved rifles here something",
+            pg_context_before="if we had",
+            pg_context_after="could have been",
+        )
+        self._stub_gaps(monkeypatch, [hole])
+
+        gen = self._make_generator(
+            scan_pages=[object()],
+            alignments=[Alignment(pg_start=0, pg_end=100, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            body_text="Some body text here.",
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+
+        section = email[email.find("MISSING CONTENT"):]
+        # Short-format header line
+        assert "Page 219 (https://archive.org/details/test-scan/page/n219/mode/1up) - 9 words [HIGH]:" in section
+        # Missing: prefixed and quoted
+        assert 'Missing: "barrios with his 2 000 improved rifles here something"' in section
+        # PG context line with [gap] marker
+        assert "PG context: ...if we had [gap] could have been..." in section
+        # No "Source scan:" line for single-page short entries
+        assert "Source scan:" not in section
+
+    def test_consecutive_pages_grouped_as_multi_page(self, sample_metadata, monkeypatch):
+        """Two consecutive uncovered pages render as 'Pages N-M' pointing at the first page."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        # 3 words * 20 = 60 words per page (>= REPORT_MIN_WORDS_UNCOVERED=50)
+        gap6 = CoverageGap(page=6, strategy="uncovered", word_count=60,
+                           scan_text_preview="page six text " * 20,
+                           pg_verified=True, confidence="high")
+        gap7 = CoverageGap(page=7, strategy="uncovered", word_count=60,
+                           scan_text_preview="page seven text " * 20,
+                           pg_verified=True, confidence="high")
+        self._stub_gaps(monkeypatch, [gap6, gap7])
+
+        gen = self._make_generator(
+            scan_pages=[object(), object()],
+            alignments=[
+                Alignment(pg_start=0, pg_end=50, scan_page=5, confidence=0.9, method=AlignmentMethod.LCS),
+                Alignment(pg_start=100, pg_end=150, scan_page=8, confidence=0.9, method=AlignmentMethod.LCS),
+            ],
+            body_text="alpha " * 50 + "beta " * 50,
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+
+        # Grouped header with first-page URL
+        assert "Pages 6-7 (https://archive.org/details/test-scan/page/n6/mode/1up)" in section
+        # Approximate word count with tilde (60 + 60 = 120)
+        assert "~120 words [HIGH]:" in section
+        # No separate Page 6 / Page 7 entries
+        assert "Page 6 (" not in section
+        assert "Page 7 (" not in section
+        # Source scan line present because of the multi-page group
+        assert "Source scan: https://archive.org/details/test-scan" in section
+
+    def test_non_consecutive_pages_not_grouped(self, sample_metadata, monkeypatch):
+        """Pages 10 and 12 (gap > 1) stay as separate single-page entries."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        g1 = CoverageGap(page=10, strategy="uncovered", word_count=60,
+                         scan_text_preview="alpha content " * 20,
+                         pg_verified=True, confidence="high")
+        g2 = CoverageGap(page=12, strategy="uncovered", word_count=60,
+                         scan_text_preview="bravo content " * 20,
+                         pg_verified=True, confidence="high")
+        self._stub_gaps(monkeypatch, [g1, g2])
+
+        gen = self._make_generator(
+            scan_pages=[object()],
+            alignments=[Alignment(pg_start=0, pg_end=100, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            body_text="Some body text here.",
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+
+        assert "page/n10/mode/1up" in section
+        assert "page/n12/mode/1up" in section
+        assert "Pages 10-" not in section  # not grouped
+        # No Source scan line (no multi-page group)
+        assert "Source scan:" not in section
+
+    def test_running_headers_and_page_numbers_stripped(self, sample_metadata, monkeypatch):
+        """Repetitive headers, standalone digits, and 'digit + header' combos are removed."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        # The header "THE YOUNGER EDDA." appears on the aligned page AND the
+        # missing page so cross-page detection fires. "6 PREFACE." is a combo.
+        header_text = (
+            "THE YOUNGER EDDA.\n"
+            "Prologue text on the aligned page for context here."
+        )
+        gap_text = (
+            "THE YOUNGER EDDA.\n"
+            "6                               PREFACE.\n"
+            "7\n"
+            "The real content starts here and runs for many words to clear "
+            "the minimum gap thresholds established by the gap detector logic."
+        )
+        gap = CoverageGap(page=6, strategy="uncovered", word_count=50,
+                          scan_text_preview=gap_text, pg_verified=True, confidence="high")
+
+        class FakePage:
+            def __init__(self, pnum, text):
+                self.page_num = pnum
+                self.vision_text = text
+                self.ocr_text = ""
+                self.image_path = None
+
+        # Stub: only the gap is reported (page 6). scan_pages also holds an
+        # aligned page 5 carrying the same header so header detection fires.
+        self._stub_gaps(monkeypatch, [gap])
+        gen = self._make_generator(
+            scan_pages=[FakePage(5, header_text), FakePage(6, gap_text)],
+            alignments=[Alignment(pg_start=0, pg_end=50, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            body_text="Some body text here. " * 5,
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+
+        assert "The real content starts here" in section
+        assert "THE YOUNGER EDDA." not in section
+        assert "PREFACE." not in section
+        # Standalone "7" should not appear on its own line as a page number
+        assert "\n7\n" not in section
+
+    def test_no_alignment_jargon_removed(self, sample_metadata, monkeypatch):
+        """The 'no alignment' technical description must not appear."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        gap = CoverageGap(page=10, strategy="uncovered", word_count=60,
+                          scan_text_preview="alpha content " * 20,
+                          pg_verified=True, confidence="high")
+        self._stub_gaps(monkeypatch, [gap])
+
+        gen = self._make_generator(
+            scan_pages=[object()],
+            alignments=[Alignment(pg_start=0, pg_end=100, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            body_text="Some body text here.",
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+        assert "no alignment" not in section
+        assert "page coverage" not in section
+
+    def test_short_format_single_page_exact_word_count(self, sample_metadata, monkeypatch):
+        """A single structural gap under 100 words uses an exact count (no tilde)."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        # 4 words * 13 = 52 words (>= REPORT_MIN_WORDS_UNCOVERED=50, < 100 → short format)
+        gap = CoverageGap(page=10, strategy="uncovered", word_count=52,
+                          scan_text_preview="alpha content words here " * 13,
+                          pg_verified=True, confidence="high")
+        self._stub_gaps(monkeypatch, [gap])
+
+        gen = self._make_generator(
+            scan_pages=[object()],
+            alignments=[Alignment(pg_start=0, pg_end=100, scan_page=5,
+                                  confidence=0.9, method=AlignmentMethod.LCS)],
+            body_text="Some body text here.",
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+        # Exact count (re-counted from cleaned text), no tilde, short format with Missing: prefix
+        assert "- 52 words [HIGH]:" in section
+        assert "~52 words" not in section
+        assert 'Missing: "' in section
+
+    def test_pg_context_derived_from_neighbor_alignments(self, sample_metadata, monkeypatch):
+        """Multi-page group pulls PG context from the alignments before and after."""
+        from gerrata.checker.gap_detector import CoverageGap
+
+        gap6 = CoverageGap(page=6, strategy="uncovered", word_count=120,
+                           scan_text_preview="page six content " * 30,
+                           pg_verified=True, confidence="high")
+        gap7 = CoverageGap(page=7, strategy="uncovered", word_count=80,
+                           scan_text_preview="page seven content " * 30,
+                           pg_verified=True, confidence="high")
+        self._stub_gaps(monkeypatch, [gap6, gap7])
+
+        body_text = (
+            "before the gap we have many words here that should appear. " * 3
+            + "AFTER THE GAP COMES THIS DISTINCTIVE PASSAGE TEXT. " * 3
+        )
+        gen = self._make_generator(
+            scan_pages=[object(), object()],
+            alignments=[
+                # Alignment on page 5 (before group) ends mid body_text
+                Alignment(pg_start=0, pg_end=120, scan_page=5, confidence=0.9, method=AlignmentMethod.LCS),
+                # Alignment on page 8 (after group) starts later
+                Alignment(pg_start=130, pg_end=200, scan_page=8, confidence=0.9, method=AlignmentMethod.LCS),
+            ],
+            body_text=body_text,
+        )
+        report = Report(metadata=sample_metadata, errors=[self._trigger_error(sample_metadata)])
+        email = gen.generate_errata_email(report)
+        section = email[email.find("MISSING CONTENT"):]
+
+        assert "PG context:" in section
+        assert "[gap]" in section
+        # Context should pull from body_text (before side)
+        assert "before the gap" in section
+        # Context should not contain partial words at offset boundaries
+        line = [ln for ln in section.split("\n") if ln.startswith("PG context:")][0]
+        # The [gap] marker separates before and after cleanly
+        assert "] [gap]" not in line  # no dangling bracket from partial word
+
+
 class TestCLI:
     def test_build_parser(self):
         from gerrata.cli import build_parser
