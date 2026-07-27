@@ -1,7 +1,7 @@
 """Checker package — compare PG text against scan OCR to find discrepancies."""
 
-from gerrata.checker.text_diff import TextDiffChecker
-from gerrata.checker.gap_detector import (
+from book_projects.gerrata.src.gerrata.checker.text_diff import TextDiffChecker
+from book_projects.gerrata.src.gerrata.checker.gap_detector import (
     CoverageGap,
     detect_scan_gaps,
     filter_for_report,

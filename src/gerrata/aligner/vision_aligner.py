@@ -1677,7 +1677,7 @@ class VisionAligner:
             )
             return None
 
-        from gerrata.models import Alignment, AlignmentMethod
+        from book_projects.gerrata.src.gerrata.models import Alignment, AlignmentMethod
 
         alignment = Alignment(
             pg_start=best_pg_start,
@@ -2201,7 +2201,7 @@ class VisionAligner:
 
         Returns sorted by pg_start position.
         """
-        from gerrata.models import Alignment
+        from book_projects.gerrata.src.gerrata.models import Alignment
 
         alignments = [r.alignment for r in results]
         alignments.sort(key=lambda a: a.pg_start)
@@ -2215,7 +2215,7 @@ class VisionAligner:
 
         Used to populate scan_pages with vision text for the diff stage.
         """
-        from gerrata.fetcher.scans import ScanPage
+        from book_projects.gerrata.src.gerrata.fetcher.scans import ScanPage
 
         pages = []
         for trans in transcriptions:

@@ -15,7 +15,7 @@ import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
-from gerrata.models import CandidateError, Error, ErrorCategory, Verdict
+from book_projects.gerrata.src.gerrata.models import CandidateError, Error, ErrorCategory, Verdict
 
 logger = logging.getLogger(__name__)
 

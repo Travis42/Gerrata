@@ -14,18 +14,18 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from gerrata.edition.metadata import (
+from book_projects.gerrata.src.gerrata.edition.metadata import (
     MetadataMatcher,
     PGEditionClues,
     IAEditionClues,
     MetadataMatchResult,
 )
-from gerrata.edition.linebreaks import (
+from book_projects.gerrata.src.gerrata.edition.linebreaks import (
     LineBreakFingerprinter,
     LineBreakDetection,
     LineBreakMatchResult,
 )
-from gerrata.fetcher.pg import PGFetcher
+from book_projects.gerrata.src.gerrata.fetcher.pg import PGFetcher
 
 logger = logging.getLogger(__name__)
 
@@ -166,7 +166,7 @@ class EditionVerifier:
         }
 
         # Extract header text for approach A
-        from gerrata.fetcher.pg import START_MARKER
+        from book_projects.gerrata.src.gerrata.fetcher.pg import START_MARKER
         start_match = START_MARKER.search(raw_text)
         header_text = raw_text[:start_match.start()] if start_match else raw_text[:2000]
 

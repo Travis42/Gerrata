@@ -13,8 +13,8 @@ import logging
 import re
 from dataclasses import dataclass
 
-from gerrata.models import CandidateError, ErrorCategory
-from gerrata.checker.us_uk_spelling import is_us_uk_variant
+from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory
+from book_projects.gerrata.src.gerrata.checker.us_uk_spelling import is_us_uk_variant
 
 logger = logging.getLogger(__name__)
 

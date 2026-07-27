@@ -28,7 +28,7 @@ import re
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 
-from gerrata.models import CandidateError, ErrorCategory
+from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory
 
 logger = logging.getLogger(__name__)
 

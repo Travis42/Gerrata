@@ -25,8 +25,8 @@ import re
 from difflib import SequenceMatcher
 from typing import Optional
 
-from gerrata.aligner.vision_aligner import PageTranscription
-from gerrata.models import Alignment, AlignmentMethod
+from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
+from book_projects.gerrata.src.gerrata.models import Alignment, AlignmentMethod
 
 logger = logging.getLogger(__name__)
 

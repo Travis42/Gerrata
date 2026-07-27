@@ -5,8 +5,8 @@ Approaches:
   B — Line-break fingerprinting (slower, structural)
 """
 
-from gerrata.edition.verifier import EditionVerifier
-from gerrata.edition.metadata import MetadataMatcher
-from gerrata.edition.linebreaks import LineBreakFingerprinter
+from book_projects.gerrata.src.gerrata.edition.verifier import EditionVerifier
+from book_projects.gerrata.src.gerrata.edition.metadata import MetadataMatcher
+from book_projects.gerrata.src.gerrata.edition.linebreaks import LineBreakFingerprinter
 
 __all__ = ["EditionVerifier", "MetadataMatcher", "LineBreakFingerprinter"]
