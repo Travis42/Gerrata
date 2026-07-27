@@ -126,16 +126,28 @@ class ScanFetcher:
             logger.warning(f"Failed to download page {page_num}: {e}")
             return None
 
-    def _jp2_to_png(self, jp2_path: Path) -> Path:
-        """Convert a JP2 image to PNG using OpenCV (Pillow lacks JP2 support)."""
+    def _jp2_to_png(self, jp2_path: Path, max_width: int | None = None) -> Path:
+        """Convert a JP2 image to PNG using OpenCV (Pillow lacks JP2 support).
+
+        Args:
+            jp2_path: Path to JP2 file.
+            max_width: If set, downscale images wider than this to max_width pixels.
+                Preserves aspect ratio. Reduces RAM usage for vision transcription.
+        """
         import cv2
 
         png_path = jp2_path.with_suffix(".png")
         img = cv2.imread(str(jp2_path), cv2.IMREAD_ANYCOLOR)
         if img is None:
             raise ValueError(f"OpenCV could not read {jp2_path}")
+        if max_width and img.shape[1] > max_width:
+            h, w = img.shape[:2]
+            scale = max_width / w
+            img = cv2.resize(img, (max_width, int(h * scale)), interpolation=cv2.INTER_AREA)
+            logger.debug(f"Downscaled {jp2_path.name}: {w}x{h} -> {max_width}x{int(h * scale)}")
         cv2.imwrite(str(png_path), img)
-        logger.info(f"Converted {jp2_path.name} to {png_path.name}")
+        del img  # free numpy array immediately
+        logger.debug(f"Converted {jp2_path.name} to {png_path.name}")
         return png_path
 
     async def download_jp2_zip(
@@ -298,6 +310,7 @@ class ScanFetcher:
         zip_path: Path,
         dest: Path | None = None,
         page_range: tuple[int, int] | None = None,
+        max_width: int | None = None,
     ) -> list[Path]:
         """Extract JP2 files from a zip and convert to PNG.
 
@@ -305,6 +318,8 @@ class ScanFetcher:
             zip_path: Path to the JP2 zip file.
             dest: Directory for extracted/converted files. Defaults to cache_dir.
             page_range: Optional (start, end) page numbers to extract (inclusive).
+            max_width: If set, downscale images wider than this to max_width pixels.
+                Preserves aspect ratio. Reduces RAM usage for vision transcription.
 
         Returns:
             Sorted list of paths to extracted PNG files.
@@ -354,6 +369,11 @@ class ScanFetcher:
                     if img is None:
                         logger.warning(f"Failed to read {jp2_name}")
                         continue
+                    if max_width and img.shape[1] > max_width:
+                        h, w = img.shape[:2]
+                        scale = max_width / w
+                        img = cv2.resize(img, (max_width, int(h * scale)), interpolation=cv2.INTER_AREA)
+                        logger.debug(f"Downscaled page {page_num}: {w}x{h} -> {max_width}x{int(h * scale)}")
                     cv2.imwrite(str(png_path), img)
                     del img  # free decompressed numpy array
                     png_files.append(png_path)

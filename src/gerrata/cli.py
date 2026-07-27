@@ -405,6 +405,18 @@ def build_parser() -> argparse.ArgumentParser:
         default=10,
         help="Grid resolution for page text detection (default: 10)",
     )
+    parser.add_argument(
+        "--max-image-width",
+        type=int,
+        default=0,
+        help="Max pixel width for page images (0=no limit). Reduces RAM for large scans.",
+    )
+    parser.add_argument(
+        "--low-memory",
+        action="store_true",
+        default=False,
+        help="Reduce memory usage: downscale images to 1200px, concurrency=3",
+    )
     return parser
 
 
@@ -623,7 +635,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                         console.print(f"  [dim]Could not derive scan_id from filename — report will show 'local'[/dim]")
                 extract_dir = zip_path.parent / "pages"
                 page_images = scan_fetcher.extract_jp2_zip(
-                    zip_path, dest=extract_dir, page_range=page_range
+                    zip_path, dest=extract_dir, page_range=page_range,
+                    max_width=args.max_image_width if args.max_image_width else None,
                 )
                 console.print(f"  Extracted {len(page_images)} pages from {zip_path.name}")
             elif scan_id:
@@ -637,7 +650,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                 )
                 extract_dir = (cache_dir or Path("./cache")) / "pages"
                 page_images = scan_fetcher.extract_jp2_zip(
-                    zip_path, dest=extract_dir, page_range=page_range
+                    zip_path, dest=extract_dir, page_range=page_range,
+                    max_width=args.max_image_width if args.max_image_width else None,
                 )
                 console.print(f"  Downloaded and extracted {len(page_images)} pages")
             else:
@@ -1884,8 +1898,19 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv[1:])
     args.pg_id = pg_id
 
+    # Apply --low-memory presets
+    if getattr(args, 'low_memory', False):
+        if not args.max_image_width:
+            args.max_image_width = 1200
+        if args.concurrency > 3:
+            args.concurrency = 3
+
+    max_image_width = args.max_image_width
+
     setup_logging(args.verbose)
     logger = logging.getLogger(__name__)
+    if getattr(args, 'low_memory', False):
+        logger.info("Low-memory mode: max_image_width=%d, concurrency=%d", max_image_width, args.concurrency)
 
     try:
         report = asyncio.run(run_pipeline(args))
