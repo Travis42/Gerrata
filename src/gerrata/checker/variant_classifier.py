@@ -14,8 +14,8 @@ import unicodedata
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 
-from book_projects.gerrata.src.gerrata.checker.us_uk_spelling import is_us_uk_variant
-from book_projects.gerrata.src.gerrata.models import (
+from gerrata.checker.us_uk_spelling import is_us_uk_variant
+from gerrata.models import (
     CandidateError,
     TextualVariant,
     VariantCategory,

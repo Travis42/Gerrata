@@ -5,7 +5,7 @@ import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from book_projects.gerrata.src.gerrata.text_utils import trim_shared_edges, normalize_possessive
+from gerrata.text_utils import trim_shared_edges, normalize_possessive
 
 
 def is_diacritic_or_ligature_change(pg_word: str, scan_word: str) -> bool:
@@ -150,7 +150,7 @@ class GlobalReplacementDetector:
             groups[(pg_root, scan_root)].append((pg_t, scan_t, page))
 
         # Step 3: Count occurrences in PG text and qualify
-        from book_projects.gerrata.src.gerrata.checker.dictionary import DictionaryChecker
+        from gerrata.checker.dictionary import DictionaryChecker
         dict_checker = DictionaryChecker(pg_text=pg_body_text)
 
         results = []

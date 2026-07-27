@@ -13,7 +13,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup, Tag
 
-from book_projects.gerrata.src.gerrata.models import PGMetadata
+from gerrata.models import PGMetadata
 
 logger = logging.getLogger(__name__)
 

@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from book_projects.gerrata.src.gerrata.models import (
+from gerrata.models import (
     ComparisonReport,
     TextualVariant,
     VariantCategory,

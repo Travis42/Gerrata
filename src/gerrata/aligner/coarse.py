@@ -14,7 +14,7 @@ import re
 import unicodedata
 from typing import Optional
 
-from book_projects.gerrata.src.gerrata.models import Alignment, AlignmentMethod
+from gerrata.models import Alignment, AlignmentMethod
 
 logger = logging.getLogger(__name__)
 

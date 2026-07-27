@@ -13,9 +13,9 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from book_projects.gerrata.src.gerrata.aligner.global_anchor import GlobalAnchorAligner
-from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
-from book_projects.gerrata.src.gerrata.models import Alignment, AlignmentMethod, EditionAlignment
+from gerrata.aligner.global_anchor import GlobalAnchorAligner
+from gerrata.aligner.vision_aligner import PageTranscription
+from gerrata.models import Alignment, AlignmentMethod, EditionAlignment
 
 logger = logging.getLogger(__name__)
 

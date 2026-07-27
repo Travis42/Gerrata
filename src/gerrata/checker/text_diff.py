@@ -11,8 +11,8 @@ import re
 import unicodedata
 from difflib import SequenceMatcher
 
-from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
-from book_projects.gerrata.src.gerrata.checker.stitch import stitch_scan_pages, build_token_page_map
+from gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
+from gerrata.checker.stitch import stitch_scan_pages, build_token_page_map
 
 logger = logging.getLogger(__name__)
 
@@ -263,7 +263,7 @@ class TextDiffChecker:
         Returns:
             All candidate errors found.
         """
-        from book_projects.gerrata.src.gerrata.checker.stitch import stitch_scan_pages, build_token_page_map
+        from gerrata.checker.stitch import stitch_scan_pages, build_token_page_map
 
         if not alignments or not scan_pages:
             return []

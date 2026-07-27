@@ -16,7 +16,7 @@ from typing import Optional
 
 import httpx
 
-from book_projects.gerrata.src.gerrata.models import Report
+from gerrata.models import Report
 
 logger = logging.getLogger(__name__)
 

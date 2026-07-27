@@ -16,7 +16,7 @@ from typing import Optional
 
 import httpx
 
-from book_projects.gerrata.src.gerrata.models import CandidateError, Error, Verdict
+from gerrata.models import CandidateError, Error, Verdict
 
 logger = logging.getLogger(__name__)
 

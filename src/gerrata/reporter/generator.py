@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from book_projects.gerrata.src.gerrata.checker.dictionary import DictionaryChecker
+from gerrata.checker.dictionary import DictionaryChecker
 
 
 def _next_version(path: Path) -> Path:
@@ -49,8 +49,8 @@ def _slugify(text: str, max_length: int = 60) -> str:
 from rich.console import Console
 from rich.table import Table
 
-from book_projects.gerrata.src.gerrata.models import Error, ErrorCategory, ErrorSeverity, Report, Verdict
-from book_projects.gerrata.src.gerrata.fetcher.pg import PGParsedText
+from gerrata.models import Error, ErrorCategory, ErrorSeverity, Report, Verdict
+from gerrata.fetcher.pg import PGParsedText
 
 
 class ReportGenerator:
@@ -64,7 +64,7 @@ class ReportGenerator:
     @staticmethod
     def _trim_shared_edges(pg_text: str, scan_text: str) -> tuple[str, str]:
         """Trim common leading/trailing punctuation from both texts."""
-        from book_projects.gerrata.src.gerrata.text_utils import trim_shared_edges
+        from gerrata.text_utils import trim_shared_edges
         return trim_shared_edges(pg_text, scan_text)
 
     def __init__(self, console: Optional[Console] = None, pg_parsed_text: Optional[PGParsedText] = None,
@@ -1264,7 +1264,7 @@ class ReportGenerator:
         global_instances: list = []
         unique_errors: list = []
         if self.global_replacements:
-            from book_projects.gerrata.src.gerrata.checker.global_replacements import GlobalReplacementDetector
+            from gerrata.checker.global_replacements import GlobalReplacementDetector
             detector = GlobalReplacementDetector()
             for err in deduplicated:
                 if detector.is_global_instance(
@@ -1281,7 +1281,7 @@ class ReportGenerator:
         # so the reviewer can see all caught examples together and decide
         if global_instances:
             # Build a lookup: (pg_text, scan_text) → list of errors
-            from book_projects.gerrata.src.gerrata.checker.global_replacements import normalize_possessive
+            from gerrata.checker.global_replacements import normalize_possessive
             grouped: dict[tuple[str, str], list] = {}
             for err in global_instances:
                 pg_word = err.candidate.pg_text.strip()
@@ -1637,7 +1637,7 @@ class ReportGenerator:
         # uses the raw CoverageGap data for richer display.
         if self.alignments and self.scan_pages and self.body_text:
             try:
-                from book_projects.gerrata.src.gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report
+                from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report
                 all_gaps = detect_scan_gaps(
                     pg_text=self.body_text,
                     alignments=self.alignments,

@@ -15,18 +15,18 @@ from typing import Any, Optional
 from rich.console import Console
 from rich.logging import RichHandler
 
-from book_projects.gerrata.src.gerrata.models import Error, Report, PGMetadata
-from book_projects.gerrata.src.gerrata.fetcher.pg import PGFetcher, PGParsedText
-from book_projects.gerrata.src.gerrata.fetcher.scans import ScanFetcher
-from book_projects.gerrata.src.gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
-from book_projects.gerrata.src.gerrata.aligner.global_anchor import GlobalAnchorAligner
-from book_projects.gerrata.src.gerrata.checker.text_diff import TextDiffChecker
-from book_projects.gerrata.src.gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report, gaps_to_candidate_errors
-from book_projects.gerrata.src.gerrata.checker.global_replacements import GlobalReplacementDetector
-from book_projects.gerrata.src.gerrata.checker.rules import FalsePositiveFilter
-from book_projects.gerrata.src.gerrata.verifier.programmatic import ProgrammaticVerifier
-from book_projects.gerrata.src.gerrata.reporter.generator import ReportGenerator
-from book_projects.gerrata.src.gerrata.reporter.substantive import SubstantiveErrataGenerator
+from gerrata.models import Error, Report, PGMetadata
+from gerrata.fetcher.pg import PGFetcher, PGParsedText
+from gerrata.fetcher.scans import ScanFetcher
+from gerrata.aligner.vision_aligner import VisionAligner, VisionTranscriber
+from gerrata.aligner.global_anchor import GlobalAnchorAligner
+from gerrata.checker.text_diff import TextDiffChecker
+from gerrata.checker.gap_detector import detect_scan_gaps, filter_for_report, gaps_to_candidate_errors
+from gerrata.checker.global_replacements import GlobalReplacementDetector
+from gerrata.checker.rules import FalsePositiveFilter
+from gerrata.verifier.programmatic import ProgrammaticVerifier
+from gerrata.reporter.generator import ReportGenerator
+from gerrata.reporter.substantive import SubstantiveErrataGenerator
 
 
 
@@ -487,7 +487,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "01_pg_parsed")
         if not cached:
             raise ValueError(f"--resume-from={resume_from} but 01_pg_parsed.json not found in {intermed_dir}")
-        from book_projects.gerrata.src.gerrata.fetcher.pg import ChapterLocation
+        from gerrata.fetcher.pg import ChapterLocation
         chapters = [
             ChapterLocation(**ch) if isinstance(ch, dict) else ch
             for ch in cached["chapters"]
@@ -572,7 +572,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                         f"02_transcriptions.json nor transcriber cache found "
                         f"in {intermed_dir}"
                     )
-            from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
+            from gerrata.aligner.vision_aligner import PageTranscription
             successful = [PageTranscription(
                 page_num=t["page_num"],
                 image_path=Path(t["image_path"]) if t.get("image_path") else None,
@@ -585,8 +585,8 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
             # If poetry formatting mode, clean JSON from transcriptions on resume
             if getattr(args, 'poetry_formatting', False):
-                from book_projects.gerrata.src.gerrata.poetry.extractor import parse_poetry_response
-                from book_projects.gerrata.src.gerrata.aligner.vision_aligner import strip_paratext
+                from gerrata.poetry.extractor import parse_poetry_response
+                from gerrata.aligner.vision_aligner import strip_paratext
                 for t in successful:
                     # Try to parse poetry JSON from either field
                     raw = t.transcription or ""
@@ -653,7 +653,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             skipped_page_count = 0
             if not args.skip_page_classification:
                 console.print("[bold blue]Step 2a:[/bold blue] Classifying pages (text vs. illustration)...")
-                from book_projects.gerrata.src.gerrata.page_classifier import classify_pages, filter_text_pages
+                from gerrata.page_classifier import classify_pages, filter_text_pages
                 classifications = classify_pages(
                     page_images,
                     min_dark_density=args.min_dark_density,
@@ -701,9 +701,9 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
                     console.print(f"  [dim]Auto-resume: {len(completed_pages)}/{len(page_images)} pages already transcribed[/dim]")
 
             # Select prompt: poetry formatting or standard transcription
-            from book_projects.gerrata.src.gerrata.aligner.vision_aligner import TRANSCRIPTION_PROMPT
+            from gerrata.aligner.vision_aligner import TRANSCRIPTION_PROMPT
             if getattr(args, 'poetry_formatting', False):
-                from book_projects.gerrata.src.gerrata.poetry.extractor import POETRY_FORMATTING_PROMPT
+                from gerrata.poetry.extractor import POETRY_FORMATTING_PROMPT
                 active_prompt = POETRY_FORMATTING_PROMPT
                 console.print("  [dim]Poetry formatting mode: using combined JSON prompt[/dim]")
             else:
@@ -728,9 +728,9 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
             # If poetry formatting mode, extract and save formatting data
             if getattr(args, 'poetry_formatting', False):
-                from book_projects.gerrata.src.gerrata.poetry.extractor import parse_poetry_response, pages_to_json
+                from gerrata.poetry.extractor import parse_poetry_response, pages_to_json
                 poetry_pages = []
-                from book_projects.gerrata.src.gerrata.aligner.vision_aligner import strip_paratext
+                from gerrata.aligner.vision_aligner import strip_paratext
                 for t in successful:
                     text, poetry_page = parse_poetry_response(
                         t.transcription, t.page_num, str(t.image_path)
@@ -770,7 +770,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "03_alignments")
         if not cached:
             raise ValueError(f"--resume-from={resume_from} but 03_alignments.json not found in {intermed_dir}")
-        from book_projects.gerrata.src.gerrata.models import Alignment, AlignmentMethod
+        from gerrata.models import Alignment, AlignmentMethod
         alignments = [Alignment(
             pg_start=a["pg_start"],
             pg_end=a["pg_end"],
@@ -782,7 +782,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
         cached_pages = load_intermediate(intermed_dir, "03_scan_pages")
         if cached_pages:
-            from book_projects.gerrata.src.gerrata.fetcher.scans import ScanPage
+            from gerrata.fetcher.scans import ScanPage
             scan_pages = [ScanPage(
                 page_num=p["page_num"],
                 vision_text=p.get("vision_text", ""),
@@ -898,7 +898,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "05_candidates_filtered")
         if not cached:
             raise ValueError("--resume-from=pre-verify but 05_candidates_filtered.json not found")
-        from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
+        from gerrata.models import CandidateError, ErrorCategory, ErrorSeverity
         candidates = []
         for c in cached:
             c_copy = dict(c)
@@ -913,7 +913,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         cached = load_intermediate(intermed_dir, "06_verified_errors")
         if not cached:
             raise ValueError("--resume-from=pre-report but 06_verified_errors.json not found")
-        from book_projects.gerrata.src.gerrata.models import Error, ErrorCategory, ErrorSeverity, CandidateError, Verdict
+        from gerrata.models import Error, ErrorCategory, ErrorSeverity, CandidateError, Verdict
         verified_errors = []
         for e in cached:
             e_copy = dict(e)
@@ -982,7 +982,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
         # Content holes: gaps within aligned passages (scan has text PG lacks
         # between two matched blocks)
-        from book_projects.gerrata.src.gerrata.checker.gap_detector import detect_content_holes
+        from gerrata.checker.gap_detector import detect_content_holes
         content_holes = detect_content_holes(
             alignments=alignments,
             scan_pages=scan_pages,
@@ -1018,7 +1018,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         # Step 6b: Word-boundary cutoff artifact filter
         def is_cutoff_artifact(scan_text: str, pg_text: str) -> bool:
             """Check if a diff is a word-boundary cutoff artifact."""
-            from book_projects.gerrata.src.gerrata.models import ErrorCategory
+            from gerrata.models import ErrorCategory
             s = scan_text.strip()
             p = pg_text.strip()
             if ' ' in s or ' ' in p:
@@ -1036,7 +1036,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
         artifacts_count = 0
         for candidate in candidates:
             if is_cutoff_artifact(candidate.scan_text, candidate.pg_text):
-                from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory
+                from gerrata.models import CandidateError, ErrorCategory
                 artifact_candidate = CandidateError(
                     pg_text=candidate.pg_text,
                     scan_text=candidate.scan_text,
@@ -1145,7 +1145,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             filtered = False
             for filter_name, filter_fn in FILTERS:
                 if filter_fn(candidate.scan_text, candidate.pg_text):
-                    from book_projects.gerrata.src.gerrata.models import CandidateError, ErrorCategory
+                    from gerrata.models import CandidateError, ErrorCategory
                     artifact_candidate = CandidateError(
                         pg_text=candidate.pg_text,
                         scan_text=candidate.scan_text,
@@ -1265,7 +1265,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
 
     # Promote singular diacritic/ligature errata to global replacements.
     # These are almost certainly systematic (scan preserves original accents).
-    from book_projects.gerrata.src.gerrata.checker.dictionary import DictionaryChecker
+    from gerrata.checker.dictionary import DictionaryChecker
     dict_checker = DictionaryChecker()
     existing_gr_keys = {(gr.pg_text.lower(), gr.scan_text.lower()) for gr in global_replacements}
     pg_body_lower = parsed.body_text.lower()
@@ -1289,7 +1289,7 @@ async def run_pipeline(args: argparse.Namespace) -> Report:
             continue
         occ = pg_body_lower.count(pg_clean.lower())
         if occ >= 1:
-            from book_projects.gerrata.src.gerrata.checker.global_replacements import GlobalReplacement
+            from gerrata.checker.global_replacements import GlobalReplacement
             promoted.append(GlobalReplacement(
                 pg_text=pg_clean,
                 scan_text=re.sub(r"<[^>]+>", "", scan_t).strip(),
@@ -1404,7 +1404,7 @@ def _load_transcriptions_json(path: str) -> list:
         raise FileNotFoundError(f"Transcriptions file not found: {path}")
     with open(p) as f:
         data = json.load(f)
-    from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
+    from gerrata.aligner.vision_aligner import PageTranscription
     results = []
     if isinstance(data, list):
         for t in data:
@@ -1450,13 +1450,13 @@ async def _resolve_edition_source(
 
     if source_type == "text":
         text = _load_text_file(identifier)
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _split_text_to_pages
+        from gerrata.aligner.cross_aligner import _split_text_to_pages
         transcriptions = _split_text_to_pages(text)
         return text, transcriptions
 
     elif source_type == "transcribed":
         transcriptions = _load_transcriptions_json(identifier)
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _build_synthetic_text
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
         full_text = _build_synthetic_text(transcriptions)
         return full_text, transcriptions
 
@@ -1478,7 +1478,7 @@ async def _resolve_edition_source(
         )
         transcriptions = await transcriber.transcribe_pages(page_images)
         successful = [t for t in transcriptions if t.success]
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _build_synthetic_text
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
         full_text = _build_synthetic_text(successful)
         return full_text, successful
 
@@ -1496,7 +1496,7 @@ async def _resolve_edition_source(
             if resume_dir and resume_stage in ("transcriptions", "alignments", "variants", "pre-report"):
                 cached = load_intermediate(resume_dir, "02_transcriptions")
                 if cached:
-                    from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
+                    from gerrata.aligner.vision_aligner import PageTranscription
                     successful = [PageTranscription(
                         page_num=t["page_num"],
                         image_path=Path(t["image_path"]) if t.get("image_path") else None,
@@ -1505,7 +1505,7 @@ async def _resolve_edition_source(
                         success=t["success"],
                         error=t.get("error"),
                     ) for t in cached]
-                    from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _build_synthetic_text
+                    from gerrata.aligner.cross_aligner import _build_synthetic_text
                     return _build_synthetic_text(successful), successful
 
             zip_path = await scan_fetcher.download_jp2_zip(
@@ -1529,7 +1529,7 @@ async def _resolve_edition_source(
         )
         transcriptions = await transcriber.transcribe_pages(page_images)
         successful = [t for t in transcriptions if t.success]
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _build_synthetic_text
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
         full_text = _build_synthetic_text(successful)
         return full_text, successful
 
@@ -1613,7 +1613,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
 
         # Reload transcriptions for A
         cached_trans = load_intermediate(compare_cache, "02_transcriptions")
-        from book_projects.gerrata.src.gerrata.aligner.vision_aligner import PageTranscription
+        from gerrata.aligner.vision_aligner import PageTranscription
         trans_a = [PageTranscription(
             page_num=t["page_num"],
             image_path=Path(t["image_path"]) if t.get("image_path") else None,
@@ -1622,7 +1622,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
             success=t["success"],
             error=t.get("error"),
         ) for t in cached_trans]
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import _build_synthetic_text
+        from gerrata.aligner.cross_aligner import _build_synthetic_text
         text_a = _build_synthetic_text(trans_a)
 
         # Reload transcriptions for B
@@ -1655,8 +1655,8 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
     # ── Step 2: Cross-align editions ──────────────────────────────
     if resume_stage not in ("variants", "pre-report"):
         console.print("[bold blue]Step 2:[/bold blue] Cross-aligning editions...")
-        from book_projects.gerrata.src.gerrata.aligner.cross_aligner import align_editions
-        from book_projects.gerrata.src.gerrata.models import EditionAlignment
+        from gerrata.aligner.cross_aligner import align_editions
+        from gerrata.models import EditionAlignment
 
         edition_alignments = align_editions(
             transcriptions_a=trans_a,
@@ -1674,7 +1674,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
         cached = load_intermediate(compare_cache, "03_alignments")
         if not cached:
             raise ValueError(f"--resume-from={resume_stage} but 03_alignments.json not found")
-        from book_projects.gerrata.src.gerrata.models import EditionAlignment
+        from gerrata.models import EditionAlignment
         edition_alignments = [
             EditionAlignment(
                 edition_a_start=a["edition_a"]["start"],
@@ -1716,7 +1716,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
 
         # ── Step 4: Classify variants ─────────────────────────────
         console.print("[bold blue]Step 4:[/bold blue] Classifying variants...")
-        from book_projects.gerrata.src.gerrata.checker.variant_classifier import VariantClassifier
+        from gerrata.checker.variant_classifier import VariantClassifier
 
         classifier = VariantClassifier()
         variants = classifier.classify_batch(all_candidates)
@@ -1743,7 +1743,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
         cached = load_intermediate(compare_cache, "04_variants")
         if not cached:
             raise ValueError("--resume-from=pre-report but 04_variants.json not found")
-        from book_projects.gerrata.src.gerrata.models import TextualVariant, VariantCategory, VariantSignificance
+        from gerrata.models import TextualVariant, VariantCategory, VariantSignificance
         variants = [
             TextualVariant(
                 edition_a_text=v["edition_a"]["text"],
@@ -1764,11 +1764,11 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
     # ── Step 5: Generate reports ──────────────────────────────────
     console.print("[bold blue]Step 5:[/bold blue] Generating reports...")
 
-    from book_projects.gerrata.src.gerrata.models import (
+    from gerrata.models import (
         ComparisonReport,
         EditionInfo,
     )
-    from book_projects.gerrata.src.gerrata.reporter.comparison_reporter import ComparisonReporter
+    from gerrata.reporter.comparison_reporter import ComparisonReporter
 
     report = ComparisonReport(
         edition_a=EditionInfo(
@@ -1812,7 +1812,7 @@ async def run_compare_editions(args: argparse.Namespace) -> int:
 
 async def run_verify_edition(args: argparse.Namespace) -> int:
     """Run the verify-edition subcommand."""
-    from book_projects.gerrata.src.gerrata.edition.verifier import EditionVerifier
+    from gerrata.edition.verifier import EditionVerifier
 
     verifier = EditionVerifier(
         cache_dir=Path(args.cache_dir) if args.cache_dir else Path("./cache"),
